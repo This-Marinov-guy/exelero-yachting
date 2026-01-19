@@ -10,7 +10,7 @@ import { Col, Container, Label, Row } from "reactstrap";
 const MainBanner = () => {
   return (
     <div className='car2-home-section'>
-      <RatioImage src={`${ImagePath}/car2/bg-effect/noise-bg.png`} alt='noise-bg' className='img-fluid bg-img' />
+      {/* <RatioImage src={`${ImagePath}/car2/bg-effect/noise-bg.png`} alt='noise-bg' className='img-fluid bg-img' /> */}
       <div className='quote'>
         <ul className='marquee'>
           {dynamicNumber(12).map((_, index) => (

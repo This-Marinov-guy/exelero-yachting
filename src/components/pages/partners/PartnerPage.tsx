@@ -31,7 +31,7 @@ const PartnerPage: React.FC = () => {
       <div className="partner-hero-section">
         <div className="partner-hero-background">
           <Image
-            src={partner.heroImage}
+            src={partner.breadcrumbImage}
             alt={partner.name}
             fill
             className="partner-hero-image"
@@ -61,6 +61,17 @@ const PartnerPage: React.FC = () => {
         <div className="partner-content-section">
           <Row className="g-4">
             <Col lg={8}>
+              <div className="partner-image-panel">
+                <div className="partner-panel-image-wrapper">
+                  <Image
+                    src={partner.heroImage}
+                    alt={partner.name}
+                    fill
+                    className="partner-panel-image"
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
+              </div>
               <div className="partner-description">
                 <h2>About {partner.name}</h2>
                 <p>{partner.description}</p>

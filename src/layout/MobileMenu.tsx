@@ -3,11 +3,14 @@ import { setCartData, setSearchModal } from "@/redux/reducers/LayoutSlice";
 import { RouteList } from "@/utils/RouteList";
 import { Heart, House, Menu, Profile, SearchNormal1 } from "iconsax-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FC } from "react";
 import { Href } from "../constants";
 
 const MobileMenu: FC<{ part?: string }> = ({ part }) => {
   const dispatch = useAppDispatch();
+  const pathname = usePathname();
+  const isBoatsPage = pathname === RouteList.Pages.Boats;
 
   return (
     <ul className={`mobile-menu ${part === "car-2"? "dark-mobile-menu" : ""}`}>
@@ -18,12 +21,20 @@ const MobileMenu: FC<{ part?: string }> = ({ part }) => {
         </Link>
       </li>
       <li>
-        <Link scroll={false} href={Href} onClick={() => dispatch(setSearchModal())}>
+        <Link
+          scroll={false}
+          href={isBoatsPage ? Href : RouteList.Pages.Boats}
+          onClick={(e) => {
+            if (!isBoatsPage) return;
+            e.preventDefault();
+            dispatch(setSearchModal());
+          }}
+        >
           <SearchNormal1 className='iconsax' />
           <span>Search</span>
         </Link>
       </li>
-      <li>
+      {/* <li>
         <Link href={RouteList.Car.CarWishlist}>
           <Heart className='iconsax' />
           <span>Shortlist</span>
@@ -34,7 +45,7 @@ const MobileMenu: FC<{ part?: string }> = ({ part }) => {
           <Profile className='iconsax' />
           <span>Profile</span>
         </Link>
-      </li>
+      </li> */}
       <li>
         <Link scroll={false} href={Href} onClick={() => dispatch(setCartData())}>
           <Menu className='iconsax' />

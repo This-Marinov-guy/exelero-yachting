@@ -22,14 +22,14 @@ const CarDemo1Container = () => {
   return (
     <>
       <CarHomeSection />
-      <Categories type="carDemo-1"/>
+      {/* <Categories type="carDemo-1"/>
       <CarDemoProduct/>
       <Services/>
       <Offer/>
       <Work/>
       <Experience/>
       <About/>
-      <Testimonials/>
+      <Testimonials/> */}
     </>
   );
 };

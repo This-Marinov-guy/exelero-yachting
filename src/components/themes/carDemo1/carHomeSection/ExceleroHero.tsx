@@ -13,6 +13,18 @@ interface BrandPanel {
 const ExceleroHero = () => {
   const brands: BrandPanel[] = [
     {
+      name: "Omaya Yachts",
+      heroImage: "/assets/images/hero/omaya-yachts.jpg",
+      logoImage: "/assets/images/logo/omaya-yachts.jpg",
+      link: RouteList.Pages.Partners.OmayaYachts,
+    },
+    {
+      name: "Broker Market",
+      heroImage: "/assets/images/hero/boats.jpg",
+      logoImage: "/assets/images/favicons/favicon.ico",
+      link: RouteList.Pages.Boats,
+    },
+    {
       name: "X-Yachts",
       heroImage: "/assets/images/hero/x-yachts.jpg",
       logoImage: "/assets/images/logo/x-yachts.png",
@@ -23,12 +35,6 @@ const ExceleroHero = () => {
       heroImage: "/assets/images/hero/elvstrom.jpg",
       logoImage: "/assets/images/logo/elvstrom.jpg",
       link: RouteList.Pages.Partners.Elvstrom,
-    },
-    {
-      name: "Omaya Yachts",
-      heroImage: "/assets/images/hero/omaya-yachts.jpg",
-      logoImage: "/assets/images/logo/omaya-yachts.jpg",
-      link: RouteList.Pages.Partners.OmayaYachts,
     },
   ];
 
@@ -51,7 +57,7 @@ const ExceleroHero = () => {
           <h2 className="hero-subtitle">Yachting and more</h2>
           <Row className="hero-panels g-3 g-md-4">
             {brands.map((brand, index) => (
-              <Col lg={4} md={6} sm={6} xs={12} key={index}>
+              <Col xl={3} lg={3} md={6} sm={6} xs={12} key={index}>
                 <Link href={brand.link} className="hero-panel">
                   <div className="panel-image-wrapper">
                     <Image

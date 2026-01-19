@@ -38,6 +38,12 @@ export const MenuItem = [
     active: false,
   },
   {
+    title: "About",
+    type: "link",
+    path: RouteList.Pages.About,
+    active: false,
+  },
+  {
     title: "Partners",
     type: "sub",
     active: false,
@@ -55,6 +61,13 @@ export const MenuItem = [
         type: "link",
         path: RouteList.Pages.Partners.Elvstrom,
         image: "logo/elvstrom.jpg",
+        active: false,
+      },
+      {
+        title: "Elvstrom SailWear",
+        type: "link",
+        path: RouteList.Pages.Partners.ElvstromSailWear,
+        image: "logo/elvstrom-sailwear.webp",
         active: false,
       },
       {

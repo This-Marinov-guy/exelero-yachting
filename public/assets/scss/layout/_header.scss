@@ -1252,7 +1252,7 @@ header {
     left: 0;
     background: rgba(var(--white), 1);
     width: 100%;
-    z-index: 1;
+    z-index: 10000;
     padding: calc(10px + (15 - 10) * ((100vw - 320px) / (1920 - 320)));
     box-shadow: 0 0px 10px 0px rgba(8, 31, 46, 0.2);
     display: flex;

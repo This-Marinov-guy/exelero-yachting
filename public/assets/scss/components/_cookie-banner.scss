@@ -1,0 +1,126 @@
+/*========================
+  Cookie Banner Style
+==========================*/
+
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(var(--white), 1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+  padding: calc(15px + (25 - 15) * ((100vw - 320px) / (1920 - 320))) 0;
+  animation: slideUp 0.3s ease-out;
+
+  @media (max-width: 767px) {
+    padding: calc(12px + (20 - 12) * ((100vw - 320px) / (767 - 320))) 0;
+  }
+
+  .cookie-banner-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(20px + (30 - 20) * ((100vw - 320px) / (1920 - 320)));
+
+    @media (max-width: 991px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: calc(15px + (20 - 15) * ((100vw - 576px) / (991 - 576)));
+    }
+
+    .cookie-banner-text {
+      flex: 1;
+
+      h5 {
+        font-size: calc(18px + (22 - 18) * ((100vw - 320px) / (1920 - 320)));
+        font-weight: 600;
+        color: rgba(var(--title-color), 1);
+        margin-bottom: calc(8px + (12 - 8) * ((100vw - 320px) / (1920 - 320)));
+
+        @media (max-width: 767px) {
+          font-size: calc(16px + (20 - 16) * ((100vw - 320px) / (767 - 320)));
+        }
+      }
+
+      p {
+        font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
+        color: rgba(var(--content-color), 1);
+        line-height: 1.6;
+        margin: 0;
+
+        @media (max-width: 767px) {
+          font-size: calc(13px + (15 - 13) * ((100vw - 320px) / (767 - 320)));
+        }
+      }
+    }
+
+    .cookie-banner-buttons {
+      display: flex;
+      gap: calc(10px + (15 - 10) * ((100vw - 320px) / (1920 - 320)));
+      flex-shrink: 0;
+
+      @media (max-width: 991px) {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      @media (max-width: 575px) {
+        flex-direction: column;
+        width: 100%;
+
+        .cookie-btn {
+          width: 100%;
+        }
+      }
+
+      .cookie-btn {
+        padding: calc(10px + (14 - 10) * ((100vw - 320px) / (1920 - 320))) calc(20px + (30 - 20) * ((100vw - 320px) / (1920 - 320)));
+        font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
+        font-weight: 500;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+
+        @media (max-width: 575px) {
+          white-space: normal;
+        }
+
+        &.btn-outline {
+          border: 2px solid rgba(var(--theme-color), 1);
+          color: rgba(var(--theme-color), 1);
+          background: transparent;
+
+          &:hover {
+            background: rgba(var(--theme-color), 1);
+            color: rgba(var(--white), 1);
+          }
+        }
+
+        &.btn-solid {
+          background: rgba(var(--theme-color), 1);
+          color: rgba(var(--white), 1);
+          border: 2px solid rgba(var(--theme-color), 1);
+
+          &:hover {
+            background: rgba(var(--theme-color), 0.9);
+            border-color: rgba(var(--theme-color), 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(var(--theme-color), 0.3);
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

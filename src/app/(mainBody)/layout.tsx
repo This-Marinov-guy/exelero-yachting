@@ -1,4 +1,5 @@
 "use client";
+import CookieBanner from "@/components/commonComponents/CookieBanner";
 import SearchModal from "@/components/commonComponents/modal/SearchModal";
 import { SearchModalData } from "@/data/layout/Header";
 import Customizer from "@/layout/Customizer";
@@ -53,6 +54,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
       <TapTop part={firstPart} />
       {/* <Customizer part={segments} />       */}
       <SearchModal type={SearchModalData[firstPart] || SearchModalData.car} carSpaceClass={carSpaceClass} />
+      <CookieBanner />
       <CustomToaster/>
     </div>
   );

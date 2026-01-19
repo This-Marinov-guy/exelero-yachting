@@ -1,6 +1,14 @@
 import { Call, Location, Sms } from "iconsax-react";
 import { FooterDetailType } from "@/types/Layout";
 import { RouteList } from "@/utils/RouteList";
+import { 
+  MAIN_CONTACT_NUMBER, 
+  MAIN_CONTACT_EMAIL, 
+  MAIN_CONTACT_LOCATION,
+  INSTAGRAM_URL,
+  FACEBOOK_URL,
+  LINKEDIN_URL
+} from "@/utils/defines/CONTACTS";
 
 export const HeaderClassMapFooter: { [key: string]: string } = {
   "car-2": "car2-footer",
@@ -9,74 +17,63 @@ export const HeaderClassMapFooter: { [key: string]: string } = {
 };
 
 export const Details = [
-  'Find your ideal career with personalized support, together.',
-  'Let us guide you towards a fulfilling career path with our personalized recommendations and supportive community.'
+  'Excelero Yachting - Your premier destination for luxury yachting services, exceptional boats, and trusted partnerships.',
+  'Experience excellence in yachting with personalized service and world-class expertise.'
 ];
 
 export const Copyright =( <div className='copyright'>
-  <p>@ 2025 All Rights Reserved</p>
+  <p>@ {new Date().getFullYear()} Excelero Yachting. All Rights Reserved</p>
 </div>)
 
 export const ContactListData = [
-  { icon: <Call className="iconsax"/>, title: "Call", text: "(702) 555-0122" },
-  { icon: <Sms className="iconsax"/>, title: "Email", text: "general.info@gmail.com" },
-  { icon: <Location className="iconsax"/>, title: "Location", text: "4517 Washington Ave. Manchester," },
+  { icon: <Call className="iconsax"/>, title: "Call", text: MAIN_CONTACT_NUMBER },
+  { icon: <Sms className="iconsax"/>, title: "Email", text: MAIN_CONTACT_EMAIL },
+  { icon: <Location className="iconsax"/>, title: "Location", text: MAIN_CONTACT_LOCATION },
 ];
 
 export const SocialMediaData = [
-  { url: "https://www.instagram.com/", icon: "ri-instagram-line" },
-  { url: "https://www.facebook.com/", icon: "ri-facebook-line" },
-  { url: "https://x.com/", icon: "ri-twitter-x-line" },
-  { url: "https://in.pinterest.com/", icon: "ri-pinterest-line" },
+  { url: INSTAGRAM_URL, icon: "ri-instagram-line" },
+  { url: FACEBOOK_URL, icon: "ri-facebook-line" },
+  { url: LINKEDIN_URL, icon: "ri-linkedin-line" },
 ];
 
 export const FooterDetailData: FooterDetailType[] = [
   {
-    title: "Location",
+    title: "Navigation",
     links: [
-      { title: "New York", url: RouteList.Car.Listing.CarLeftList },
-      { title: "London", url: RouteList.Car.Listing.CarLeftList },
-      { title: "Prague", url: RouteList.Car.Listing.CarLeftList },
-      { title: "Cape Town", url: RouteList.Car.Listing.CarLeftList },
-      { title: "Singapore", url: RouteList.Car.Listing.CarLeftList },
+      { title: "Boats", url: RouteList.Pages.Boats },
+      { title: "Gallery", url: RouteList.Pages.Gallery },
+      { title: "About", url: RouteList.Pages.About },
+      { title: "Contact", url: RouteList.Pages.Other.ContactUs1 },
     ],
   },
   {
-    title: "Quick Links",
+    title: "Partners",
     links: [
-      { title: "Saved Rides", url: RouteList.Pages.Other.UserDashboard },
-      { title: "Profile", url: RouteList.Pages.Other.UserDashboard },
-      { title: "Post Cars", url: RouteList.Pages.Other.UserDashboard },
-      { title: "Privacy", url: RouteList.Pages.Other.Privacy },
+      { title: "X-Yachts", url: RouteList.Pages.Partners.XYachts },
+      { title: "Elvstrom", url: RouteList.Pages.Partners.Elvstrom },
+      { title: "Omaya Yachts", url: RouteList.Pages.Partners.OmayaYachts },
     ],
   },
   {
-    title: "official info",
+    title: "Services",
+    links: [
+      { title: "Sails", url: RouteList.Pages.Services.Sails },
+      { title: "Clothes", url: RouteList.Pages.Services.Clothes },
+      { title: "Boats", url: RouteList.Pages.Services.Boats },
+      { title: "Transportation", url: RouteList.Pages.Services.Transportation },
+      { title: "Sell Your Boat", url: RouteList.Pages.Services.SellYourBoat },
+      { title: "Charters", url: RouteList.Pages.Services.Charters },
+      { title: "Parts", url: RouteList.Pages.Services.Parts },
+    ],
+  },
+  {
+    title: "Contact Info",
     contactList: true,
     links: [
-      { title: "4517 Washington Ave. ManchesteR", icon: "ri-map-pin-fill" },
-      { title: "(702) 555-0122", icon: "ri-phone-fill" },
-      { title: "general.info@gmail.com", icon: "ri-mail-fill" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { title: "Portfolio", url: RouteList.Property.Grid.Property3Grid },
-      { title: "Blog", url: RouteList.Pages.Blog.BlogLeftSidebar },
-      { title: "Pricing", url: RouteList.Pages.Other.Pricing },
-      { title: "Register", url: RouteList.Pages.Other.SignUp1 },
-      { title: "Review", url: RouteList.Pages.Other.Testimonial },
-    ],
-  },
-  {
-    title: "About",
-    links: [
-      { title: "About Us", url: RouteList.Pages.Other.AboutUs1 },
-      { title: "Service", url: RouteList.Pages.Other.Services },
-      { title: "FAQs", url: RouteList.Pages.Other.Faq },
-      { title: "Teams", url: RouteList.Pages.Other.Team },
-      { title: "Contact Us", url: RouteList.Pages.Other.ContactUs1 },
+      { title: MAIN_CONTACT_LOCATION, icon: "ri-map-pin-fill" },
+      { title: MAIN_CONTACT_NUMBER, icon: "ri-phone-fill" },
+      { title: MAIN_CONTACT_EMAIL, icon: "ri-mail-fill" },
     ],
   },
 ];
