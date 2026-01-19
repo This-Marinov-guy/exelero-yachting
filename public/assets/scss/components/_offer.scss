@@ -1,0 +1,52 @@
+/*========================
+  3.16 offer style start
+==========================*/
+
+.car-offer-section {
+    background: rgba(var(--bg-color), 1);
+
+    .nav {
+        border-bottom: none;
+        gap: calc(10px + (20 - 10) * ((100vw - 320px) / (1920 - 320)));
+        justify-content: center;
+        padding-bottom: calc(20px + (50 - 20) * ((100vw - 320px) / (1920 - 320)));
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        width: 100%;
+        overflow-x: auto;
+
+        @media (max-width:991px) {
+            justify-content: flex-start;
+        }
+
+        .nav-item {
+            .nav-link {
+                color: rgba(var(--content-color), 1);
+                font-size: calc(16px + (20 - 16) * ((100vw - 320px) / (1920 - 320)));
+                font-weight: 400;
+                line-height: 1.4;
+                display: flex;
+                align-items: center;
+                padding: calc(8px + (12 - 8) * ((100vw - 320px) / (1920 - 320)));
+                gap: 6px;
+                border: none;
+                border-radius: 5px;
+                background: rgba(var(--white), 1);
+                width: max-content;
+
+                &:hover,
+                &.active {
+                    border: none;
+                    background: rgba(var(--title-color), 1);
+                    color: rgba(var(--white), 1);
+                }
+            }
+        }
+    }
+
+    .tab-content {
+        .featured-box {
+            background: rgba(var(--white), 1);
+        }
+    }
+}

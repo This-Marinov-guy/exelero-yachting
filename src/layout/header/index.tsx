@@ -1,0 +1,32 @@
+import { Href } from "@/constants";
+import { ContainerClassMap, HeaderClassMap } from "@/data/layout/Header";
+import { useAppSelector } from "@/redux/hooks";
+import { PathTypes } from "@/types/Layout";
+import Link from "next/link";
+import { Container } from "reactstrap";
+import LeftHeader from "./leftHeader/Index";
+import MainMenu from "./mainMenu";
+import RightHeader from "./rightHeader/Index";
+import TopBar from "./topBar";
+
+const Header: React.FC<PathTypes> = ({ part }) => {
+  const { sidebarOpen } = useAppSelector((state) => state.layout);
+  const isTopBar = ["car-2", "property-2"].some((item) => part?.includes(item));
+  const isJobOrProperty = ["job-2", "job-3", "property-2"].some((item) => part?.includes(item));
+
+  return (
+    <header className={`px-0${HeaderClassMap[part] || ""}`} id='header'>
+      {isTopBar && <TopBar part={part} />}
+      <Container className={ContainerClassMap[part] || ""}>
+        <div className='header-flex'>
+          <LeftHeader sidebarOpen={sidebarOpen} part={part} isJobOrProperty={isJobOrProperty} />
+          <MainMenu />
+          <RightHeader part={part} isJobOrProperty={isJobOrProperty} />
+        </div>
+      </Container>
+      <Link scroll={false} href={Href} className={`overlay ${sidebarOpen ? " overlay--active" : ""}`} />
+    </header>
+  );
+};
+
+export default Header;

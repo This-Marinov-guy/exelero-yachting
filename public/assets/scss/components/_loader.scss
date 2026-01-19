@@ -1,0 +1,199 @@
+/*========================
+  3.20 button style start
+==========================*/
+.loader-wrapper {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(var(--white), 1);
+    width: 100%;
+    height: auto;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+
+    .property-loader {
+        $time: 6s;
+        text-align: center;
+
+        svg {
+            width: 120px;
+            height: 120px;
+        }
+
+        .ha-logo {
+
+            path,
+            circle {
+                fill: none;
+                stroke: rgba(var(--theme-color), 0.8);
+                stroke-width: 0.125px;
+                stroke-linejoin: round;
+
+                &.house {
+                    stroke-linecap: round;
+                    stroke-width: .3px;
+                }
+            }
+        }
+
+        .loading.ha-logo circle {
+            animation: nodes $time linear infinite;
+        }
+
+        .loading.ha-logo .house {
+            animation: house $time ease infinite;
+        }
+
+        .loading.ha-logo .circut {
+            animation: circut $time cubic-bezier(.7, .1, .1, .9) infinite;
+        }
+
+        @keyframes house {
+            0% {
+                stroke-dashoffset: -50;
+                stroke-dasharray: 50 50
+            }
+
+            45% {
+                stroke-dashoffset: -100
+            }
+
+            50% {
+                stroke: rgba(var(--theme-color), 0.8);
+            }
+
+            60% {
+                stroke: rgba(var(--theme-color), 0.5);
+            }
+
+            75% {
+                stroke: rgba(var(--theme-color), 0.8);
+            }
+
+            80% {
+                stroke-dashoffset: -100
+            }
+
+            100% {
+                stroke-dashoffset: -130;
+                stroke-dasharray: 50 50
+            }
+        }
+
+        @keyframes circut {
+            0% {
+                stroke-dasharray: 20 20;
+                stroke-dashoffset: -20
+            }
+
+            13% {
+                stroke-dashoffset: -20
+            }
+
+            50% {
+                stroke-dashoffset: -40;
+                stroke: rgba(var(--theme-color), 0.8);
+            }
+
+            60% {
+                stroke: rgba(var(--theme-color), 0.5);
+            }
+
+            70% {
+                stroke: rgba(var(--theme-color), 0.8);
+            }
+
+            85% {
+                stroke-dashoffset: -40;
+            }
+
+            100% {
+                stroke-dashoffset: -60;
+                stroke-dasharray: 20 20
+            }
+        }
+
+        @keyframes nodes {
+            0% {
+                stroke-dasharray: 0 4
+            }
+
+            25% {
+                stroke-dasharray: 0 4
+            }
+
+            35% {
+                stroke-dasharray: 4 0;
+                stroke: rgba(var(--theme-color), 0.8);
+            }
+
+            41% {
+                fill: none;
+            }
+
+            42% {
+                fill: rgba(var(--theme-color), 0.8);
+            }
+
+            55% {
+                fill: none;
+                stroke: rgba(var(--theme-color), 0.8);
+            }
+
+            65% {
+                fill: rgba(var(--theme-color), 0.5);
+                stroke: rgba(var(--theme-color), 0.5);
+            }
+
+            75% {
+                stroke: rgba(var(--theme-color), 0.8);
+                fill: none;
+                stroke-dasharray: 4 0;
+            }
+
+            85% {
+                fill: rgba(var(--theme-color), 0.8);
+                stroke: rgba(var(--theme-color), 0.8);
+            }
+
+            93% {
+                fill: none;
+                stroke-dasharray: 4 0;
+                stroke-dashoffset: 0;
+            }
+
+            100% {
+                stroke-dashoffset: -4;
+                stroke-dasharray: 0 4;
+            }
+        }
+
+        @for $i from 1 to 15 {
+            .ha-logo circle:nth-child(#{$i}n) {
+                animation-delay: $i * -($time * 0.009);
+            }
+        }
+    }
+
+    h4 {
+        font-weight: 400;
+        color: rgba(var(--title-color), 1);
+        text-transform: capitalize;
+    }
+
+    .car-loader {
+        img {
+            margin-bottom: 15px;
+        }
+    }
+
+    .job-loader {
+        img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+        }
+    }
+}

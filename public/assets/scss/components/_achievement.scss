@@ -1,0 +1,54 @@
+/*========================
+  3.8 achievement style start
+==========================*/
+
+.property-achievements-section {
+    .achievements-img {
+        transition: 0.9s ease;
+
+        &:hover {
+            transform: scaleX(-1);
+        }
+    }
+
+    .achievements-counter-box {
+        display: flex;
+        align-items: center;
+        gap: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
+
+        .counter-box {
+            width: calc(100px + (147 - 100) * ((100vw - 320px) / (1920 - 320)));
+            height: calc(100px + (147 - 100) * ((100vw - 320px) / (1920 - 320)));
+            border-radius: 5px;
+            background: rgba(var(--white), 1);
+            box-shadow: 0px 0px 16px 0px rgba(var(--theme-color), 0.08);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: calc(5px + (8 - 5) * ((100vw - 320px) / (1920 - 320)));
+            padding: calc(8px + (10 - 8) * ((100vw - 320px) / (1920 - 320)));
+
+            span {
+                color: rgba(var(--theme-color), 1);
+                font-size: calc(18px + (35 - 18) * ((100vw - 320px) / (1920 - 320)));
+                font-weight: 600;
+                line-height: normal;
+            }
+
+            h6 {
+                color: rgba(var(--content-color), 1);
+                font-weight: 400;
+                line-height: normal;
+                font-size: calc(14px + (18 - 14) * ((100vw - 320px) / (1920 - 320)));
+            }
+        }
+    }
+
+    .achievements-circle {
+        margin-top: calc(20px + (45 - 20) * ((100vw - 320px) / (1920 - 320)));
+        animation: rotate 30s infinite linear;
+        display: inline-block;
+    }
+}

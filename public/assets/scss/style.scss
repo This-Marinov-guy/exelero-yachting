@@ -1,0 +1,129 @@
+/*-----------------------------------------------------------------------------------
+
+    Template Name:fuso - classified - car rental, real estate,job find 
+    Template URI: https://themes.pixelstrap.net/fuso
+    Description: This is classified Html Template
+    Author: Pixelstrap
+    Author URL: https://themeforest.net/user/pixelstrap
+
+----------------------------------------------------------------------------------- */
+/*========================
+   1. Abstracts scss file
+==========================*/
+/* 1.1 mixin scss */
+/* 1.2 variables scss */
+
+/*========================
+   2. Base scss file
+==========================*/
+/* 2.1 reset scss */
+/* 2.2 typography scss */
+
+/*========================
+   3. Components scss file
+==========================*/
+/* 3.1  button scss */
+/* 3.2  animate scss */
+/* 3.3  title scss */
+/* 3.4  featured scss */
+/* 3.5  categories scss */
+/* 3.6  newsletter scss */
+/* 3.7  discovery scss */
+/* 3.8  achievement scss */
+/* 3.9  experience scss */
+/* 3.10 range scss */
+/* 3.11 ratio scss */
+/* 3.12 team scss */
+/* 3.13 tap-to-top scss */
+/* 3.14 about scss */
+/* 3.15 slider scss */
+/* 3.16 offer scss */
+/* 3.17 modal scss */
+/* 3.18 breadcrumbs scss */
+/* 3.19 progress scss */
+/* 3.20 loader scss */
+
+/*========================
+   4. Layout scss file
+==========================*/
+/* 4.1 header scss */
+/* 4.2 services scss */
+/* 4.3 testimonials scss */
+/* 4.4 form scss */
+/* 4.5 footer scss */
+/* 4.6 mode-change-btn scss */
+/* 4.7 navigation scss */
+
+/*========================
+   5. pages scss file
+==========================*/
+/* 5.1 property-shop scss */
+/* 5.2 car-shop scss */
+/* 5.3 home scss */
+/* 5.4 job-shop scss */
+/* 5.5 blog scss */
+/* 5.6 portfolio scss */
+/* 5.7 sub-page scss */
+
+/*========================
+   6. Themes scss file
+==========================*/
+/* 6.1 dark scss */
+/* 6.2 rtl scss */
+
+// abstracts scss file
+@import "abstracts/mixin";
+@import "abstracts/variables";
+
+// base scss file
+@import "base/reset";
+@import "base/typography";
+
+// components scss file
+@import "components/button";
+@import "components/animate";
+@import "components/title";
+@import "components/featured";
+@import "components/categories";
+@import "components/newsletter";
+@import "components/discovery";
+@import "components/achievement";
+@import "components/experience";
+@import "components/range";
+@import "components/ratio";
+@import "components/team";
+@import "components/tap-to-top";
+@import "components/about";
+@import "components/slider";
+@import "components/offer";
+@import "components/modal";
+@import "components/breadcrumbs";
+@import "components/progress";
+@import "components/loader";
+
+// layout scss file
+@import "layout/header";
+@import "layout/services";
+@import "layout/testimonials";
+@import "layout/form";
+@import "layout/footer";
+@import "layout/mode-change-btn";
+@import "layout/navigation";
+
+// pages scss file
+@import "pages/property-shop";
+@import "pages/car-shop";
+@import "pages/home";
+@import "pages/job-shop";
+@import "pages/blog";
+@import "pages/portfolio";
+@import "pages/sub-page";
+
+// themes scss file
+@import "themes/dark";
+@import "themes/rtl";
+
+// plugins scss file
+@import "plugins/iconsax.scss";
+@import "plugins/dropzone.scss"
+

@@ -1,0 +1,49 @@
+ /*========================
+  3.10 range style start
+==========================*/
+
+.range-slider {
+    padding-inline: 5px;
+    [dir="rtl"] & {
+        direction: ltr;
+    }
+
+    >div {
+        height: auto !important;
+
+        >div {
+            margin-bottom: 27px;
+
+            >div {
+                height: calc(10px + (14 - 10) * ((100vw - 320px) / (1920 - 320))) !important;
+                width: calc(10px + (14 - 10) * ((100vw - 320px) / (1920 - 320))) !important;
+                top: 0 !important;
+                border-radius: 100% !important;
+                box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 6px !important;
+                &:nth-child(2){
+                    >div{
+                        left: unset !important;
+                        right: 0 !important;
+                    }
+                }
+
+                &:focus-visible {
+                    outline: none;
+                }
+
+                >div {
+                    font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320))) !important;
+                    font-weight: 300 !important;
+                    color: rgba(var(--black), 1) !important;
+                    top: 16px !important;
+                    background-color: transparent !important;
+                    padding: 0 !important;
+                    border-radius: 0 !important;
+                    font-family: "Outfit", sans-serif !important;
+                    width: auto !important;
+                    left: 0 !important; 
+                }
+            }
+        }
+    }
+}

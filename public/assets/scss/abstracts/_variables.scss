@@ -1,0 +1,136 @@
+/*========================
+  1.2 variable style start
+==========================*/
+
+/**=====================
+  1. Font family
+==========================**/
+
+$outfit: "Outfit",
+  sans-serif;
+$rochester: "Rochester",
+  cursive;
+
+/**=====================
+  2. CSS Variables
+==========================**/
+:root {
+  --white: 255, 255, 255;
+  --black: 0, 0, 0;
+  --theme-color: 0, 173, 179;
+  --title-color: 8, 31, 46;
+  --content-color: 125, 130, 135;
+  --bg-color: 250, 253, 255;
+  --border-color: 238, 238, 238;
+  --light-bg-color: 248, 248, 248;
+}
+
+.property2-color {
+  --title-color: 9, 12, 33;
+  --bg-color: 255, 250, 249;
+  --theme-color: 252, 104, 65;
+  --content-color: 153, 153, 153;
+  --border-color: 238, 238, 238;
+}
+
+.car-color {
+  --theme-color: 24, 138, 236;
+  --title-color: 6, 21, 34;
+  --bg-color: 238, 242, 249;
+  --chart-border: #eee;
+  --chart-theme: #188aec;
+  --chart-white: #fff;
+  --content-color: 173, 173, 173;
+}
+
+.car2-color {
+  --theme-color: 192, 255, 73;
+  --title-color: 35, 35, 35;
+  --border-color: 238, 238, 238;
+  --content-color: 153, 153, 153;
+}
+
+.job-color {
+  --theme-color: 42, 41, 40;
+  --title-color: 43, 41, 40;
+  --border-color: 67, 67, 67;
+  --light-border-color: 238, 238, 238;
+}
+
+.job2-color {
+  --bg-color: 8, 13, 37;
+  --theme-color: 50, 96, 231;
+  --border-color: 238, 238, 238;
+  --content-color: 153, 153, 153;
+  --light-border-color: 238, 238, 238;
+}
+
+.job3-color {
+  --bg-color: 6, 10, 31;
+  --theme-color: 45, 130, 255;
+  --border-color: 238, 238, 238;
+  --content-color: 153, 153, 153;
+  --title-color: 34, 34, 34;
+  --blue-shade-bg: 238, 246, 255;
+  --light-border-color: 238, 238, 238;
+}
+
+/**=====================
+  3. Dark Variables
+==========================**/
+.dark {
+  --white: 20, 25, 35;
+  --black: 245, 245, 245;
+  --title-color: 248, 248, 248;
+  --content-color: 177, 177, 177;
+  --bg-color: 26, 38, 49;
+  --border-color: 64, 64, 64;
+  --chart-border: #10151d;
+  --light-bg-color: 26, 32, 45;
+  --chart-white: 20, 25, 35;
+
+  &.car-color {
+    --bg-color: 31, 36, 47;
+    --light-bg-color: 26, 32, 45;
+  }
+
+  &.job-color {
+    --white: 30, 30, 30;
+    --black: 245, 245, 245;
+    --content-color: 177, 177, 177;
+    --theme-color: 245, 245, 245;
+    --bg-color: 11, 14, 20;
+    --light-bg-color: 44, 44, 44;
+    --light-border-color: 68, 68, 68;
+  }
+
+  &.job3-color {
+    --white: 3, 7, 28;
+    --bg-color: 6, 10, 31;
+    --border-color: 22, 25, 38;
+    --blue-shade-bg: 8, 14, 42;
+    --light-border-color: 68, 68, 68;
+  }
+
+  &.car2-color {
+    --white: 42, 41, 40;
+    --title-color: 248, 248, 248;
+    --border-color: 64, 64, 64;
+    --light-bg-color: 50, 50, 49;
+    --content-color: 153, 153, 153;
+  }
+
+  &.property2-color {
+    --white: 5, 8, 26;
+    --title-color: 248, 248, 248;
+    --bg-color: 255, 250, 249;
+    --theme-color: 252, 104, 65;
+    --content-color: 153, 153, 153;
+    --border-color: 22, 25, 38;
+    --light-bg-color: 7, 10, 33;
+  }
+}
+
+.bg-color {
+  background: rgba(var(--bg-color), 1) !important;
+}

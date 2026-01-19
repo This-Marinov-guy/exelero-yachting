@@ -1,0 +1,57 @@
+/*========================
+  1.1 mixin style start
+==========================*/
+
+/* d-flex-center */
+@mixin flex_center($dis: flex, $align: center, $justify: center) {
+    display: $dis;
+    align-items: $align;
+    justify-content: $justify;
+}
+
+/* d-flex-between */
+@mixin flex_between($dis: flex, $align: center, $justify: space-between) {
+    display: $dis;
+    align-items: $align;
+    justify-content: $justify;
+}
+
+/* position-absolute */
+@mixin pos_absolute ($pos: absolute, $content: "") {
+    content: $content;
+    position: $pos;
+}
+
+/* width-height */
+@mixin width_height ($width: 100%, $height: 100%) {
+    width: $width;
+    height: $height;
+}
+
+/* position: vertical,horizontal,both */
+@mixin center ($position) {
+    @if $position=="vertical" {
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    @else if $position=="horizontal" {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    @else if $position=="both" {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* after-before */
+@mixin after_before {
+    @include pos_absolute;
+    @include width_height;
+    top: 0;
+    left: 0;
+    transition: 0.4s ease;
+}

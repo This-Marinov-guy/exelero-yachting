@@ -1,0 +1,108 @@
+/*========================
+  2.2 typography style start
+==========================*/
+
+body {
+    position: relative;
+    font-size: 18px;
+    font-family: $outfit;
+    scroll-behavior: smooth;
+    background-color: rgba(var(--white), 1);
+
+    &.job2-color {
+        background: rgba(var(--bg-color), 1);
+        color: rgba(var(--white), 0.6);
+    }
+
+    &.large-container {
+        @media (min-width:1400px) {
+            .container {
+                max-width: 1530px;
+            }
+        }
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+ul,
+ol {
+    padding-left: 0;
+    margin-bottom: 0;
+
+    [dir="rtl"] & {
+        padding-right: 0;
+    }
+}
+
+a {
+    text-decoration: none;
+    transition: 0.4s ease;
+    display: inline-block;
+
+    &:hover {
+        text-decoration: none;
+    }
+
+    &:focus {
+        outline: none;
+    }
+}
+
+li {
+    display: inline-block;
+    font-size: calc(16px + (24 - 16) * ((100vw - 320px) / (1920 - 320)));
+    line-height: 1.2;
+    font-weight: 400;
+}
+
+p {
+    font-size: calc(16px + (18 - 16) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+h1 {
+    font-size: calc(22px + (60 - 22) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 0;
+}
+
+h2 {
+    font-size: calc(20px + (38 - 20) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 500;
+    line-height: normal;
+    margin-bottom: 0;
+}
+
+h3 {
+    font-size: calc(20px + (28 - 20) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 500;
+    line-height: normal;
+    margin-bottom: 0;
+}
+
+h4 {
+    font-size: calc(16px + (22 - 16) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 400;
+    line-height: normal;
+    margin-bottom: 0;
+}
+
+h5 {
+    font-size: calc(18px + (20 - 18) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 500;
+    line-height: normal;
+    margin-bottom: 0;
+}
+
+h6 {
+    font-size: calc(16px + (18 - 16) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 400;
+    line-height: normal;
+    margin-bottom: 0;
+}

@@ -1,0 +1,142 @@
+/*========================
+  3.11 ratio style start
+==========================*/
+.ratio_20 .bg-size:before {
+    padding-top: 20%;
+    content: "";
+    display: block
+}
+
+.ratio_30 .bg-size:before {
+    padding-top: 30%;
+    content: "";
+    display: block
+}
+
+.ratio_40 .bg-size:before {
+    padding-top: 40%;
+    content: "";
+    display: block
+}
+
+.ratio_45 .bg-size:before {
+    padding-top: 45%;
+    content: "";
+    display: block
+}
+
+.ratio_60 .bg-size:before {
+    padding-top: 60%;
+    content: "";
+    display: block
+}
+
+.ratio_65 .bg-size:before {
+    padding-top: 65%;
+    content: "";
+    display: block
+}
+
+.ratio2_1 .bg-size:before {
+    padding-top: 50%;
+    content: "";
+    display: block
+}
+
+.ratio2_3 .bg-size:before {
+    padding-top: 60%;
+    content: "";
+    display: block
+}
+
+.ratio3_2 .bg-size:before {
+    padding-top: 66.66%;
+    content: "";
+    display: block
+}
+
+.ratio_landscape .bg-size:before {
+    padding-top: 75%;
+    content: "";
+    display: block
+}
+
+.ratio_media_landscape .bg-size:before {
+    @media (max-width:575px) {
+        padding-top: 75%;
+        content: "";
+        display: block
+    }
+}
+
+.ratio_square .bg-size:before {
+    padding-top: 100%;
+    content: "";
+    display: block
+}
+
+.ratio_105 .bg-size:before {
+    padding-top: 105%;
+    content: "";
+    display: block
+}
+
+
+.ratio_115 .bg-size:before {
+    padding-top: 115%;
+    content: "";
+    display: block
+}
+
+.ratio_120 .bg-size:before {
+    padding-top: 120%;
+    content: "";
+    display: block
+}
+
+.ratio_125 .bg-size:before {
+    padding-top: 125%;
+    content: "";
+    display: block
+}
+
+.ratio_130 .bg-size:before {
+    padding-top: 130%;
+    content: "";
+    display: block
+}
+
+.ratio_asos .bg-size:before {
+    padding-top: 127.7777778%;
+    content: "";
+    display: block
+}
+
+.ratio_portrait .bg-size:before {
+    padding-top: 150%;
+    content: "";
+    display: block
+}
+
+.ratio1_2 .bg-size:before {
+    padding-top: 200%;
+    content: "";
+    display: block
+}
+
+.b-top {
+    background-position: top !important
+}
+
+.b-bottom {
+    background-position: bottom !important
+}
+
+.b-center {
+    background-position: center !important
+}
+
+.b_size_content {
+    background-size: contain !important;
+    background-repeat: no-repeat
+}

@@ -1,0 +1,16 @@
+'use client';
+import Breadcrumbs from '@/components/commonComponents/breadcrumb'
+import GridView from "@/components/commonComponents/gridView";
+import { RouteList } from '@/utils/RouteList'
+import React from 'react'
+
+const Car2RightGridContainer = () => {
+  return (
+    <>
+      <Breadcrumbs mainClass='car-breadcrumbs-section' title='Car Shop' url={RouteList.Home.CarDemo1} />
+      <GridView type={"car"} sectionClass='car-shop-section car-product-section' filterClass='filter-sidebar' side='right' tagClass='car-list-header' />
+    </>
+  )
+}
+
+export default Car2RightGridContainer

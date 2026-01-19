@@ -1,0 +1,45 @@
+/*========================
+  6.2 rtl style start
+==========================*/
+[dir="rtl"] {   
+    .swiper {
+        direction: ltr;
+
+        .swiper-slide {
+            >* {
+                direction: rtl;
+            }
+        }
+    }
+
+    .offcanvas-start {
+        left: unset;
+        right: 0;
+        transform: translate(100%);
+        transition: transform 0.15s linear;
+
+        &.show {
+            transform: none;
+        }
+    }
+
+    .offcanvas-end {
+        right: unset;
+        left: 0;
+        transform: translate(-100%);
+        transition: transform 0.15s linear;
+
+        &.show {
+            transform: none;
+        }
+    }
+
+    .text-start{
+        text-align: right !important;
+    }
+
+    .text-end {
+        text-align: start !important;
+
+    }
+}

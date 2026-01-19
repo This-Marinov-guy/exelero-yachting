@@ -1,0 +1,14 @@
+import Breadcrumbs from "@/components/commonComponents/breadcrumb";
+import GridView from "@/components/commonComponents/gridView";
+import { RouteList } from "@/utils/RouteList";
+
+const Car2GridContainer = () => {
+  return (
+    <>
+      <Breadcrumbs mainClass='car-breadcrumbs-section' title='Car Shop' url={RouteList.Home.CarDemo1} />
+      <GridView type={"car"} sectionClass='car-shop-section car-product-section' filterClass='filter-sidebar' tagClass='car-list-header' />
+    </>
+  );
+};
+
+export default Car2GridContainer;

@@ -1,0 +1,576 @@
+/*========================
+  6.1 dark style start
+==========================*/
+
+body {
+    &.dark {
+        .bg-white {
+            background: rgba(var(--bg-color), 1) !important;
+        }
+        .car-about-section{
+            ~.about-slider-section{
+             background: rgba(var(--bg-color), 1) !important;
+            }
+          }
+        .car-arrow {
+
+            .swiper-button-prev,
+            .swiper-button-next {
+                background: #1f242f;
+
+                .iconsax {
+                    stroke: #fff !important;
+                }
+            }
+        }
+        .sortby-section{
+            &:has(+ .property-parallax) {
+                background: rgba(var(--title-color), 0.06);
+              }
+        }
+
+        .property-about-section,
+        .property-service-section {
+            background: rgba(var(--bg-color), 1) !important;
+
+            .service-main {
+                background: rgba(var(--bg-color), 1);
+            }
+        }
+
+        .property-discovery-section {
+            background: #131d27;
+        }
+
+        .property-testimonials-section {
+            &::after {
+                background: rgba(var(--bg-color), 1) !important;
+            }
+
+            .testimonials-box {
+                background: rgba(var(--bg-color), 1);
+
+                &:hover {
+                    background: rgba(var(--theme-color), 1);
+                }
+            }
+        }
+
+        .property-achievements-section {
+            .achievements-counter-box {
+                .counter-box {
+                    background: #131d27;
+                    box-shadow: none;
+                }
+            }
+        }
+
+        .title-style-2 {
+            .title-flex {
+                span {
+                    background: #2b3843;
+
+                    &:first-child {
+                        background: #384754;
+                    }
+                }
+            }
+        }
+
+        .car-about-section {
+            background: rgba(var(--bg-color), 1);
+
+            .about-bottom-img {
+                img {
+                    border-color: rgba(var(--bg-color), 1);
+                }
+            }
+
+            .about-list {
+                .about-list-icon {
+                    background: rgba(var(--white), 1);
+
+                    img {
+                        filter: invert(1);
+                    }
+                }
+            }
+        }
+
+        .property-home-tab {
+            &.car2-home-tab {
+                box-shadow: 0 0 20px 0 #1f1f1e;
+            }
+
+            .tab-content {
+                .tab-list {
+                    .tab-item {
+                        .select-menu {
+                            .select-item {
+                                img {
+                                    filter: invert(1);
+                                }
+                            }
+                        }
+
+                        .dropdown {
+                            .dropdown-menu {
+                                    .dropdown-item {
+                                        i {
+                                            background: #222730;
+                                        }
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .job-logo-section,
+        .about-slider-section {
+            background: #222222;
+        }
+
+        .job-box-section,
+        .job-hire-section,
+        .job-newsletter-section {
+            background: rgba(var(--white), 1);
+        }
+
+        .job-header {
+            .right-side-header {
+                .icon-side {
+                    .login-list {
+                        .btn-solid {
+                            color: #2a2928;
+                        }
+                    }
+                }
+            }
+        }
+
+        .inner-pages-header {
+            .header-logo {
+                img {
+                    filter: invert(1);
+                }
+            }
+        }
+
+        .breadcrumbs-section {
+            background: #161D2A;
+
+            .breadcrumbs-particles {
+                &::after {
+                    background: -webkit-gradient(linear, left top, right top, color-stop(60%, #161D2A), to(rgba(22, 29, 42, 0.2)));
+                }
+            }
+
+            .tab-content {
+                background: #222730 !important;
+            }
+        }
+
+        .property-detail-section {
+            .detail-body {
+                .overview-list {
+                    .overview-box {
+                        .overview-icon {
+                            img {
+                                filter: invert(1);
+                            }
+                        }
+                    }
+                }
+
+                .floor-img {
+                    img {
+                        filter: invert(0.7);
+                    }
+                }
+            }
+        }
+
+        .category-inner-section {
+            .category-inner-slider {
+                .category-box {
+                    .category-icon {
+                        img {
+                            filter: invert(1);
+                        }
+                    }
+                }
+            }
+        }
+
+        .car-detail-section {
+            &.half-breadcrumbs {
+                .car-top-title {
+                    box-shadow: 0px 0px 6px 0px rgba(3, 15, 24, 0.45);
+                }
+            }
+        }
+
+        .blog-grid-section {
+            &.blog-layout-1 {
+                .blog-grid-box {
+                    box-shadow: 0 0 15px 4px #0b0f1652;
+                }
+            }
+
+            .blog-sidebar {
+                .sidebar-newsletter {
+                    background: rgba(var(--bg-color), 1);
+                }
+            }
+        }
+
+        .login-section {
+            &::after {
+                filter: invert(1);
+            }
+        }
+
+        .team-section {
+            .team-box {
+                box-shadow: 0 0 15px 2px #0f131c;
+            }
+        }
+
+        .team-info-section {
+            .person-img {
+                &::after {
+                    background: #0f131c75;
+                }
+            }
+        }
+
+        .car-testimonials-section {
+            &.testimonials-page-section {
+                .testimonials-box {
+                    box-shadow: 0 0 20px 0px #11151c7a;
+                }
+            }
+        }
+
+        .job-accordion {
+            .accordion-item {
+                .accordion-body {
+                    input[type=checkbox] {
+                        &:focus-visible {
+                            outline: none;
+                        }
+
+                        &::before {
+                            color: #2a2928;
+                        }
+                    }
+                }
+            }
+        }
+
+        .job-box {
+            .progress {
+                background: #2a2928;
+            }
+        }
+
+        .job-list-header {
+            .category-filter-flex {
+                .category-filter {
+                    .btn-solid {
+                        background: rgba(var(--border-color), 1) !important;
+                        border-color: rgba(var(--border-color), 1) !important;
+
+                        &:hover {
+                            background: transparent !important;
+                        }
+                    }
+                }
+            }
+        }
+
+        .dark-color-change {
+            background: rgba(var(--border-color), 1);
+        }
+
+        .job-ad-box {
+            .ad-list {
+                li {
+                    a {
+                        background: rgba(var(--white), 0.4);
+                    }
+                }
+            }
+
+            &.light-purple,
+            &.light-red,
+            &.light-blue {
+                background: rgba(44, 44, 44, 1);
+            }
+        }
+
+        .job-detail-section {
+            .top-detail {
+                box-shadow: 0 0 19px 1px #1c1c1ceb;
+
+                .review-title-flex {
+                    .btn-border {
+                        &:hover {
+                            color: #2b2928;
+                        }
+                    }
+                }
+            }
+
+            .detail-sidebar-box {
+                .btn-solid {
+                    color: #2b2928;
+
+                    &:hover {
+                        color: #fff;
+                    }
+                }
+            }
+
+            .share-friends {
+                .btn-solid {
+                    color: #2ab13f;
+
+                    &:hover {
+                        color: #2ab13f;
+                    }
+                }
+            }
+
+            .job-description {
+                .features-list {
+                    li {
+                        img {
+                            filter: invert(0.6);
+                        }
+                    }
+                }
+            }
+        }
+
+        .detail-right-sidebar {
+            .key-info {
+                li {
+                    img {
+                        filter: invert(1);
+                    }
+                }
+            }
+        }
+
+        .contact-section {
+            &::after {
+                filter: invert(1);
+            }
+        }
+
+        .job3-home-section {
+            .home-content {
+                .search-input-home {
+                    background: #15192c;
+                }
+            }
+        }
+
+        .logo-section {
+            .logo-img {
+                &:hover {
+                    img {
+                        filter: grayscale(0) invert(0);
+                    }
+                }
+
+                img {
+                    filter: grayscale(1) invert(0.2);
+                }
+            }
+        }
+
+        .job-box {
+            &.demo-job-box3 {
+                background-color: rgba(var(--bg-color), 1) !important;
+
+                .job-tag {
+                    label {
+                        background: rgba(var(--blue-shade-bg), 1);
+                    }
+                }
+            }
+        }
+
+        .job3-footer {
+
+            .search-pill,
+            .form-control {
+                background: #15192c;
+            }
+
+        }
+
+        .car2-about {
+            .dots-bg {
+                mix-blend-mode: color-burn;
+            }
+        }
+
+        .car2-featured-section {
+            .car2-featured-content {
+                .featured-list {
+                    li {
+                        img {
+                            filter: invert(1);
+                        }
+                    }
+                }
+            }
+        }
+
+        .car2-footer {
+
+            .search-pill,
+            .form-control {
+                background: #2D2D2D;
+            }
+        }
+
+        .home-form-box {
+            .home-form {
+                .select-menu {
+                    li {
+                        .select-item {
+                            img {
+                                filter: invert(1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .property2-footer {
+
+            .search-pill,
+            .form-control {
+                background: #15192c;
+            }
+        }
+
+        .job-category-section {
+            .category-box {
+                .category-icon {
+                    img {
+                        filter: brightness(0) invert(1);
+                    }
+                }
+            }
+        }
+
+        .rated-job-section {
+            .company-job-box {
+                background: rgba(var(--bg-color), 1);
+            }
+        }
+
+        .job3-newsletter {
+
+            .circle-1,
+            .circle-2,
+            .circle-3 {
+                filter: invert(1);
+            }
+        }
+
+        .apexcharts-tooltip {
+            &.apexcharts-theme-light {
+                border: 1px solid rgba(var(--white), 1);
+                background: rgba(var(--light-bg-color), 1);
+                color: rgba(var(--white), 1);
+                box-shadow: none;
+
+                .apexcharts-tooltip-title {
+                    background: rgba(var(--light-bg-color), 1);
+                    color: rgba(var(--black), 1);
+                    border-color: rgba(var(--border-color), 0.5);
+                }
+            }
+
+            .apexcharts-tooltip-series-group {
+                color: rgba(var(--black), 1);
+            }
+
+            .value,
+            .separator {
+                color: rgba(var(--black), 1);
+            }
+        }
+
+        .about-slider-section {
+            .about-job-slider {
+                .about-slider-content {
+                    background: rgba(var(--white), 1);
+
+                    &::after {
+                        background: rgba(var(--white), 1);
+                    }
+                }
+
+                .car-arrow {
+
+                    .swiper-button-prev,
+                    .swiper-button-next {
+                        background: rgba(var(--white), 1);
+                    }
+                }
+            }
+        }
+
+        .car-newsletter {
+            .job-newsletter-box {
+                .input-group {
+                    .form-control {
+                        background: #0c2133;
+                    }
+                }
+            }
+        }
+
+        .user-dashboard-section {
+            .tab-content {
+                .nav {
+                    .nav-item {
+                        .nav-link {
+                            &.active {
+                                img {
+                                    filter: invert(48%) sepia(46%) saturate(6011%) hue-rotate(190deg) brightness(99%) contrast(88%);
+                                }
+                            }
+
+                            img {
+                                filter: brightness(0) invert(1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        .theme-modal{
+            .property-detail-section{
+                .detail-body{
+                    .floor-plan{
+                        img{
+                            filter: invert(0.7);
+                        }
+                    }
+                }
+            }
+        }   
+    }
+}
