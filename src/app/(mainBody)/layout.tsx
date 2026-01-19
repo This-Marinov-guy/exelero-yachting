@@ -30,15 +30,15 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
     default: { className: "car-color", favicon: "favicon-3.png" },
   };
 
-  const { className, favicon } = pathSettings[firstPart] || pathSettings.default;
+  const { className } = pathSettings[firstPart] || pathSettings.default;
 
   useEffect(() => {
     document.body.className = className;
-    setFavicon(`/assets/images/logo/${favicon}`);
+    setFavicon("/assets/images/favicons/favicon.ico");
     Aos.init({ once: true });
 
-    return () => setFavicon(`/assets/images/logo/favicon-3.png`);
-  }, [className, favicon]);
+    return () => setFavicon("/assets/images/favicons/favicon.ico");
+  }, [className]);
   
   const isJobOrProperty = ["car-2", "job-3", "job-2", "property-2"].some((item) => firstPart.includes(item));
   const secondPart = segments[1] || ""; // Get the second segment
@@ -51,7 +51,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
       {children}
       {segments[2] !== "portfolio-vertical-slider" && (isJobOrProperty ? <FooterDemo2 part={firstPart} /> : <Footer part={firstPart} />)}
       <TapTop part={firstPart} />
-      <Customizer part={segments} />      
+      {/* <Customizer part={segments} />       */}
       <SearchModal type={SearchModalData[firstPart] || SearchModalData.car} carSpaceClass={carSpaceClass} />
       <CustomToaster/>
     </div>

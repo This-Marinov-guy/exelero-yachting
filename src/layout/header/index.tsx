@@ -2,6 +2,7 @@ import { Href } from "@/constants";
 import { ContainerClassMap, HeaderClassMap } from "@/data/layout/Header";
 import { useAppSelector } from "@/redux/hooks";
 import { PathTypes } from "@/types/Layout";
+import UseStickyBar from "@/utils/UseStickyBar";
 import Link from "next/link";
 import { Container } from "reactstrap";
 import LeftHeader from "./leftHeader/Index";
@@ -13,9 +14,10 @@ const Header: React.FC<PathTypes> = ({ part }) => {
   const { sidebarOpen } = useAppSelector((state) => state.layout);
   const isTopBar = ["car-2", "property-2"].some((item) => part?.includes(item));
   const isJobOrProperty = ["job-2", "job-3", "property-2"].some((item) => part?.includes(item));
+  const isSticky = UseStickyBar(100);
 
   return (
-    <header className={`px-0${HeaderClassMap[part] || ""}`} id='header'>
+    <header className={`px-0${HeaderClassMap[part] || ""} ${isSticky ? "sticky-header" : ""}`} id='header'>
       {isTopBar && <TopBar part={part} />}
       <Container className={ContainerClassMap[part] || ""}>
         <div className='header-flex'>

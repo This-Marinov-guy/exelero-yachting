@@ -6,8 +6,11 @@ import { detectLanguage } from "./i18n/server";
 import { Providers } from "./MainProvider";
 
 export const metadata: Metadata = {
-  title: "Fuso",
-  description: "themes.pixelstrap.com",
+  title: "Excelero Yachting",
+  description: "Excelero Yachting",
+  icons: {
+    icon: "/assets/images/favicons/favicon.ico",
+  },
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -15,7 +15,7 @@ const LeftHeader: React.FC<LeftHeaderProps> = ({ sidebarOpen, part, isJobOrPrope
         <i className='ri-menu-line' />
       </Link>
       <Logo part={part} />
-      <PropertyDropDown part={part} isJobOrProperty={isJobOrProperty} />
+      {/* <PropertyDropDown part={part} isJobOrProperty={isJobOrProperty} /> */}
     </div>
   );
 };

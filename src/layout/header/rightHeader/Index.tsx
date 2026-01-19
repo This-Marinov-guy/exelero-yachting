@@ -20,7 +20,7 @@ const RightHeader: React.FC<RightHeaderProps> = ({ part, isJobOrProperty }) => {
       {!isJobOrProperty && (
         <div className='icon-side'>
           <AccountSection />
-          <LanguageSection part={part} />
+          {/* <LanguageSection part={part} /> */}
         </div>
       )}
     </div>

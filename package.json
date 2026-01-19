@@ -1,6 +1,6 @@
 {
-  "name": "fuso-next",
-  "version": "0.1.0",
+  "name": "excelero-yachting",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,10 +10,11 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
+    "@supabase/supabase-js": "^2.90.1",
     "accept-language": "^3.0.20",
     "aos": "^2.3.4",
     "apexcharts": "^4.3.0",
-    "axios": "^1.7.9",
+    "axios": "^1.8.4",
     "bootstrap": "^5.3.3",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.16.1",
@@ -44,6 +45,7 @@
     "reactstrap": "^9.2.3",
     "remixicon": "^4.6.0",
     "smooth-scroll": "^16.1.3",
+    "sonner": "^2.0.7",
     "swiper": "^11.2.0"
   },
   "devDependencies": {

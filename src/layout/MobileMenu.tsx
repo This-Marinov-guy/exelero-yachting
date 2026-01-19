@@ -1,7 +1,7 @@
 import { useAppDispatch } from "@/redux/hooks";
-import { setSearchModal } from "@/redux/reducers/LayoutSlice";
+import { setCartData, setSearchModal } from "@/redux/reducers/LayoutSlice";
 import { RouteList } from "@/utils/RouteList";
-import { Heart, House, Profile, SearchNormal1 } from "iconsax-react";
+import { Heart, House, Menu, Profile, SearchNormal1 } from "iconsax-react";
 import Link from "next/link";
 import { FC } from "react";
 import { Href } from "../constants";
@@ -33,6 +33,12 @@ const MobileMenu: FC<{ part?: string }> = ({ part }) => {
         <Link href={RouteList.Pages.Other.UserDashboard}>
           <Profile className='iconsax' />
           <span>Profile</span>
+        </Link>
+      </li>
+      <li>
+        <Link scroll={false} href={Href} onClick={() => dispatch(setCartData())}>
+          <Menu className='iconsax' />
+          <span>Menu</span>
         </Link>
       </li>
     </ul>

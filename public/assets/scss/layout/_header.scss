@@ -9,6 +9,45 @@ header {
     left: 0;
     width: 100%;
     z-index: 2;
+    transition: all 0.3s ease-in-out;
+
+    &.sticky-header {
+        position: fixed;
+        top: 0;
+        background: rgba(var(--white), 1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding-top: calc(10px + (20 - 10) * ((100vw - 320px) / (1920 - 320)));
+        padding-bottom: calc(10px + (20 - 10) * ((100vw - 320px) / (1920 - 320)));
+        animation: slideDown 0.3s ease-in-out;
+        color: #000;
+
+        .header-flex {
+            a,
+            i,
+            .iconsax {
+                color: #000;
+            }
+        }
+
+        .left-side-header {
+            .toggle {
+                i {
+                    color: #000;
+                }
+            }
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
 
     &.position-relative {
         inset: unset;
@@ -640,8 +679,7 @@ header {
 
         .header-logo {
             img {
-                width: calc(80px + (110 - 80) * ((100vw - 320px) / (1920 - 320)));
-                height: auto;
+                width: 80px;
                 object-fit: contain;
             }
         }

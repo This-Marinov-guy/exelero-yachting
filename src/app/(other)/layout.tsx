@@ -22,20 +22,20 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
         default: { className: "car-color", favicon: "favicon-3.png" },
     };
 
-    const { className, favicon } = pathSettings[firstPart] || pathSettings.default;
+    const { className } = pathSettings[firstPart] || pathSettings.default;
 
     useEffect(() => {
         document.body.className = className;
-        setFavicon(`/assets/images/logo/${favicon}`);
+        setFavicon("/assets/images/favicons/favicon.ico");
         Aos.init({ once: true });
 
-        return () => setFavicon(`/assets/images/logo/favicon-3.png`);
-    }, [className, favicon]);
+        return () => setFavicon("/assets/images/favicons/favicon.ico");
+    }, [className]);
 
     return (
         <div>
             {children}
-            <Customizer part={segments} />
+            {/* <Customizer part={segments} /> */}
         </div>
     );
 }
