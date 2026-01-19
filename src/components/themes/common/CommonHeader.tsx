@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { ViewAll } from "@/constants";
 import { CommonHeaderType } from "@/types/CommonComponents";

@@ -8,8 +8,8 @@ const ExceleroLoader = () => {
         <Image
           src="/assets/images/favicons/favicon.ico"
           alt="Excelero Yachting"
-          width={120}
-          height={120}
+          width={1000}
+          height={1000}
           className="loader-logo"
           priority
         />

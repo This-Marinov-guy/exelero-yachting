@@ -8,7 +8,6 @@ import { Container } from "reactstrap";
 const Breadcrumbs: FC<BreadcrumbsType> = ({ title, image, subTitle, url, mainClass }) => {
   return (
     <div className={`${mainClass ? mainClass : "breadcrumbs-section without-search-breadcrumbs"} `}>
-      {image && <RatioImage src={`${ImagePath}/other/breadcrumbs-img.jpg`} alt='b-1' className='img-fluid bg-img' />}
       <Container>
         <div className='breadcrumbs-main'>
           <h2>{title}</h2>

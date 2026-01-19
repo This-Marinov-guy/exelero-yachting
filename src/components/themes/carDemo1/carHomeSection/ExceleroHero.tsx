@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Col, Container, Row } from "reactstrap";
+import { RouteList } from "@/utils/RouteList";
 
 interface BrandPanel {
   name: string;
@@ -15,19 +16,19 @@ const ExceleroHero = () => {
       name: "X-Yachts",
       heroImage: "/assets/images/hero/x-yachts.jpg",
       logoImage: "/assets/images/logo/x-yachts.png",
-      link: "/property/grid/property-2-grid",
+      link: RouteList.Pages.Partners.XYachts,
     },
     {
       name: "Elvstrom",
       heroImage: "/assets/images/hero/elvstrom.jpg",
       logoImage: "/assets/images/logo/elvstrom.jpg",
-      link: "/car/grid/car-2-grid",
+      link: RouteList.Pages.Partners.Elvstrom,
     },
     {
       name: "Omaya Yachts",
       heroImage: "/assets/images/hero/omaya-yachts.jpg",
       logoImage: "/assets/images/logo/omaya-yachts.jpg",
-      link: "/car/grid/car-3-grid",
+      link: RouteList.Pages.Partners.OmayaYachts,
     },
   ];
 

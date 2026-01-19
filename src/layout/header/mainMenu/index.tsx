@@ -39,20 +39,30 @@ const MainMenu = () => {
       </div>
       <ul className='menu-items'>
         {MenuItem &&
-          MenuItem.map((mainMenu, index) => (
-            <li className={`expand-btn ${!mainMenu.megaMenuImage && !mainMenu.megaMenu ? "dropdown-menus" : ""}`} key={index}>
-              <Link scroll={false} href={Href} className={`menu-item ${openSections[mainMenu.title] ? "open" : ""}`} onClick={() => toggleSection(mainMenu.title)}>
+          MenuItem.map((mainMenu, index) => {
+            const hasSubmenu = mainMenu.children && mainMenu.children.length > 0;
+            const hasMegaMenuImage = mainMenu.megaMenuImage || false;
+            const hasMegaMenu = (mainMenu as any).megaMenu || false;
+            return (
+            <li className={`${hasSubmenu ? "expand-btn" : ""} ${!hasMegaMenuImage && !hasMegaMenu && hasSubmenu ? "dropdown-menus" : ""}`} key={index}>
+              <Link 
+                scroll={false} 
+                href={hasSubmenu ? Href : (mainMenu.path || Href)} 
+                className={`menu-item ${openSections[mainMenu.title] ? "open" : ""}`} 
+                onClick={() => hasSubmenu ? toggleSection(mainMenu.title) : undefined}
+              >
                 {t(mainMenu.title)}
               </Link>
-              {mainMenu.megaMenuImage && <ImageMenuList mainMenu={mainMenu.children} toggleMain={toggle}/>}
-              {!mainMenu.megaMenuImage && !mainMenu.megaMenu && (
+              {hasMegaMenuImage && mainMenu.children && <ImageMenuList mainMenu={mainMenu.children} toggleMain={toggle}/>}
+              {!hasMegaMenuImage && !hasMegaMenu && hasSubmenu && mainMenu.children && (
                 <ul className='dropdown-megamenu sample link-list'>
                   <SidebarSubMenu menu={mainMenu.children} level={0} />
                 </ul>
               )}
-              {mainMenu.megaMenu && <PagesMegaMenu mainMenu={mainMenu.children} toggleMain={toggle}/>}
+              {hasMegaMenu && mainMenu.children && <PagesMegaMenu mainMenu={mainMenu.children} toggleMain={toggle}/>}
             </li>
-          ))}
+            );
+          })}
       </ul>
     </nav>
   );

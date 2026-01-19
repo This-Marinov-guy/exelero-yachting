@@ -1,12 +1,8 @@
 import { ContactFormInputs } from "@/types/Other";
-import { usePathname } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, Col, Form, Input, Label, Row } from "reactstrap";
 
 const ContactForm = () => {
-  const pathname = usePathname();
-  const segments = pathname.split("/").slice(1);
-
   const { register, handleSubmit, formState: { errors }, reset, } = useForm<ContactFormInputs>();
   const onSubmitData: SubmitHandler<ContactFormInputs> = (data) => { reset();};
 
@@ -63,12 +59,6 @@ const ContactForm = () => {
               {errors.message && <div className='invalid-feedback'>{errors.message.message}</div>}
             </div>
           </Col>
-          {segments[2] === "contact-3" && (
-            <div className="form-check-box">
-              <Input type="checkbox" id="message" required />
-              <Label htmlFor="message">I agree to receive other communication message.</Label>
-            </div>
-          )}
           <Col xl={4} lg={5} xs={8}>
             <Button className='btn-solid'>Send Message</Button>
           </Col>

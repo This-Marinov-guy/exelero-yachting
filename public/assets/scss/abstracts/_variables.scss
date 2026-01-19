@@ -17,7 +17,8 @@ $rochester: "Rochester",
 :root {
   --white: 255, 255, 255;
   --black: 0, 0, 0;
-  --theme-color: 0, 173, 179;
+  --theme-color: 29, 186, 231;
+  --secondary-color: 255, 184, 77;
   --title-color: 8, 31, 46;
   --content-color: 125, 130, 135;
   --bg-color: 250, 253, 255;
@@ -34,11 +35,12 @@ $rochester: "Rochester",
 }
 
 .car-color {
-  --theme-color: 24, 138, 236;
+  --theme-color: 29, 186, 231;
+  --secondary-color: 255, 184, 77;
   --title-color: 6, 21, 34;
   --bg-color: 238, 242, 249;
   --chart-border: #eee;
-  --chart-theme: #188aec;
+  --chart-theme: #1dbae7;
   --chart-white: #fff;
   --content-color: 173, 173, 173;
 }
