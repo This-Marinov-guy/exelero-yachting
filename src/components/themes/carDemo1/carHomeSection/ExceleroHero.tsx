@@ -1,92 +1,154 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Col, Container, Row } from "reactstrap";
-import { RouteList } from "@/utils/RouteList";
+import { Container } from "reactstrap";
 
-interface BrandPanel {
+type HeroLinkPanel = {
+  kind?: "link";
+  eyebrow?: string;
   name: string;
-  heroImage: string;
+  description: string;
+  thumbImage: string;
   logoImage: string;
-  link: string;
+  href: string;
+  variant?: "a" | "b";
+};
+
+type HeroCompositePanel = {
+  kind: "composite";
+  eyebrow?: string;
+  name: string;
+  description: string;
+  thumbImage: string;
+  logos: Array<{ src: string; alt: string }>;
+  actions: Array<{ href: string; label: string }>;
+  variant?: "a" | "b";
+};
+
+export type HeroPanel = HeroLinkPanel | HeroCompositePanel;
+
+export interface ExceleroHeroProps {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  backgroundVideo?: string;
+  backgroundPoster?: string;
+  overlayVariant?: "dark" | "darker";
+  panels: HeroPanel[];
+  single?: boolean;
+  separator?: boolean;
 }
 
-const ExceleroHero = () => {
-  const brands: BrandPanel[] = [
-    {
-      name: "Omaya Yachts",
-      heroImage: "/assets/images/hero/omaya-yachts.jpg",
-      logoImage: "/assets/images/logo/omaya-yachts.jpg",
-      link: RouteList.Pages.Partners.OmayaYachts,
-    },
-    {
-      name: "Broker Market",
-      heroImage: "/assets/images/hero/boats.jpg",
-      logoImage: "/assets/images/favicons/favicon.ico",
-      link: RouteList.Pages.Boats,
-    },
-    {
-      name: "X-Yachts",
-      heroImage: "/assets/images/hero/x-yachts.jpg",
-      logoImage: "/assets/images/logo/x-yachts.png",
-      link: RouteList.Pages.Partners.XYachts,
-    },
-    {
-      name: "Elvstrom",
-      heroImage: "/assets/images/hero/elvstrom.jpg",
-      logoImage: "/assets/images/logo/elvstrom.jpg",
-      link: RouteList.Pages.Partners.Elvstrom,
-    },
-  ];
-
+const ExceleroHero = ({
+  title,
+  subtitle,
+  description,
+  backgroundVideo,
+  backgroundPoster = "/assets/images/hero/main2.png",
+  overlayVariant = "dark",
+  panels,
+  single,
+  separator,
+}: ExceleroHeroProps) => {
   return (
-    <div className="exelero-hero-section">
-      <div className="hero-background">
-        <Image
-          src="/assets/images/hero/main2.png"
-          alt="Exelero Yachting"
-          fill
-          className="hero-bg-image"
-          priority
-          style={{ objectFit: "cover" }}
-        />
+    <section
+      className={`exelero-hero-section ${overlayVariant === "darker" ? "overlay-darker" : "overlay-dark"} ${separator ? "has-separator" : ""}`}
+    >
+      <div className="hero-background" aria-hidden="true">
+        {backgroundVideo ? (
+          <video className="hero-bg-video" autoPlay muted loop playsInline preload="auto" poster={backgroundPoster}>
+            <source src={backgroundVideo} type="video/mp4" />
+          </video>
+        ) : (
+          <Image src={backgroundPoster} alt="" fill className="hero-bg-image" style={{ objectFit: "cover" }} priority />
+        )}
         <div className="hero-overlay"></div>
       </div>
+
       <Container>
-        <div className="hero-content">
-          <h1 className="hero-title">Exelero Group</h1>
-          <h2 className="hero-subtitle">Yachting and more</h2>
-          <Row className="hero-panels g-3 g-md-4">
-            {brands.map((brand, index) => (
-              <Col xl={3} lg={3} md={6} sm={6} xs={12} key={index}>
-                <Link href={brand.link} className="hero-panel">
-                  <div className="panel-image-wrapper">
-                    <Image
-                      src={brand.heroImage}
-                      alt={brand.name}
-                      fill
-                      className="panel-image"
-                      style={{ objectFit: "cover" }}
-                    />
-                    <div className="panel-overlay"></div>
-                    <div className="panel-logo">
-                      <Image
-                        src={brand.logoImage}
-                        alt={`${brand.name} logo`}
-                        width={150}
-                        height={80}
-                        className="logo-img"
-                        style={{ objectFit: "contain" }}
-                      />
+        <div className="hero-content" data-aos="fade-up" data-aos-duration={700}>
+          <div className="hero-header">
+            <h1 className="hero-title">{title}</h1>
+            {subtitle && <h2 className="hero-subtitle">{subtitle}</h2>}
+            {description && <p className="hero-description">{description}</p>}
+          </div>
+
+          <div className={`geo-panels ${single ? "geo-panels--single" : ""}`}>
+            {panels.map((panel, idx) => {
+              const variantClass = panel.variant === "a" ? "geo-panel--a" : "geo-panel--b";
+
+              if (panel.kind === "composite") {
+                return (
+                  <div
+                    key={`${panel.name}-${idx}`}
+                    className={`geo-panel geo-panel--wide ${variantClass}`}
+                    data-aos="fade-up"
+                    data-aos-duration={500 + idx * 150}
+                  >
+                    <div className="geo-thumb" aria-hidden="true">
+                      <Image src={panel.thumbImage} alt="" fill className="geo-thumb-img" style={{ objectFit: "cover" }} />
+                    </div>
+
+                    <div className="geo-content">
+                      <div className="geo-top">
+                        <div className="geo-logos">
+                          {panel.logos.map((l) => (
+                            <div className="geo-logo" key={l.alt}>
+                              <Image src={l.src} alt={l.alt} width={150} height={84} className="geo-logo-img" style={{ objectFit: "contain" }} />
+                            </div>
+                          ))}
+                        </div>
+                        {panel.eyebrow && <span className="geo-eyebrow">{panel.eyebrow}</span>}
+                      </div>
+
+                      <h3 className="geo-title">{panel.name}</h3>
+                      <p className="geo-text">{panel.description}</p>
+
+                      <div className="geo-actions">
+                        {panel.actions.map((a) => (
+                          <Link key={a.href} href={a.href} className="geo-action">
+                            {a.label} <i className="ri-arrow-right-line" />
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <h3 className="panel-title">{brand.name}</h3>
+                );
+              }
+
+              return (
+                <Link
+                  key={`${panel.name}-${idx}`}
+                  href={panel.href}
+                  className={`geo-panel ${variantClass}`}
+                  data-aos="fade-up"
+                  data-aos-duration={500 + idx * 150}
+                >
+                  <div className="geo-thumb" aria-hidden="true">
+                    <Image src={panel.thumbImage} alt="" fill className="geo-thumb-img" style={{ objectFit: "cover" }} />
+                  </div>
+
+                  <div className="geo-content">
+                    <div className="geo-top">
+                      <div className="geo-logo">
+                        <Image src={panel.logoImage} alt={`${panel.name} logo`} width={160} height={90} className="geo-logo-img" style={{ objectFit: "contain" }} />
+                      </div>
+                      {panel.eyebrow && <span className="geo-eyebrow">{panel.eyebrow}</span>}
+                    </div>
+
+                    <h3 className="geo-title">{panel.name}</h3>
+                    <p className="geo-text">{panel.description}</p>
+
+                    <span className="geo-cta">
+                      Explore <i className="ri-arrow-right-line" />
+                    </span>
+                  </div>
                 </Link>
-              </Col>
-            ))}
-          </Row>
+              );
+            })}
+          </div>
         </div>
       </Container>
-    </div>
+    </section>
   );
 };
 

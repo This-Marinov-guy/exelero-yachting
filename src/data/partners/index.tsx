@@ -60,4 +60,17 @@ export const Partners: Record<string, Partner> = {
     description: "Omaya Yachts specializes in luxury yacht design and manufacturing, creating bespoke vessels that combine elegance with exceptional performance. Each yacht is crafted with meticulous attention to detail and the finest materials.",
     website: "https://www.omayayachts.com",
   },
+  "zhik": {
+    id: "zhik",
+    name: "Zhik",
+    heroImage: "/assets/images/hero/zhik.jpg",
+    logoImage: "/assets/images/logo/zhik.svg",
+    breadcrumbImage: "/assets/images/breadcrumbs/zhik.jpg",
+    affiliateLink: "https://zhik.com",
+    primaryColor: "#000000",
+    secondaryColor: "#1dbae7",
+    description:
+      "Zhik designs high-performance sailing apparel and technical gear trusted by sailors worldwide — engineered for comfort, durability, and speed in all conditions.",
+    website: "https://zhik.com",
+  },
 };

@@ -78,6 +78,13 @@ export const MenuItem = [
         image: "logo/omaya-yachts.jpg",
         active: false,
       },
+      {
+        title: "Zhik",
+        type: "link",
+        path: RouteList.Pages.Partners.Zhik,
+        image: "logo/zhik.svg",
+        active: false,
+      },
     ],
   },
   {
