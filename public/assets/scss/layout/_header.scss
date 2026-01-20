@@ -934,6 +934,25 @@ header {
         }
     }
 
+    .header-toggle__brand {
+        display: none;
+        align-items: center;
+        gap: 10px;
+
+        @media (max-width: 991px) {
+            display: inline-flex;
+        }
+
+        .header-toggle__brand-text {
+            font-family: "Orbitron", sans-serif;
+            font-size: calc(14px + (18 - 14) * ((100vw - 320px) / (991 - 320)));
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            line-height: 1;
+        }
+    }
+
     .right-side-header {
         display: flex;
         align-items: center;
@@ -1199,6 +1218,19 @@ header {
         transform: translateX(-350px);
         overflow-y: auto;
         box-shadow: 10px 14px 38px 0px rgba(0, 0, 0, 0.13);
+        
+        // Ensure all text is black on mobile sidebar
+        color: rgba(var(--title-color), 1);
+        
+        a, .menu-item, .menu-link, li, h6, span, .menu-title {
+            color: rgba(var(--title-color), 1) !important;
+        }
+        
+        .menu-header {
+            .menu-title {
+                color: rgba(var(--title-color), 1) !important;
+            }
+        }
     }
 
     li {

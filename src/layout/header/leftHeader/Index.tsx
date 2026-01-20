@@ -12,15 +12,12 @@ const LeftHeader: React.FC<LeftHeaderProps> = ({ sidebarOpen, part, isJobOrPrope
   const dispatch = useAppDispatch();
   return (
     <div className='left-side-header'>
-      <Link scroll={false} href={Href} className={`toggle ${sidebarOpen ? "open" : ""}`} onClick={() => dispatch(setCartData())}>
-        <i className='ri-menu-line header-toggle__icon' />
         <span className='header-toggle__brand' aria-label='Excelero Yachting menu'>
           <span className='header-toggle__brand-logo' aria-hidden='true'>
             <Image src='/assets/images/logo/1-transparent.png' alt='' width={45} height={45} />
           </span>
           <span className='header-toggle__brand-text'>Excelero Yachting</span>
         </span>
-      </Link>
       <Logo part={part} />
       {/* <PropertyDropDown part={part} isJobOrProperty={isJobOrProperty} /> */}
     </div>
