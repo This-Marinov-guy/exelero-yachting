@@ -26,10 +26,13 @@ const CarHomeSection = () => {
       const sections = getSections();
       if (nextIndex < 0 || nextIndex >= sections.length) return;
 
+      const target = sections[nextIndex];
+      const top = target.offsetTop;
+
       isAnimatingRef.current = true;
-      sections[nextIndex].scrollIntoView({
+      window.scrollTo({
+        top,
         behavior: prefersReducedMotion ? "auto" : "smooth",
-        block: "start",
       });
 
       window.setTimeout(() => {
@@ -43,7 +46,7 @@ const CarHomeSection = () => {
       let bestIdx = 0;
       let bestDist = Number.POSITIVE_INFINITY;
       sections.forEach((s, idx) => {
-        const top = s.getBoundingClientRect().top + window.scrollY;
+        const top = s.offsetTop;
         const dist = Math.abs(top - y);
         if (dist < bestDist) {
           bestDist = dist;
@@ -53,32 +56,45 @@ const CarHomeSection = () => {
       return bestIdx;
     };
 
-    const wheelAccumRef = { value: 0 };
-    const lastWheelTsRef = { value: 0 };
-    const WHEEL_RESET_MS = 180;
-    const WHEEL_TRIGGER_THRESHOLD = 40; // require a bit more scroll before snapping
+    const getNextIndex = () => {
+      const sections = getSections();
+      const y = window.scrollY;
+      for (let i = 0; i < sections.length; i++) {
+        if (sections[i].offsetTop - 1 > y) return i;
+      }
+      return sections.length - 1;
+    };
+
+    const getPrevIndex = () => {
+      const sections = getSections();
+      const y = window.scrollY;
+      for (let i = sections.length - 1; i >= 0; i--) {
+        if (sections[i].offsetTop + 1 < y) return i;
+      }
+      return 0;
+    };
+
+    const WHEEL_TRIGGER_THRESHOLD = 5; // almost any intentional scroll
 
     const onWheel = (e: WheelEvent) => {
       if (isAnimatingRef.current) return;
-      const now = Date.now();
-      if (now - lastWheelTsRef.value > WHEEL_RESET_MS) {
-        wheelAccumRef.value = 0;
-      }
-      lastWheelTsRef.value = now;
 
       // Only when the wheel target is within this hero stack
       const target = e.target as HTMLElement | null;
       if (!target || !container.contains(target)) return;
 
-      // accumulate deltas so small trackpad scroll doesn't instantly snap
-      wheelAccumRef.value += e.deltaY;
-      if (Math.abs(wheelAccumRef.value) < WHEEL_TRIGGER_THRESHOLD) return;
+      if (Math.abs(e.deltaY) < WHEEL_TRIGGER_THRESHOLD) return;
 
       e.preventDefault();
-      const dir = wheelAccumRef.value > 0 ? 1 : -1;
-      wheelAccumRef.value = 0;
-      const idx = getActiveIndex();
-      scrollToIndex(idx + dir);
+      if (e.deltaY > 0) {
+        // scrolling down → next section strictly below current scroll
+        const nextIdx = getNextIndex();
+        scrollToIndex(nextIdx);
+      } else {
+        // scrolling up → previous section strictly above current scroll
+        const prevIdx = getPrevIndex();
+        scrollToIndex(prevIdx);
+      }
     };
 
     let touchStartY = 0;
@@ -92,9 +108,13 @@ const CarHomeSection = () => {
       const endY = (e.changedTouches[0]?.clientY ?? 0);
       const delta = touchStartY - endY;
       if (Math.abs(delta) < 40) return;
-      const dir = delta > 0 ? 1 : -1;
-      const idx = getActiveIndex();
-      scrollToIndex(idx + dir);
+      if (delta > 0) {
+        const nextIdx = getNextIndex();
+        scrollToIndex(nextIdx);
+      } else {
+        const prevIdx = getPrevIndex();
+        scrollToIndex(prevIdx);
+      }
     };
 
     // non-passive so preventDefault works
@@ -172,15 +192,15 @@ const CarHomeSection = () => {
         />
 
         <ExceleroHero
-          title="Elvstrom SailWear & Zhik"
+          title="Sailing gear"
           description="Technical apparel and gear for all conditions — from coastal cruising to offshore racing."
           backgroundVideo="/assets/video/hero/3.mp4"
           backgroundPoster="/assets/images/hero/zhik.jpg"
           overlayVariant="dark"
           panels={[
             {
-              name: "Elvstrom SailWear",
-              description: "Premium sailwear designed for performance and comfort.",
+              name: "Elvstrom",
+              description: "Sails and Premium sailwear designed for performance and comfort.",
               thumbImage: "/assets/images/hero/elvstrom.jpg",
               href: RouteList.Pages.Partners.ElvstromSailWear,
               variant: "a",

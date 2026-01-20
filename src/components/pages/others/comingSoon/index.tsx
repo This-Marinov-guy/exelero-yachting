@@ -16,7 +16,7 @@ const ComingSoonContainer = () => {
                     <div className="header-flex">
                         <div className="left-side-header w-100 justify-content-between">
                             <Link href={RouteList.Home.CarDemo1} className="header-logo">
-                                <Image height={30} width={110} src={`${ImagePath}/logo/1.png`} alt="logo" className="img-fluid" />
+                                <Image height={30} width={110} src={`${ImagePath}/logo/1-transparent.png`} alt="logo" className="img-fluid" />
                             </Link>
                             <ul className="coming-soon-link">
                                 <li>
