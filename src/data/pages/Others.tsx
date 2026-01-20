@@ -1,6 +1,7 @@
 import { Href } from "@/constants";
 import { IconLinkList } from "@/types/CommonComponents";
 import { RouteList } from "@/utils/RouteList";
+import { MAIN_CONTACT_EMAIL, MAIN_CONTACT_LOCATION, MAIN_CONTACT_NUMBER } from "@/utils/defines/CONTACTS";
 import { ApexOptions } from "apexcharts";
 import { Call, CallCalling, Car, Driving, Global, Location, Message, MessageQuestion, Mobile, ReceiptText, Sms, Tag2 } from "iconsax-react";
 import { Autoplay, Navigation } from "swiper/modules";
@@ -144,30 +145,23 @@ export const AboutGetInTouchData = [
   {
     id: 1,
     title: "Our Location",
-    description: "05 West St, Suite New York 10016",
+    description: MAIN_CONTACT_LOCATION,
     icon: <Location className="iconsax" />,
   },
   {
     id: 2,
     title: "Our Email Address",
-    description: "maryjrios@rhyta.com",
+    description: MAIN_CONTACT_EMAIL,
     icon: <Sms className="iconsax" />,
     link: Href,
   },
   {
     id: 3,
     title: "Contact Number",
-    description: "860-349-8349",
+    description: MAIN_CONTACT_NUMBER,
     icon: <CallCalling className="iconsax" />,
     link: Href,
-  },
-  {
-    id: 4,
-    title: "Our Website",
-    description: "www.fuso.com",
-    icon: <Global className="iconsax" />,
-    link: Href,
-  },
+  }
 ];
 
 export const ContactPlaceholder = [

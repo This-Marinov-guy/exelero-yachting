@@ -1,7 +1,7 @@
-export const MAIN_CONTACT_NUMBER = "(702) 555-0122";
-export const MAIN_CONTACT_EMAIL = "general.info@gmail.com";
-export const MAIN_CONTACT_LOCATION = "4517 Washington Ave. Manchester,";
+export const MAIN_CONTACT_NUMBER = "+359 884967244";
+export const MAIN_CONTACT_EMAIL = "info@exelero.eu";
+export const MAIN_CONTACT_LOCATION = "1 Alexander batember blvd, 8000 Burgas Bulgaria";
 
-export const INSTAGRAM_URL = "https://www.instagram.com/excelero_group/";
-export const FACEBOOK_URL = "https://www.facebook.com/exelero.group/";
-export const LINKEDIN_URL = "https://www.linkedin.com/company/exelero-group/";
+export const INSTAGRAM_URL = "https://www.instagram.com/exeleroyachting";
+export const FACEBOOK_URL = "https://www.facebook.com/exceleroyachting";
+export const LINKEDIN_URL = "https://www.linkedin.com/company/exelero-yachting";

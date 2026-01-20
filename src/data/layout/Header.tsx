@@ -26,23 +26,24 @@ export const SearchModalData: { [key: string]: string } = {
 
 export const MenuItem = [
   {
-    title: "Boats",
-    type: "link",
-    path: RouteList.Pages.Boats,
-    active: false,
-  },
-  {
-    title: "Gallery",
-    type: "link",
-    path: RouteList.Pages.Gallery,
-    active: false,
-  },
-  {
     title: "About",
     type: "link",
     path: RouteList.Pages.About,
     active: false,
   },
+  {
+    title: "Brokerage",
+    type: "link",
+    path: RouteList.Pages.Boats,
+    active: false,
+  },
+  // {
+  //   title: "Gallery",
+  //   type: "link",
+  //   path: RouteList.Pages.Gallery,
+  //   active: false,
+  // },
+  
   {
     title: "Partners",
     type: "sub",
@@ -97,7 +98,7 @@ export const MenuItem = [
         active: false,
       },
       {
-        title: "Boats",
+        title: "Brokerage",
         type: "link",
         path: RouteList.Pages.Services.Boats,
         active: false,
@@ -108,12 +109,12 @@ export const MenuItem = [
         path: RouteList.Pages.Services.Transportation,
         active: false,
       },
-      {
-        title: "Sell Your Boat",
-        type: "link",
-        path: RouteList.Pages.Services.SellYourBoat,
-        active: false,
-      },
+      // {
+      //   title: "Sell Your Boat",
+      //   type: "link",
+      //   path: RouteList.Pages.Services.SellYourBoat,
+      //   active: false,
+      // },
       {
         title: "Charters",
         type: "link",

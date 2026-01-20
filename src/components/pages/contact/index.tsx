@@ -15,11 +15,7 @@ const ContactContainer = () => {
       <Breadcrumbs title='Contact Us' url={RouteList.Home.CarDemo1} mainClass='page-breadcrumbs-section' image />
       <section className='contact-section contact-2-section'>
         <Container>
-          <Row className="gy-xl-0 gy-4 justify-content-center">
             <GetInTouch type='contact-2' />
-                        {/* <FollowUs/> */}
-
-          </Row>
           <Row className='section-t-md-space gy-lg-0 gy-4'>
             <Col lg={6}>
               <div className="contact-img">
