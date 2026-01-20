@@ -4,7 +4,7 @@ export const SVGPath ='/assets/svg'
 export const VideoPath ='/assets/video'
 
 export const SymbolRegex = /[!@#\$%\^\*\(\)_\+\{\}\[\]:;"'<>,.?/\\|`~=]/g;
-export const Href: string = "#JavaScript";
+export const Href: string = "#";
 export const Primary = "var(--theme-deafult)";
 export const SignOut: string = "Sign out";
 export const MyActive: string = "my active";

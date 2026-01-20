@@ -48,7 +48,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
   return (
     <div>
       <Header part={firstPart} />
-      <MobileMenu  part={firstPart}/>
+      {/* <MobileMenu  part={firstPart}/> */}
       {children}
       {segments[2] !== "portfolio-vertical-slider" && (isJobOrProperty ? <FooterDemo2 part={firstPart} /> : <Footer part={firstPart} />)}
       <TapTop part={firstPart} />

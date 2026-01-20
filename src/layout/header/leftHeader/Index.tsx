@@ -16,7 +16,7 @@ const LeftHeader: React.FC<LeftHeaderProps> = ({ sidebarOpen, part, isJobOrPrope
         <i className='ri-menu-line header-toggle__icon' />
         <span className='header-toggle__brand' aria-label='Excelero Yachting menu'>
           <span className='header-toggle__brand-logo' aria-hidden='true'>
-            <Image src='/assets/images/favicons/favicon.ico' alt='' width={22} height={22} />
+            <Image src='/assets/images/logo/1-transparent.png' alt='' width={45} height={45} />
           </span>
           <span className='header-toggle__brand-text'>Excelero Yachting</span>
         </span>

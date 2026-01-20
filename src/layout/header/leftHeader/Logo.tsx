@@ -1,4 +1,3 @@
-import { ImagePath } from "@/constants";
 import { RouteList } from "@/utils/RouteList";
 import Image from "next/image";
 import Link from "next/link";

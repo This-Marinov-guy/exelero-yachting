@@ -4,7 +4,7 @@
 
 .tap-to-tap {
     position: fixed;
-    bottom: -60px;
+    bottom: 0px;
     right: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
     transition: 0.4s ease;
 
@@ -13,13 +13,13 @@
         left: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
     }
 
-    &.show {
-        bottom: 0;
+    // &.show {
+    //     bottom: 0;
 
-        @media (max-width:575px) {
-            bottom: calc(60px + (62 - 60) * ((100vw - 320px) / (1920 - 320)));
-        }
-    }
+    //     @media (max-width:575px) {
+    //         bottom: calc(60px + (62 - 60) * ((100vw - 320px) / (1920 - 320)));
+    //     }
+    // }
 
     &.car-top {
         bottom: -100px;

@@ -1,6 +1,7 @@
 import { Href } from "@/constants";
 import { ContainerClassMap, HeaderClassMap } from "@/data/layout/Header";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
+import { setCartData } from "@/redux/reducers/LayoutSlice";
 import { PathTypes } from "@/types/Layout";
 import UseStickyBar from "@/utils/UseStickyBar";
 import Link from "next/link";
@@ -14,6 +15,7 @@ import TapTop from "../TapTop";
 
 const Header: React.FC<PathTypes> = ({ part }) => {
   const { sidebarOpen } = useAppSelector((state) => state.layout);
+  const dispatch = useAppDispatch();
   const isTopBar = ["car-2", "property-2"].some((item) => part?.includes(item));
   const isJobOrProperty = ["job-2", "job-3", "property-2"].some((item) => part?.includes(item));
   const isSticky = UseStickyBar(100);
@@ -35,6 +37,11 @@ const Header: React.FC<PathTypes> = ({ part }) => {
         <div className='header-flex'>
           <LeftHeader sidebarOpen={sidebarOpen} part={part} isJobOrProperty={isJobOrProperty} />
           <MainMenu />
+          <div className='mobile-menu-toggle'>
+            <Link scroll={false} href={Href} className={`toggle ${sidebarOpen ? "open" : ""}`} onClick={() => dispatch(setCartData())}>
+              <i className='ri-menu-line' />
+            </Link>
+          </div>
           {/* <RightHeader part={part} isJobOrProperty={isJobOrProperty} /> */}
         </div>
       </Container>
