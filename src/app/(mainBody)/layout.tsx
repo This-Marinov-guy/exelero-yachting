@@ -45,13 +45,15 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
   const secondPart = segments[1] || ""; // Get the second segment
   const carSpaceClass = secondPart === "detail" ? "car-detail-space" : "";
 
+  const isHomePage = pathname === "/" || !firstPart;
+
   return (
     <div>
       <Header part={firstPart} />
       {/* <MobileMenu  part={firstPart}/> */}
       {children}
       {segments[2] !== "portfolio-vertical-slider" && (isJobOrProperty ? <FooterDemo2 part={firstPart} /> : <Footer part={firstPart} />)}
-      <TapTop part={firstPart} />
+      {!isHomePage && <TapTop part={firstPart} />}
       {/* <Customizer part={segments} />       */}
       <SearchModal type={SearchModalData[firstPart] || SearchModalData.car} carSpaceClass={carSpaceClass} />
       <CookieBanner />
