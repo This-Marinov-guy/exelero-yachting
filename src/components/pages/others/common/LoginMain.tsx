@@ -1,40 +1,85 @@
+"use client";
+
 import CommonInput from "@/components/commonComponents/CommonInput";
 import { NotAccount, ImagePath, LogIn, LogInWithFacebook, LogInWithGoogle, LogInYourAccount, Remember, SignUp, Welcome, Href } from "@/constants";
-import { useAppDispatch } from "@/redux/hooks";
-import { setLoginModal, setSignUpModal } from "@/redux/reducers/LayoutSlice";
+import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { RouteList } from "@/utils/RouteList";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "reactstrap";
 
-const LoginMain = () => {
+type LoginMainProps = {
+  /** When true, renders as a standalone page (no modal toggling). */
+  asPage?: boolean;
+};
 
-  const pathname = usePathname() || "";
-  const dispatch = useAppDispatch();
-  const segments = pathname.split("/").slice(1);
+const LoginMain = ({ asPage = false }: LoginMainProps) => {
+  const router = useRouter();
+  const supabase = getSupabaseBrowserClient();
 
-  const handleNavigate = () => {
-    segments[2] === "login-4" && dispatch(setSignUpModal());
-    dispatch(setLoginModal());
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.error("Please enter email and password.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      if (!data.session) {
+        toast.error("Sign in failed. Please try again.");
+        return;
+      }
+      toast.success("Signed in successfully.");
+      router.push(RouteList.Auth.Account);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Unable to sign in.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className='form-box'>
+    <div className='form-box auth-form-box'>
       <div className='login-title'>
         <h3>{Welcome}</h3>
         <h5>{LogInYourAccount}</h5>
       </div>
-      <form className='login-form'>
-        <CommonInput inputType='email' placeholder='Enter Your Email' />
-        <CommonInput inputType='password' placeholder='Enter Your password' />
-        <div className='form-check-box'>
+      <form className='login-form' onSubmit={handleSubmit}>
+        <CommonInput
+          inputType='email'
+          placeholder='Enter Your Email'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete='email'
+          required
+          disabled={loading}
+        />
+        <CommonInput
+          inputType='password'
+          placeholder='Enter Your password'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete='current-password'
+          required
+          disabled={loading}
+        />
+        {/* <div className='form-check-box'>
           <input type='checkbox' id='Remember' />
           <label htmlFor='Remember'>{Remember}</label>
-        </div>
-        <Button className='btn-solid' type='button'>
-          {LogIn}
+        </div> */}
+        <Button className='btn-solid' type='submit' disabled={loading}>
+          {loading ? "Signing in..." : LogIn}
         </Button>
-        <div className='text-divider'>
+        {/* <div className='text-divider'>
           <span>OR</span>
         </div>
         <ul className='login-social'>
@@ -50,10 +95,10 @@ const LoginMain = () => {
               <span>{LogInWithFacebook}</span>
             </Link>
           </li>
-        </ul>
+        </ul> */}
         <div className='signup-box'>
           <h6>{NotAccount}</h6>
-          <Link href={segments[2] === "login-4" ? Href : RouteList.Pages.Other.SignUp1} onClick={handleNavigate}>{SignUp}</Link>
+          <Link href={asPage ? RouteList.Auth.SignUp : RouteList.Pages.Other.SignUp1}>{SignUp}</Link>
         </div>
       </form>
     </div>

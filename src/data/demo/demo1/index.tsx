@@ -160,7 +160,7 @@ export const ExperienceCarData = [
   { icon: "car/experience/7.svg", label: "Acceleration", value: "5.9 Seconds" },
   { icon: "car/experience/8.svg", label: "Length (in)", value: "180.6" },
 ];
-export const AboutContentData = "Experience the new standard of quality with Fuso. Discover why we’re the trusted choice for Car and achieve your goals with confidence.";
+export const AboutContentData = "Experience the new standard of quality with Exelero. Discover why we’re the trusted choice for Car and achieve your goals with confidence.";
 
 export const LuxuryCarContentData = "We provide free consultation to help you find a tenant for your new house.We provide free consultation to help you find a tenant for your new house.We provide free consultation to help.";
 

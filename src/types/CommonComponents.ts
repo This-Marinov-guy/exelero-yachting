@@ -102,6 +102,14 @@ export interface InputBoxType {
   ColClass?: string;
   mainClass?: string;
   inputClass?: string;
+  name?: string;
+  id?: string;
+  value?: string;
+  defaultValue?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  autoComplete?: string;
+  required?: boolean;
+  disabled?: boolean;
 }
 
 export interface RadioGroupType {

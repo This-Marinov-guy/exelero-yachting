@@ -1,3 +1,4 @@
+"use client";
 import { Href } from "@/constants";
 import { PaginationProps } from "@/types/Product";
 import Link from "next/link";

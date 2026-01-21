@@ -1,34 +1,92 @@
+"use client";
+
 import CommonInput from "@/components/commonComponents/CommonInput";
 import { AlreadyAnAccount, ConditionAccept, CreateAnAccount, Href, ImagePath, LogIn, LogInWithFacebook, LogInWithGoogle, PrivacyPolicy, SignUpAccount, Terms, Welcome } from "@/constants";
-import { useAppDispatch } from "@/redux/hooks";
-import { setLoginModal, setSignUpModal } from "@/redux/reducers/LayoutSlice";
+import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { RouteList } from "@/utils/RouteList";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { FC } from "react";
+import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "reactstrap";
 
-const SignUpMain: FC<{ classname?: string }> = ({ classname }) => {
+const SignUpMain: FC<{ classname?: string; asPage?: boolean }> = ({ classname, asPage = false }) => {
+  const router = useRouter();
+  const supabase = getSupabaseBrowserClient();
 
-  const pathname = usePathname() || "";
-  const dispatch = useAppDispatch();
-  const segments = pathname.split("/").slice(1);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleNavigate = () => {
-    segments[2] === "login-4" && dispatch(setLoginModal());
-    dispatch(setSignUpModal());
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.error("Please enter email and password.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: fullName ? { full_name: fullName } : undefined,
+        },
+      });
+      if (error) throw error;
+
+      if (data.session) {
+        toast.success("Account created.");
+        router.push(RouteList.Auth.Account);
+        return;
+      }
+
+      // If email confirmation is enabled, session can be null.
+      toast.success("Account created. Please check your email to confirm, then sign in.");
+      router.push(RouteList.Auth.SignIn);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Unable to sign up.");
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
-    <div className={`${classname ? classname : ""} form-box`}>
+    <div className={`${classname ? classname : ""} form-box auth-form-box`}>
       <div className='login-title'>
         <h3>{Welcome}</h3>
         <h5>{SignUpAccount}</h5>
       </div>
-      <form className='login-form'>
-        <CommonInput inputType='text' placeholder='Enter Your Full Name' />
-        <CommonInput inputType='email' placeholder='Enter Your Email' />
-        <CommonInput inputType='password' placeholder='Enter Your password' />
-        <div className='form-check-box align-items-start'>
+      <form className='login-form' onSubmit={handleSubmit}>
+        <CommonInput
+          inputType='text'
+          placeholder='Enter Your Full Name'
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          autoComplete='name'
+          disabled={loading}
+        />
+        <CommonInput
+          inputType='email'
+          placeholder='Enter Your Email'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoComplete='email'
+          required
+          disabled={loading}
+        />
+        <CommonInput
+          inputType='password'
+          placeholder='Enter Your password'
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete='new-password'
+          required
+          disabled={loading}
+        />
+        {/* <div className='form-check-box align-items-start'>
           <input type='checkbox' id='Remember' />
           <label htmlFor='Remember' className='line-height-change'>
             {ConditionAccept}
@@ -40,9 +98,11 @@ const SignUpMain: FC<{ classname?: string }> = ({ classname }) => {
               {PrivacyPolicy}
             </Link>
           </label>
-        </div>
-        <Button className='btn-solid'>{CreateAnAccount}</Button>
-        <div className='text-divider'>
+        </div> */}
+        <Button className='btn-solid' type='submit' disabled={loading}>
+          {loading ? "Creating account..." : CreateAnAccount}
+        </Button>
+        {/* <div className='text-divider'>
           <span>OR</span>
         </div>
         <ul className='login-social'>
@@ -58,10 +118,10 @@ const SignUpMain: FC<{ classname?: string }> = ({ classname }) => {
               <span>{LogInWithFacebook}</span>
             </Link>
           </li>
-        </ul>
+        </ul> */}
         <div className='signup-box'>
           <h6>{AlreadyAnAccount}</h6>
-          <Link href={segments[2] === "login-4" ? Href : RouteList.Pages.Other.Login1} onClick={handleNavigate}>{LogIn}</Link>
+          <Link href={asPage ? RouteList.Auth.SignIn : RouteList.Pages.Other.Login1}>{LogIn}</Link>
         </div>
       </form>
     </div>

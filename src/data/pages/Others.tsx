@@ -338,7 +338,7 @@ export const PersonsDetail = [
     image: "/other/person2.png",
     alt: "Noah Evans",
     quote: "Designing Insightful Solutions for Creative Applications.",
-    description: `Welcome to Fuso, where quality meets creativity. We're proud to provide tailored solutions designed to meet a wide range of client needs. Our business was founded with a mission to redefine industry standards, blending insight with innovative design to deliver exceptional results.`,
+    description: `Welcome to Exelero, where quality meets creativity. We're proud to provide tailored solutions designed to meet a wide range of client needs. Our business was founded with a mission to redefine industry standards, blending insight with innovative design to deliver exceptional results.`,
     name: "Noah Evans",
     title: "Marketing Manager",
     isRightAligned: false,
@@ -348,7 +348,7 @@ export const PersonsDetail = [
     image: "/other/person.png",
     alt: "Jessica Doe",
     quote: "The bridge that connects understanding with knowledge is design.",
-    description: `Welcome to Fuso, the place where quality and creativity combine. We take great satisfaction knowing that we offer creative suggestions that are customized in order to meet an extensive variety of demands of our clients. The business we operate originated to redefine standards in the industry.`,
+    description: `Welcome to Exelero, the place where quality and creativity combine. We take great satisfaction knowing that we offer creative suggestions that are customized in order to meet an extensive variety of demands of our clients. The business we operate originated to redefine standards in the industry.`,
     name: "Jessica Doe",
     title: "Design Manager",
     isRightAligned: true,
@@ -1185,7 +1185,7 @@ export const PrivacyData = [
 ];
 
 export const BottomInfo = [
-  { label: "Fuso", isHeader: true },
+  { label: "Exelero", isHeader: true },
   { label: "Email :", value: "contact@gmail.com" },
   { label: "Address :", value: "Meester Western" },
   { label: "Phone :", value: "(401) 531-6404" },
@@ -1214,7 +1214,7 @@ export const PrivacyPolicyData = [
   {
     id: "privacy-1",
     title: "1. Introduction",
-    content: "Welcome to Fuso. We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy outlines how we collect, use, disclose, and safeguard your information when you visit our website [insert website URL] and use our services related to classified car and job bookings.",
+    content: "Welcome to Exelero. We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy outlines how we collect, use, disclose, and safeguard your information when you visit our website [insert website URL] and use our services related to classified car and job bookings.",
   },
   {
     id: "privacy-2",
@@ -1336,7 +1336,7 @@ export const ConditionData = [
   {
     id: "condition-1",
     title: "1. Introduction",
-    content: "Welcome to Fuso. By accessing or using our website fuso.com and services related to classified car and job bookings, you agree to comply with and be bound by the following Terms and Conditions. Please read them carefully.",
+    content: "Welcome to Exelero. By accessing or using our website fuso.com and services related to classified car and job bookings, you agree to comply with and be bound by the following Terms and Conditions. Please read them carefully.",
   },
   {
     id: "condition-2",
@@ -1346,7 +1346,7 @@ export const ConditionData = [
   {
     id: "condition-3",
     title: "3. Services Provided",
-    content: "Fuso provides a platform for users to post and browse classified ads related to car bookings and job opportunities. We do not guarantee the accuracy or completeness of any listings and are not responsible for the transactions or interactions between users.",
+    content: "Exelero provides a platform for users to post and browse classified ads related to car bookings and job opportunities. We do not guarantee the accuracy or completeness of any listings and are not responsible for the transactions or interactions between users.",
   },
   {
     id: "condition-4",
@@ -1388,29 +1388,29 @@ export const ConditionData = [
   {
     id: "condition-6-1",
     title: "6.1 Listings",
-    content: "Users may post classified ads for cars and job opportunities. All transactions and interactions are solely between the parties involved, and Fuso is not a party to these transactions.",
+    content: "Users may post classified ads for cars and job opportunities. All transactions and interactions are solely between the parties involved, and Exelero is not a party to these transactions.",
     subsections: true,
   },
   {
     id: "condition-6-2",
     title: "6.2 Payment",
-    content: "Fuso may offer payment processing services for certain transactions. You agree to use any payment methods provided in a lawful manner and comply with any applicable payment terms.",
+    content: "Exelero may offer payment processing services for certain transactions. You agree to use any payment methods provided in a lawful manner and comply with any applicable payment terms.",
     subsections: true,
   },
   {
     id: "condition-7",
     title: "7. Intellectual Property",
-    content: "All content and materials on our Site, including text, graphics, logos, and software, are the property of Fuso or its licensors and are protected by intellectual property laws. You may not reproduce, distribute, or otherwise use any content from our Site without our express written permission.",
+    content: "All content and materials on our Site, including text, graphics, logos, and software, are the property of Exelero or its licensors and are protected by intellectual property laws. You may not reproduce, distribute, or otherwise use any content from our Site without our express written permission.",
   },
   {
     id: "condition-8",
     title: "8. Limitation of Liability",
-    content: "To the maximum extent permitted by law, Fuso and its affiliates shall not be liable for any indirect, incidental, special, or consequential damages arising out of or in connection with your use of our Site or Services, including but not limited to loss of data, revenue, or profits.",
+    content: "To the maximum extent permitted by law, Exelero and its affiliates shall not be liable for any indirect, incidental, special, or consequential damages arising out of or in connection with your use of our Site or Services, including but not limited to loss of data, revenue, or profits.",
   },
   {
     id: "condition-9",
     title: "9. Indemnification",
-    content: "You agree to indemnify and hold harmless Fuso and its affiliates from any claims, liabilities, damages, losses, or expenses (including reasonable attorneys' fees) arising out of or in connection with your use of our Site or Services or your violation of these Terms.",
+    content: "You agree to indemnify and hold harmless Exelero and its affiliates from any claims, liabilities, damages, losses, or expenses (including reasonable attorneys' fees) arising out of or in connection with your use of our Site or Services or your violation of these Terms.",
   },
   {
     id: "condition-10",

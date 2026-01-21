@@ -1,24 +1,13 @@
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "sonner";
 
 export const CustomToaster = () => (
   <Toaster
+    richColors
+    position="bottom-right"
+    duration={1800}
     toastOptions={{
-      duration: 1500,
-      success: {
-        style: {
-          minWidth: 200,
-          background: "rgb(229, 245, 227)",
-          color: "rgba(var(--success), 1)",
-          fontWeight: 700,
-        },
-      },
-      error: {
-        style: {
-          minWidth: 200,
-          background: "rgb(255, 238, 237)",
-          fontWeight: 700,
-          color: "rgba(var(--error), 1)",
-        },
+      style: {
+        fontWeight: 600,
       },
     }}
   />

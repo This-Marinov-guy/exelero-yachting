@@ -1,3 +1,4 @@
+"use client";
 import Pagination from "@/components/commonComponents/gridView/filter/Pagination";
 import { Href, ImagePath } from "@/constants";
 import { PortfolioBoxSlider, PortfolioItems } from "@/data/pages/Portfolio";

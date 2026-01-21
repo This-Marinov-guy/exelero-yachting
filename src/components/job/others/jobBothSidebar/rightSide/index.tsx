@@ -15,7 +15,7 @@ const JobRightSideBar = () => {
           </Link>
         </div>
         <div className='sidebar-banner'>
-          <h2>10M+ Users are on the Fuso app</h2>
+          <h2>10M+ Users are on the Exelero app</h2>
           <Button className='btn-solid'>Download Now</Button>
         </div>
       </div>

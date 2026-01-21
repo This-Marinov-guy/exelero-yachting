@@ -1,3 +1,4 @@
+"use client";
 import { Href, ImagePath, VideoTitle } from "@/constants";
 import { setVideoModal } from "@/redux/reducers/LayoutSlice";
 import { RenderImageType } from "@/types/Product";

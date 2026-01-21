@@ -212,4 +212,9 @@ export const RouteList = {
       Parts: `/services/parts`,
     },
   },
+  Auth: {
+    SignIn: `/sign-in`,
+    SignUp: `/sign-up`,
+    Account: `/account`,
+  },
 };
