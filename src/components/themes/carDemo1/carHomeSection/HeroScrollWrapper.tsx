@@ -8,7 +8,9 @@ interface HeroScrollWrapperProps {
 }
 
 export const HeroScrollWrapper = ({ children }: HeroScrollWrapperProps) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  // Use non-null generic so it matches ScrollController's expected ref type.
+  // It's still null until the div mounts (normal React behavior).
+  const containerRef = useRef<HTMLDivElement>(null!);
 
   return (
     <>
