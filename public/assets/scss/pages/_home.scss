@@ -2460,25 +2460,23 @@
         padding: calc(12px + (18 - 12) * ((100vw - 320px) / (1920 - 320)));
         text-decoration: none;
         color: rgba(var(--white), 1);
-        // Blue glass gradient
+        // Rectangular glass panel with primary blue
         background:
           linear-gradient(
             135deg,
-            rgba(var(--theme-color), 0.28) 0%,
-            rgba(0, 0, 0, 0.22) 45%,
-            rgba(var(--secondary-color), 0.12) 100%
+            rgba(var(--theme-color), 0.15) 0%,
+            rgba(var(--theme-color), 0.08) 50%,
+            rgba(0, 0, 0, 0.25) 100%
           );
-        border: 1px solid rgba(var(--theme-color), 0.28);
+        border: 1px solid rgba(var(--theme-color), 0.4);
         box-shadow:
-          0 14px 35px rgba(0, 0, 0, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.18);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
+          0 8px 32px rgba(0, 0, 0, 0.4),
+          0 0 0 1px rgba(var(--theme-color), 0.2) inset,
+          0 0 20px rgba(var(--theme-color), 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         overflow: hidden;
-        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-
-        // Uneven geometric shape (like screenshot)
-        clip-path: polygon(7% 0%, 94% 0%, 100% 16%, 96% 100%, 16% 100%, 0% 88%, 0% 10%);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 
         @media (max-width: 767px) {
           max-width: 360px; // fixed width on mobile
@@ -2488,12 +2486,14 @@
           gap: 10px;
           padding: calc(10px + (14 - 10) * ((100vw - 320px) / (767 - 320)));
           scroll-snap-align: center;
+          border-radius: 16px;
         }
 
         @media (max-width: 575px) {
           max-width: 320px;
           grid-template-columns: 1fr; // column layout: image on top, text below
           gap: 10px;
+          border-radius: 14px;
         }
 
         &::before {
@@ -2501,25 +2501,28 @@
           position: absolute;
           inset: 0;
           background:
-            radial-gradient(900px 380px at 20% 0%, rgba(var(--theme-color), 0.28) 0%, rgba(0,0,0,0) 62%),
-            radial-gradient(900px 380px at 90% 100%, rgba(var(--secondary-color), 0.18) 0%, rgba(0,0,0,0) 60%);
-          opacity: 0.9;
+            radial-gradient(600px 300px at 20% 0%, rgba(var(--theme-color), 0.25) 0%, rgba(0,0,0,0) 70%),
+            radial-gradient(600px 300px at 80% 100%, rgba(var(--theme-color), 0.15) 0%, rgba(0,0,0,0) 70%);
+          opacity: 0.8;
           z-index: 0;
           pointer-events: none;
+          border-radius: inherit;
         }
 
         &:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 28px 60px rgba(0, 0, 0, 0.45);
-          border-color: rgba(var(--theme-color), 0.35);
+          transform: translateY(-8px);
+          box-shadow:
+            0 16px 48px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(var(--theme-color), 0.4) inset,
+            0 0 30px rgba(var(--theme-color), 0.25);
+          border-color: rgba(var(--theme-color), 0.6);
         }
 
         &.geo-panel--b {
-          // slightly different uneven cut
-          clip-path: polygon(6% 0%, 84% 0%, 100% 12%, 100% 88%, 92% 100%, 0% 100%, 0% 18%);
-
           &::before {
-            background: radial-gradient(1000px 400px at 85% 0%, rgba(var(--secondary-color), 0.18) 0%, rgba(0,0,0,0) 62%);
+            background:
+              radial-gradient(600px 300px at 80% 0%, rgba(var(--theme-color), 0.25) 0%, rgba(0,0,0,0) 70%),
+              radial-gradient(600px 300px at 20% 100%, rgba(var(--theme-color), 0.15) 0%, rgba(0,0,0,0) 70%);
           }
         }
 
@@ -2675,42 +2678,58 @@
         padding: calc(16px + (26 - 16) * ((100vw - 320px) / (1920 - 320)));
         text-decoration: none;
         color: rgba(var(--white), 1);
-        background: rgba(0, 0, 0, 0.78);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        // Rectangular glass panel with primary blue
+        background:
+          linear-gradient(
+            135deg,
+            rgba(var(--theme-color), 0.15) 0%,
+            rgba(var(--theme-color), 0.08) 50%,
+            rgba(0, 0, 0, 0.25) 100%
+          );
+        border: 1px solid rgba(var(--theme-color), 0.4);
+        border-radius: 20px;
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.4),
+          0 0 0 1px rgba(var(--theme-color), 0.2) inset,
+          0 0 20px rgba(var(--theme-color), 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         overflow: hidden;
-        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-
-        clip-path: polygon(7% 0%, 94% 0%, 100% 16%, 96% 100%, 16% 100%, 0% 88%, 0% 10%);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 
         @media (max-width: 575px) {
           grid-template-columns: 1fr;
           gap: 12px;
+          border-radius: 16px;
         }
 
         &::before {
           content: "";
           position: absolute;
           inset: 0;
-          background: radial-gradient(1000px 400px at 15% 0%, rgba(var(--theme-color), 0.18) 0%, rgba(0,0,0,0) 60%);
-          opacity: 0.9;
+          background:
+            radial-gradient(600px 300px at 20% 0%, rgba(var(--theme-color), 0.25) 0%, rgba(0,0,0,0) 70%),
+            radial-gradient(600px 300px at 80% 100%, rgba(var(--theme-color), 0.15) 0%, rgba(0,0,0,0) 70%);
+          opacity: 0.8;
           z-index: 0;
           pointer-events: none;
+          border-radius: inherit;
         }
 
         &:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 28px 60px rgba(0, 0, 0, 0.45);
-          border-color: rgba(var(--theme-color), 0.35);
+          transform: translateY(-8px);
+          box-shadow:
+            0 16px 48px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(var(--theme-color), 0.4) inset,
+            0 0 30px rgba(var(--theme-color), 0.25);
+          border-color: rgba(var(--theme-color), 0.6);
         }
 
         &.geo-panel--b {
-          clip-path: polygon(6% 0%, 84% 0%, 100% 12%, 100% 88%, 92% 100%, 0% 100%, 0% 18%);
-
           &::before {
-            background: radial-gradient(1000px 400px at 85% 0%, rgba(var(--secondary-color), 0.18) 0%, rgba(0,0,0,0) 62%);
+            background:
+              radial-gradient(600px 300px at 80% 0%, rgba(var(--theme-color), 0.25) 0%, rgba(0,0,0,0) 70%),
+              radial-gradient(600px 300px at 20% 100%, rgba(var(--theme-color), 0.15) 0%, rgba(0,0,0,0) 70%);
           }
         }
 
