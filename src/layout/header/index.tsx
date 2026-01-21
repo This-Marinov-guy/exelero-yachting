@@ -12,6 +12,7 @@ import MainMenu from "./mainMenu";
 import RightHeader from "./rightHeader/Index";
 import TopBar from "./topBar";
 import TapTop from "../TapTop";
+import AuthAccountIcon from "./AuthAccountIcon";
 
 const Header: React.FC<PathTypes> = ({ part }) => {
   const { sidebarOpen } = useAppSelector((state) => state.layout);
@@ -38,6 +39,7 @@ const Header: React.FC<PathTypes> = ({ part }) => {
         <div className='header-flex'>
           <LeftHeader sidebarOpen={sidebarOpen} part={part} isJobOrProperty={isJobOrProperty} />
           <MainMenu />
+          <AuthAccountIcon />
           <div className='mobile-menu-toggle'>
             <Link scroll={false} href={Href} className={`toggle ${sidebarOpen ? "open" : ""}`} onClick={() => dispatch(setCartData())}>
               <i className='ri-menu-line' />

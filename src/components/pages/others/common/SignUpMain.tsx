@@ -21,8 +21,20 @@ const SignUpMain: FC<{ classname?: string; asPage?: boolean }> = ({ classname, a
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate inputs
     if (!email || !password) {
-      toast.error("Please enter email and password.");
+      toast.error("Please enter both email and password.");
+      return;
+    }
+
+    if (!email.includes("@")) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters long.");
       return;
     }
 
@@ -35,20 +47,24 @@ const SignUpMain: FC<{ classname?: string; asPage?: boolean }> = ({ classname, a
           data: fullName ? { full_name: fullName } : undefined,
         },
       });
-      if (error) throw error;
+      
+      if (error) {
+        toast.error(error.message || "Unable to create account. Please try again.");
+        setLoading(false);
+        return;
+      }
 
       if (data.session) {
-        toast.success("Account created.");
+        toast.success("Account created successfully! Redirecting...");
         router.push(RouteList.Auth.Account);
         return;
       }
 
       // If email confirmation is enabled, session can be null.
-      toast.success("Account created. Please check your email to confirm, then sign in.");
+      toast.success("Account created! Please check your email to confirm your account, then sign in.");
       router.push(RouteList.Auth.SignIn);
     } catch (err: any) {
-      toast.error(err?.message ?? "Unable to sign up.");
-    } finally {
+      toast.error(err?.message || "An unexpected error occurred. Please try again.");
       setLoading(false);
     }
   };
@@ -121,7 +137,7 @@ const SignUpMain: FC<{ classname?: string; asPage?: boolean }> = ({ classname, a
         </ul> */}
         <div className='signup-box'>
           <h6>{AlreadyAnAccount}</h6>
-          <Link href={asPage ? RouteList.Auth.SignIn : RouteList.Pages.Other.Login1}>{LogIn}</Link>
+          <Link href={RouteList.Auth.SignIn}>{LogIn}</Link>
         </div>
       </form>
     </div>

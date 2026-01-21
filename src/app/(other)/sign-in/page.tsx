@@ -1,13 +1,13 @@
-"use client";
-import LoginMain from "@/components/pages/others/common/LoginMain";
-import Footer from "@/layout/footer";
-import Header from "@/layout/header";
+import type { Metadata } from "next";
+import Login3Container from "@/components/pages/others/login3";
+
+export const metadata: Metadata = {
+  title: "Sign In",
+  description: "Sign in to your Exelero Yachting account.",
+  alternates: { canonical: "/sign-in" },
+};
 
 export default function SignInPage() {
-  return (<>
-  {/* <Header part={""} /> */}
-  <LoginMain asPage />
-  <Footer part={""} />
-  </>)
+  return <Login3Container />;
 }
 

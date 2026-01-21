@@ -131,7 +131,7 @@ const HeroStackSections = () => {
         <section
           key={slab.id}
           id={slab.id}
-          className={`exelero-hero-slab ${slab.single ? "is-single" : ""} ${slab.overlayVariant === "darker" ? "overlay-darker" : "overlay-dark"}`}
+          className={`exelero-hero-slab ${slab.single ? "is-single" : ""} ${"overlay-dark"}`}
         >
           <div className="slab-background" aria-hidden="true">
             {slab.backgroundVideo ? (

@@ -934,6 +934,47 @@ header {
         }
     }
 
+    .header-account-icon {
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+
+        .header-account-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+
+            i {
+                font-size: 22px;
+                color: #fff;
+            }
+
+            &:hover {
+                opacity: 0.9;
+                transform: translateY(-1px);
+                color: currentColor;
+            }
+        }
+
+        // On small screens keep it compact next to the hamburger
+        @media (max-width: 991px) {
+            margin-left: 6px;
+
+            .header-account-link {
+                width: 38px;
+                height: 38px;
+            }
+        }
+    }
+
     .header-toggle__brand {
         display: none;
         align-items: center;

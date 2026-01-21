@@ -47,7 +47,7 @@ const DynamicExceleroHero = ({
       
       <section
         ref={heroRef}
-        className={`exelero-hero-section ${currentSection.overlayVariant === "darker" ? "overlay-darker" : "overlay-dark"}`}
+        className={`exelero-hero-section ${"overlay-dark"}`}
         style={{ 
           minHeight: "100vh",
           position: "relative",

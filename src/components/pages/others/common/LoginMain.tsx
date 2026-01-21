@@ -25,24 +25,38 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate inputs
     if (!email || !password) {
-      toast.error("Please enter email and password.");
+      toast.error("Please enter both email and password.");
+      return;
+    }
+
+    if (!email.includes("@")) {
+      toast.error("Please enter a valid email address.");
       return;
     }
 
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      if (!data.session) {
-        toast.error("Sign in failed. Please try again.");
+      
+      if (error) {
+        toast.error("Invalid email or password. Please try again.");
+        setLoading(false);
         return;
       }
-      toast.success("Signed in successfully.");
+      
+      if (!data.session) {
+        toast.error("Sign in failed. Please try again.");
+        setLoading(false);
+        return;
+      }
+      
+      toast.success("Signed in successfully! Redirecting...");
       router.push(RouteList.Auth.Account);
-    } catch (err: any) {
-      toast.error(err?.message ?? "Unable to sign in.");
-    } finally {
+    } catch (err: any) {      
+      toast.error(err?.message || "An unexpected error occurred. Please try again.");
       setLoading(false);
     }
   };
@@ -98,7 +112,7 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
         </ul> */}
         <div className='signup-box'>
           <h6>{NotAccount}</h6>
-          <Link href={asPage ? RouteList.Auth.SignUp : RouteList.Pages.Other.SignUp1}>{SignUp}</Link>
+          <Link href={RouteList.Auth.SignUp}>{SignUp}</Link>
         </div>
       </form>
     </div>

@@ -2,6 +2,7 @@
 import Customizer from "@/layout/Customizer";
 import { PathSettings } from "@/types/Layout";
 import { setFavicon } from "@/utils/SetFavicon";
+import { CustomToaster } from "@/utils/Toaster";
 import Aos from "aos";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
@@ -35,6 +36,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
     return (
         <div>
             {children}
+            <CustomToaster/>
             {/* <Customizer part={segments} /> */}
         </div>
     );

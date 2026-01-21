@@ -1,8 +1,8 @@
-"use client";
+import UserDashboardContainer from "@/components/pages/others/userDashboard";
 
-import AccountClient from "@/components/pages/account/AccountClient";
+const AccountPage = () => {
+  return <UserDashboardContainer />;
+};
 
-export default function AccountPage() {
-  return <AccountClient />;
-}
+export default AccountPage;
 

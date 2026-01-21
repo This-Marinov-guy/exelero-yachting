@@ -35,7 +35,7 @@ const ExceleroHero = ({
 }: ExceleroHeroProps) => {
   return (
     <section
-      className={`exelero-hero-section ${overlayVariant === "darker" ? "overlay-darker" : "overlay-dark"} ${separator ? "has-separator" : ""}`}
+      className={`exelero-hero-section ${"overlay-dark"}`}
     >
       <div className="hero-background" aria-hidden="true">
         {backgroundVideo ? (

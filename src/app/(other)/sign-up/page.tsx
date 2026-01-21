@@ -1,13 +1,13 @@
-"use client";
+import type { Metadata } from "next";
+import Signup3Container from "@/components/pages/others/signup3";
 
-import SignUpMain from "@/components/pages/others/common/SignUpMain";
-import Footer from "@/layout/footer";
+export const metadata: Metadata = {
+  title: "Sign Up",
+  description: "Create your account with Exelero Yachting.",
+  alternates: { canonical: "/sign-up" },
+};
 
 export default function SignUpPage() {
-  return (<>
-  {/* <Header part={""} /> */}
-  <SignUpMain asPage />
-  <Footer part={""} />
-  </>)
+  return <Signup3Container />;
 }
 

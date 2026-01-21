@@ -18,7 +18,7 @@ const Login3Container = () => {
           </Col>
           <Col lg={6} className='p-0'>
             <div className='login3-image'>
-              <RatioImage src={`${ImagePath}/other/s-2.jpg`} alt='s2' className='bg-img' />
+              <RatioImage src={`${ImagePath}/other/auth/login.jpg`} alt='s2' className='bg-img' />
               <div className='login3-content'>
                 <Link href={RouteList.Home.CarDemo1} className='login-logo'>
                   <RatioImage src={`${ImagePath}/logo/1.png`} alt='logo' />

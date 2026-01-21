@@ -3,8 +3,8 @@ import { Toaster } from "sonner";
 export const CustomToaster = () => (
   <Toaster
     richColors
-    position="bottom-right"
-    duration={1800}
+    position="top-right"
+    duration={5000}
     toastOptions={{
       style: {
         fontWeight: 600,
