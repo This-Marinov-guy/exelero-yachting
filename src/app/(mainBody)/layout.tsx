@@ -35,11 +35,12 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
 
   useEffect(() => {
     document.body.className = className;
+    document.body.classList.toggle("home-scrollbar-hidden", pathname === "/");
     setFavicon("/assets/images/favicons/favicon.ico");
     Aos.init({ once: true });
 
     return () => setFavicon("/assets/images/favicons/favicon.ico");
-  }, [className]);
+  }, [className, pathname]);
   
   const isJobOrProperty = ["car-2", "job-3", "job-2", "property-2"].some((item) => firstPart.includes(item));
   const secondPart = segments[1] || ""; // Get the second segment
