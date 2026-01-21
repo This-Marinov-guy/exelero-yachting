@@ -89,12 +89,12 @@ const DynamicExceleroHero = ({
               data-aos-duration={500}
             >
               <h1 className="hero-title">{currentSection.title}</h1>
-              {currentSection.subtitle && (
+              {/* {currentSection.subtitle && (
                 <h2 className="hero-subtitle">{currentSection.subtitle}</h2>
               )}
               {currentSection.description && (
                 <p className="hero-description">{currentSection.description}</p>
-              )}
+              )} */}
             </div>
 
             <div 

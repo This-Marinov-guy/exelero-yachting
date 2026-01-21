@@ -52,8 +52,8 @@ const ExceleroHero = ({
         <div className="hero-content" data-aos="fade-up" data-aos-duration={700}>
           <div className="hero-header">
             <h1 className="hero-title">{title}</h1>
-            {subtitle && <h2 className="hero-subtitle">{subtitle}</h2>}
-            {description && <p className="hero-description">{description}</p>}
+            {/* {subtitle && <h2 className="hero-subtitle">{subtitle}</h2>} */}
+            {/* {description && <p className="hero-description">{description}</p>} */}
           </div>
 
           <div className={`geo-panels ${single ? "geo-panels--single" : ""}`} style={{display: "flex", justifyContent: "center", overflowY: "hidden"}}>

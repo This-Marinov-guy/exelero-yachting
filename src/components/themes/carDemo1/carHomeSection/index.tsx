@@ -65,7 +65,7 @@ const CarHomeSection = () => {
   return (
     <>
       <DynamicExceleroHero
-        backgroundVideo="/assets/video/hero/main.m4v"
+        backgroundVideo="/assets/video/hero/performance.m4v"
         backgroundPoster="/assets/images/hero/x-yachts.jpg"
         sections={heroSections}
       />
