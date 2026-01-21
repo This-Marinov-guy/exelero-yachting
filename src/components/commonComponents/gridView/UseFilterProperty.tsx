@@ -37,7 +37,8 @@ const UseFilterProperty = ({ value }: FilterProductsType) => {
   }, [value, propertyType, sortBy, popular, priceStatus, bedsRooms, squareFeetStatus, yearBuiltStatus, amenities]);
 
   useEffect(() => {
-    const newSearchParams = new URLSearchParams(searchParams);
+    const baseParams = searchParams ? searchParams.toString() : "";
+    const newSearchParams = new URLSearchParams(baseParams);
 
     ["property", "price", "beds", "sqft", "year", "ameniti"].forEach((name) => newSearchParams.delete(name));
 
@@ -48,7 +49,7 @@ const UseFilterProperty = ({ value }: FilterProductsType) => {
     if (yearBuiltStatus) newSearchParams.set("year", `${yearBuiltStatus[0]}-${yearBuiltStatus[1]}`);
     amenities.forEach((ameniti) => newSearchParams.append("ameniti", ameniti));
 
-    if (newSearchParams.toString() !== searchParams.toString()) {
+    if (newSearchParams.toString() !== baseParams) {
       router.push(`${pathname}?${newSearchParams}`);
     }
   }, [amenities, bedsRooms, pathname, priceStatus, propertyType, router, searchParams, squareFeetStatus, yearBuiltStatus]);

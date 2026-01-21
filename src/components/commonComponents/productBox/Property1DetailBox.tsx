@@ -14,7 +14,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 const Property1DetailBox: FC<ProductCardType> = ({ data, view, wishlist, propertyId }) => {
   const dispatch = useAppDispatch();
-  const location = usePathname();
+  const location = usePathname() || "";
 
   const handleWishlist = () => toast.success("Added to Wishlist successfully");
 

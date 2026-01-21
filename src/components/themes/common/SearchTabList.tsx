@@ -20,7 +20,7 @@ const SearchTabList: FC<SearchTabListType> = ({ showTab, datePicker, scrollDown,
   const [selected, setSelected] = useState(HomeTabData.filter(({ id }) => showTab?.includes(id)));
   const [basicTab, setBasicTab] = useState(1);
   const dispatch = useAppDispatch();
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
   const [path] = pathname.split("/").slice(1);
 
   const dropdownRefs = selected.map(() => UseOutsideDropdown(false));

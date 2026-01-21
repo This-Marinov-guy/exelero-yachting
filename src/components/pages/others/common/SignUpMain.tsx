@@ -10,7 +10,7 @@ import { Button } from "reactstrap";
 
 const SignUpMain: FC<{ classname?: string }> = ({ classname }) => {
 
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
   const dispatch = useAppDispatch();
   const segments = pathname.split("/").slice(1);
 

@@ -11,7 +11,7 @@ import { Rating } from "react-simple-star-rating";
 import { Label } from "reactstrap";
 
 const Job7DetailBox: FC<ProductCardType> = ({ data }) => {
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
   const segments = pathname.split("/").slice(1);
   return (
     <article className='job-box'>

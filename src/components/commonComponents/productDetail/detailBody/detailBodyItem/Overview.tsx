@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import React, { FC, Fragment } from "react";
 
 const OverviewSection: FC<DetailBodyItemType> = ({ label, type }) => {
-  const pathname = usePathname();
+  const pathname = usePathname() || "";
   const Part = pathname.split("/").map((item) => item.replace(SymbolRegex, " "));
 
   return (

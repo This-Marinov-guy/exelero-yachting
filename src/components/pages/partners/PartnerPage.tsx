@@ -7,8 +7,9 @@ import { Button, Col, Container, Row } from "reactstrap";
 import { ArrowRight } from "iconsax-react";
 
 const PartnerPage: React.FC = () => {
-  const { partnerId } = useParams();
-  const partner: Partner | undefined = partnerId && typeof partnerId === 'string' ? Partners[partnerId] : undefined;
+  const params = useParams();
+  const partnerId = params?.["partnerId"];
+  const partner: Partner | undefined = partnerId && typeof partnerId === "string" ? Partners[partnerId] : undefined;
 
   if (!partner) {
     return (
