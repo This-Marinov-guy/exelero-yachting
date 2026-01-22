@@ -2600,7 +2600,6 @@ main {
           
           @media (max-width: 767px) {
             max-width: 360px;
-            width: 100%;
             margin-inline: auto;
             grid-template-columns: 1fr;
             gap: 10px;
@@ -2639,7 +2638,7 @@ main {
             // box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 
             @media (max-width: 575px) {
-              min-height: 120px;
+              max-width: 120px;
             }
 
             .geo-thumb-img {
@@ -2663,6 +2662,7 @@ main {
 
           .geo-title {
             margin: 0;
+            height: 50px;
             text-align: center;
             color: rgba(var(--white), 1);
             font-size: 18px;
