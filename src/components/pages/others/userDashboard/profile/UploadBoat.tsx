@@ -339,16 +339,25 @@ const UploadBoat = () => {
         }
     };
 
-    const handleDragStart = (index: number) => {
+    const handleDragStart = (e: React.DragEvent, index: number) => {
         setDraggedIndex(index);
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/html", index.toString());
     };
 
     const handleDragOver = (e: React.DragEvent, index: number) => {
         e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = "move";
+    };
+
+    const handleDragEnd = () => {
+        setDraggedIndex(null);
     };
 
     const handleDrop = (e: React.DragEvent, dropIndex: number) => {
         e.preventDefault();
+        e.stopPropagation();
 
         if (draggedIndex === null || draggedIndex === dropIndex) {
             setDraggedIndex(null);
@@ -876,12 +885,13 @@ const UploadBoat = () => {
                       <div
                         key={uploadedImage.filePath}
                         className="col-md-3 col-sm-4 col-6"
-                        draggable
-                        onDragStart={() => handleDragStart(index)}
+                        draggable={!uploadingImages.has(index)}
+                        onDragStart={(e) => handleDragStart(e, index)}
                         onDragOver={(e) => handleDragOver(e, index)}
+                        onDragEnd={handleDragEnd}
                         onDrop={(e) => handleDrop(e, index)}
                         style={{
-                          cursor: "move",
+                          cursor: uploadingImages.has(index) ? "default" : "move",
                           opacity: draggedIndex === index ? 0.5 : 1,
                         }}
                       >
@@ -948,8 +958,12 @@ const UploadBoat = () => {
                                                         <button
                                                             type="button"
                                                             className="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-                                                            onClick={() => removeImage(index)}
-                                                            style={{ zIndex: 10, padding: "2px 4px", fontSize: "10px" }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                removeImage(index);
+                                                            }}
+                                                            onMouseDown={(e) => e.stopPropagation()}
+                                                            style={{ zIndex: 100 }}
                                                         >
                                                             <i className="ri-close-line" />
                                                         </button>
@@ -960,7 +974,11 @@ const UploadBoat = () => {
                                                         <button
                                                             type="button"
                                                             className="btn btn-sm btn-warning position-absolute bottom-0 start-0 m-1"
-                                                            onClick={() => setAsMainImage(index)}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setAsMainImage(index);
+                                                            }}
+                                                            onMouseDown={(e) => e.stopPropagation()}
                                                             style={{ zIndex: 10 }}
                                                         >
                                                             <i className="ri-star-line" />
