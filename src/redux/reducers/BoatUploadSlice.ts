@@ -17,12 +17,15 @@ const loadFromStorage = () => {
 const saveToStorage = (state: BoatUploadState) => {
   if (typeof window === "undefined") return;
   try {
-    // Don't store File objects, only metadata
+    // Don't store File objects, only metadata and uploaded URLs
     const dataToStore = {
       formData: state.formData,
       imageMetadata: state.imageMetadata,
+      uploadedImages: state.uploadedImages,
+      uploadFolderName: state.uploadFolderName,
       mainImageIndex: state.mainImageIndex,
       brochureFileName: state.brochureFileName,
+      brochureUrl: state.brochureUrl,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
   } catch (error) {
@@ -35,6 +38,13 @@ export interface ImageMetadata {
   size: number;
   type: string;
   order: number;
+}
+
+export interface UploadedImage {
+  url: string;
+  order: number;
+  name: string;
+  filePath: string; // Path in storage bucket
 }
 
 export interface BoatUploadState {
@@ -62,8 +72,11 @@ export interface BoatUploadState {
     exterior_description: string;
   };
   imageMetadata: ImageMetadata[];
+  uploadedImages: UploadedImage[]; // Images already uploaded to storage
+  uploadFolderName: string | null; // Unique folder name for this upload session
   mainImageIndex: number;
   brochureFileName: string | null;
+  brochureUrl: string | null; // URL of uploaded brochure
 }
 
 const storedData = loadFromStorage();
@@ -93,8 +106,11 @@ const initialState: BoatUploadState = storedData || {
     exterior_description: "",
   },
   imageMetadata: [],
+  uploadedImages: [],
+  uploadFolderName: null,
   mainImageIndex: 0,
   brochureFileName: null,
+  brochureUrl: null,
 };
 
 const BoatUploadSlice = createSlice({
@@ -164,11 +180,84 @@ const BoatUploadSlice = createSlice({
       state.brochureFileName = action.payload;
       saveToStorage(state);
     },
+    setBrochureUrl: (state, action: PayloadAction<string | null>) => {
+      state.brochureUrl = action.payload;
+      saveToStorage(state);
+    },
+    setUploadFolderName: (state, action: PayloadAction<string | null>) => {
+      state.uploadFolderName = action.payload;
+      saveToStorage(state);
+    },
+    addUploadedImage: (state, action: PayloadAction<UploadedImage>) => {
+      state.uploadedImages.push(action.payload);
+      // Sort by order
+      state.uploadedImages.sort((a, b) => a.order - b.order);
+      saveToStorage(state);
+    },
+    removeUploadedImage: (state, action: PayloadAction<number>) => {
+      const removed = state.uploadedImages.splice(action.payload, 1)[0];
+      // Reorder remaining images
+      state.uploadedImages.forEach((img, index) => {
+        img.order = index;
+      });
+      // Adjust main image index if needed
+      if (state.mainImageIndex === action.payload && state.uploadedImages.length > 0) {
+        state.mainImageIndex = 0;
+      } else if (state.mainImageIndex > action.payload) {
+        state.mainImageIndex = state.mainImageIndex - 1;
+      }
+      // Also remove from metadata
+      state.imageMetadata.splice(action.payload, 1);
+      state.imageMetadata.forEach((img, index) => {
+        img.order = index;
+      });
+      saveToStorage(state);
+    },
+    reorderUploadedImages: (state, action: PayloadAction<{ fromIndex: number; toIndex: number }>) => {
+      const { fromIndex, toIndex } = action.payload;
+      const [moved] = state.uploadedImages.splice(fromIndex, 1);
+      state.uploadedImages.splice(toIndex, 0, moved);
+      // Update order values
+      state.uploadedImages.forEach((img, index) => {
+        img.order = index;
+      });
+      // Also reorder metadata
+      const [movedMeta] = state.imageMetadata.splice(fromIndex, 1);
+      state.imageMetadata.splice(toIndex, 0, movedMeta);
+      state.imageMetadata.forEach((img, index) => {
+        img.order = index;
+      });
+      // Update main image index if needed
+      if (state.mainImageIndex === fromIndex) {
+        state.mainImageIndex = toIndex;
+      } else if (state.mainImageIndex === toIndex) {
+        state.mainImageIndex = fromIndex;
+      } else if (fromIndex < state.mainImageIndex && toIndex >= state.mainImageIndex) {
+        state.mainImageIndex = state.mainImageIndex - 1;
+      } else if (fromIndex > state.mainImageIndex && toIndex <= state.mainImageIndex) {
+        state.mainImageIndex = state.mainImageIndex + 1;
+      }
+      saveToStorage(state);
+    },
+    setUploadedImages: (state, action: PayloadAction<UploadedImage[]>) => {
+      state.uploadedImages = action.payload;
+      // Sync metadata
+      state.imageMetadata = action.payload.map((img, index) => ({
+        name: img.name,
+        size: 0, // Size not needed for uploaded images
+        type: img.name.split(".").pop() || "image/jpeg",
+        order: index,
+      }));
+      saveToStorage(state);
+    },
     resetForm: (state) => {
       state.formData = initialState.formData;
       state.imageMetadata = [];
+      state.uploadedImages = [];
+      state.uploadFolderName = null;
       state.mainImageIndex = 0;
       state.brochureFileName = null;
+      state.brochureUrl = null;
       localStorage.removeItem(STORAGE_KEY);
     },
   },
@@ -183,6 +272,12 @@ export const {
   reorderImages,
   setMainImageIndex,
   setBrochureFileName,
+  setBrochureUrl,
+  setUploadFolderName,
+  addUploadedImage,
+  removeUploadedImage,
+  reorderUploadedImages,
+  setUploadedImages,
   resetForm,
 } = BoatUploadSlice.actions;
 
