@@ -37,10 +37,11 @@ CREATE TABLE IF NOT EXISTS boat_data (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Broker data table (one-to-many relationship with boats)
+-- Broker data table (one-to-many relationship with boats, one-to-many relationship with auth.users)
 CREATE TABLE IF NOT EXISTS broker_data (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     boat_id UUID NOT NULL REFERENCES boats(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     name VARCHAR(512) NOT NULL,
     email VARCHAR(512) NOT NULL,
     phone VARCHAR(50),
@@ -73,12 +74,23 @@ CREATE TABLE IF NOT EXISTS boat_images (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Profile image table (one-to-one relationship with auth.users)
+CREATE TABLE IF NOT EXISTS profile_image (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID UNIQUE NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    image_url VARCHAR(1000) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_boat_data_boat_id ON boat_data(boat_id);
 CREATE INDEX IF NOT EXISTS idx_broker_data_boat_id ON broker_data(boat_id);
+CREATE INDEX IF NOT EXISTS idx_broker_data_user_id ON broker_data(user_id);
 CREATE INDEX IF NOT EXISTS idx_inqueries_boat_id ON inqueries(boat_id);
 CREATE INDEX IF NOT EXISTS idx_boat_images_boat_id ON boat_images(boat_id);
 CREATE INDEX IF NOT EXISTS idx_boat_images_display_order ON boat_images(boat_id, display_order);
+CREATE INDEX IF NOT EXISTS idx_profile_image_user_id ON profile_image(user_id);
 
 -- Create function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -103,6 +115,9 @@ CREATE TRIGGER update_inqueries_updated_at BEFORE UPDATE ON inqueries
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_boat_images_updated_at BEFORE UPDATE ON boat_images
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_profile_image_updated_at BEFORE UPDATE ON profile_image
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Add email validation constraint for broker_data

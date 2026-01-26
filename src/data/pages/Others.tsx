@@ -645,12 +645,9 @@ export const FAQAccordionData = [
 ];
 
 export const SidebarItems = [
-  { id: "dashboard", label: "Dashboard" },
-  { id: "listing", label: "My Properties" },
-  { id: "property", label: "Create Property" },
-  { id: "profile", label: "My Profile" },
-  { id: "favorites", label: "Favorites" },
-  { id: "privacy", label: "Privacy" },
+  { id: "dealer-info", label: "Dealer Info", locked: false },
+  { id: "upload-boat", label: "Upload Boat", locked: true },
+  { id: "boats-listing", label: "Boats Listing", locked: true },
 ];
 
 export const SaleData = [

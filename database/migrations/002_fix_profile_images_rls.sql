@@ -1,0 +1,85 @@
+-- Migration: Fix Profile Images RLS Policies
+-- Date: 2024
+-- Description: Fixes RLS policies for profile_images bucket to resolve upload issues
+-- 
+-- IMPORTANT: Storage RLS policies cannot be created via SQL in Supabase.
+-- You must create them through the Supabase Dashboard or Management API.
+-- 
+-- This file documents the required policies. See instructions below.
+
+-- ============================================================================
+-- HOW TO SET UP STORAGE RLS POLICIES IN SUPABASE DASHBOARD
+-- ============================================================================
+-- 
+-- 1. Go to your Supabase Dashboard
+-- 2. Navigate to: Storage > Policies
+-- 3. Select the 'profile_images' bucket
+-- 4. Click "New Policy" for each policy below
+-- 
+-- OR use the Supabase Management API (requires service_role key)
+-- 
+-- ============================================================================
+-- REQUIRED POLICIES FOR profile_images BUCKET
+-- ============================================================================
+
+-- Policy 1: Users can upload their own profile images
+-- Policy Name: "Users can upload own profile images"
+-- Allowed Operation: INSERT
+-- Target Roles: authenticated
+-- Policy Definition (WITH CHECK):
+--   bucket_id = 'profile_images' AND
+--   ((storage.foldername(name))[1] = auth.uid()::text OR name LIKE (auth.uid()::text || '/%'))
+
+-- Policy 2: Users can update their own profile images
+-- Policy Name: "Users can update own profile images"
+-- Allowed Operation: UPDATE
+-- Target Roles: authenticated
+-- Policy Definition (USING):
+--   bucket_id = 'profile_images' AND
+--   ((storage.foldername(name))[1] = auth.uid()::text OR name LIKE (auth.uid()::text || '/%'))
+-- Policy Definition (WITH CHECK):
+--   bucket_id = 'profile_images' AND
+--   ((storage.foldername(name))[1] = auth.uid()::text OR name LIKE (auth.uid()::text || '/%'))
+
+-- Policy 3: Users can delete their own profile images
+-- Policy Name: "Users can delete own profile images"
+-- Allowed Operation: DELETE
+-- Target Roles: authenticated
+-- Policy Definition (USING):
+--   bucket_id = 'profile_images' AND
+--   ((storage.foldername(name))[1] = auth.uid()::text OR name LIKE (auth.uid()::text || '/%'))
+
+-- Policy 4: Public can view profile images
+-- Policy Name: "Public can view profile images"
+-- Allowed Operation: SELECT
+-- Target Roles: public
+-- Policy Definition (USING):
+--   bucket_id = 'profile_images'
+
+-- ============================================================================
+-- ALTERNATIVE: Create policies via Supabase Management API
+-- ============================================================================
+-- 
+-- You can use the Supabase Management API to create policies programmatically.
+-- This requires the service_role key (keep it secret!).
+-- 
+-- Example using curl:
+-- 
+-- curl -X POST 'https://api.supabase.com/v1/projects/{project_ref}/storage/policies' \
+--   -H "Authorization: Bearer {service_role_key}" \
+--   -H "Content-Type: application/json" \
+--   -d '{
+--     "bucket_id": "profile_images",
+--     "name": "Users can upload own profile images",
+--     "definition": "bucket_id = '\''profile_images'\'' AND ((storage.foldername(name))[1] = auth.uid()::text OR name LIKE (auth.uid()::text || '\''/%'\''))",
+--     "check": "bucket_id = '\''profile_images'\'' AND ((storage.foldername(name))[1] = auth.uid()::text OR name LIKE (auth.uid()::text || '\''/%'\''))",
+--     "operation": "INSERT",
+--     "roles": ["authenticated"]
+--   }'
+--
+-- ============================================================================
+-- NOTE: Path Structure
+-- ============================================================================
+-- File paths in the bucket should be: {user_id}/{filename}
+-- Example: "550e8400-e29b-41d4-a716-446655440000/1234567890.jpg"
+-- The RLS policy checks that the first folder matches auth.uid()

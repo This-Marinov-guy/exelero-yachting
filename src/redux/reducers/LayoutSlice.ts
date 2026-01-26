@@ -13,7 +13,7 @@ const initialState = {
   testDriverModal: false,
   offerPriceModal: false,
   UserDashboardSidebar: false,
-  activeTab: "dashboard",
+  activeTab: "dealer-info",
   logoutModal: false,
   moreDetailModal: false,   
   personInfoModal: false,
