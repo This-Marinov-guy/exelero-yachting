@@ -4,7 +4,7 @@ import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { Button, Card, CardBody, CardTitle, Modal, ModalBody, ModalHeader } from "reactstrap";
 import CommonInput from "@/components/commonComponents/CommonInput";
-import { Edit2, Trash, Add } from "iconsax-react";
+import { Edit, Trash2, Plus } from "lucide-react";
 import CloseBtn from "@/components/commonComponents/CloseBtn";
 
 type BrokerData = {
@@ -209,7 +209,7 @@ const DealerInfo = ({ onDataChange }: DealerInfoProps) => {
               setShowForm(true);
             }}
           >
-            <i className="ri-add-line" /> Add Dealer
+            <Plus className="iconsax" style={{ width: '16px', height: '16px' }} /> Add Dealer
           </Button>
         )}
       </div>
@@ -291,7 +291,7 @@ const DealerInfo = ({ onDataChange }: DealerInfoProps) => {
                       onClick={() => handleEdit(item)}
                       aria-label="Edit"
                     >
-                      <i className="ri-edit-line" />
+                      <Edit className="iconsax" style={{ width: '16px', height: '16px' }} />
                     </button>
                     <button
                       type="button"
@@ -299,7 +299,7 @@ const DealerInfo = ({ onDataChange }: DealerInfoProps) => {
                       onClick={() => handleDeleteClick(item)}
                       aria-label="Delete"
                     >
-                      <i className="ri-delete-bin-line" />
+                      <Trash2 className="iconsax" style={{ width: '16px', height: '16px' }} />
                     </button>
                   </div>
                 </div>
@@ -318,7 +318,7 @@ const DealerInfo = ({ onDataChange }: DealerInfoProps) => {
             <ModalBody>
               <div className='delete-confirmation-content text-center'>
                 <div className='mb-4'>
-                  <i className='ri-delete-bin-line' style={{ fontSize: '48px', color: 'rgba(var(--error), 1)' }} />
+                  <Trash2 style={{ width: '48px', height: '48px', color: 'rgba(var(--error), 1)' }} />
                 </div>
                 <h4 className='mb-3'>Delete Dealer Information?</h4>
                 <p className='mb-4 text-muted'>

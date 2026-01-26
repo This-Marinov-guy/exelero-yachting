@@ -1,7 +1,7 @@
 import { SVGPath } from "@/constants";
 import { ProductCardType } from "@/types/Product";
 import { RouteList } from "@/utils/RouteList";
-import { Clock, Location } from "iconsax-react";
+import { Clock, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
@@ -67,7 +67,7 @@ const Job8DetailBox: FC<ProductCardType> = ({ data }) => {
         <div className='post-time'>
           <div className='post-flex'>
             <div className='post-item'>
-              <Location className='iconsax' />
+              <MapPin className='iconsax' />
               <span>{data.location}</span>
             </div>
             <div className='post-item'>

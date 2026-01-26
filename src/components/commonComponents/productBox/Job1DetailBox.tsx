@@ -4,7 +4,7 @@ import { deleteProduct } from "@/redux/reducers/ProductSlice";
 import { ProductCardType } from "@/types/Product";
 import { dynamicNumber } from "@/utils";
 import { RouteList } from "@/utils/RouteList";
-import { Clock, Location, Trash } from "iconsax-react";
+import { Clock, MapPin, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { FC } from "react";
@@ -33,7 +33,7 @@ const Job1DetailBox: FC<ProductCardType> = ({ data, wishlist,jobId }) => {
 
         {wishlist ? (
           <Link href={Href} scroll={false} className='remove-button' onClick={() => jobId && handleDelete(jobId)}>
-            <Trash className='iconsax' />
+            <Trash2 className='iconsax' />
           </Link>
         ) : (
           <Link href={Href} scroll={false} onClick={() => toast.success("successfully added in wishlist !")} className='save-btn'>
@@ -54,7 +54,7 @@ const Job1DetailBox: FC<ProductCardType> = ({ data, wishlist,jobId }) => {
       <p className='text-wrap'>{data.description}</p>
       <ul className='post-time'>
         <li>
-          <Location className='iconsax'/>
+          <MapPin className='iconsax'/>
           <span>{data.location}</span>
         </li>
         <li>

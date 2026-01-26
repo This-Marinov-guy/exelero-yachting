@@ -7,6 +7,7 @@ import UseStickyBar from "@/utils/UseStickyBar";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Container } from "reactstrap";
+import { Menu } from "lucide-react";
 import LeftHeader from "./leftHeader/Index";
 import MainMenu from "./mainMenu";
 import RightHeader from "./rightHeader/Index";
@@ -42,7 +43,7 @@ const Header: React.FC<PathTypes> = ({ part }) => {
           <AuthAccountIcon />
           <div className='mobile-menu-toggle'>
             <Link scroll={false} href={Href} className={`toggle ${sidebarOpen ? "open" : ""}`} onClick={() => dispatch(setCartData())}>
-              <i className='ri-menu-line' />
+              <Menu className='iconsax' style={{ width: '24px', height: '24px' }} />
             </Link>
           </div>
           {/* <RightHeader part={part} isJobOrProperty={isJobOrProperty} /> */}

@@ -2353,124 +2353,221 @@
 
       // Boats listing section styles
       .boats-listing-section {
-        .table {
+        // Modern table styling with shadcn/ui
+        [data-radix-popper-content-wrapper] {
+          z-index: 50;
+        }
+
+        // Toggle switch styling
+        .peer {
+          &:checked {
+            background-color: rgba(var(--theme-color), 1) !important;
+          }
+        }
+
+        // Table container
+        .rounded-lg {
           background: rgba(var(--white), 1);
-          border-radius: 8px;
+          border: 1px solid rgba(var(--border-color), 1);
+          box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+          width: 100%;
           overflow: hidden;
+        }
 
-          thead {
-            background: rgba(var(--theme-color), 0.1);
-            th {
-              font-weight: 600;
-              color: rgba(var(--title-color), 1);
-              padding: 12px;
-              border-bottom: 2px solid rgba(var(--border-color), 1);
+        // Table wrapper
+        table {
+          width: 100%;
+          table-layout: auto;
+          border-collapse: collapse;
+        }
+
+        // Table header
+        thead {
+          background: rgba(var(--theme-color), 0.05);
+          
+          th {
+            font-weight: 600;
+            color: rgba(var(--title-color), 1);
+            padding: 16px 12px;
+            border-bottom: 1px solid rgba(var(--border-color), 1);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            
+            &:first-child {
+              padding-left: 16px;
+              width: 100px;
+            }
+            
+            &:nth-child(2) {
+              width: 140px;
+            }
+            
+            &:nth-child(3),
+            &:nth-child(4) {
+              white-space: normal;
+            }
+            
+            &:last-child {
+              padding-right: 16px;
+              width: 120px;
             }
           }
+        }
 
-          tbody {
-            tr {
-              transition: background-color 0.2s ease;
+        // Table body rows
+        tbody {
+          tr {
+            transition: all 0.2s ease;
+            border-bottom: 1px solid rgba(var(--border-color), 0.3);
 
-              &:hover {
-                background-color: rgba(var(--theme-color), 0.05);
+            &:hover {
+              background-color: rgba(var(--theme-color), 0.03);
+            }
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            td {
+              padding: 16px 12px;
+              vertical-align: middle;
+              color: rgba(var(--content-color), 1);
+              
+              &:first-child {
+                padding-left: 16px;
               }
-
-              td {
-                padding: 12px;
-                vertical-align: middle;
-                border-bottom: 1px solid rgba(var(--border-color), 0.5);
+              
+              &:last-child {
+                padding-right: 16px;
+              }
+              
+              // Title and Dealer columns - allow text to wrap and fill space
+              &:nth-child(3),
+              &:nth-child(4) {
+                overflow: visible;
+                word-wrap: break-word;
+                max-width: none;
               }
             }
           }
+        }
 
-          // Toggle switch styling
-          .form-check.form-switch {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        // Toggle switch styling
+        .form-check.form-switch {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0;
+
+          .form-check-input {
+            width: 3em;
+            height: 1.5em;
+            cursor: pointer;
             margin: 0;
 
-            .form-check-input {
-              width: 3em;
-              height: 1.5em;
-              cursor: pointer;
-              margin: 0;
+            &:checked {
+              background-color: rgba(var(--theme-color), 1);
+              border-color: rgba(var(--theme-color), 1);
+            }
 
-              &:checked {
-                background-color: rgba(var(--theme-color), 1);
-                border-color: rgba(var(--theme-color), 1);
-              }
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+            }
+          }
+        }
 
-              &:disabled {
-                opacity: 0.6;
-                cursor: not-allowed;
-              }
+        // Bootstrap dropdown menu styling - scoped to boats listing
+        .boats-listing-dropdown-wrapper {
+          position: relative;
+
+          .btn-ghost {
+            &:hover {
+              background-color: rgba(var(--theme-color), 0.08) !important;
+              color: rgba(var(--theme-color), 1) !important;
+            }
+
+            &:focus {
+              box-shadow: none !important;
+            }
+          }
+        }
+
+        // DropdownMenu styling
+        .boats-listing-dropdown {
+          background: rgba(var(--white), 1) !important;
+          border: 1px solid rgba(var(--border-color), 1) !important;
+          border-radius: 8px !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+          padding: 8px !important;
+          min-width: 160px !important;
+          margin-top: 4px !important;
+        }
+
+        // DropdownItem styling
+        .boats-listing-dropdown-item {
+          padding: 10px 12px !important;
+          margin: 1px 0 !important;
+          border-radius: 6px !important;
+          background-color: transparent !important;
+          display: flex !important;
+          align-items: center !important;
+          gap: 10px !important;
+          font-size: 14px !important;
+          color: rgba(var(--title-color), 1) !important;
+          transition: all 0.2s ease !important;
+          cursor: pointer !important;
+          min-height: 36px !important;
+          border: none !important;
+
+          &:hover,
+          &:focus,
+          &:active {
+            background-color: rgba(var(--theme-color), 0.08) !important;
+            color: rgba(var(--theme-color), 1) !important;
+          }
+
+          // Danger styling for delete
+          &.boats-listing-dropdown-item-danger {
+            color: rgba(var(--error), 1) !important;
+
+            &:hover,
+            &:focus,
+            &:active {
+              background-color: rgba(var(--error), 0.1) !important;
+              color: rgba(var(--error), 1) !important;
             }
           }
 
-          // Dropdown menu styling
-          .dropdown {
-            .btn {
-              padding: 4px 8px;
-              border: none;
-              background: transparent;
-              color: rgba(var(--title-color), 1);
-
-              &:hover {
-                background-color: rgba(var(--theme-color), 0.1);
-                color: rgba(var(--theme-color), 1);
-              }
-
-              .iconsax {
-                width: 20px;
-                height: 20px;
-              }
-            }
-
-            .dropdown-menu {
-              min-width: 150px;
-              padding: 4px 0;
-              border: 1px solid rgba(var(--border-color), 1);
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-
-              .dropdown-item {
-                padding: 8px 16px;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                cursor: pointer;
-                transition: background-color 0.2s ease;
-
-                &:hover {
-                  background-color: rgba(var(--theme-color), 0.1);
-                }
-
-                &.text-danger {
-                  color: rgba(var(--error), 1) !important;
-
-                  &:hover {
-                    background-color: rgba(var(--error), 0.1);
-                  }
-                }
-
-                .iconsax {
-                  width: 16px;
-                  height: 16px;
-                  flex-shrink: 0;
-                }
-
-                span {
-                  font-size: 14px;
-                }
-
-                &:disabled {
-                  opacity: 0.6;
-                  cursor: not-allowed;
-                }
-              }
-            }
+          // Icon spacing
+          svg {
+            width: 16px !important;
+            height: 16px !important;
+            flex-shrink: 0 !important;
+            margin-right: 0 !important;
           }
+
+          // Text spacing
+          span {
+            flex: 1;
+          }
+
+          // Disabled state
+          &:disabled,
+          &[disabled] {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+          }
+        }
+
+        // Dropdown divider
+        .boats-listing-dropdown .dropdown-divider {
+          height: 1px !important;
+          background-color: rgba(var(--border-color), 1) !important;
+          margin: 6px 0 !important;
+          opacity: 1 !important;
         }
       }
 
@@ -2708,80 +2805,6 @@
   #jobChart {
     [dir="rtl"] & {
       direction: ltr;
-    }
-  }
-
-  .map-card {
-    height: 100%;
-    box-shadow: 0px 9px 20px rgba(var(--title-color), 0.05);
-
-    img {
-      border-radius: 8px;
-      height: 100%;
-    }
-  }
-
-  .property-card {
-    background: linear-gradient(90deg, rgba(var(--theme-color), 1) 0%, rgba(0, 174, 249, 1) 100%);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding-right: 0;
-    position: relative;
-    z-index: 0;
-
-    [dir="rtl"] & {
-      padding-left: 0;
-      padding-right: 15px;
-    }
-
-    .card-title {
-      .btn-solid {
-        background: white;
-        color: rgba(var(--theme-color), 1);
-        padding: calc(5px + (10 - 5) * ((100vw - 320px) / (1920 - 320))) calc(10px + (15 - 10) * ((100vw - 320px) / (1920 - 320)));
-        font-size: calc(16px + (18 - 16) * ((100vw - 320px) / (1920 - 320)));
-
-        &:active {
-          background: transparent !important;
-          border-color: #fff !important;
-          color: #fff !important;
-        }
-
-        &:hover {
-          background: transparent;
-          border-color: #fff;
-          color: #fff;
-        }
-      }
-
-      h5 {
-        color: #fff;
-        line-height: 1.5;
-      }
-    }
-
-    img {
-      width: 45%;
-
-      @media (max-width: 470px) {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
-        z-index: -1;
-        opacity: 0.3;
-      }
-
-      [dir="rtl"] & {
-        transform: scaleX(-1);
-
-        @media (max-width: 470px) {
-          right: unset;
-          left: 0;
-          transform: translateY(-50%) scaleX(-1);
-        }
-      }
     }
   }
 }

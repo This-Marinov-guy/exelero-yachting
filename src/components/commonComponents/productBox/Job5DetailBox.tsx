@@ -1,7 +1,7 @@
 import { SVGPath } from "@/constants";
 import { ProductCardType } from "@/types/Product";
 import { RouteList } from "@/utils/RouteList";
-import { Location } from "iconsax-react";
+import { MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { FC } from "react";
@@ -39,7 +39,7 @@ const Job5DetailBox: FC<ProductCardType> = ({ data }) => {
         <Link href={RouteList.Job.Detail.JobDetail1} className='job-detail'>
           <span>{data.company}</span>
           <div className='bottom-location'>
-            <Location className='iconsax' />
+            <MapPin className='iconsax' />
             <span className='mb-0'>{data.location}</span>
           </div>
         </Link>

@@ -8,7 +8,7 @@ import { setActiveTab, setLogoutModal, setUserDashboardSidebar } from "@/redux/r
 import { Button, Col, Nav, NavItem, NavLink, Tooltip } from "reactstrap";
 import UserProfile from "./UserProfile";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
-import { Lock1 } from "iconsax-react";
+import { X, Lock } from "lucide-react";
 
 const UserSidebar = () => {
   const { UserDashboardSidebar, activeTab } = useAppSelector((state) => state.layout);
@@ -81,7 +81,7 @@ const UserSidebar = () => {
     <Col lg={3}>
       <div className={`left-sidebar filter-sidebar ${UserDashboardSidebar ? "open" : ""}`}>
         <Button className='close-btn' onClick={() => dispatch(setUserDashboardSidebar())}>
-          <i className='ri-close-line' />
+          <X className='iconsax' style={{ width: '20px', height: '20px' }} />
         </Button>
         <UserProfile />
         <Nav pills className='flex-column sidebar-list'>
@@ -104,7 +104,7 @@ const UserSidebar = () => {
                   id={tooltipId}
                 >
                   {item.label}
-                  {isLocked && <i className='ri-lock-line' />}
+                  {isLocked && <Lock className='iconsax' style={{ width: '16px', height: '16px' }} />}
                 </NavLink>
                 {isLocked && (
                   <Tooltip

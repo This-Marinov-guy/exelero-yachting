@@ -2,7 +2,7 @@ import { ApplyNow, ImagePath, SVGPath } from "@/constants";
 import { ProductCardType } from "@/types/Product";
 import { dynamicNumber } from "@/utils";
 import { RouteList } from "@/utils/RouteList";
-import { Clock, Location } from "iconsax-react";
+import { Clock, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { FC } from "react";
@@ -40,7 +40,7 @@ const Job2DetailBox: FC<ProductCardType> = ({ data }) => {
           })}
         </ul>
         <div className='post-time'>
-          <Location className='iconsax'/>
+          <MapPin className='iconsax'/>
           <span>{data.location}</span>
         </div>
       </div>

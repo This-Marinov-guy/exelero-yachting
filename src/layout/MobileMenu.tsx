@@ -1,7 +1,7 @@
 import { useAppDispatch } from "@/redux/hooks";
 import { setCartData, setSearchModal } from "@/redux/reducers/LayoutSlice";
 import { RouteList } from "@/utils/RouteList";
-import { Heart, House, Menu, Profile, SearchNormal1 } from "iconsax-react";
+import { Heart, Home, Menu, User, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
@@ -16,7 +16,7 @@ const MobileMenu: FC<{ part?: string }> = ({ part }) => {
     <ul className={`mobile-menu ${part === "car-2"? "dark-mobile-menu" : ""}`}>
       <li className='active'>
         <Link href={RouteList.Home.CarDemo1}>
-          <House className='iconsax' />
+          <Home className='iconsax' />
           <span>Home</span>
         </Link>
       </li>
@@ -30,7 +30,7 @@ const MobileMenu: FC<{ part?: string }> = ({ part }) => {
             dispatch(setSearchModal());
           }}
         >
-          <SearchNormal1 className='iconsax' />
+          <Search className='iconsax' />
           <span>Search</span>
         </Link>
       </li>
@@ -42,7 +42,7 @@ const MobileMenu: FC<{ part?: string }> = ({ part }) => {
       </li>
       <li>
         <Link href={RouteList.Pages.Other.UserDashboard}>
-          <Profile className='iconsax' />
+          <User className='iconsax' />
           <span>Profile</span>
         </Link>
       </li> */}

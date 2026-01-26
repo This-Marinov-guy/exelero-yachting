@@ -1,7 +1,7 @@
 import { Href, SVGPath } from "@/constants";
 import { ProductCardType } from "@/types/Product";
 import { RouteList } from "@/utils/RouteList";
-import { Clock, Location } from "iconsax-react";
+import { Clock, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { FC } from "react";
@@ -22,7 +22,7 @@ const Job4DetailBox: FC<ProductCardType> = ({ data }) => {
           <Link href={RouteList.Job.Detail.JobDetail1} className='job-detail'>
             <h5>{data.title}</h5>
             <div className='d-flex align-items-center gap-1 mt-1'>
-            <Location className='iconsax' />
+            <MapPin className='iconsax' />
               <span className='border-0 p-0 mb-0'>{data.location}</span>
             </div>
           </Link>

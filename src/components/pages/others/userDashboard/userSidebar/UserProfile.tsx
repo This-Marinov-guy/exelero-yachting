@@ -1,6 +1,6 @@
 "use client";
 import { ImagePath } from "@/constants";
-import { Edit2 } from "iconsax-react";
+import { Edit } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
@@ -287,7 +287,7 @@ const UserProfile = () => {
           {uploading ? (
             <div className="upload-spinner" />
           ) : (
-            <Edit2 className="iconsax" />
+            <Edit className="iconsax" size={18} />
           )}
         </button>
         <input

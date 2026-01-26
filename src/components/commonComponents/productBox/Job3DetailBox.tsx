@@ -1,7 +1,7 @@
 import { SVGPath, ViewDetails } from "@/constants";
 import { Job3CardType } from "@/types/Product";
 import { RouteList } from "@/utils/RouteList";
-import { Clock, Location } from "iconsax-react";
+import { Clock, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { FC } from "react";
@@ -33,7 +33,7 @@ const Job3DetailBox: FC<Job3CardType> = ({ data, activeTab }) => {
       </div>
       <div className='location-flex'>
         <div className='post-time'>
-        <Location className='iconsax' />
+        <MapPin className='iconsax' />
           <span>{data.location}</span>
         </div>
         <Link href={RouteList.Job.Detail.JobDetail1} className='text-btn'>

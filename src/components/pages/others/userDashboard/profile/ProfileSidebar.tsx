@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Nav, NavItem, NavLink, Tooltip } from "reactstrap";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
-import { Lock1 } from "iconsax-react";
+import { Lock } from "lucide-react";
 
 type ProfileSidebarProps = {
     activeTab: string;
@@ -76,7 +76,7 @@ const ProfileSidebar = ({ activeTab, onTabChange, refreshTrigger }: ProfileSideb
                                 id={tooltipId}
                             >
                                 {item.label}
-                                {isLocked && <i className='ri-shake-hands-line lock-icon' />}
+                                {isLocked && <Lock className='lock-icon' style={{ width: '16px', height: '16px' }} />}
                             </NavLink>
                             {isLocked && (
                                 <Tooltip
