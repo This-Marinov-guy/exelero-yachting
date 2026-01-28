@@ -6,6 +6,7 @@ import ParticleComponent from "./ParticleComponent";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setBoatType } from "@/redux/reducers/FilterSlice";
 import { useState, useEffect } from "react";
+import { Check } from "lucide-react";
 
 const boatTypes = [
   {
@@ -69,7 +70,7 @@ const TopFilter = () => {
         <div className='breadcrumbs-main'>
           <div className='boat-type-filter'>
             <h2 className="filter-title">Brokerage & Charter</h2>
-            <div className="d-flex justify-content-center align-items-center gap-4">
+            <div className="boat-type-grid boat-type-grid--desktop-between">
               {boatTypes.map((type) => (
                 <div
                   key={type.id}
@@ -77,8 +78,10 @@ const TopFilter = () => {
                   onClick={() => handleTypeClick(type.id)}
                   role="button"
                   tabIndex={0}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
+                  aria-pressed={selectedTypes.includes(type.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
                       handleTypeClick(type.id);
                     }
                   }}
@@ -96,7 +99,7 @@ const TopFilter = () => {
                     </div>
                     {selectedTypes.includes(type.id) && (
                       <div className="selected-overlay">
-                        <i className="ri-check-line" />
+                        <Check aria-hidden="true" />
                       </div>
                     )}
                   </div>

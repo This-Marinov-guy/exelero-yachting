@@ -832,7 +832,7 @@ header {
                 white-space: nowrap;
 
                 &::before {
-                    content: "\ef14";
+                    content: "^";
                     position: relative;
                     display: block;
                     font-family: remixicon !important;
@@ -845,7 +845,7 @@ header {
                 }
 
                 &::after {
-                    content: "\f492";
+                    content: "^";
                     position: relative;
                     display: block;
                     font-family: remixicon !important;
@@ -1311,7 +1311,7 @@ header {
             .menu-item {
                 @media (max-width:1199px) {
                     &::after {
-                        content: "\f492";
+                        content: "^";
                         font-family: remixicon !important;
                         font-style: normal;
                         -webkit-font-smoothing: antialiased;
@@ -1343,7 +1343,7 @@ header {
             }
 
             &::after {
-                content: "\f492";
+                content: "^";
                 position: relative;
                 font-family: remixicon !important;
                 font-style: normal;

@@ -10,7 +10,7 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
   const dispatch = useAppDispatch();
   const { minAndMaxPrice, budgetStatus, priceStatus, kmsDriven, minAndMaxKilometers, minAndMaxSalary, salaryStatus } = useAppSelector((state) => state.filter);
   const [rangePrice, setRangePrice] = useState<number[]>([40000, 500000]);
-  const [value, setValue] = useState<number[]>(minAndMaxPrice || minAndMaxKilometers || minAndMaxSalary);
+  const [value, setValue] = useState<number[]>(minAndMaxPrice ?? minAndMaxKilometers ?? minAndMaxSalary ?? [10, 1000000]);
 
   const getAction = () => {
     switch (type) {
@@ -27,15 +27,21 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
 
   useEffect(() => {
     setRangePrice(type === "car" ? budgetStatus : type === "job" ? salaryStatus : type === "KMS" ? kmsDriven : priceStatus);
-    setValue(type === "KMS" ? minAndMaxKilometers : type === "job" ? minAndMaxSalary : minAndMaxPrice);
+    setValue((type === "KMS" ? minAndMaxKilometers : type === "job" ? minAndMaxSalary : minAndMaxPrice) ?? [10, 1000000]);
   }, [budgetStatus, priceStatus, type, minAndMaxPrice, kmsDriven, minAndMaxKilometers, salaryStatus, minAndMaxSalary]);
+
+  // react-range requires min < max (not equal). Ensure bounds are always valid.
+  const step = type === "job" ? 1 : STEP;
+  const minBound = value?.[0] ?? 10;
+  const rawMaxBound = value?.[1] ?? 1000000;
+  const maxBound = rawMaxBound <= minBound ? minBound + step : rawMaxBound;
 
   return (
     <Range
       values={rangePrice}
-      step={type === "job" ? 1 : STEP}
-      min={value[0] || 10} 
-      max={value[1] || 1000000}
+      step={step}
+      min={minBound}
+      max={maxBound}
       onChange={(values) => handlePriceChange(values)}
       renderTrack={({ props, children }) => (
         <div onTouchStart={props.onTouchStart} onMouseDown={props.onMouseDown} style={{ ...props.style, height: "36px", display: "flex", width: "100%" }}>
@@ -48,8 +54,8 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
               background: getTrackBackground({
                 values: rangePrice,
                 colors: ["#ccc", "rgba(var(--theme-color), 1)", "#ccc"],
-                min: value[0] || 10,
-                max: value[1] || 1000000,
+                min: minBound,
+                max: maxBound,
               }),
               alignSelf: "center",
             }}

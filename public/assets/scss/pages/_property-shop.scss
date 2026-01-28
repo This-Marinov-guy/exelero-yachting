@@ -1560,8 +1560,7 @@ input[type="radio"] {
     }
 
     p {
-      color: rgba(var(--content-color), 1);
-      padding-bottom: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
+      padding-bottom: 5px;
       line-height: 1.7;
 
       @media (max-width: 480px) {

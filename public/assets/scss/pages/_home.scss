@@ -1520,7 +1520,7 @@ main {
           }
 
           &::before {
-            content: "\ef14";
+            content: "^";
             font-size: calc(16px + (20 - 16) * ((100vw - 320px) / (1920 - 320)));
             color: rgba(var(--theme-color), 1);
             margin-right: calc(8px + (22 - 8) * ((100vw - 320px) / (1920 - 320)));

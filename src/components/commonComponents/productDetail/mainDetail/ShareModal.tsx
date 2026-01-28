@@ -61,10 +61,11 @@ const ShareModal = () => {
                     return link.url;
                 }
               })();
+              const Icon = link.Icon;
               return (
                 <li key={index}>
                   <Link href={shareUrl} target='_blank' rel='noopener noreferrer'>
-                    <i className={link.iconClass}></i>
+                    <Icon size={18} />
                   </Link>
                 </li>
               );

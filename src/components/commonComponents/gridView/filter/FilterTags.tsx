@@ -45,48 +45,23 @@ const FilterTags: FC<TopPanelType> = ({ topFilter, side, type, mainClass }) => {
   return (
     <div className={`${mainClass ? mainClass : "top-panel"}`}>
       <Fragment>
-        {type === "job" ? (
-          <div className='category-filter-flex'>
-            <h5>All {totalProduct} jobs got found</h5>
-            <div className='category-filter'>
-              {!topFilter && (
-                <Link href={Href} scroll={false} className={`btn-solid ${side !== "nosidebar" && "filter-btn"}`} onClick={() => dispatch(setOpenFilterSidebar())}>
-                  Filter
-                </Link>
-              )}
-              <div className='category-filter'>
-                {FilterDropdown(3, 8)}
-              </div>
-            </div>
+
+        <h4>
+          {totalProduct} results
+        </h4>
+
+        {topFilter ? <div className='category-filter'>
+          <div className='car-sortby-flex'>
+            {FilterDropdown(3, 8)}
           </div>
-        ) : (
-          <Fragment>
-            <h4>
-              {totalProduct} {type === "property" ? "properties in Amsterdam" : type === "job" ? "All 980 jobs got found" : type === "boat" ? "boats found" : "Cars To Explore"}
-            </h4>
-            {type === "property" ? (
-              <Fragment>
-                {FilterDropdown(0, 3)}
-                {!topFilter && (
-                  <Link href={Href} scroll={false} className={`btn-solid ${side !== "nosidebar" && "filter-btn"}`} onClick={() => dispatch(setOpenFilterSidebar())}>
-                    Filter
-                  </Link>
-                )}
-              </Fragment>
-            ) : (
-              <div className='category-filter'>
-                <div className='car-sortby-flex'>
-                  {FilterDropdown(3, 8)}
-                </div>
-                {!topFilter && (
-                  <Link href={Href} scroll={false} className={`btn-solid ${side !== "nosidebar" && "filter-btn"}`} onClick={() => dispatch(setOpenFilterSidebar())}>
-                    Filter
-                  </Link>
-                )}
-              </div>
-            )}
-          </Fragment>
-        )}
+        </div> : <div className='category-filter d-flex justify-content-between align-items-center gap-2'>
+          <div className='car-sortby-flex'>
+            {FilterDropdown(3, 8)}
+          </div>
+          <Link href={Href} scroll={false} className={`btn-solid ${side !== "nosidebar" && "filter-btn"}`} onClick={() => dispatch(setOpenFilterSidebar())}>
+            Filter
+          </Link>
+        </div>}
       </Fragment>
     </div>
   );

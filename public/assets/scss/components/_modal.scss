@@ -378,6 +378,12 @@
                 i {
                     font-size: 18px;
                 }
+
+                // Support SVG icon libraries (e.g. lucide-react)
+                svg {
+                    width: 18px;
+                    height: 18px;
+                }
             }
         }
     }

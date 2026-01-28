@@ -29,7 +29,7 @@ const TeamGrid = () => {
                       {SocialLinks.slice(0, 3).map((social, j) => (
                         <li key={j}>
                           <a href={social.url} target='_blank'>
-                            <i className={social.iconClass} />
+                            <social.Icon size={18} />
                           </a>
                         </li>
                       ))}

@@ -82,7 +82,7 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
                 Print
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 scroll={false}
                 href={Href}
@@ -92,7 +92,7 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
                 <Bookmark className={`h-5 w-5 ${saveBoat ? 'fill-current' : ''}`} />
                 Save
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
         <ShareModal />

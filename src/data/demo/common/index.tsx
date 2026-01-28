@@ -1,5 +1,7 @@
 import { NavType } from "@/types/HomeDemo";
 import { Building, Calendar, Car, Location, SearchNormal1, Wallet } from "iconsax-react";
+import type { LucideIcon } from "lucide-react";
+import { Facebook, Linkedin, Mail, MessageCircle, Twitter } from "lucide-react";
 
 export const HomeTabData: NavType[] = [
   {
@@ -89,26 +91,26 @@ export const SocialLinks = [
   {
     name: "Facebook",
     url: "https://www.facebook.com/",
-    iconClass: "ri-facebook-line",
+    Icon: Facebook,
   },
   {
     name: "Twitter",
     url: "https://x.com/",
-    iconClass: "ri-twitter-line",
+    Icon: Twitter,
   },
   {
     name: "LinkedIn",
     url: "https://in.linkedin.com/",
-    iconClass: "ri-linkedin-line",
+    Icon: Linkedin,
   },
   {
     name: "WhatsApp",
     url: "https://web.whatsapp.com/",
-    iconClass: "ri-whatsapp-line",
+    Icon: MessageCircle,
   },
   {
     name: "Email",
     url: "https://mail.google.com/",
-    iconClass: "ri-mail-line",
+    Icon: Mail,
   },
-];
+] satisfies Array<{ name: string; url: string; Icon: LucideIcon }>;
