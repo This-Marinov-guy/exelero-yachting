@@ -47,7 +47,7 @@ const CarHomeSection = () => {
         {
           name: "Elvstrom",
           description: "Sails and Premium sailwear designed for performance and comfort.",
-          thumbImage: "/assets/images/hero/elvstrom.png",
+          thumbImage: "/assets/images/hero/elvstrom.jpg",
           href: RouteList.Pages.Partners.ElvstromSailWear,
           variant: "a" as const,
         },
