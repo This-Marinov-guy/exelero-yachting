@@ -3,6 +3,7 @@ import { MenuListType } from "../../../types/Layout";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Href } from "@/constants";
 
 const SidebarSubMenu: React.FC<MenuListType> = ({ menu, level }) => {
@@ -17,6 +18,11 @@ const SidebarSubMenu: React.FC<MenuListType> = ({ menu, level }) => {
           <li className={`${level === 0 && menuItem.children ? "dropdown-menus dropdown-right" : ""}${menuItem.children ? " expand-btn" : ""}`} key={index}>
             <Link href={menuItem.path ? menuItem.path : Href} className={`menu-link ${level === 0 && menuItem.children ? "menu-item" : ""}${menuItem.title && openSections[menuItem.title] ? " open" : ""}`} onClick={() => menuItem.title && toggleSection(menuItem.title)}>
               {t(menuItem.title ? menuItem.title : "")}
+              {menuItem.children && (
+                <span className="menu-chevron" aria-hidden>
+                  {menuItem.title && openSections[menuItem.title] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                </span>
+              )}
             </Link>
             {menuItem.children && (
               <ul className='menu-right sample'>

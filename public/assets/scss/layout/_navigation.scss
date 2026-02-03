@@ -472,10 +472,24 @@
                 }
 
                 @media (max-width:1199px) {
-                    content: "^" !important;
-                    position: absolute;
-                    top: 3px;
-                    right: 0;
+                    content: none !important;
+                }
+            }
+        }
+
+        .menu-chevron {
+            display: inline-flex;
+            flex-shrink: 0;
+
+            @media (max-width: 1199px) {
+                position: absolute;
+                top: 3px;
+                right: 0;
+                color: rgba(var(--title-color), 1) !important;
+
+                [dir="rtl"] & {
+                    right: unset;
+                    left: 0;
                 }
             }
         }

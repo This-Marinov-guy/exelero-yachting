@@ -831,31 +831,14 @@ header {
                 text-overflow: ellipsis;
                 white-space: nowrap;
 
-                &::before {
-                    content: "^";
-                    position: relative;
-                    display: block;
-                    font-family: remixicon !important;
-                    font-style: normal;
-                    -webkit-font-smoothing: antialiased;
-                    display: inline-block;
-                    line-height: 1;
-                    font-size: 20px;
-                    transition: 0.4s ease;
+                &::before,
+                &::after {
+                    content: none;
                 }
 
-                &::after {
-                    content: "^";
-                    position: relative;
-                    display: block;
-                    font-family: remixicon !important;
-                    font-style: normal;
-                    -webkit-font-smoothing: antialiased;
-                    display: inline-block;
-                    line-height: 1;
-                    font-size: 20px;
-                    transition: 0.4s ease;
-
+                .select-button-chevron {
+                    flex-shrink: 0;
+                    color: inherit;
                 }
             }
         }
@@ -1240,6 +1223,11 @@ header {
 
         @media (max-width:1199px) {
             padding: 12px 18px;
+            flex: 1;
+            flex-direction: column;
+            align-items: stretch;
+            overflow-y: auto;
+            min-height: 0;
         }
     }
 
@@ -1259,6 +1247,8 @@ header {
         transform: translateX(-350px);
         overflow-y: auto;
         box-shadow: 10px 14px 38px 0px rgba(0, 0, 0, 0.13);
+        display: flex;
+        flex-direction: column;
 
         // Black sidebar: ensure text/icons are readable
         color: rgba(var(--white), 1);
@@ -1309,15 +1299,17 @@ header {
             }
 
             .menu-item {
-                @media (max-width:1199px) {
-                    &::after {
-                        content: "^";
-                        font-family: remixicon !important;
-                        font-style: normal;
-                        -webkit-font-smoothing: antialiased;
-                        font-size: 18px;
-                        line-height: 1;
-                        transition: 0.2s ease;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+
+                .menu-chevron {
+                    display: inline-flex;
+                    flex-shrink: 0;
+                    color: inherit;
+                    transition: transform 0.2s ease, color 0.2s ease;
+
+                    @media (max-width: 1199px) {
                         position: absolute;
                         right: 0;
                         top: 4px;
@@ -1328,42 +1320,27 @@ header {
                             left: 0;
                         }
                     }
+                }
 
-                    &.open {
-                        color: rgba(var(--theme-color), 1);
-                        transition: unset;
+                &.open .menu-chevron {
+                    color: rgba(var(--theme-color), 1);
+                }
 
-                        &::after {
-                            color: rgba(var(--theme-color), 1);
-                            transition: unset;
-                            transform: scaleY(-1);
-                        }
+                @media (max-width:1199px) {
+                    &::after {
+                        content: none;
                     }
                 }
             }
 
             &::after {
-                content: "^";
-                position: relative;
-                font-family: remixicon !important;
-                font-style: normal;
-                -webkit-font-smoothing: antialiased;
-                font-size: 18px;
-                line-height: 1;
-                color: #fff;
-                transition: 0.2s ease;
-                margin-top: 3px;
-
-                @media (max-width: 1199px) {
-                    content: unset;
-                }
+                content: none;
             }
         }
 
         &:hover {
             &.expand-btn {
-                &::after {
-                    transform: scaleY(-1);
+                .menu-chevron {
                     color: rgba(var(--theme-color), 1);
 
                     @media (max-width:1199px) {

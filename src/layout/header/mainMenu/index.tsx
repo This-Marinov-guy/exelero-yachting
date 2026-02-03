@@ -1,11 +1,14 @@
 import { Href } from "@/constants";
 import { MenuItem } from "@/data/layout/Header";
+import { Partners } from "@/data/partners";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setSidebarOpen } from "@/redux/reducers/LayoutSlice";
 import UseOutsideDropdown from "@/utils/UseOutsideDropdown";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import ImageMenuList from "./ImageMenuList";
 import PagesMegaMenu from "./PagesMegaMenu";
 import SidebarSubMenu from "./SidebarSubMenu";
@@ -42,16 +45,21 @@ const MainMenu = () => {
           MenuItem.map((mainMenu, index) => {
             const hasSubmenu = mainMenu.children && mainMenu.children.length > 0;
             const hasMegaMenuImage = mainMenu.megaMenuImage || false;
-            const hasMegaMenu = (mainMenu as any).megaMenu || false;
+            const hasMegaMenu = mainMenu.megaMenu || false;
             return (
             <li className={`${hasSubmenu ? "expand-btn" : ""} ${!hasMegaMenuImage && !hasMegaMenu && hasSubmenu ? "dropdown-menus" : ""}`} key={index}>
               <Link 
                 scroll={false} 
                 href={hasSubmenu ? Href : (mainMenu.path || Href)} 
-                className={`menu-item ${openSections[mainMenu.title] ? "open" : ""}`} 
-                onClick={() => hasSubmenu ? toggleSection(mainMenu.title) : undefined}
+                className={`menu-item ${openSections[mainMenu.title ?? ""] ? "open" : ""}`} 
+                onClick={() => hasSubmenu && mainMenu.title ? toggleSection(mainMenu.title) : undefined}
               >
-                {t(mainMenu.title)}
+                {t(mainMenu.title ?? "")}
+                {hasSubmenu && (
+                  <span className="menu-chevron" aria-hidden>
+                    {openSections[mainMenu.title ?? ""] ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  </span>
+                )}
               </Link>
               {hasMegaMenuImage && mainMenu.children && <ImageMenuList mainMenu={mainMenu.children} toggleMain={toggle}/>}
               {!hasMegaMenuImage && !hasMegaMenu && hasSubmenu && mainMenu.children && (
@@ -64,6 +72,33 @@ const MainMenu = () => {
             );
           })}
       </ul>
+      {/* Partner logos – shown in sidebar on mobile only */}
+      <div className="sidebar-partner-logos" aria-label="Partner logos">
+        <span className="sidebar-partner-logos__label">{t("Partners")}</span>
+        <div className="sidebar-partner-logos__list">
+          {Object.values(Partners).map((partner) => (
+            <Link
+              key={partner.id}
+              href={partner.affiliateLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="sidebar-partner-logos__item"
+              title={partner.name}
+              onClick={toggle}
+            >
+              <div className="sidebar-partner-logos__image-wrapper">
+                <Image
+                  src={partner.logoImage}
+                  alt={partner.name}
+                  fill
+                  className="sidebar-partner-logos__image"
+                  style={{ objectFit: "contain" }}
+                />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
     </nav>
   );
 };

@@ -12,6 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import DatePicker from "react-datepicker";
 import { Button, Dropdown, DropdownItem, DropdownMenu, Input, Label, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 
@@ -79,7 +80,7 @@ const SearchTabList: FC<SearchTabListType> = ({ showTab, datePicker, scrollDown,
                   <Dropdown isOpen={dropdownRefs[index].isComponentVisible} toggle={() => dropdownRefs[index].setIsComponentVisible(!dropdownRefs[index].isComponentVisible)}>
                     <div className='select-button' onClick={() => dropdownRefs[index].setIsComponentVisible(true)}>
                       <Input type='text' value={item.inputLabel} placeholder={item.inputLabel || "Select an option"} readOnly />
-                      {car2 && <img src={`${SVGPath}/car2/arrow.svg`} alt='arrow-svg' className='img-fluid' />}
+                      {car2 ? <img src={`${SVGPath}/car2/arrow.svg`} alt='arrow-svg' className='img-fluid' /> : <ChevronDown size={20} className="dropdown-toggle-chevron" aria-hidden />}
                     </div>
                     <DropdownMenu className='select-menu'>
                       {item.dropdownMenu ? (
