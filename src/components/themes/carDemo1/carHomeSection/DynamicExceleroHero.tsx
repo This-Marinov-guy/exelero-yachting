@@ -82,32 +82,32 @@ const DynamicExceleroHero = ({
           <div className="hero-overlay"></div>
         </div>
 
+        {/* Partner logos on mobile: direct child of section so position is relative to hero, below header */}
+        <div className="hero-partner-logos" aria-label="Partner logos">
+          {Object.values(Partners).map((partner) => (
+            <Link
+              key={partner.id}
+              href={partner.affiliateLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-partner-logos__item"
+              title={partner.name}
+            >
+              <div className="hero-partner-logos__image-wrapper">
+                <Image
+                  src={partner.logoImage}
+                  alt={partner.name}
+                  fill
+                  className="hero-partner-logos__image"
+                  style={{ objectFit: "contain" }}
+                />
+              </div>
+            </Link>
+          ))}
+        </div>
+
         <Container>
           <div className="hero-content" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            {/* Partner logos bar – mirror position of right panels */}
-            <div className="hero-partner-logos" aria-label="Partner logos">
-              {Object.values(Partners).map((partner) => (
-                <Link
-                  key={partner.id}
-                  href={partner.affiliateLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hero-partner-logos__item"
-                  title={partner.name}
-                >
-                  <div className="hero-partner-logos__image-wrapper">
-                    <Image
-                      src={partner.logoImage}
-                      alt={partner.name}
-                      fill
-                      className="hero-partner-logos__image"
-                      style={{ objectFit: "contain" }}
-                    />
-                  </div>
-                </Link>
-              ))}
-            </div>
-
             <div 
               className="hero-header"
               key={`header-${currentIndex}`}

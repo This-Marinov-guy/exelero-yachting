@@ -91,7 +91,7 @@ const AboutPage = () => {
               </Col>
               <Col md={3} sm={6} xs={6} className='partner-col'>
                 <Link className='partner-card' href={RouteList.Pages.Partners.Elvstrom}>
-                  <Image src='/assets/images/logo/elvstrom.jpg' alt='Elvstrom' width={220} height={120} className='partner-logo' />
+                  <Image src='/assets/images/logo/elvstrom.png' alt='Elvstrom' width={220} height={120} className='partner-logo' />
                 </Link>
               </Col>
               <Col md={3} sm={6} xs={6} className='partner-col'>

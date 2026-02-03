@@ -68,7 +68,7 @@ export const MenuItem = [
   //       title: "Elvstrom",
   //       type: "link",
   //       path: RouteList.Pages.Partners.Elvstrom,
-  //       image: "logo/elvstrom.jpg",
+  //       image: "logo/elvstrom.png",
   //       active: false,
   //     },
   //     {

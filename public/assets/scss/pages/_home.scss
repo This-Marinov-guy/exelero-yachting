@@ -2518,7 +2518,7 @@ main {
 
       @media (min-width: 992px) {
         position: absolute;
-        right: calc(0.5% + (1.5 - 0.5) * ((100vw - 992px) / (1920 - 992)));
+        right: -3em;
         top: 50%;
         transform: translateY(-50%);
         display: flex;
