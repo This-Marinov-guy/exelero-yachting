@@ -2458,6 +2458,56 @@ main {
       }
     }
 
+    // Partner logos bar – mirror position of right panels (inside hero)
+    .hero-partner-logos {
+      display: none;
+
+      @media (min-width: 992px) {
+        display: flex;
+        position: absolute;
+        left: calc(0.5% + (1.5 - 0.5) * ((100vw - 992px) / (1920 - 992)));
+        top: 50%;
+        transform: translateY(-50%);
+        flex-direction: column;
+        align-items: flex-start;
+        gap: calc(20px + (30 - 20) * ((100vw - 992px) / (1920 - 992)));
+        margin: 0;
+        z-index: 10;
+      }
+
+      &__item {
+        display: block;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        opacity: 0.85;
+
+        &:hover {
+          opacity: 1;
+          transform: scale(1.05);
+        }
+      }
+
+      &__image-wrapper {
+        position: relative;
+        width: 80px;
+        height: 60px;
+        padding: 6px;
+        // background: rgba(255, 255, 255, 0.15);
+        // border: 1px solid rgba(255, 255, 255, 0.3);
+        // box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      &__image {
+        // filter: grayscale(100%) brightness(1.2);
+        opacity: 0.9;
+        border-radius: 10%;
+
+        .hero-partner-logos__item:hover & {
+          filter: grayscale(0%) brightness(1);
+          opacity: 1;
+        }
+      }
+    }
+
     .geo-panels {
       &.geo-panels--single {
         grid-template-columns: 1fr;

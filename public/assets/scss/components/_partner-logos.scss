@@ -1,0 +1,153 @@
+// Partner Logos Component
+.partner-logos {
+  z-index: 100;
+
+  &__container {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  &__item {
+    display: block;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+
+  &__image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &__image {
+    filter: grayscale(100%);
+    transition: filter 0.3s ease;
+    border-radius: 10%;
+
+    .partner-logos__item:hover & {
+      filter: grayscale(0%);
+    }
+  }
+
+  // Desktop: Vertical line on the left
+  &--desktop {
+    position: fixed;
+    left: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+
+    @media (min-width: 1200px) {
+      display: block;
+    }
+
+    .partner-logos__container {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .partner-logos__item {
+      width: 80px;
+      height: 60px;
+    }
+
+    .partner-logos__image-wrapper {
+      width: 80px;
+      height: 60px;
+    }
+  }
+
+  // Mobile: Horizontal below header
+  &--mobile {
+    position: fixed;
+    top: var(--header-height, 70px);
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 99;
+
+    @media (max-width: 1199px) {
+      display: block;
+    }
+
+    .partner-logos__container {
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      max-width: 100%;
+      overflow-x: auto;
+      padding: 0.25rem 0;
+
+      /* Hide scrollbar but keep functionality */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .partner-logos__item {
+      width: 70px;
+      height: 50px;
+      flex-shrink: 0;
+
+      @media (max-width: 576px) {
+        width: 60px;
+        height: 45px;
+      }
+    }
+
+    .partner-logos__image-wrapper {
+      width: 70px;
+      height: 50px;
+
+      @media (max-width: 576px) {
+        width: 60px;
+        height: 45px;
+      }
+    }
+  }
+}
+
+// Adjust content positioning when mobile partner logos are visible
+@media (max-width: 1199px) {
+  // Add padding to main content to account for fixed header + partner logos
+  #header {
+    --header-height: 70px;
+    
+    @media (max-width: 576px) {
+      --header-height: 65px;
+    }
+  }
+
+  // Sticky header stays at top
+  .sticky-header {
+    top: 0 !important;
+  }
+  
+  // Add padding to prevent content from being hidden
+  .section-t-lg-space,
+  .section-t-md-space,
+  .exelero-hero-section {
+    padding-top: calc(var(--header-height, 70px) + 70px) !important;
+    
+    @media (max-width: 576px) {
+      padding-top: calc(var(--header-height, 65px) + 65px) !important;
+    }
+  }
+}

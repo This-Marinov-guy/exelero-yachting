@@ -1,9 +1,12 @@
 "use client";
+
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "reactstrap";
 import { ScrollController } from "./ScrollController";
+import PartnerLogos from "./PartnerLogos";
+import { Partners } from "@/data/partners";
 
 export type HeroPanel = {
   name: string;
@@ -44,7 +47,6 @@ const DynamicExceleroHero = ({
         onSectionChange={setCurrentIndex}
         heroRef={heroRef}
       />
-      
       <section
         ref={heroRef}
         className={`exelero-hero-section ${"overlay-dark"}`}
@@ -82,6 +84,30 @@ const DynamicExceleroHero = ({
 
         <Container>
           <div className="hero-content" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            {/* Partner logos bar – mirror position of right panels */}
+            <div className="hero-partner-logos" aria-label="Partner logos">
+              {Object.values(Partners).map((partner) => (
+                <Link
+                  key={partner.id}
+                  href={partner.affiliateLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hero-partner-logos__item"
+                  title={partner.name}
+                >
+                  <div className="hero-partner-logos__image-wrapper">
+                    <Image
+                      src={partner.logoImage}
+                      alt={partner.name}
+                      fill
+                      className="hero-partner-logos__image"
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                </Link>
+              ))}
+            </div>
+
             <div 
               className="hero-header"
               key={`header-${currentIndex}`}

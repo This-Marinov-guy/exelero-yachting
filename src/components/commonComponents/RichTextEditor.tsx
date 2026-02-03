@@ -8,6 +8,19 @@ import Highlight from "@tiptap/extension-highlight";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
+import { 
+  Bold, 
+  Italic, 
+  Underline as UnderlineIcon, 
+  Strikethrough, 
+  List, 
+  ListOrdered, 
+  AlignLeft, 
+  AlignCenter, 
+  AlignRight, 
+  Link as LinkIcon, 
+  Eraser 
+} from "lucide-react";
 
 interface RichTextEditorProps {
   value: string;
@@ -93,7 +106,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           className={editor?.isActive("bold") ? "is-active" : ""}
           title="Bold"
         >
-          <i className="ri-bold" />
+          <Bold className="h-4 w-4" />
         </button>
         <button
           type="button"
@@ -101,7 +114,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           className={editor?.isActive("italic") ? "is-active" : ""}
           title="Italic"
         >
-          <i className="ri-italic" />
+          <Italic className="h-4 w-4" />
         </button>
         <button
           type="button"
@@ -109,7 +122,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           className={editor?.isActive("underline") ? "is-active" : ""}
           title="Underline"
         >
-          <i className="ri-underline" />
+          <UnderlineIcon className="h-4 w-4" />
         </button>
         <button
           type="button"
@@ -117,7 +130,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           className={editor?.isActive("strike") ? "is-active" : ""}
           title="Strikethrough"
         >
-          <i className="ri-strikethrough" />
+          <Strikethrough className="h-4 w-4" />
         </button>
         <div className="toolbar-divider" />
         <button
@@ -126,7 +139,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           className={editor?.isActive("bulletList") ? "is-active" : ""}
           title="Bullet List"
         >
-          <i className="ri-list-unordered" />
+          <List className="h-4 w-4" />
         </button>
         <button
           type="button"
@@ -134,7 +147,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           className={editor?.isActive("orderedList") ? "is-active" : ""}
           title="Numbered List"
         >
-          <i className="ri-list-ordered" />
+          <ListOrdered className="h-4 w-4" />
         </button>
         <div className="toolbar-divider" />
         <button
@@ -143,7 +156,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           className={editor?.isActive({ textAlign: "left" }) ? "is-active" : ""}
           title="Align Left"
         >
-          <i className="ri-align-left" />
+          <AlignLeft className="h-4 w-4" />
         </button>
         <button
           type="button"
@@ -151,7 +164,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           className={editor?.isActive({ textAlign: "center" }) ? "is-active" : ""}
           title="Align Center"
         >
-          <i className="ri-align-center" />
+          <AlignCenter className="h-4 w-4" />
         </button>
         <button
           type="button"
@@ -159,7 +172,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           className={editor?.isActive({ textAlign: "right" }) ? "is-active" : ""}
           title="Align Right"
         >
-          <i className="ri-align-right" />
+          <AlignRight className="h-4 w-4" />
         </button>
         <div className="toolbar-divider" />
         <button
@@ -173,7 +186,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           className={editor?.isActive("link") ? "is-active" : ""}
           title="Insert Link"
         >
-          <i className="ri-links-line" />
+          <LinkIcon className="h-4 w-4" />
         </button>
         <input
           type="color"
@@ -198,7 +211,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           onClick={() => editor?.chain().focus().unsetAllMarks().run()}
           title="Clear Formatting"
         >
-          <i className="ri-format-clear" />
+          <Eraser className="h-4 w-4" />
         </button>
       </div>
       <EditorContent editor={editor} />

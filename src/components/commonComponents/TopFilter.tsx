@@ -16,17 +16,29 @@ const boatTypes = [
     // description: "High-performance racing yachts"
   },
   {
+    id: "sport-cruiser",
+    label: "Sport-Cruiser",
+    image: "/assets/images/filter/cruising.png",
+    // description: "Comfortable cruising yachts"
+  },
+  {
     id: "cruiser",
     label: "Cruiser",
     image: "/assets/images/filter/cruising.png",
     // description: "Comfortable cruising yachts"
   },
   {
-    id: "charter",
-    label: "Charter",
-    image: "/assets/images/filter/charter.jpg",
-    // description: "Charter-ready vessels"
-  }
+    id: "power-boat",
+    label: "Power Boat",
+    image: "/assets/images/filter/cruising.png",
+    // description: "Comfortable cruising yachts"
+  },
+  // {
+  //   id: "charter",
+  //   label: "Charter",
+  //   image: "/assets/images/filter/charter.jpg",
+  //   // description: "Charter-ready vessels"
+  // }
 ];
 
 const TopFilter = () => {
@@ -73,7 +85,7 @@ const TopFilter = () => {
             <div className="boat-type-grid boat-type-grid--desktop-between">
               {boatTypes.map((type) => (
                 <div
-                  key={type.id}
+                  key={`${type.id}-${type.label}`}
                   className={`boat-type-card ${selectedTypes.includes(type.id) ? 'selected' : ''}`}
                   onClick={() => handleTypeClick(type.id)}
                   role="button"

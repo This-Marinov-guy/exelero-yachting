@@ -44,50 +44,50 @@ export const MenuItem = [
   //   active: false,
   // },
   
-  {
-    title: "Partners",
-    type: "sub",
-    active: false,
-    megaMenuImage: true,
-    children: [
-      {
-        title: "X-Yachts",
-        type: "link",
-        path: RouteList.Pages.Partners.XYachts,
-        image: "logo/x-yachts.png",
-        active: false,
-      },
-       {
-        title: "Omaya Yachts",
-        type: "link",
-        path: RouteList.Pages.Partners.OmayaYachts,
-        image: "logo/omaya-yachts.jpg",
-        active: false,
-      },
-      {
-        title: "Elvstrom",
-        type: "link",
-        path: RouteList.Pages.Partners.Elvstrom,
-        image: "logo/elvstrom.jpg",
-        active: false,
-      },
-      {
-        title: "Elvstrom SailWear",
-        type: "link",
-        path: RouteList.Pages.Partners.ElvstromSailWear,
-        image: "logo/elvstrom-sailwear.webp",
-        active: false,
-      },
+  // {
+  //   title: "Partners",
+  //   type: "sub",
+  //   active: false,
+  //   megaMenuImage: true,
+  //   children: [
+  //     {
+  //       title: "X-Yachts",
+  //       type: "link",
+  //       path: RouteList.Pages.Partners.XYachts,
+  //       image: "logo/x-yachts.png",
+  //       active: false,
+  //     },
+  //      {
+  //       title: "Omaya Yachts",
+  //       type: "link",
+  //       path: RouteList.Pages.Partners.OmayaYachts,
+  //       image: "logo/omaya-yachts.jpg",
+  //       active: false,
+  //     },
+  //     {
+  //       title: "Elvstrom",
+  //       type: "link",
+  //       path: RouteList.Pages.Partners.Elvstrom,
+  //       image: "logo/elvstrom.jpg",
+  //       active: false,
+  //     },
+  //     {
+  //       title: "Elvstrom SailWear",
+  //       type: "link",
+  //       path: RouteList.Pages.Partners.ElvstromSailWear,
+  //       image: "logo/elvstrom-sailwear.webp",
+  //       active: false,
+  //     },
      
-      {
-        title: "Zhik",
-        type: "link",
-        path: RouteList.Pages.Partners.Zhik,
-        image: "logo/zhik.jpg",
-        active: false,
-      },
-    ],
-  },
+  //     {
+  //       title: "Zhik",
+  //       type: "link",
+  //       path: RouteList.Pages.Partners.Zhik,
+  //       image: "logo/zhik.jpg",
+  //       active: false,
+  //     },
+  //   ],
+  // },
   {
     title: "Services",
     type: "sub",

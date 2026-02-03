@@ -24,14 +24,20 @@
         margin: 0 auto;
 
         @media (max-width: 768px) {
-            grid-template-columns: 1fr;
-            gap: 15px;
-            max-width: 520px;
+            // Mobile/tablet: 2 cards per row
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            max-width: 100%;
         }
 
         @media (max-width: 576px) {
             gap: 12px;
             max-width: 100%;
+        }
+
+        @media (max-width: 390px) {
+            // Very small screens: fall back to 1 per row
+            grid-template-columns: 1fr;
         }
     }
 
@@ -47,8 +53,8 @@
 
     .boat-type-card {
         position: relative;
-        width: 250px;
-        height: 200px;
+        width: 220px;
+        height: 170px;
         border-radius: 12px;
         overflow: hidden;
         cursor: pointer;
@@ -58,12 +64,12 @@
 
         @media (max-width: 768px) {
             width: 100%;
-            max-width: 520px;
             margin: 0 auto;
+            height: 150px;
         }
 
         @media (max-width: 576px) {
-            height: 160px;
+            height: 140px;
             border-radius: 10px;
         }
 
@@ -119,12 +125,12 @@
                 bottom: 0;
                 left: 0;
                 right: 0;
-                padding: 20px;
+                padding: 14px;
                 z-index: 2;
                 text-align: center;
 
                 h5 {
-                    font-size: 1.5rem;
+                    font-size: 1.2rem;
                     font-weight: 600;
                     margin: 0;
                     color: #fff;

@@ -9,7 +9,7 @@ import { formatPrice } from "@/utils";
 const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
   const dispatch = useAppDispatch();
   const { minAndMaxPrice, priceStatus } = useAppSelector((state) => state.filter);
-  const [rangePrice, setRangePrice] = useState<number[]>([40000, 500000]);
+  const [rangePrice, setRangePrice] = useState<number[]>([0, 1000000]);  
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const getAction = () => {
@@ -33,7 +33,7 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
     // Set new timer to dispatch after 0.8 seconds
     debounceTimerRef.current = setTimeout(() => {
       dispatch(getAction()(values));
-    }, 800);
+    }, 500);
   };
 
   // Cleanup timer on unmount
@@ -62,7 +62,9 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
       max={maxBound}
       onChange={(values) => handlePriceChange(values)}
       renderTrack={({ props, children }) => (
-        <div onTouchStart={props.onTouchStart} onMouseDown={props.onMouseDown} style={{ ...props.style, height: "36px", display: "flex", width: "100%" }}>
+        <div onTouchStart={props.onTouchStart} onMouseDown={props.onMouseDown} style={{
+          ...props.style, height: "36px", display: "flex", width: "100%", padding: `0 10px`,
+ }}>
           <div
             ref={props.ref}
             style={{
@@ -76,45 +78,44 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
                 max: maxBound,
               }),
               alignSelf: "center",
+              
             }}
           >
             {children}
           </div>
         </div>
       )}
-      renderThumb={({ index, props }) => {
-        const isSameValue = rangePrice[0] === rangePrice[1];
-        const isMerged = Math.abs(rangePrice[1] - rangePrice[0]) <= MERGE_THRESHOLD;
-        return (
-          <div {...props} key={index} style={{ ...props.style, height: `${THUMB_SIZE}px`, width: `${THUMB_SIZE}px`, top: "15px", borderRadius: "4px", backgroundColor: "rgba(var(--theme-color), 1)", display: "flex", justifyContent: "center", alignItems: "center", boxShadow: "0px 2px 6px #AAA", zIndex: isMerged ? 2 : 1, }}>
-            {isMerged && index === 0 ? (
-              <div style={{ position: "absolute", top: "-30px", left: "50%", transform: "translateX(-50%)", color: "#fff", fontWeight: "bold", fontSize: "12px", fontFamily: "Arial,Helvetica Neue,Helvetica,sans-serif", padding: "4px", borderRadius: "4px", backgroundColor: "rgba(var(--theme-color), 1)", whiteSpace: "nowrap", }}>
-                {isSameValue
-                  ? formatPrice(rangePrice[0]) // Show single value if identical
-                  : `${formatPrice(rangePrice[0])} - ${formatPrice(rangePrice[1])}`} {/* Show merged */}
-                {type === "job" ? "K" : ""}
-              </div>
-            ) : !isMerged ? (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "-30px",
-                  color: "#fff",
-                  fontWeight: "bold",
-                  fontSize: "12px",
-                  fontFamily: "Arial, Helvetica Neue, Helvetica, sans-serif",
-                  padding: "4px",
-                  borderRadius: "4px",
-                  backgroundColor: "rgba(var(--theme-color), 1)",
-                }}
-              >
-                {formatPrice(rangePrice[index])}
-                {type === "job" ? "K" : ""}
-              </div>
-            ) : null}
+      renderThumb={({ index, props }) => (
+        <div
+          {...props}
+          style={{
+            ...props.style,
+            height: `${THUMB_SIZE}px`,
+            width: `${THUMB_SIZE}px`,
+            backgroundColor: "rgba(var(--theme-color), 1)",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: "-30px",
+              background: "rgba(var(--theme-color), 1)",
+              color: "#fff",
+              padding: "4px",
+              fontSize: "12px",
+              borderRadius: "4px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {formatPrice(rangePrice[index])}
+            {type === "job" ? "K" : ""}
           </div>
-        )
-      }}
+        </div>
+      )}
     />
   );
 };
