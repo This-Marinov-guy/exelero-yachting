@@ -1,0 +1,167 @@
+/*========================
+  Transportation Page
+==========================*/
+
+.transportation-hero {
+  position: relative;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  padding: calc(40px + (80 - 40) * ((100vw - 320px) / (1920 - 320))) 0;
+  overflow: hidden;
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(135deg, rgba(var(--theme-color), 0.25) 0%, rgba(0, 0, 0, 0.15) 50%),
+      url("/assets/images/hero/boats.jpg") center / cover no-repeat;
+    z-index: 0;
+  }
+
+  &__glass {
+    position: relative;
+    z-index: 1;
+    padding: calc(20px + (32 - 20) * ((100vw - 320px) / (1920 - 320)));
+    border-radius: 16px;
+    /* blue glass effect */
+    background: linear-gradient(
+      135deg,
+      rgba(var(--theme-color), 0.25) 0%,
+      rgba(var(--theme-color), 0.12) 50%,
+      rgba(var(--theme-color), 0.06) 100%
+    );
+    border: 1px solid rgba(var(--theme-color), 0.4);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+
+    @media (max-width: 991px) {
+      max-width: 100%;
+    }
+
+    &--static {
+      /* same as __glass, for content rows */
+    }
+  }
+
+  &__title {
+    font-size: calc(24px + (38 - 24) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 700;
+    color: rgba(var(--title-color), 1);
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  &__description {
+    font-size: calc(14px + (17 - 14) * ((100vw - 320px) / (1920 - 320)));
+    color: rgba(var(--content-color), 1);
+    line-height: 1.65;
+    margin: 0;
+  }
+}
+
+.transportation-content {
+  .transportation-row {
+    margin-bottom: calc(30px + (50 - 30) * ((100vw - 320px) / (1920 - 320)));
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &--reverse {
+      @media (min-width: 992px) {
+        > [class*="col-"]:first-child {
+          order: 2;
+        }
+        > [class*="col-"]:last-child {
+          order: 1;
+        }
+      }
+    }
+  }
+
+  .transportation-row__image-wrap {
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .transportation-row__image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  .transportation-row__title {
+    font-size: calc(20px + (28 - 20) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 600;
+    color: rgba(var(--title-color), 1);
+    margin-bottom: 10px;
+  }
+
+  .transportation-row__text {
+    font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
+    color: rgba(var(--content-color), 1);
+    line-height: 1.7;
+    margin: 0;
+  }
+}
+
+.transportation-form-section {
+  .transportation-form-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: calc(24px + (40 - 24) * ((100vw - 320px) / (1920 - 320)));
+    border-radius: 16px;
+    background: rgba(var(--white), 1);
+    border: 1px solid rgba(var(--border-color), 1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  }
+
+  .transportation-form__title {
+    font-size: calc(22px + (28 - 22) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 600;
+    color: rgba(var(--title-color), 1);
+    margin-bottom: 6px;
+  }
+
+  .transportation-form__subtitle {
+    font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
+    color: rgba(var(--content-color), 1);
+    margin-bottom: 24px;
+  }
+
+  .transportation-form {
+    .form-control {
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.85;
+      }
+    }
+  }
+}
+
+.transportation-request-cta {
+  &--sticky {
+    position: fixed;
+    bottom: calc(20px + (32 - 20) * ((100vw - 320px) / (1920 - 320)));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    visibility: visible;
+
+    &[aria-hidden="true"] {
+      visibility: hidden;
+    }
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+}

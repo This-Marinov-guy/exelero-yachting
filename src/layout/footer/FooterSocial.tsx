@@ -11,8 +11,8 @@ const FooterSocial: FC<{ endPoint: number, details: string }> = ({ endPoint, det
       <ul className='dark-footer-social'>
         {SocialMediaData.slice(0, endPoint).map((item, index) => (
           <li key={index}>
-            <Link href={item.url} target='_blank'>
-              <i className={item.icon} />
+            <Link href={item.url} target="_blank">
+              {item.icon}
             </Link>
           </li>
         ))}

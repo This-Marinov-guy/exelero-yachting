@@ -1,14 +1,16 @@
-import { Call, Location, Sms } from "iconsax-react";
+import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { FooterDetailType } from "@/types/Layout";
 import { RouteList } from "@/utils/RouteList";
-import { 
-  MAIN_CONTACT_NUMBER, 
-  MAIN_CONTACT_EMAIL, 
+import {
+  MAIN_CONTACT_NUMBER,
+  MAIN_CONTACT_EMAIL,
   MAIN_CONTACT_LOCATION,
   INSTAGRAM_URL,
   FACEBOOK_URL,
-  LINKEDIN_URL
+  LINKEDIN_URL,
 } from "@/utils/defines/CONTACTS";
+
+const iconSize = 18;
 
 export const HeaderClassMapFooter: { [key: string]: string } = {
   "car-2": "car2-footer",
@@ -17,24 +19,26 @@ export const HeaderClassMapFooter: { [key: string]: string } = {
 };
 
 export const Details = [
-  'Exelero Yachting - Yachting and more.',
-  'Experience excellence in yachting with personalized service and world-class expertise.'
+  "Exelero Yachting - Yachting and more.",
+  "Experience excellence in yachting with personalized service and world-class expertise.",
 ];
 
-export const Copyright =( <div className='copyright'>
-  <p>@ {new Date().getFullYear()} Exelero Yachting. All Rights Reserved</p>
-</div>)
+export const Copyright = (
+  <div className="copyright">
+    <p>@ {new Date().getFullYear()} Exelero Yachting. All Rights Reserved</p>
+  </div>
+);
 
 export const ContactListData = [
-  { icon: <Call className="iconsax"/>, title: "Call", text: MAIN_CONTACT_NUMBER },
-  { icon: <Sms className="iconsax"/>, title: "Email", text: MAIN_CONTACT_EMAIL },
-  { icon: <Location className="iconsax"/>, title: "Location", text: MAIN_CONTACT_LOCATION },
+  { icon: <Phone size={iconSize} />, title: "Call", text: MAIN_CONTACT_NUMBER },
+  { icon: <Mail size={iconSize} />, title: "Email", text: MAIN_CONTACT_EMAIL },
+  { icon: <MapPin size={iconSize} />, title: "Location", text: MAIN_CONTACT_LOCATION },
 ];
 
 export const SocialMediaData = [
-  { url: INSTAGRAM_URL, icon: "ri-instagram-line" },
-  { url: FACEBOOK_URL, icon: "ri-facebook-line" },
-  { url: LINKEDIN_URL, icon: "ri-linkedin-line" },
+  { url: INSTAGRAM_URL, icon: <Instagram size={iconSize} /> },
+  { url: FACEBOOK_URL, icon: <Facebook size={iconSize} /> },
+  { url: LINKEDIN_URL, icon: <Linkedin size={iconSize} /> },
 ];
 
 export const FooterDetailData: FooterDetailType[] = [
@@ -71,9 +75,9 @@ export const FooterDetailData: FooterDetailType[] = [
     title: "Contact Info",
     contactList: true,
     links: [
-      { title: MAIN_CONTACT_LOCATION, icon: "ri-map-pin-fill" },
-      { title: MAIN_CONTACT_NUMBER, icon: "ri-phone-fill" },
-      { title: MAIN_CONTACT_EMAIL, icon: "ri-mail-fill" },
+      { title: MAIN_CONTACT_LOCATION, icon: <MapPin size={iconSize} /> },
+      { title: MAIN_CONTACT_NUMBER, icon: <Phone size={iconSize} /> },
+      { title: MAIN_CONTACT_EMAIL, icon: <Mail size={iconSize} /> },
     ],
   },
 ];

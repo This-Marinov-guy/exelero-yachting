@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import { JSX, ReactNode } from "react";
 
 export interface MenuItemType {
   title?: string;
@@ -29,7 +29,7 @@ export interface MainMenu {
 export interface FooterListType {
   title: string;
   url?: string;
-  icon?: string;
+  icon?: string | ReactNode;
 }
 
 export interface FooterDetailType {

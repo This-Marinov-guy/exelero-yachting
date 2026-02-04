@@ -197,6 +197,8 @@
                 background: rgba(255, 255, 255, 0.1);
                 @include flex_center;
                 border-radius: 100%;
+                color: #2075F5;
+                font-size: 24px;
                 transition: 0.4s ease;
 
                 .iconsax {
@@ -407,10 +409,6 @@
     @media (max-width: 575px) {
         .open-footer-content {
             .footer-title {
-                &::before {
-                    content: "−";
-                }
-
                 &::after {
                     display: block;
                 }
@@ -439,21 +437,16 @@
             margin-top: 8px;
         }
 
-        @media (max-width: 575px) {
-            &::after {
-                display: none;
-            }
+        &__toggle {
+            display: none;
 
-            &::before {
-                content: "\ea13";
+            @media (max-width: 575px) {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
                 position: absolute;
                 top: 50%;
                 right: 0;
-                font-size: 18px;
-                font-weight: 400;
-                font-family: remixicon !important;
-                font-style: normal;
-                -webkit-font-smoothing: antialiased;
                 transform: translateY(-50%);
                 transition: 0.4s ease;
                 color: rgba(var(--theme-color), 1);
@@ -462,6 +455,12 @@
                     right: unset;
                     left: 0;
                 }
+            }
+        }
+
+        @media (max-width: 575px) {
+            &::after {
+                display: none;
             }
         }
     }
