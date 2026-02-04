@@ -36,24 +36,27 @@ const CharterPage = () => {
         image
       /> */}
 
-      {/* Hero with half glass effect */}
+      {/* Hero with full-bleed bg + glass panel */}
       <section className="charter-hero">
-        {/* <div className="charter-hero__bg" /> */}
+        <div className="charter-hero__bg" aria-hidden />
+        <div className="charter-hero__noise" aria-hidden />
         <Container>
-          <div className="charter-hero__glass mt-5 text-center">
+          <div className="charter-hero__glass charter-hero__glass--center">
+            <span className="charter-hero__label">Charters</span>
             <h1 className="charter-hero__title">Yacht & Sailing Charters</h1>
-            {/* <p className="charter-hero__description">
+            <p className="charter-hero__description">
               Whether you want a day sail, a week along the coast, or a fully crewed experience,
-              we arrange charters that fit your style and schedule. Choose from our network of
-              trusted boats and skippers for an unforgettable time on the water.
-            </p> */}
+              we arrange charters that fit your style and schedule.
+            </p>
+            <div className="charter-hero__line" />
           </div>
         </Container>
       </section>
 
-      {/* Three rows: image/text alternating */}
+      {/* Content rows */}
       <section className="charter-content section-b-space">
         <Container>
+          <p className="charter-content__intro">What we offer</p>
           {CHARTER_ROWS.map((row, index) => (
             <Row
               key={index}
@@ -61,6 +64,7 @@ const CharterPage = () => {
             >
               <Col lg={6}>
                 <div className="charter-row__image-wrap">
+                  <span className="charter-row__index" aria-hidden>{String(index + 1).padStart(2, "0")}</span>
                   <Image
                     src={row.image}
                     alt={row.imageAlt}
@@ -71,7 +75,7 @@ const CharterPage = () => {
                 </div>
               </Col>
               <Col lg={6}>
-                <div className="charter-row__content charter-hero__glass__static">
+                <div className="charter-row__content charter-row__card">
                   <h2 className={`charter-row__title ${index % 2 === 1 ? "text-start" : "text-end"}`}>{row.title}</h2>
                   <p className="charter-row__text">{row.description}</p>
                 </div>

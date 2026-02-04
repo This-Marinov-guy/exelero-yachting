@@ -29,18 +29,27 @@ const TRANSPORTATION_ROWS = [
 const TransportationPage = () => {
   return (
     <>
-      {/* Hero with blue glass effect */}
+      {/* Hero with full-bleed bg + glass panel */}
       <section className="transportation-hero">
+        <div className="transportation-hero__bg" aria-hidden />
+        <div className="transportation-hero__noise" aria-hidden />
         <Container>
-          <div className="transportation-hero__glass mt-5 text-center">
+          <div className="transportation-hero__glass transportation-hero__glass--center">
+            <span className="transportation-hero__label">Transportation</span>
             <h1 className="transportation-hero__title">Boat & Yacht Transportation</h1>
+            <p className="transportation-hero__description">
+              Safe, professional transport for boats and yachts—from marina to marina or across regions.
+              We handle the logistics so you can focus on the water.
+            </p>
+            <div className="transportation-hero__line" />
           </div>
         </Container>
       </section>
 
-      {/* Three rows: image/text alternating */}
+      {/* Content rows */}
       <section className="transportation-content section-b-space">
         <Container>
+          <p className="transportation-content__intro">What we offer</p>
           {TRANSPORTATION_ROWS.map((row, index) => (
             <Row
               key={index}
@@ -48,6 +57,7 @@ const TransportationPage = () => {
             >
               <Col lg={6}>
                 <div className="transportation-row__image-wrap">
+                  <span className="transportation-row__index" aria-hidden>{String(index + 1).padStart(2, "0")}</span>
                   <Image
                     src={row.image}
                     alt={row.imageAlt}
@@ -58,7 +68,7 @@ const TransportationPage = () => {
                 </div>
               </Col>
               <Col lg={6}>
-                <div className="transportation-row__content transportation-hero__glass transportation-hero__glass--static">
+                <div className="transportation-row__content transportation-row__card">
                   <h2 className={`transportation-row__title ${index % 2 === 1 ? "text-start" : "text-end"}`}>{row.title}</h2>
                   <p className="transportation-row__text">{row.description}</p>
                 </div>
