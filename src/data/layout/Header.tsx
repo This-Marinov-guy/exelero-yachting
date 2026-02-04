@@ -94,18 +94,18 @@ export const MenuItem: MenuItemType[] = [
     type: "sub",
     active: false,
     children: [
-      {
-        title: "Sails",
-        type: "link",
-        path: RouteList.Pages.Services.Sails,
-        active: false,
-      },
-      {
-        title: "Clothes",
-        type: "link",
-        path: RouteList.Pages.Services.Clothes,
-        active: false,
-      },
+      // {
+      //   title: "Sails",
+      //   type: "link",
+      //   path: RouteList.Pages.Services.Sails,
+      //   active: false,
+      // },
+      // {
+      //   title: "Clothes",
+      //   type: "link",
+      //   path: RouteList.Pages.Services.Clothes,
+      //   active: false,
+      // },
       {
         title: "Brokerage",
         type: "link",
@@ -130,12 +130,12 @@ export const MenuItem: MenuItemType[] = [
         path: RouteList.Pages.Services.Charters,
         active: false,
       },
-      {
-        title: "Parts",
-        type: "link",
-        path: RouteList.Pages.Services.Parts,
-        active: false,
-      },
+      // {
+      //   title: "Parts",
+      //   type: "link",
+      //   path: RouteList.Pages.Services.Parts,
+      //   active: false,
+      // },
     ],
   },
   {

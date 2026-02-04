@@ -1,8 +1,11 @@
 import Breadcrumbs from "@/components/commonComponents/breadcrumb";
 import { RouteList } from "@/utils/RouteList";
+import { Handshake, Sailboat, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Col, Container, Row } from "reactstrap";
+
+const iconSize = 20;
 
 const AboutPage = () => {
   return (
@@ -39,7 +42,7 @@ const AboutPage = () => {
                 <div className='about-highlights'>
                   <div className='highlight'>
                     <div className='highlight-icon'>
-                      <i className='ri-sailboat-line' />
+                      <Sailboat size={iconSize} />
                     </div>
                     <div className='highlight-content'>
                       <h4>Yachting & Charter</h4>
@@ -49,7 +52,7 @@ const AboutPage = () => {
 
                   <div className='highlight'>
                     <div className='highlight-icon'>
-                      <i className='ri-shield-check-line' />
+                      <ShieldCheck size={iconSize} />
                     </div>
                     <div className='highlight-content'>
                       <h4>Trusted Partners</h4>
@@ -59,7 +62,7 @@ const AboutPage = () => {
 
                   <div className='highlight'>
                     <div className='highlight-icon'>
-                      <i className='ri-shake-hands-line' />
+                      <Handshake size={iconSize} />
                     </div>
                     <div className='highlight-content'>
                       <h4>Full Support</h4>

@@ -17,23 +17,23 @@ export type HeroPanel = {
 };
 
 export interface HeroSection {
-  title: string;
+  title?: string;
   subtitle?: string;
   description?: string;
-  panels: HeroPanel[];
+  panels?: HeroPanel[];
   overlayVariant?: "dark" | "darker";
 }
 
 export interface DynamicExceleroHeroProps {
   backgroundVideo?: string;
   backgroundPoster?: string;
-  sections: HeroSection[];
+  sections?: HeroSection[];
 }
 
 const DynamicExceleroHero = ({
   backgroundVideo,
   backgroundPoster = "/assets/images/hero/main2.png",
-  sections,
+  sections = [],
 }: DynamicExceleroHeroProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const heroRef = useRef<HTMLElement | null>(null);
@@ -83,7 +83,7 @@ const DynamicExceleroHero = ({
         </div>
 
         {/* Partner logos on mobile: direct child of section so position is relative to hero, below header */}
-        <div className="hero-partner-logos" aria-label="Partner logos">
+        {/* <div className="hero-partner-logos" aria-label="Partner logos">
           {Object.values(Partners).map((partner) => (
             <Link
               key={partner.id}
@@ -104,7 +104,7 @@ const DynamicExceleroHero = ({
               </div>
             </Link>
           ))}
-        </div>
+        </div> */}
 
         <Container>
           <div className="hero-content" style={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center" }}>
@@ -123,7 +123,7 @@ const DynamicExceleroHero = ({
               )} */}
             </div>
 
-            <div 
+            {currentSection.panels && <div 
               className={`geo-panels ${currentSection.panels.length === 1 ? "geo-panels--single" : ""}`}
               key={`panels-${currentIndex}`}
             >
@@ -151,7 +151,7 @@ const DynamicExceleroHero = ({
                   </Link>
                 );
               })}
-            </div>
+            </div>}
 
             {/* Section indicators */}
             <div 

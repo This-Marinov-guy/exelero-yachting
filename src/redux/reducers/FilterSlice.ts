@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: FilterSliceType = {
   propertyType: [],
-  priceStatus: [0, 100000],
+  priceStatus: [0, 1000000],
   bedsRooms: [],
   sortBy: null,
   popular: null,

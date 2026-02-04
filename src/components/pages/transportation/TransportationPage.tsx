@@ -1,6 +1,6 @@
 import TransportationRequestSection from "./TransportationRequestSection";
 import Image from "next/image";
-import { Col, Container, Row } from "reactstrap";
+import { Container } from "reactstrap";
 
 const TRANSPORTATION_ROWS = [
   {
@@ -43,40 +43,33 @@ const TransportationPage = () => {
             </p>
             <div className="transportation-hero__line" />
           </div>
-        </Container>
-      </section>
 
-      {/* Content rows */}
-      <section className="transportation-content section-b-space">
-        <Container>
-          <p className="transportation-content__intro">What we offer</p>
-          {TRANSPORTATION_ROWS.map((row, index) => (
-            <Row
-              key={index}
-              className={`transportation-row align-items-center g-4 g-lg-5 ${index % 2 === 1 ? "transportation-row--reverse" : ""}`}
-            >
-              <Col lg={6}>
-                <div className="transportation-row__image-wrap">
-                  <span className="transportation-row__index" aria-hidden>{String(index + 1).padStart(2, "0")}</span>
+          {/* Bento grid content */}
+          <section className="transportation-content section-b-space mt-5">
+            <Container>
+              <article className="transportation-bento__cell transportation-bento__cell--small transportation-bento__cell--small-row">
+                <div className="transportation-bento__image-wrap transportation-bento__image-wrap--small transportation-bento__image-wrap--compact">
                   <Image
-                    src={row.image}
-                    alt={row.imageAlt}
-                    width={640}
-                    height={400}
-                    className="transportation-row__image img-fluid"
+                    src={TRANSPORTATION_ROWS[2].image}
+                    alt={TRANSPORTATION_ROWS[2].imageAlt}
+                    width={400}
+                    height={280}
+                    className="transportation-bento__image img-fluid"
                   />
                 </div>
-              </Col>
-              <Col lg={6}>
-                <div className="transportation-row__content transportation-row__card">
-                  <h2 className={`transportation-row__title ${index % 2 === 1 ? "text-start" : "text-end"}`}>{row.title}</h2>
-                  <p className="transportation-row__text">{row.description}</p>
+                <div className="transportation-bento__card transportation-bento__card--small">
+                  <h2 className="transportation-bento__title">{TRANSPORTATION_ROWS[2].title}</h2>
+                  <p className="transportation-bento__text">{TRANSPORTATION_ROWS[2].description}</p>
                 </div>
-              </Col>
-            </Row>
-          ))}
+              </article>
+            </Container>
+          </section>
         </Container>
+
+        
       </section>
+
+      
 
       {/* Sticky CTA + form (client component) */}
       <TransportationRequestSection />

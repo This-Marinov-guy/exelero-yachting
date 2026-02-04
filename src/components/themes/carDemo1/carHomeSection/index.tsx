@@ -8,22 +8,22 @@ const CarHomeSection = () => {
       title: "Performance and luxury yachts",
       subtitle: "From coastal cruising to offshore racing",
       overlayVariant: "dark" as const,
-      panels: [
-        {
-          name: "X‑Yachts",
-          description: "Performance yachts built with Scandinavian precision.",
-          thumbImage: "/assets/images/hero/x-yachts.jpg",
-          href: RouteList.Pages.Partners.XYachts,
-          variant: "a" as const,
-        },
-        {
-          name: "Omaya Yachts",
-          description: "Premium sails and sail solutions for cruising and racing.",
-          thumbImage: "/assets/images/hero/omaya-yachts.jpg",
-          href: RouteList.Pages.Partners.OmayaYachts,
-          variant: "b" as const,
-        },
-      ],
+      // panels: [
+      //   {
+      //     name: "X‑Yachts",
+      //     description: "Performance yachts built with Scandinavian precision.",
+      //     thumbImage: "/assets/images/hero/x-yachts.jpg",
+      //     href: RouteList.Pages.Partners.XYachts,
+      //     variant: "a" as const,
+      //   },
+      //   {
+      //     name: "Omaya Yachts",
+      //     description: "Premium sails and sail solutions for cruising and racing.",
+      //     thumbImage: "/assets/images/hero/omaya-yachts.jpg",
+      //     href: RouteList.Pages.Partners.OmayaYachts,
+      //     variant: "b" as const,
+      //   },
+      // ],
     },
     {
       title: "Brokerage & Charters",
@@ -43,22 +43,22 @@ const CarHomeSection = () => {
       title: "Sailing gear",
       description: "Technical apparel and gear for all conditions — from coastal cruising to offshore racing.",
       overlayVariant: "dark" as const,
-      panels: [
-        {
-          name: "Elvstrom",
-          description: "Sails and Premium sailwear designed for performance and comfort.",
-          thumbImage: "/assets/images/hero/elvstrom.jpg",
-          href: RouteList.Pages.Partners.ElvstromSailWear,
-          variant: "a" as const,
-        },
-        {
-          name: "Zhik",
-          description: "Technical gear trusted by sailors worldwide — engineered to perform.",
-          thumbImage: "/assets/images/hero/zhik.jpg",
-          href: RouteList.Pages.Partners.Zhik,
-          variant: "b" as const,
-        },
-      ],
+      // panels: [
+      //   {
+      //     name: "Elvstrom",
+      //     description: "Sails and Premium sailwear designed for performance and comfort.",
+      //     thumbImage: "/assets/images/hero/elvstrom.jpg",
+      //     href: RouteList.Pages.Partners.ElvstromSailWear,
+      //     variant: "a" as const,
+      //   },
+      //   {
+      //     name: "Zhik",
+      //     description: "Technical gear trusted by sailors worldwide — engineered to perform.",
+      //     thumbImage: "/assets/images/hero/zhik.jpg",
+      //     href: RouteList.Pages.Partners.Zhik,
+      //     variant: "b" as const,
+      //   },
+      // ],
     },
   ];
 

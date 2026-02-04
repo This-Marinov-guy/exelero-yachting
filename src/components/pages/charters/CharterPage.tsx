@@ -1,6 +1,6 @@
 import CharterRequestSection from "./CharterRequestSection";
 import Image from "next/image";
-import { Col, Container, Row } from "reactstrap";
+import { Container } from "reactstrap";
 
 const CHARTER_ROWS = [
   {
@@ -53,35 +53,56 @@ const CharterPage = () => {
         </Container>
       </section>
 
-      {/* Content rows */}
-      <section className="charter-content section-b-space">
+      {/* Bento grid content */}
+      <section className="charter-content section-b-space mt-5">
         <Container>
-          <p className="charter-content__intro">What we offer</p>
-          {CHARTER_ROWS.map((row, index) => (
-            <Row
-              key={index}
-              className={`charter-row align-items-center g-4 g-lg-5 ${index % 2 === 1 ? "charter-row--reverse" : ""}`}
-            >
-              <Col lg={6}>
-                <div className="charter-row__image-wrap">
-                  <span className="charter-row__index" aria-hidden>{String(index + 1).padStart(2, "0")}</span>
-                  <Image
-                    src={row.image}
-                    alt={row.imageAlt}
-                    width={640}
-                    height={400}
-                    className="charter-row__image img-fluid"
-                  />
-                </div>
-              </Col>
-              <Col lg={6}>
-                <div className="charter-row__content charter-row__card">
-                  <h2 className={`charter-row__title ${index % 2 === 1 ? "text-start" : "text-end"}`}>{row.title}</h2>
-                  <p className="charter-row__text">{row.description}</p>
-                </div>
-              </Col>
-            </Row>
-          ))}
+          <div className="charter-bento">
+            <article className="charter-bento__cell charter-bento__cell--large">
+              <div className="charter-bento__image-wrap">
+                <Image
+                  src={CHARTER_ROWS[0].image}
+                  alt={CHARTER_ROWS[0].imageAlt}
+                  width={800}
+                  height={500}
+                  className="charter-bento__image img-fluid"
+                />
+              </div>
+              <div className="charter-bento__card">
+                <h2 className="charter-bento__title">{CHARTER_ROWS[0].title}</h2>
+                <p className="charter-bento__text">{CHARTER_ROWS[0].description}</p>
+              </div>
+            </article>
+            <article className="charter-bento__cell charter-bento__cell--small">
+              <div className="charter-bento__image-wrap charter-bento__image-wrap--small">
+                <Image
+                  src={CHARTER_ROWS[1].image}
+                  alt={CHARTER_ROWS[1].imageAlt}
+                  width={400}
+                  height={280}
+                  className="charter-bento__image img-fluid"
+                />
+              </div>
+              <div className="charter-bento__card charter-bento__card--small">
+                <h2 className="charter-bento__title">{CHARTER_ROWS[1].title}</h2>
+                <p className="charter-bento__text">{CHARTER_ROWS[1].description}</p>
+              </div>
+            </article>
+            <article className="charter-bento__cell charter-bento__cell--small">
+              <div className="charter-bento__image-wrap charter-bento__image-wrap--small">
+                <Image
+                  src={CHARTER_ROWS[2].image}
+                  alt={CHARTER_ROWS[2].imageAlt}
+                  width={400}
+                  height={280}
+                  className="charter-bento__image img-fluid"
+                />
+              </div>
+              <div className="charter-bento__card charter-bento__card--small">
+                <h2 className="charter-bento__title">{CHARTER_ROWS[2].title}</h2>
+                <p className="charter-bento__text">{CHARTER_ROWS[2].description}</p>
+              </div>
+            </article>
+          </div>
         </Container>
       </section>
 

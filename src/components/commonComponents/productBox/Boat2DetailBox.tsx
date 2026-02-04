@@ -22,7 +22,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
 
   return (
     <article className='car2-featured-box property2-featured-box'>
-      <Link href={`/boats/${data.id}`} className='car2-featured-img'>
+      <Link href={`/services/brokerage/${data.id}`} className='car2-featured-img'>
         <Swiper {...Property2SwiperSetting}>
           <div className='swiper-wrapper'>
             {data.image.map((src, i) => {
@@ -50,7 +50,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
         </div>
       </Link>
       <div className='car2-featured-content'>
-        <Link href={`/boats/${data.id}`}>
+        <Link href={`/services/brokerage/${data.id}`}>
           <h4>{data.title}</h4>
         </Link>
         <div className='location-flex'>
@@ -71,7 +71,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
           <h4>
             {formatPrice(data.price || 0)} <span style={{fontFamily: 'Satisfy'}}>€</span>
           </h4>
-          <a href={`/boats/${data.id}`} target="_blank" className='btn-solid'>
+          <a href={`/services/brokerage/${data.id}`} target="_blank" className='btn-solid'>
             View
           </a>
         </div>

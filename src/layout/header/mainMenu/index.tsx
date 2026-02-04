@@ -72,8 +72,7 @@ const MainMenu = () => {
             );
           })}
       </ul>
-      {/* Partner logos – shown in sidebar on mobile only */}
-      <div className="sidebar-partner-logos" aria-label="Partner logos">
+      {/* <div className="sidebar-partner-logos" aria-label="Partner logos">
         <span className="sidebar-partner-logos__label">{t("Partners")}</span>
         <div className="sidebar-partner-logos__list">
           {Object.values(Partners).map((partner) => (
@@ -97,8 +96,8 @@ const MainMenu = () => {
               </div>
             </Link>
           ))}
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
     </nav>
   );
 };
