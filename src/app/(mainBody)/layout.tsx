@@ -1,5 +1,6 @@
 "use client";
 import CookieBanner from "@/components/commonComponents/CookieBanner";
+import LoadingOverlay from "@/components/commonComponents/LoadingOverlay";
 import SearchModal from "@/components/commonComponents/modal/SearchModal";
 import { SearchModalData } from "@/data/layout/Header";
 import Customizer from "@/layout/Customizer";
@@ -50,6 +51,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
 
   return (
     <div>
+      <LoadingOverlay />
       <Header part={firstPart} />
       {/* <MobileMenu  part={firstPart}/> */}
       {children}

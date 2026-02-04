@@ -1,6 +1,17 @@
 /*========================
   3.20 button style start
 ==========================*/
+@keyframes loaderSlideRightOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 1;
+    }
+}
+
 .loader-wrapper {
     position: fixed;
     inset: 0;
@@ -11,7 +22,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.5s ease;
+
+    /* On enter: just appears (no animation) */
+    &.loader-exit {
+        animation: loaderSlideRightOut 0.5s ease-in forwards;
+        pointer-events: none;
+    }
 
     .property-loader {
         $time: 6s;
