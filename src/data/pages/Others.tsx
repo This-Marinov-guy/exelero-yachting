@@ -648,6 +648,8 @@ export const SidebarItems = [
   { id: "dealer-info", label: "Dealer Info", locked: false },
   { id: "upload-boat", label: "Upload Boat", locked: true },
   { id: "boats-listing", label: "Boats Listing", locked: true },
+  { id: "charter-requests", label: "Charter Requests", locked: false },
+  { id: "transportation-requests", label: "Transportation Requests", locked: false },
 ];
 
 export const SaleData = [

@@ -133,7 +133,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           <Strikethrough className="h-4 w-4" />
         </button>
         <div className="toolbar-divider" />
-        <button
+        {/* <button
           type="button"
           onClick={() => editor?.chain().focus().toggleBulletList().run()}
           className={editor?.isActive("bulletList") ? "is-active" : ""}
@@ -148,7 +148,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           title="Numbered List"
         >
           <ListOrdered className="h-4 w-4" />
-        </button>
+        </button> */}
         <div className="toolbar-divider" />
         <button
           type="button"
@@ -174,7 +174,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
         >
           <AlignRight className="h-4 w-4" />
         </button>
-        <div className="toolbar-divider" />
+        {/* <div className="toolbar-divider" />
         <button
           type="button"
           onClick={() => {
@@ -187,7 +187,7 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           title="Insert Link"
         >
           <LinkIcon className="h-4 w-4" />
-        </button>
+        </button> */}
         <input
           type="color"
           onChange={(e) => editor?.chain().focus().setColor(e.target.value).run()}
@@ -205,14 +205,14 @@ const RichTextEditor = ({ value, onChange, placeholder, rows = 4 }: RichTextEdit
           title="Background Color"
           className="color-picker"
         />
-        <div className="toolbar-divider" />
+        {/* <div className="toolbar-divider" />
         <button
           type="button"
           onClick={() => editor?.chain().focus().unsetAllMarks().run()}
           title="Clear Formatting"
         >
           <Eraser className="h-4 w-4" />
-        </button>
+        </button> */}
       </div>
       <EditorContent editor={editor} />
     </div>

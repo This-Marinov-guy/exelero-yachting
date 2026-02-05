@@ -6,6 +6,8 @@ import { Col, TabContent, TabPane } from "reactstrap";
 import DealerInfo from "../profile/DealerInfo";
 import UploadBoat from "../profile/UploadBoat";
 import BoatsListing from "../profile/BoatsListing";
+import CharterRequests from "../profile/CharterRequests";
+import TransportationRequests from "../profile/TransportationRequests";
 
 const DashboardTabs = () => {
   const { activeTab } = useAppSelector((state) => state.layout);
@@ -24,6 +26,12 @@ const DashboardTabs = () => {
         </TabPane>
         <TabPane tabId={"boats-listing"}>
           <BoatsListing />
+        </TabPane>
+        <TabPane tabId={"charter-requests"}>
+          <CharterRequests />
+        </TabPane>
+        <TabPane tabId={"transportation-requests"}>
+          <TransportationRequests />
         </TabPane>
       </TabContent>
     </Col>

@@ -202,7 +202,7 @@ export default function CharterRequestSection() {
                 </Col>
                 <Col xs={12} md={6}>
                   <div className="form-input">
-                    <label className="form-label" style={{ marginRight: '10px' }}>Date from</label>
+                    <label className="form-label">Date from</label>
                     <DatePicker
                       selected={form.dateFrom ? new Date(form.dateFrom) : null}
                       onChange={(date) => handleDateChange("dateFrom", date as Date | null)}
@@ -213,7 +213,7 @@ export default function CharterRequestSection() {
                 </Col>
                 <Col xs={12} md={6}>
                   <div className="form-input">
-                    <label className="form-label" style={{ marginRight: '10px' }}>Date to</label>
+                    <label className="form-label">Date to</label>
                     <DatePicker
                       selected={form.dateTo ? new Date(form.dateTo) : null}
                       onChange={(date) => handleDateChange("dateTo", date as Date | null)}
@@ -255,7 +255,7 @@ export default function CharterRequestSection() {
                     />
                   </div>
                 </Col>
-                <Col xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
+                <Col xs={12} className="form-submit-col">
                   <button type="submit" className="btn-solid px-2" disabled={submitting}>
                     {submitting ? "Sending..." : "Send request"}
                   </button>

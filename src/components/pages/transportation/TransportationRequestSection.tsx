@@ -194,7 +194,7 @@ export default function TransportationRequestSection() {
                 </Col>
                 <Col md={6}>
                   <div className="form-input">
-                    <label className="form-label" style={{ marginRight: '10px' }}>Start date</label>
+                    <label className="form-label">Start date</label>
                     <DatePicker
                       selected={form.dateStart ? new Date(form.dateStart) : null}
                       onChange={(date) => handleDateChange("dateStart", date as Date | null)}
@@ -205,7 +205,7 @@ export default function TransportationRequestSection() {
                 </Col>
                 <Col md={6}>
                   <div className="form-input">
-                    <label className="form-label" style={{ marginRight: '10px' }}>Deadline date</label>
+                    <label className="form-label">Deadline date</label>
                     <DatePicker
                       selected={form.deadlineDate ? new Date(form.deadlineDate) : null}
                       onChange={(date) => handleDateChange("deadlineDate", date as Date | null)}
@@ -346,7 +346,7 @@ export default function TransportationRequestSection() {
                     />
                   </div>
                 </Col>
-                <Col xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
+                <Col xs={12} className="form-submit-col">
                   <button type="submit" className="btn-solid px-2" disabled={submitting}>
                     {submitting ? "Sending..." : "Send request"}
                   </button>

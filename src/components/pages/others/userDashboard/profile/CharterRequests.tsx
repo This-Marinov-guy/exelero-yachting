@@ -182,7 +182,7 @@ Status: ${request.status}`;
                           <MoreVertical className="h-4 w-4" />
                           <span className="visually-hidden">Open menu</span>
                         </DropdownToggle>
-                        <DropdownMenu className="boats-listing-dropdown">
+                        <DropdownMenu container="body" className="boats-listing-dropdown">
                           <DropdownItem
                             onClick={() => {
                               setOpenDropdowns(new Set());

@@ -200,6 +200,7 @@ export const RouteList = {
       Zhik: `/partners/zhik`,
     },
     Boats: `/services/brokerage`,
+    Charters: `/services/charters`,
     About: `/about`,
     Gallery: `/gallery`,
     Services: {

@@ -2494,7 +2494,7 @@
           }
         }
 
-        // DropdownMenu styling
+        // DropdownMenu styling - high z-index so menu overlays table rows when portaled to body
         .boats-listing-dropdown {
           background: rgba(var(--white), 1) !important;
           border: 1px solid rgba(var(--border-color), 1) !important;
@@ -2503,6 +2503,7 @@
           padding: 8px !important;
           min-width: 160px !important;
           margin-top: 4px !important;
+          z-index: 1050 !important;
         }
 
         // DropdownItem styling
@@ -2569,6 +2570,11 @@
           margin: 6px 0 !important;
           opacity: 1 !important;
         }
+      }
+
+      // Global rule for boats-listing-dropdown when portaled to body (Actions overlay)
+      .boats-listing-dropdown {
+        z-index: 1050 !important;
       }
 
       // Upload boat section styles
@@ -3299,4 +3305,9 @@
       }
     }
   }
+}
+
+/* Actions dropdown when portaled to body - ensure it overlays table rows */
+.boats-listing-dropdown {
+  z-index: 1050 !important;
 }

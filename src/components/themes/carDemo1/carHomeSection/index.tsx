@@ -31,11 +31,18 @@ const CarHomeSection = () => {
       overlayVariant: "darker" as const,
       panels: [
         {
-          name: "Brokerage & Charters",
+          name: "Brokerage",
           description: "Find your next boat or get your boat listed with Exelero.",
           thumbImage: "/assets/images/hero/boats.jpg",
           variant: "b" as const,
           href: RouteList.Pages.Boats,
+        },
+        {
+          name: "Charters",
+          description: "Find your next boat or get your boat listed with Exelero.",
+          thumbImage: "/assets/images/charter/cruiser.jpg",
+          variant: "b" as const,
+          href: RouteList.Pages.Services.Charters,
         },
       ],
     },
