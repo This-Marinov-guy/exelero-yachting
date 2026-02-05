@@ -13,7 +13,6 @@ const PeopleReview = () => {
   
   return (
     <div className='combine-bg overflow-hidden'>
-      <RatioImage src={`${ImagePath}/dark-job/bg-effect/newsletter-bg.png`} alt='newsletter-bg' className='bg-img' />
       <section className='dark-testimonial-section'>
         <Container>
           <CommonHeader title={PeopleSays} content={PeopleSayContent} headClass='title-style-4' />

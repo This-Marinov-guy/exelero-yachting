@@ -645,7 +645,6 @@ main {
 
 .car-home-section {
   position: relative;
-  background: url(../../images/car/bg-effect/home-bg.png);
   background-size: cover;
 
   .home-section-box {
@@ -1420,7 +1419,6 @@ main {
 
   &::after {
     @include after_before;
-    background: url(../../images/dark-job/bg-effect/home-bg.png);
     z-index: -1;
     background-repeat: no-repeat;
     background-size: cover;

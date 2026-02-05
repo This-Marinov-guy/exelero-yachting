@@ -4,7 +4,7 @@
 
 .charter-hero {
   position: relative;
-  min-height: 380px;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   padding: calc(50px + (120 - 50) * ((100vw - 320px) / (1920 - 320))) 0;
@@ -15,13 +15,9 @@
     inset: 0;
     background:
       linear-gradient(160deg, rgba(var(--theme-color), 0.4) 0%, rgba(0, 20, 50, 0.5) 40%, rgba(0, 0, 0, 0.35) 100%),
-      url("/assets/images/hero/boats.jpg") center / cover no-repeat;
+      url("/assets/images/charter/charter-bg.jpg") center / cover no-repeat;
     z-index: 0;
-    transition: transform 0.6s ease;
-  }
-
-  &:hover &__bg {
-    transform: scale(1.03);
+    transform: translateY(var(--hero-parallax-y, 0));
   }
 
   &__noise {
@@ -199,7 +195,7 @@
   }
 
   &--small {
-    min-height: 160px;
+    height: 160px;
 
     @media (min-width: 992px) {
       min-height: 0;
@@ -282,19 +278,9 @@
   line-height: 1.25;
 }
 
-.charter-bento__card--small .charter-bento__title {
-  font-size: calc(16px + (20 - 16) * ((100vw - 320px) / (1920 - 320)));
-}
-
 .charter-bento__text {
-  font-size: calc(13px + (15 - 13) * ((100vw - 320px) / (1920 - 320)));
-  color: rgba(var(--content-color), 1);
   line-height: 1.65;
   margin: 0;
-}
-
-.charter-bento__card--small .charter-bento__text {
-  font-size: calc(12px + (14 - 12) * ((100vw - 320px) / (1920 - 320)));
 }
 
 .charter-form-section {

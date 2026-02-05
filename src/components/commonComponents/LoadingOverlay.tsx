@@ -4,7 +4,7 @@ import ExceleroLoader from "@/components/commonComponents/ExceleroLoader";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-const READY_DELAY_MS = 900;
+const READY_DELAY_MS = 0;
 const EXIT_ANIMATION_MS = 500;
 
 const LoadingOverlay = () => {

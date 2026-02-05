@@ -1,3 +1,4 @@
+import HeroParallaxSection from "@/components/commonComponents/HeroParallaxSection";
 import CharterRequestSection from "./CharterRequestSection";
 import Image from "next/image";
 import { Container } from "reactstrap";
@@ -7,21 +8,21 @@ const CHARTER_ROWS = [
     title: "Sailing Charters",
     description:
       "Explore the coast with our hand-picked sailing yachts. From day trips to week-long cruises, we match you with the right boat and skipper for your experience.",
-    image: "/assets/images/filter/charter.jpg",
+    image: "/assets/images/charter/cruiser.jpg",
     imageAlt: "Sailing charter",
   },
   {
     title: "Luxury & Comfort",
     description:
       "Premium vessels with full amenities. Ideal for families and groups who want space, comfort, and professional crew support for a stress-free journey.",
-    image: "/assets/images/hero/boats.jpg",
+    image: "/assets/images/charter/racing.jpg",
     imageAlt: "Luxury yacht",
   },
   {
     title: "Custom Itineraries",
     description:
       "Tell us your dream route and dates. We handle boat selection, crew, and logistics so you can focus on the sailing and the views.",
-    image: "/assets/images/other/about/general.jpg",
+    video: "/assets/images/charter/yacht.mp4",
     imageAlt: "Custom charter",
   },
 ];
@@ -36,10 +37,8 @@ const CharterPage = () => {
         image
       /> */}
 
-      {/* Hero with full-bleed bg + glass panel */}
-      <section className="charter-hero">
-        <div className="charter-hero__bg" aria-hidden />
-        <div className="charter-hero__noise" aria-hidden />
+      {/* Hero with full-bleed bg + glass panel (bg scrolls slower = parallax) */}
+      <HeroParallaxSection heroClass="charter-hero">
         <Container>
           <div className="charter-hero__glass charter-hero__glass--center">
             <span className="charter-hero__label">Services</span>
@@ -51,7 +50,7 @@ const CharterPage = () => {
             <div className="charter-hero__line" />
           </div>
         </Container>
-      </section>
+      </HeroParallaxSection>
 
       {/* Bento grid content */}
       <section className="charter-content section-b-space mt-5">
@@ -60,7 +59,7 @@ const CharterPage = () => {
             <article className="charter-bento__cell charter-bento__cell--large">
               <div className="charter-bento__image-wrap">
                 <Image
-                  src={CHARTER_ROWS[0].image}
+                  src={CHARTER_ROWS[0].image!}
                   alt={CHARTER_ROWS[0].imageAlt}
                   width={800}
                   height={500}
@@ -75,7 +74,7 @@ const CharterPage = () => {
             <article className="charter-bento__cell charter-bento__cell--small">
               <div className="charter-bento__image-wrap charter-bento__image-wrap--small">
                 <Image
-                  src={CHARTER_ROWS[1].image}
+                  src={CHARTER_ROWS[1].image!}
                   alt={CHARTER_ROWS[1].imageAlt}
                   width={400}
                   height={280}
@@ -89,12 +88,14 @@ const CharterPage = () => {
             </article>
             <article className="charter-bento__cell charter-bento__cell--small">
               <div className="charter-bento__image-wrap charter-bento__image-wrap--small">
-                <Image
-                  src={CHARTER_ROWS[2].image}
-                  alt={CHARTER_ROWS[2].imageAlt}
-                  width={400}
-                  height={280}
+                <video
+                  src={CHARTER_ROWS[2].video}
                   className="charter-bento__image img-fluid"
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
+                  aria-label={CHARTER_ROWS[2].imageAlt}
                 />
               </div>
               <div className="charter-bento__card charter-bento__card--small">

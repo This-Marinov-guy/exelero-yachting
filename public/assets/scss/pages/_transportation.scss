@@ -15,14 +15,11 @@
     inset: 0;
     background:
       linear-gradient(160deg, rgba(var(--theme-color), 0.4) 0%, rgba(0, 20, 50, 0.5) 40%, rgba(0, 0, 0, 0.35) 100%),
-      url("/assets/images/transportation/delivery-bg.jpg") center / cover no-repeat;
+      url("/assets/images/transportation/delivery-bg.jpeg") center / cover no-repeat;
     z-index: 0;
-    transition: transform 0.6s ease;
+    transform: translateY(var(--hero-parallax-y, 0));
   }
 
-  &:hover &__bg {
-    transform: scale(1.03);
-  }
 
   &__noise {
     position: absolute;
