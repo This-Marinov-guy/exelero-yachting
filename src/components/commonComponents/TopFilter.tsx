@@ -18,7 +18,7 @@ const boatTypes = [
   {
     id: "sport-cruiser",
     label: "Sport-Cruiser",
-    image: "/assets/images/filter/cruising.png",
+    image: "/assets/images/filter/sport-cruise.jpg",
     // description: "Comfortable cruising yachts"
   },
   {
@@ -30,7 +30,7 @@ const boatTypes = [
   {
     id: "power-boat",
     label: "Power Boat",
-    image: "/assets/images/filter/cruising.png",
+    image: "/assets/images/filter/power.jpg",
     // description: "Comfortable cruising yachts"
   },
   // {
