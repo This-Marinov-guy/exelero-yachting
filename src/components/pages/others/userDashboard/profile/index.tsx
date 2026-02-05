@@ -5,6 +5,8 @@ import ProfileSidebar from "./ProfileSidebar";
 import DealerInfo from "./DealerInfo";
 import UploadBoat from "./UploadBoat";
 import BoatsListing from "./BoatsListing";
+import CharterRequests from "./CharterRequests";
+import TransportationRequests from "./TransportationRequests";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("dealer-info");
@@ -25,6 +27,8 @@ const Profile = () => {
             {activeTab === "dealer-info" && <DealerInfo onDataChange={handleDealerInfoChange} />}
             {activeTab === "upload-boat" && <UploadBoat />}
             {activeTab === "boats-listing" && <BoatsListing />}
+            {activeTab === "charter-requests" && <CharterRequests />}
+            {activeTab === "transportation-requests" && <TransportationRequests />}
           </div>
         </Col>
       </Row>

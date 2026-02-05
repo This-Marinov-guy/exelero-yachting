@@ -49,6 +49,8 @@ const ProfileSidebar = ({ activeTab, onTabChange, refreshTrigger }: ProfileSideb
         { id: "dealer-info", label: "Dealer Info", locked: false },
         { id: "upload-boat", label: "Upload Boat", locked: !hasDealerInfo },
         { id: "boats-listing", label: "Boats Listing", locked: !hasDealerInfo },
+        { id: "charter-requests", label: "Charter Requests", locked: false },
+        { id: "transportation-requests", label: "Transportation Requests", locked: false },
     ];
 
     if (loading) {
