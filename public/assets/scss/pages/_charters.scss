@@ -186,14 +186,6 @@
       0 0 0 1px rgba(var(--theme-color), 0.12);
   }
 
-  .charter-bento__cell--large & {
-    @media (min-width: 992px) {
-      flex: 1;
-      min-height: 100%;
-      border-radius: 16px;
-    }
-  }
-
   &--small {
     height: 160px;
 
@@ -228,11 +220,9 @@
   }
 
   .charter-bento__cell--large & {
-    @media (min-width: 992px) {
-      flex: 0 0 42%;
-      justify-content: center;
-      padding: calc(24px + (36 - 24) * ((100vw - 992px) / (1920 - 992)));
-    }
+   display: flex;
+   align-items: center;
+  justify-content: space-around;
   }
 
   &--small {
@@ -258,7 +248,7 @@
 .charter-bento__image {
   width: 100%;
   height: 100%;
-  min-height: 220px;
+  min-height: 200px;
   display: block;
   object-fit: cover;
   transition: transform 0.5s ease;
@@ -281,6 +271,113 @@
 .charter-bento__text {
   line-height: 1.65;
   margin: 0;
+}
+
+/* Skipper options tabs inside the main charter panel */
+.charter-skipper-tabs {
+  margin-top: calc(16px + (24 - 16) * ((100vw - 320px) / (1920 - 320)));
+  max-width: 520px;
+
+  &__title {
+    font-size: calc(16px + (20 - 16) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 600;
+    color: rgba(var(--title-color), 1);
+    margin-bottom: 10px;
+  }
+
+  &__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  &__nav-item {
+    border: 1px solid rgba(var(--theme-color), 0.25);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    background: rgba(var(--white), 1);
+    color: rgba(var(--title-color), 1);
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    cursor: pointer;
+
+    &:hover {
+      border-color: rgba(var(--theme-color), 0.6);
+    }
+
+    &--active {
+      background: rgba(var(--theme-color), 1);
+      color: rgba(255, 255, 255, 1);
+      border-color: rgba(var(--theme-color), 1);
+    }
+  }
+
+  &__content {
+    margin: 0;
+    line-height: 1.7;
+  }
+}
+
+/* Secondary info tabs section: \"Who is it for / When & where / Boats\" */
+.charter-info {
+  background: rgba(var(--white), 1);
+}
+
+.charter-info-tabs {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr);
+  gap: calc(24px + (36 - 24) * ((100vw - 320px) / (1920 - 320)));
+  align-items: flex-start;
+
+  @media (max-width: 991px) {
+    grid-template-columns: 1fr;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-left: 2px solid rgba(var(--border-color), 0.4);
+    padding-left: 18px;
+  }
+
+  &__nav-item {
+    padding: 4px 0;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: calc(16px + (20 - 16) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 500;
+    color: rgba(var(--content-color), 0.6);
+    cursor: pointer;
+    transition: color 0.25s ease;
+
+    &--active {
+      color: rgba(7, 54, 104, 1);
+      font-weight: 600;
+    }
+  }
+
+  &__content {
+    max-width: 640px;
+  }
+
+  &__heading {
+    font-size: calc(20px + (26 - 20) * ((100vw - 320px) / (1920 - 320)));
+    font-weight: 600;
+    color: rgba(7, 54, 104, 1);
+    margin-bottom: 10px;
+  }
+
+  &__text {
+    line-height: 1.8;
+
+    &:not(:last-child) {
+      margin-bottom: 8px;
+    }
+  }
 }
 
 .charter-form-section {

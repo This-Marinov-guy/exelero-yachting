@@ -2,19 +2,21 @@ import HeroParallaxSection from "@/components/commonComponents/HeroParallaxSecti
 import CharterRequestSection from "./CharterRequestSection";
 import Image from "next/image";
 import { Container } from "reactstrap";
+import CharterSkipperTabs from "./CharterSkipperTabs";
+import CharterInfoTabs from "./CharterInfoTabs";
 
 const CHARTER_ROWS = [
   {
     title: "Sailing Charters",
     description:
       "Explore the coast with our hand-picked sailing yachts. From day trips to week-long cruises, we match you with the right boat and skipper for your experience.",
-    image: "/assets/images/charter/cruiser.jpg",
+    image: "/assets/images/charter/cruiser.webp",
     imageAlt: "Sailing charter",
   },
   {
-    title: "Luxury & Comfort",
+    title: "Variety on demand",
     description:
-      "Premium vessels with full amenities. Ideal for families and groups who want space, comfort, and professional crew support for a stress-free journey.",
+      "Choose from a range of vessels, from small cruisers to large racing yachts. We can provide a boat for every occasion from cruisers, racing yachts to power boats. Holiday or Racing, we have you covered.",
     image: "/assets/images/charter/racing.jpg",
     imageAlt: "Luxury yacht",
   },
@@ -57,19 +59,30 @@ const CharterPage = () => {
         <Container>
           <div className="charter-bento">
             <article className="charter-bento__cell charter-bento__cell--large">
-              <div className="charter-bento__image-wrap">
-                <Image
-                  src={CHARTER_ROWS[0].image!}
-                  alt={CHARTER_ROWS[0].imageAlt}
-                  width={800}
-                  height={500}
-                  className="charter-bento__image img-fluid"
-                />
-              </div>
               <div className="charter-bento__card">
-                <h2 className="charter-bento__title">{CHARTER_ROWS[0].title}</h2>
-                <p className="charter-bento__text">{CHARTER_ROWS[0].description}</p>
+                {/* <p className="charter-bento__text">
+                  From relaxed coastal cruising to performance-oriented passages, our charter partners
+                  offer a curated fleet of yachts ready to match your experience level, crew size, and
+                  dream itinerary.
+                </p> */}
+
+                {/* Info tabs: who / when & where / boats */}
+                <CharterInfoTabs />
+
+                {/* Skipper options tabs */}
+                <CharterSkipperTabs />
+
+                <div className="charter-bento__image-wrap">
+                  <Image
+                    src={CHARTER_ROWS[0].image!}
+                    alt={CHARTER_ROWS[0].imageAlt}
+                    width={800}
+                    height={500}
+                    className="charter-bento__image img-fluid"
+                  />
+                </div>
               </div>
+              
             </article>
             <article className="charter-bento__cell charter-bento__cell--small">
               <div className="charter-bento__image-wrap charter-bento__image-wrap--small">
@@ -98,10 +111,7 @@ const CharterPage = () => {
                   aria-label={CHARTER_ROWS[2].imageAlt}
                 />
               </div>
-              <div className="charter-bento__card charter-bento__card--small">
-                <h2 className="charter-bento__title">{CHARTER_ROWS[2].title}</h2>
-                <p className="charter-bento__text">{CHARTER_ROWS[2].description}</p>
-              </div>
+             
             </article>
           </div>
         </Container>
