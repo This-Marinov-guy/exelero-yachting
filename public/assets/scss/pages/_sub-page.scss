@@ -2478,7 +2478,100 @@
           }
         }
 
-        // Bootstrap dropdown menu styling - scoped to boats listing
+        // Actions dropdown trigger (profile tables: boats, charter, transportation)
+        .profile-table-actions-trigger {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          padding: 0;
+          border: 1px solid rgba(var(--border-color), 0.6);
+          border-radius: 6px;
+          background: rgba(var(--white), 1);
+          color: rgba(var(--content-color), 0.8);
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: rgba(var(--theme-color), 0.08);
+            color: rgba(var(--theme-color), 1);
+            border-color: rgba(var(--theme-color), 0.3);
+          }
+
+          &:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(var(--theme-color), 0.25);
+          }
+        }
+
+        // Inline actions next to dots (profile tables: boats, charter, transportation) - legacy
+        .profile-table-actions {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 8px;
+          flex-wrap: wrap;
+
+          .profile-table-actions-dots {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(var(--content-color), 0.7);
+            margin-right: 4px;
+            flex-shrink: 0;
+          }
+
+          .profile-table-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: 1px solid rgba(var(--border-color), 1);
+            background: rgba(var(--white), 1);
+            color: rgba(var(--title-color), 1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+
+            &:hover:not(:disabled) {
+              background: rgba(var(--theme-color), 0.08);
+              color: rgba(var(--theme-color), 1);
+              border-color: rgba(var(--theme-color), 0.3);
+            }
+
+            &:focus {
+              outline: none;
+              box-shadow: 0 0 0 2px rgba(var(--theme-color), 0.25);
+            }
+
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+            }
+
+            svg {
+              width: 16px;
+              height: 16px;
+              flex-shrink: 0;
+            }
+
+            &.profile-table-action-btn-danger {
+              color: rgba(var(--error), 1);
+              border-color: rgba(var(--error), 0.3);
+
+              &:hover:not(:disabled) {
+                background: rgba(var(--error), 0.1);
+                color: rgba(var(--error), 1);
+                border-color: rgba(var(--error), 0.5);
+              }
+            }
+          }
+        }
+
+        // Bootstrap dropdown menu styling - scoped to boats listing (legacy)
         .boats-listing-dropdown-wrapper {
           position: relative;
 
@@ -2500,10 +2593,26 @@
           border: 1px solid rgba(var(--border-color), 1) !important;
           border-radius: 8px !important;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-          padding: 8px !important;
-          min-width: 160px !important;
-          margin-top: 4px !important;
+          padding: 6px 4px !important;
+          min-width: 180px !important;
           z-index: 1050 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 0 !important;
+
+          [data-radix-collection-item],
+          [role="menuitem"] {
+            display: block !important;
+            width: 100% !important;
+          }
+
+          .boats-listing-dropdown-label {
+            padding: 6px 10px 4px !important;
+            font-size: 12px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            color: rgba(var(--content-color), 0.8) !important;
+          }
         }
 
         // DropdownItem styling

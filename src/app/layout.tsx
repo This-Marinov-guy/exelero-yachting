@@ -5,14 +5,53 @@ import { I18nProvider } from "./i18n/i18n-context";
 import { detectLanguage } from "./i18n/server";
 import { Providers } from "./MainProvider";
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://exelero.com");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Exelero Yachting",
     template: "%s | Exelero Yachting",
   },
-  description: "Exelero Yachting — yachting, brokerage, charters, sailing gear and services.",
+  description:
+    "Exelero Yachting — luxury yachts, brokerage, charters, sailing gear and marine services. Find your perfect vessel.",
+  keywords: [
+    "yachting",
+    "yacht brokerage",
+    "boat charter",
+    "yacht for sale",
+    "marine services",
+    "sailing",
+    "luxury yacht",
+    "Exelero",
+  ],
   icons: {
     icon: "/assets/images/favicons/favicon.ico",
+  },
+  openGraph: {
+    siteName: "Exelero Yachting",
+    type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "/assets/images/hero/x-yachts.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Exelero Yachting",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "/",
   },
 };
 

@@ -51,24 +51,24 @@ export const FooterDetailData: FooterDetailType[] = [
       { title: "Contact", url: RouteList.Pages.Other.ContactUs1 },
     ],
   },
-  {
-    title: "Partners",
-    links: [
-      { title: "X-Yachts", url: RouteList.Pages.Partners.XYachts },
-      { title: "Elvstrom", url: RouteList.Pages.Partners.Elvstrom },
-      { title: "Omaya Yachts", url: RouteList.Pages.Partners.OmayaYachts },
-    ],
-  },
+  // {
+  //   title: "Partners",
+  //   links: [
+  //     { title: "X-Yachts", url: RouteList.Pages.Partners.XYachts },
+  //     { title: "Elvstrom", url: RouteList.Pages.Partners.Elvstrom },
+  //     { title: "Omaya Yachts", url: RouteList.Pages.Partners.OmayaYachts },
+  //   ],
+  // },
   {
     title: "Services",
     links: [
-      { title: "Sails", url: RouteList.Pages.Services.Sails },
-      { title: "Clothes", url: RouteList.Pages.Services.Clothes },
+      // { title: "Sails", url: RouteList.Pages.Services.Sails },
+      // { title: "Clothes", url: RouteList.Pages.Services.Clothes },
       { title: "Boats", url: RouteList.Pages.Services.Boats },
       { title: "Transportation", url: RouteList.Pages.Services.Transportation },
-      { title: "Sell Your Boat", url: RouteList.Pages.Services.SellYourBoat },
+      // { title: "Sell Your Boat", url: RouteList.Pages.Services.SellYourBoat },
       { title: "Charters", url: RouteList.Pages.Services.Charters },
-      { title: "Parts", url: RouteList.Pages.Services.Parts },
+      // { title: "Parts", url: RouteList.Pages.Services.Parts },
     ],
   },
   {

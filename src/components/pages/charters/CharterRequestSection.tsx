@@ -93,6 +93,25 @@ export default function CharterRequestSection() {
         return;
       }
 
+      // Notify exelerodev@gmail.com (fire-and-forget)
+      fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "charter",
+          data: {
+            name: name.trim(),
+            email: email.trim(),
+            phone: form.phone.trim() || null,
+            charter_type: type,
+            date_from: dateFrom,
+            date_to: dateTo,
+            group_size: groupSizeNum,
+            note: form.note.trim() || null,
+          },
+        }),
+      }).catch(() => {});
+
       toast.success("Charter request sent successfully! We’ll get back to you soon.");
       setForm(initialFormState);
     } catch (err: any) {

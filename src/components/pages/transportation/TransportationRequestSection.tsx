@@ -102,6 +102,30 @@ export default function TransportationRequestSection() {
         return;
       }
 
+      // Notify exelerodev@gmail.com (fire-and-forget)
+      fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "transportation",
+          data: {
+            name: name.trim(),
+            email: email.trim(),
+            phone: form.phone.trim() || null,
+            date_start: dateStart,
+            deadline_date: deadlineDate,
+            start_point: startPoint.trim(),
+            end_point: endPoint.trim(),
+            boat_weight_kg: toNumberOrNull(form.weight),
+            boat_length_m: toNumberOrNull(form.length),
+            boat_beam_m: toNumberOrNull(form.beam),
+            boat_draft_m: toNumberOrNull(form.draft),
+            boat_height_m: toNumberOrNull(form.height),
+            note: form.note.trim() || null,
+          },
+        }),
+      }).catch(() => {});
+
       toast.success("Transportation request sent successfully! We’ll get back to you with options.");
       setForm(initialFormState);
     } catch (err: any) {

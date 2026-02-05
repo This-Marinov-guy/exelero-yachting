@@ -24,7 +24,7 @@ const CharterRequests = () => {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<CharterRequest[]>([]);
   const [deleting, setDeleting] = useState<Set<string>>(new Set());
-  const [openDropdowns, setOpenDropdowns] = useState<Set<string>>(new Set());
+  const [dropdownOpenId, setDropdownOpenId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -153,69 +153,40 @@ Status: ${request.status}`;
                     </TableCell>
                     <TableCell>{request.group_size}</TableCell>
                     <TableCell className="capitalize">{request.status}</TableCell>
-                    <TableCell style={{ width: "120px", textAlign: "right" }} className="text-right">
+                    <TableCell style={{ width: "auto", minWidth: "200px", textAlign: "right" }} className="text-right">
                       <Dropdown
-                        isOpen={openDropdowns.has(request.id)}
-                        toggle={() => {
-                          const next = new Set(openDropdowns);
-                          next.has(request.id) ? next.delete(request.id) : next.add(request.id);
-                          setOpenDropdowns(next);
-                        }}
-                        direction="end"
                         className="boats-listing-dropdown-wrapper"
-                        style={{ display: "flex", justifyContent: "center" }}
+                        isOpen={dropdownOpenId === request.id}
+                        toggle={() => setDropdownOpenId((prev) => (prev === request.id ? null : request.id))}
                       >
                         <DropdownToggle
                           tag="button"
-                          className="btn btn-sm btn-ghost p-0"
-                          style={{
-                            width: "32px",
-                            height: "32px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            border: "none",
-                            background: "transparent",
-                            cursor: "pointer",
-                          }}
+                          className="profile-table-actions-trigger"
+                          caret={false}
+                          aria-label="Open actions menu"
                         >
                           <MoreVertical className="h-4 w-4" />
-                          <span className="visually-hidden">Open menu</span>
                         </DropdownToggle>
-                        <DropdownMenu container="body" className="boats-listing-dropdown">
-                          <DropdownItem
-                            onClick={() => {
-                              setOpenDropdowns(new Set());
-                              handlePreview(request);
-                            }}
-                            className="boats-listing-dropdown-item"
-                          >
+                        <DropdownMenu end className="boats-listing-dropdown" container={typeof document !== "undefined" ? document.body : undefined}>
+                          <DropdownItem header className="boats-listing-dropdown-label">
+                            Actions
+                          </DropdownItem>
+                          <DropdownItem divider />
+                          <DropdownItem onClick={() => handlePreview(request)} className="boats-listing-dropdown-item">
                             <Eye className="h-4 w-4" />
                             <span>Preview</span>
                           </DropdownItem>
-                          <DropdownItem
-                            onClick={() => {
-                              setOpenDropdowns(new Set());
-                              handleEdit(request);
-                            }}
-                            className="boats-listing-dropdown-item"
-                          >
+                          <DropdownItem onClick={() => handleEdit(request)} className="boats-listing-dropdown-item">
                             <Edit className="h-4 w-4" />
                             <span>Edit</span>
                           </DropdownItem>
-                          <DropdownItem divider />
                           <DropdownItem
-                            onClick={() => {
-                              setOpenDropdowns(new Set());
-                              handleDelete(request.id);
-                            }}
+                            onClick={() => handleDelete(request.id)}
                             disabled={deleting.has(request.id)}
                             className="boats-listing-dropdown-item boats-listing-dropdown-item-danger"
                           >
                             {deleting.has(request.id) ? (
-                              <span className="spinner-border spinner-border-sm" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                              </span>
+                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden />
                             ) : (
                               <Trash2 className="h-4 w-4" />
                             )}

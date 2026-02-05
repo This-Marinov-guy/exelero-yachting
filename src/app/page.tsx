@@ -38,25 +38,42 @@ export const metadata: Metadata = {
   },
 };
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://exelero.com");
+
 export default function Home() {
-  const jsonLd = {
+  const webSiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Exelero Yachting",
-    url: "/",
+    url: siteUrl,
     potentialAction: {
       "@type": "SearchAction",
-      target: "/boats?query={search_term_string}",
+      target: `${siteUrl}/services/brokerage?query={search_term_string}`,
       "query-input": "required name=search_term_string",
     },
+  };
+
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Exelero Yachting",
+    url: siteUrl,
+    description:
+      "Exelero Yachting — luxury yachts, brokerage, charters, sailing gear and marine services.",
+    sameAs: [],
   };
 
   return (
     <main>
       <script
         type="application/ld+json"
-        // JSON-LD must be a string, not an object
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
       <Layout>
         <CarDemo1Container />
