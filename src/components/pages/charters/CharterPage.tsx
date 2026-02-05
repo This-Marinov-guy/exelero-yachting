@@ -42,12 +42,12 @@ const CharterPage = () => {
         <div className="charter-hero__noise" aria-hidden />
         <Container>
           <div className="charter-hero__glass charter-hero__glass--center">
-            <span className="charter-hero__label">Charters</span>
+            <span className="charter-hero__label">Services</span>
             <h1 className="charter-hero__title">Yacht & Sailing Charters</h1>
-            <p className="charter-hero__description">
+            {/* <p className="charter-hero__description">
               Whether you want a day sail, a week along the coast, or a fully crewed experience,
               we arrange charters that fit your style and schedule.
-            </p>
+            </p> */}
             <div className="charter-hero__line" />
           </div>
         </Container>

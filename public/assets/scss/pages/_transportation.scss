@@ -4,7 +4,7 @@
 
 .transportation-hero {
   position: relative;
-  min-height: 380px;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   padding: calc(50px + (120 - 50) * ((100vw - 320px) / (1920 - 320))) 0;
@@ -15,7 +15,7 @@
     inset: 0;
     background:
       linear-gradient(160deg, rgba(var(--theme-color), 0.4) 0%, rgba(0, 20, 50, 0.5) 40%, rgba(0, 0, 0, 0.35) 100%),
-      url("/assets/images/hero/boats.jpg") center / cover no-repeat;
+      url("/assets/images/transportation/delivery-bg.jpg") center / cover no-repeat;
     z-index: 0;
     transition: transform 0.6s ease;
   }
@@ -38,12 +38,10 @@
     z-index: 2;
     padding: calc(24px + (48 - 24) * ((100vw - 320px) / (1920 - 320)));
     border-radius: 20px;
-    background: linear-gradient(
-      145deg,
-      rgba(var(--theme-color), 0.28) 0%,
-      rgba(var(--theme-color), 0.12) 50%,
-      rgba(var(--theme-color), 0.05) 100%
-    );
+    background: linear-gradient(145deg,
+        rgba(var(--theme-color), 0.28) 0%,
+        rgba(var(--theme-color), 0.12) 50%,
+        rgba(var(--theme-color), 0.05) 100%);
     border: 1px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -168,12 +166,17 @@
     @media (min-width: 992px) {
       flex-direction: row;
       align-items: stretch;
+      flex-wrap: wrap;
 
       .transportation-bento__card {
         flex: 1;
         min-width: 0;
         border-top: none;
         border-left: 3px solid rgba(var(--theme-color), 0.5);
+      }
+
+      .transportation-bento__image-wrap {
+        align-self: stretch;
       }
     }
   }
@@ -221,7 +224,7 @@
       @media (min-width: 992px) {
         flex: 0 0 32%;
         min-height: 120px;
-        max-height: 180px;
+        max-height: none;
       }
     }
   }
@@ -289,6 +292,43 @@
   }
 }
 
+/* Labels under the small-row (desktop: under both image + card) */
+.transportation-bento__labels {
+  margin-top: calc(10px + (16 - 10) * ((100vw - 320px) / (1920 - 320)));
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+
+  @media (min-width: 992px) {
+    flex: 0 0 100%;
+  }
+}
+
+.transportation-bento__label {
+  display: inline-flex;
+  margin-bottom: 40px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(var(--white), 1);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.transportation-bento__label-icon {
+  width: 24px;
+  height: 24px;
+  color: rgba(var(--theme-color), 1);
+}
+
+.transportation-bento__label-text {
+  font-weight: 600;
+  color: rgba(var(--title-color), 1);
+  text-transform: lowercase;
+}
+
 .transportation-bento__title {
   font-size: calc(18px + (24 - 18) * ((100vw - 320px) / (1920 - 320)));
   font-weight: 700;
@@ -303,14 +343,8 @@
 }
 
 .transportation-bento__text {
-  font-size: calc(13px + (15 - 13) * ((100vw - 320px) / (1920 - 320)));
-  color: rgba(var(--content-color), 1);
   line-height: 1.65;
   margin: 0;
-}
-
-.transportation-bento__card--small .transportation-bento__text {
-  font-size: calc(12px + (14 - 12) * ((100vw - 320px) / (1920 - 320)));
 }
 
 .transportation-form-section {

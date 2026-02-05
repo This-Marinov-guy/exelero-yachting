@@ -34,7 +34,7 @@ export default function TransportationRequestSection() {
           pointerEvents: showStickyBtn ? "auto" : "none",
         }}
       >
-        <a href={`#${FORM_ID}`} className="btn-solid transportation-request-cta__btn">
+        <a href={`#${FORM_ID}`} className="btn-solid transportation-request-cta__btn text-center">
           Request Transportation
         </a>
       </div>
