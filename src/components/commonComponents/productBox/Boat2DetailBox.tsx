@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Ruler, Zap } from "lucide-react";
 
 const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
   const formatPrice = (price: number) => {
@@ -14,6 +15,16 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
       maximumFractionDigits: 0,
     }).format(price);
   };
+
+  // Length: meters and feet (1 m ≈ 3.28084 ft)
+  const lengthM = data.hullLength ?? 0;
+  const lengthFt = Math.round(lengthM * 3.28084 * 10) / 10;
+  const lengthText = lengthM > 0 ? `${lengthM} m (${lengthFt} ft)` : "—";
+
+  // Engine: kW and hp (1 kW ≈ 1.34102 hp). DB stores engine_power in kW.
+  const powerKw = data.enginePower ?? 0;
+  const powerHp = Math.round(powerKw * 1.34102 * 10) / 10;
+  const powerText = powerKw > 0 ? `${powerKw} kW (${powerHp} hp)` : "—";
 
   // Check if image is external URL
   const isExternalUrl = (img: string): boolean => {
@@ -57,15 +68,15 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
           <SvgIcon iconId="/property/sprite/featured.svg#4"/>          
           <h6>{data.location}</h6>
         </div>
-        <ul className='featured-list'>
-          {data.features.map((item, i) => {
-            return (
-              <li key={i}>
-                <SvgIcon iconId={`/property/sprite/${item.icon}`} />
-                <span>{item.text}</span>
-              </li>
-            );
-          })}
+        <ul className='featured-list' style={{display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-start'}}>
+          <li>
+            <Ruler className="boat-feature-icon" aria-hidden />
+            <span>{lengthText}</span>
+          </li>
+          <li>
+            <Zap className="boat-feature-icon" aria-hidden />
+            <span>{powerText}</span>
+          </li>
         </ul>
         <div className='price-flex'>
           <h4>

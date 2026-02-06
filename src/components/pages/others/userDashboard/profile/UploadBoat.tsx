@@ -750,7 +750,9 @@ const UploadBoat = () => {
                             >
                                 <option value="">Select a type</option>
                                 <option value="racer">Racer</option>
+                                <option value="sport-cruiser">Sport-Cruiser</option>
                                 <option value="cruiser">Cruiser</option>
+                                <option value="power">Power</option>
                             </select>
                         </div>
 

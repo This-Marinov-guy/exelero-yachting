@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS boat_data (
     build_year VARCHAR(4) NOT NULL,
     location VARCHAR(512) NOT NULL,
     price INTEGER NOT NULL,
-    vat_included BOOLEAN NOT NULL DEFAULT TRUE,
+    vat_included BOOLEAN NOT NULL DEFAULT FALSE,
     description TEXT NOT NULL,
     designer VARCHAR(512) NOT NULL,
     hull_length DOUBLE PRECISION NOT NULL,

@@ -31,7 +31,7 @@ const FilterTags: FC<TopPanelType> = ({ topFilter, side, type, mainClass }) => {
     <Dropdown className='select-dropdown' isOpen={dropdownOpen} toggle={() => setDropdownOpen(!dropdownOpen)}>
       <DropdownToggle className='select-button' color="">{sortBy || "Sort By"}</DropdownToggle>
       <DropdownMenu className='select-menu' end>
-        {FilterTabsListData.slice(startPoint, endPoint).map((item, index) => (
+        {FilterTabsListData.map((item, index) => (
           <DropdownItem onClick={() => handleSortBy(item)} key={index} className="select-item">
             <Link href={Href} scroll={false} className={`select-item ${sortBy === item ? "active" : ""}`}>
               {item}

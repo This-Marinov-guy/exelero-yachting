@@ -16,7 +16,7 @@ const BoatDetailContainer: FC<BoatDetailContainerProps> = ({ boat }) => {
       <Breadcrumbs 
         title={boat.title} 
         url={RouteList.Home.CarDemo1} 
-        subTitle="Boats" 
+        subTitle="Brokerage" 
         mainClass="page-breadcrumbs-section"
         image
       />

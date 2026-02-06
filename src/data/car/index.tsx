@@ -154,7 +154,7 @@ export const CarModalBrandsData = [
   },
 ];
 
-export const FilterTabsListData = ["Most Popular", "User Rating (High to Low)", "Price (High to Low)", "$ High To Low", "Alphabetical A-Z", "Alphabetical Z-A", "Most Popular", "24 Product par page"];
+export const FilterTabsListData = ["Price (High to Low)", "Price (Low to High)", "Alphabetical A-Z", "Alphabetical Z-A"];
 
 export const FilterCategory = [
   { id: "categories-1", type: "all", label: "All Cars", count: 1530 },

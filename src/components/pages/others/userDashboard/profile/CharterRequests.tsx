@@ -5,8 +5,8 @@ import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
-import { Edit, Eye, MoreVertical, Trash2 } from "lucide-react";
+import { UncontrolledTooltip } from "reactstrap";
+import { Edit, Eye, Trash2 } from "lucide-react";
 
 type CharterRequest = {
   id: string;
@@ -24,7 +24,6 @@ const CharterRequests = () => {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<CharterRequest[]>([]);
   const [deleting, setDeleting] = useState<Set<string>>(new Set());
-  const [dropdownOpenId, setDropdownOpenId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -153,47 +152,44 @@ Status: ${request.status}`;
                     </TableCell>
                     <TableCell>{request.group_size}</TableCell>
                     <TableCell className="capitalize">{request.status}</TableCell>
-                    <TableCell style={{ width: "auto", minWidth: "200px", textAlign: "right" }} className="text-right">
-                      <Dropdown
-                        className="boats-listing-dropdown-wrapper"
-                        isOpen={dropdownOpenId === request.id}
-                        toggle={() => setDropdownOpenId((prev) => (prev === request.id ? null : request.id))}
-                      >
-                        <DropdownToggle
-                          tag="button"
-                          className="profile-table-actions-trigger"
-                          caret={false}
-                          aria-label="Open actions menu"
+                    <TableCell style={{ width: "auto", minWidth: "140px", textAlign: "right" }} className="text-right">
+                      <div className="profile-table-actions-icons d-flex align-items-center justify-content-end gap-1">
+                        <button
+                          type="button"
+                          id={`charter-preview-${request.id}`}
+                          onClick={() => handlePreview(request)}
+                          className="profile-table-action-btn"
+                          aria-label="Preview"
                         >
-                          <MoreVertical className="h-4 w-4" />
-                        </DropdownToggle>
-                        <DropdownMenu end className="boats-listing-dropdown" container={typeof document !== "undefined" ? document.body : undefined}>
-                          <DropdownItem header className="boats-listing-dropdown-label">
-                            Actions
-                          </DropdownItem>
-                          <DropdownItem divider />
-                          <DropdownItem onClick={() => handlePreview(request)} className="boats-listing-dropdown-item">
-                            <Eye className="h-4 w-4" />
-                            <span>Preview</span>
-                          </DropdownItem>
-                          <DropdownItem onClick={() => handleEdit(request)} className="boats-listing-dropdown-item">
-                            <Edit className="h-4 w-4" />
-                            <span>Edit</span>
-                          </DropdownItem>
-                          <DropdownItem
-                            onClick={() => handleDelete(request.id)}
-                            disabled={deleting.has(request.id)}
-                            className="boats-listing-dropdown-item boats-listing-dropdown-item-danger"
-                          >
-                            {deleting.has(request.id) ? (
-                              <span className="spinner-border spinner-border-sm" role="status" aria-hidden />
-                            ) : (
-                              <Trash2 className="h-4 w-4" />
-                            )}
-                            <span>Delete</span>
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </Dropdown>
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <UncontrolledTooltip target={`charter-preview-${request.id}`} placement="top">Preview</UncontrolledTooltip>
+                        <button
+                          type="button"
+                          id={`charter-edit-${request.id}`}
+                          onClick={() => handleEdit(request)}
+                          className="profile-table-action-btn"
+                          aria-label="Edit"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <Tooltip target={`charter-edit-${request.id}`} placement="top">Edit</Tooltip>
+                        <button
+                          type="button"
+                          id={`charter-delete-${request.id}`}
+                          onClick={() => handleDelete(request.id)}
+                          disabled={deleting.has(request.id)}
+                          className="profile-table-action-btn profile-table-action-btn-danger"
+                          aria-label="Delete"
+                        >
+                          {deleting.has(request.id) ? (
+                            <span className="spinner-border spinner-border-sm" role="status" aria-hidden />
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
+                        </button>
+                        <UncontrolledTooltip target={`charter-delete-${request.id}`} placement="top">Delete</UncontrolledTooltip>
+                      </div>
                     </TableCell>
                   </motion.tr>
                 ))}

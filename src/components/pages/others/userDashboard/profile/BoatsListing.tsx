@@ -12,8 +12,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
-import { Eye, Edit, Trash2, MoreVertical } from "lucide-react";
+import { UncontrolledTooltip } from "reactstrap";
+import { Eye, Edit, Trash2 } from "lucide-react";
 
 type Boat = {
     id: string;
@@ -34,7 +34,6 @@ const BoatsListing = () => {
     const [boats, setBoats] = useState<Boat[]>([]);
     const [updatingActive, setUpdatingActive] = useState<Set<string>>(new Set());
     const [deleting, setDeleting] = useState<Set<string>>(new Set());
-    const [dropdownOpenId, setDropdownOpenId] = useState<string | null>(null);
 
     useEffect(() => {
         const checkDealerInfo = async () => {
@@ -350,47 +349,44 @@ const BoatsListing = () => {
                                                 <span className="text-sm text-muted-foreground">No dealer</span>
                                             )}
                                         </TableCell>
-                                                <TableCell style={{ width: "auto", minWidth: "200px", textAlign: "right" }} className="text-right">
-                                            <Dropdown
-                                                className="boats-listing-dropdown-wrapper"
-                                                isOpen={dropdownOpenId === boat.id}
-                                                toggle={() => setDropdownOpenId((prev) => (prev === boat.id ? null : boat.id))}
-                                            >
-                                                <DropdownToggle
-                                                    tag="button"
-                                                    className="profile-table-actions-trigger"
-                                                    caret={false}
-                                                    aria-label="Open actions menu"
+                                                <TableCell style={{ width: "auto", minWidth: "140px", textAlign: "right" }} className="text-right">
+                                            <div className="profile-table-actions-icons d-flex align-items-center justify-content-end gap-1">
+                                                <button
+                                                    type="button"
+                                                    id={`boat-preview-${boat.id}`}
+                                                    onClick={() => handlePreview(boat.id)}
+                                                    className="profile-table-action-btn"
+                                                    aria-label="Preview"
                                                 >
-                                                    <MoreVertical className="h-4 w-4" />
-                                                </DropdownToggle>
-                                                <DropdownMenu end className="boats-listing-dropdown" container={typeof document !== "undefined" ? document.body : undefined}>
-                                                    <DropdownItem header className="boats-listing-dropdown-label">
-                                                        Actions
-                                                    </DropdownItem>
-                                                    <DropdownItem divider />
-                                                    <DropdownItem onClick={() => handlePreview(boat.id)} className="boats-listing-dropdown-item">
-                                                        <Eye className="h-4 w-4" />
-                                                        <span>Preview</span>
-                                                    </DropdownItem>
-                                                    <DropdownItem onClick={() => handleEdit(boat.id)} className="boats-listing-dropdown-item">
-                                                        <Edit className="h-4 w-4" />
-                                                        <span>Edit</span>
-                                                    </DropdownItem>
-                                                    <DropdownItem
-                                                        onClick={() => handleDelete(boat.id)}
-                                                        disabled={deleting.has(boat.id)}
-                                                        className="boats-listing-dropdown-item boats-listing-dropdown-item-danger"
-                                                    >
-                                                        {deleting.has(boat.id) ? (
-                                                            <span className="spinner-border spinner-border-sm" role="status" aria-hidden />
-                                                        ) : (
-                                                            <Trash2 className="h-4 w-4" />
-                                                        )}
-                                                        <span>Delete</span>
-                                                    </DropdownItem>
-                                                </DropdownMenu>
-                                            </Dropdown>
+                                                    <Eye className="h-4 w-4" />
+                                                </button>
+                                                <UncontrolledTooltip target={`boat-preview-${boat.id}`} placement="top">Preview</UncontrolledTooltip>
+                                                <button
+                                                    type="button"
+                                                    id={`boat-edit-${boat.id}`}
+                                                    onClick={() => handleEdit(boat.id)}
+                                                    className="profile-table-action-btn"
+                                                    aria-label="Edit"
+                                                >
+                                                    <Edit className="h-4 w-4" />
+                                                </button>
+                                                <UncontrolledTooltip target={`boat-edit-${boat.id}`} placement="top">Edit</UncontrolledTooltip>
+                                                <button
+                                                    type="button"
+                                                    id={`boat-delete-${boat.id}`}
+                                                    onClick={() => handleDelete(boat.id)}
+                                                    disabled={deleting.has(boat.id)}
+                                                    className="profile-table-action-btn profile-table-action-btn-danger"
+                                                    aria-label="Delete"
+                                                >
+                                                    {deleting.has(boat.id) ? (
+                                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden />
+                                                    ) : (
+                                                        <Trash2 className="h-4 w-4" />
+                                                    )}
+                                                </button>
+                                                <UncontrolledTooltip target={`boat-delete-${boat.id}`} placement="top">Delete</UncontrolledTooltip>
+                                            </div>
                                         </TableCell>
                                     </motion.tr>
                                 ))}

@@ -92,7 +92,7 @@ const initialState: BoatUploadState = storedData || {
     build_year: "",
     location: "",
     price: "",
-    vat_included: true,
+    vat_included: false,
     description: "",
     designer: "",
     hull_length: "",

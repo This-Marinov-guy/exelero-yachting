@@ -170,7 +170,7 @@ const GridLayout: FC<GridLayoutType> = ({ value, type, gridType, gridSize, view,
             No more products available.
           </p>
         )
-      ) : scrollType !== "infinite" ? (
+      ) : (scrollType !== "infinite" && showProduct.length > 0) ? (
         <div className={`${type === "job" ? "text-center" : ""}`}>
           <Pagination type={type} currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>

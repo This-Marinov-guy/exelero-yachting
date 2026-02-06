@@ -363,7 +363,7 @@ export default function TransportationRequestSection() {
                     <textarea
                       id="transport-note"
                       className="form-control"
-                      rows={4}
+                      rows={4}  
                       name="note"
                       value={form.note}
                       onChange={handleChange}

@@ -87,6 +87,7 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
           buildNumber: boatData?.build_number || "",
           buildYear: boatData?.build_year || "",
           beam: boatData?.beam || 0,
+          hullLength: boatData?.hull_length || 0,
           draft: boatData?.draft || 0,
           waterlineLength: boatData?.waterline_length || 0,
           ballast: boatData?.ballast || 0,

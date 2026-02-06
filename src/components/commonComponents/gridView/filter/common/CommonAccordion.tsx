@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setAmenities, setBedsRooms, setCategories, setColor, setFuelType, setJobAllCategory, setJobByCheck, setJobCompanyType, setJobEducation, setJobLocation, setJobTopCompanies, setJobType, setJobWorkMode, setModelYear, setOwner, setPropertyType, setSeats, setSquareFeetStatus, setTransmissions, setYearBuiltStatus, setBoatManufacturer, setBoatDesigner, setBoatLocation, setBoatBeamStatus, setBoatDraftStatus, setBoatDisplacementStatus, setBoatEnginePowerStatus, setBoatVatIncluded } from "@/redux/reducers/FilterSlice";
+import { setAmenities, setBedsRooms, setCategories, setColor, setFuelType, setJobAllCategory, setJobByCheck, setJobCompanyType, setJobEducation, setJobLocation, setJobTopCompanies, setJobType, setJobWorkMode, setModelYear, setOwner, setPropertyType, setSeats, setSquareFeetStatus, setTransmissions, setYearBuiltStatus, setBoatType, setBoatManufacturer, setBoatDesigner, setBoatLocation, setBoatBeamStatus, setBoatDraftStatus, setBoatDisplacementStatus, setBoatEnginePowerStatus, setBoatVatIncluded } from "@/redux/reducers/FilterSlice";
 import { CommonFilterType } from "@/types/Product";
 import { ChangeEvent, FC } from "react";
 import { AccordionBody, AccordionHeader, AccordionItem, Input, Label } from "reactstrap";
@@ -8,9 +8,16 @@ import { ImagePath } from "@/constants";
 import { setMapModal } from "@/redux/reducers/LayoutSlice";
 import RangeInputFields from "./RangeInputFields";
 
+const boatTypeFilterData = [
+  { id: "boat-type-racer", label: "Racer", type: "racer" },
+  { id: "boat-type-sport-cruiser", label: "Sport-Cruiser", type: "sport-cruiser" },
+  { id: "boat-type-cruiser", label: "Cruiser", type: "cruiser" },
+  { id: "boat-type-power-boat", label: "Power Boat", type: "power-boat" },
+];
+
 const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValue, priceRange, squareFeet, values, modalType, type, radio }) => {
   const dispatch = useAppDispatch();
-  const { propertyType, bedsRooms, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory, JobWorkMode, JobCompanyType, JobEducation, JobCheck, JobLocation, JobTopCompanies, JobType, boatManufacturer, boatDesigner, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded } = useAppSelector(state => state.filter);
+  const { propertyType, bedsRooms, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory, JobWorkMode, JobCompanyType, JobEducation, JobCheck, JobLocation, JobTopCompanies, JobType, boatType, boatManufacturer, boatDesigner, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded } = useAppSelector(state => state.filter);
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>, title: string, field?: string) => {
     const value = event.target.value;
@@ -72,6 +79,7 @@ const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValu
       "Top Companies": () => dispatch(setJobTopCompanies(actionCreator(JobTopCompanies))),
       "Job Type": () => dispatch(setJobType(actionCreator(JobType))),
       // Boat filters
+      "Boat Type": () => dispatch(setBoatType(actionCreator(boatType))),
       "Manufacturer": () => dispatch(setBoatManufacturer(actionCreator(boatManufacturer))),
       "Designer": () => dispatch(setBoatDesigner(actionCreator(boatDesigner))),
       "Beam (m)": () => dispatch(setBoatBeamStatus(actionCreator())),
@@ -89,7 +97,26 @@ const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValu
     <AccordionItem>
       <AccordionHeader targetId={id}>{title}</AccordionHeader>
       <AccordionBody accordionId={id}>
-        {priceRange ? (
+        {type === "boat" && title === "Boat Type" ? (
+          <div className="sidebar-choose-list categories-list">
+            {boatTypeFilterData.map((item) => (
+              <div className="main-choose-item" key={item.id}>
+                <div className="choose-item">
+                  <Input
+                    type="checkbox"
+                    id={item.id}
+                    value={item.type}
+                    checked={Array.isArray(boatType) && boatType.includes(item.type)}
+                    onChange={(event) => handleCheckboxChange(event, "Boat Type")}
+                  />
+                  <Label htmlFor={item.id} className="label-flex">
+                    <span>{item.label}</span>
+                  </Label>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : priceRange ? (
           <div className="range-slider">
             <RangeInputFields type={type} />
           </div>

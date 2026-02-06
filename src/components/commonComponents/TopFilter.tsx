@@ -3,68 +3,8 @@
 import Image from "next/image";
 import { Container } from "reactstrap";
 import ParticleComponent from "./ParticleComponent";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setBoatType } from "@/redux/reducers/FilterSlice";
-import { useState, useEffect } from "react";
-import { Check } from "lucide-react";
-
-const boatTypes = [
-  {
-    id: "racer",
-    label: "Racer",
-    image: "/assets/images/filter/racing.png",
-    // description: "High-performance racing yachts"
-  },
-  {
-    id: "sport-cruiser",
-    label: "Sport-Cruiser",
-    image: "/assets/images/filter/sport-cruise.jpg",
-    // description: "Comfortable cruising yachts"
-  },
-  {
-    id: "cruiser",
-    label: "Cruiser",
-    image: "/assets/images/filter/cruising.png",
-    // description: "Comfortable cruising yachts"
-  },
-  {
-    id: "power-boat",
-    label: "Power Boat",
-    image: "/assets/images/filter/power.jpg",
-    // description: "Comfortable cruising yachts"
-  },
-  // {
-  //   id: "charter",
-  //   label: "Charter",
-  //   image: "/assets/images/filter/charter.jpg",
-  //   // description: "Charter-ready vessels"
-  // }
-];
 
 const TopFilter = () => {
-  const dispatch = useAppDispatch();
-  const { boatType } = useAppSelector((state) => state.filter);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>(boatType || []);
-
-  useEffect(() => {
-    setSelectedTypes(boatType || []);
-  }, [boatType]);
-
-  const handleTypeClick = (typeId: string) => {
-    let newSelectedTypes: string[];
-    
-    if (selectedTypes.includes(typeId)) {
-      // Deselect if already selected
-      newSelectedTypes = selectedTypes.filter(t => t !== typeId);
-    } else {
-      // Add to selection
-      newSelectedTypes = [...selectedTypes, typeId];
-    }
-    
-    setSelectedTypes(newSelectedTypes);
-    dispatch(setBoatType(newSelectedTypes));
-  };
-
   return (
     <div className='breadcrumbs-section top-filter-section'>
       <div className="top-filter-background">
@@ -80,45 +20,7 @@ const TopFilter = () => {
       </div>
       <Container>
         <div className='breadcrumbs-main'>
-          <div className='boat-type-filter'>
-            <h2 className="filter-title">Brokerage & Charter</h2>
-            <div className="boat-type-grid boat-type-grid--desktop-between">
-              {boatTypes.map((type) => (
-                <div
-                  key={`${type.id}-${type.label}`}
-                  className={`boat-type-card ${selectedTypes.includes(type.id) ? 'selected' : ''}`}
-                  onClick={() => handleTypeClick(type.id)}
-                  role="button"
-                  tabIndex={0}
-                  aria-pressed={selectedTypes.includes(type.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      handleTypeClick(type.id);
-                    }
-                  }}
-                >
-                  <div className="boat-type-image">
-                    <Image
-                      src={type.image}
-                      alt={type.label}
-                      fill
-                      style={{ objectFit: "cover" }}
-                    />
-                    <div className="boat-type-overlay"></div>
-                    <div className="boat-type-content">
-                      <h5>{type.label}</h5>
-                    </div>
-                    {selectedTypes.includes(type.id) && (
-                      <div className="selected-overlay">
-                        <Check aria-hidden="true" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Boat type filter moved into sidebar accordion */} 
         </div>
       </Container>
       <ParticleComponent />

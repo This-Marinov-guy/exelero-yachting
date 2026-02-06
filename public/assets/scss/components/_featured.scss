@@ -175,7 +175,7 @@
       gap: 8px;
       li {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         gap: calc(4px + (6 - 4) * ((100vw - 320px) / (1920 - 320)));
         + li {
           border-left: 1px solid rgba(var(--border-color), 1);
@@ -194,7 +194,6 @@
           stroke: none;
         }
         span {
-          color: rgba(var(--content-color), 1);
           font-size: calc(14px + (15 - 14) * ((100vw - 320px) / (1920 - 320)));
           font-weight: 300;
           line-height: normal;
@@ -321,7 +320,6 @@
       }
       .featured-list {
         display: flex;
-        align-items: center;
         gap: calc(4px + (12 - 4) * ((100vw - 320px) / (1920 - 320)));
         padding-top: 0;
         li {
@@ -383,7 +381,6 @@
       span {
         background: rgba(var(--white), 1);
         font-size: 14px;
-        color: rgba(var(--content-color), 1);
         padding-left: 8px;  
         font-weight: 300;
         [dir="rtl"] & {
@@ -447,7 +444,6 @@
           gap: calc(2px + (6 - 2) * ((100vw - 320px) / (1920 - 320)));
           transition: 0.4s ease;
           span {
-            color: rgba(var(--content-color), 1) !important;
             font-weight: 300 !important;
             font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320))) !important;
           }
@@ -661,7 +657,6 @@
       }
       span {
         font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
-        color: rgba(var(--content-color), 0.6);
       }
     }
     p {
@@ -700,9 +695,7 @@
     font-size: 16px;
     margin-bottom: 12px;
     color: rgba(var(--title-color), 1);
-    span {
-      color: rgba(var(--content-color), 1);
-    }
+   
   }
   .job-detail {
     span {
@@ -826,7 +819,6 @@
       transition: 0.4s ease;
     }
     span {
-      color: rgba(var(--content-color), 1);
       font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
     }
   }
@@ -957,7 +949,6 @@
     .applied-flex {
       @include flex_between;
       span {
-        color: rgba(var(--content-color), 1);
         font-size: calc(16px + (18 - 16) * ((100vw - 320px) / (1920 - 320)));
         font-weight: 400;
       }
@@ -1033,7 +1024,6 @@
       stroke: rgba(var(--content-color), 1);
     }
     span {
-      color: rgba(var(--content-color), 1);
       font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
       font-weight: 400;
       line-height: normal;
@@ -1181,7 +1171,6 @@
           display: flex;
           align-items: center;
           gap: 5px;
-          color: rgba(var(--content-color), 1);
           svg {
             width: 14px;
             height: 14px;
@@ -1361,7 +1350,6 @@
         font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
         font-weight: 400;
         line-height: 1;
-        color: rgba(var(--content-color), 1);
         padding: calc(5px + (8 - 5) * ((100vw - 320px) / (1920 - 320))) calc(8px + (10 - 8) * ((100vw - 320px) / (1920 - 320)));
         border-radius: 6px;
         background: rgba(var(--border-color), 1);
@@ -1409,7 +1397,6 @@
         span {
           font-size: 14px;
           font-weight: 400;
-          color: rgba(var(--content-color), 1);
         }
       }
     }
@@ -1424,7 +1411,6 @@
         span {
           font-size: calc(16px + (18 - 16) * ((100vw - 320px) / (1920 - 320)));
           font-weight: 400;
-          color: rgba(var(--content-color), 1);
         }
       }
       .btn-pills {
@@ -1514,8 +1500,8 @@
       svg {
         width: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
         height: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
-        fill: rgba(var(--content-color), 1);
-        stroke: rgba(var(--content-color), 1);
+        fill: rgba(var(--theme-color), 1);
+        stroke: rgba(var(--theme-color), 1);
       }
     }
     .featured-list {
@@ -1532,8 +1518,12 @@
         svg {
           width: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
           height: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
-          fill: rgba(var(--content-color), 1);
+          fill: #ffd200;
           stroke: none;
+        }
+        .boat-feature-icon {
+          fill: none;
+          stroke: #ffd200;
         }
         span {
           font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
