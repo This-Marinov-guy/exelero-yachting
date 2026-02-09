@@ -57,6 +57,14 @@ export type TransportationPayload = {
   note?: string | null;
 };
 
+export type ContactPayload = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  message: string;
+};
+
 function formatCharterHtml(data: CharterPayload): string {
   return `
     <h2>New Charter Request</h2>
@@ -93,6 +101,17 @@ function formatTransportationHtml(data: TransportationPayload): string {
   `.trim();
 }
 
+function formatContactHtml(data: ContactPayload): string {
+  const name = `${escapeHtml(data.first_name)} ${escapeHtml(data.last_name)}`.trim();
+  return `
+    <h2>New Contact Form Submission</h2>
+    <p><strong>Name:</strong> ${name}</p>
+    <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
+    <p><strong>Phone:</strong> ${escapeHtml(data.phone)}</p>
+    <p><strong>Message:</strong><br/>${escapeHtml(data.message).replace(/\n/g, "<br/>")}</p>
+  `.trim();
+}
+
 function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")
@@ -100,6 +119,18 @@ function escapeHtml(s: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+export async function sendContactNotification(data: ContactPayload): Promise<void> {
+  const transporter = getTransporter();
+  const name = `${data.first_name} ${data.last_name}`.trim();
+  await transporter.sendMail({
+    from: getFrom(),
+    to: NOTIFICATION_TO,
+    subject: `[Exelero] New Contact from ${name}`,
+    html: formatContactHtml(data),
+    text: `New Contact Form\n\nName: ${name}\nEmail: ${data.email}\nPhone: ${data.phone}\n\nMessage:\n${data.message}`,
+  });
 }
 
 export async function sendCharterNotification(data: CharterPayload): Promise<void> {

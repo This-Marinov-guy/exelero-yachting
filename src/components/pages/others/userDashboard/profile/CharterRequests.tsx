@@ -5,6 +5,7 @@ import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input } from "reactstrap";
 import { UncontrolledTooltip } from "reactstrap";
 import { Edit, Eye, Trash2 } from "lucide-react";
 
@@ -13,10 +14,12 @@ type CharterRequest = {
   created_at: string;
   name: string;
   email: string;
+  phone?: string | null;
   charter_type: string;
   date_from: string;
   date_to: string;
   group_size: number;
+  note?: string | null;
   status: string;
 };
 
@@ -24,6 +27,9 @@ const CharterRequests = () => {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<CharterRequest[]>([]);
   const [deleting, setDeleting] = useState<Set<string>>(new Set());
+  const [previewRequest, setPreviewRequest] = useState<CharterRequest | null>(null);
+  const [editRequest, setEditRequest] = useState<CharterRequest | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -82,15 +88,41 @@ const CharterRequests = () => {
   };
 
   const handlePreview = (request: CharterRequest) => {
-    const summary = `Type: ${request.charter_type}
-Dates: ${request.date_from} → ${request.date_to}
-Group size: ${request.group_size}
-Status: ${request.status}`;
-    toast.info(summary.replace(/\n/g, " | "));
+    setPreviewRequest(request);
   };
 
   const handleEdit = (request: CharterRequest) => {
-    toast.info("Edit charter request coming soon");
+    setEditRequest({ ...request });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editRequest) return;
+    setSaving(true);
+    const supabase = getSupabaseBrowserClient();
+    try {
+      const { error } = await supabase
+        .from("charter_requests")
+        .update({
+          name: editRequest.name,
+          email: editRequest.email,
+          phone: editRequest.phone || null,
+          charter_type: editRequest.charter_type,
+          date_from: editRequest.date_from,
+          date_to: editRequest.date_to,
+          group_size: Number(editRequest.group_size),
+          note: editRequest.note || null,
+          status: editRequest.status,
+        })
+        .eq("id", editRequest.id);
+      if (error) throw error;
+      setRequests((prev) => prev.map((r) => (r.id === editRequest.id ? editRequest : r)));
+      toast.success("Charter request updated");
+      setEditRequest(null);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to update");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
@@ -173,7 +205,7 @@ Status: ${request.status}`;
                         >
                           <Edit className="h-4 w-4" />
                         </button>
-                        <Tooltip target={`charter-edit-${request.id}`} placement="top">Edit</Tooltip>
+                        <UncontrolledTooltip target={`charter-edit-${request.id}`} placement="top">Edit</UncontrolledTooltip>
                         <button
                           type="button"
                           id={`charter-delete-${request.id}`}
@@ -198,6 +230,87 @@ Status: ${request.status}`;
           </Table>
         </motion.div>
       )}
+
+      {/* Preview modal */}
+      <Modal isOpen={!!previewRequest} toggle={() => setPreviewRequest(null)} size="md">
+        <ModalHeader toggle={() => setPreviewRequest(null)}>Charter request</ModalHeader>
+        <ModalBody>
+          {previewRequest && (
+            <div className="small">
+              <p><strong>Created:</strong> {new Date(previewRequest.created_at).toLocaleString()}</p>
+              <p><strong>Name:</strong> {previewRequest.name}</p>
+              <p><strong>Email:</strong> {previewRequest.email}</p>
+              {previewRequest.phone && <p><strong>Phone:</strong> {previewRequest.phone}</p>}
+              <p><strong>Type:</strong> {previewRequest.charter_type.replace("_", " ")}</p>
+              <p><strong>Dates:</strong> {previewRequest.date_from} → {previewRequest.date_to}</p>
+              <p><strong>Group size:</strong> {previewRequest.group_size}</p>
+              <p><strong>Status:</strong> {previewRequest.status}</p>
+              {previewRequest.note && <p><strong>Note:</strong><br />{previewRequest.note}</p>}
+            </div>
+          )}
+        </ModalBody>
+      </Modal>
+
+      {/* Edit modal */}
+      <Modal isOpen={!!editRequest} toggle={() => setEditRequest(null)} size="md">
+        <ModalHeader toggle={() => setEditRequest(null)}>Edit charter request</ModalHeader>
+        <ModalBody>
+          {editRequest && (
+            <div className="row g-2">
+              <FormGroup className="col-md-6">
+                <Label>Name</Label>
+                <Input value={editRequest.name} onChange={(e) => setEditRequest((r) => r ? { ...r, name: e.target.value } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-6">
+                <Label>Email</Label>
+                <Input type="email" value={editRequest.email} onChange={(e) => setEditRequest((r) => r ? { ...r, email: e.target.value } : null)} />
+              </FormGroup>
+              <FormGroup className="col-12">
+                <Label>Phone</Label>
+                <Input value={editRequest.phone || ""} onChange={(e) => setEditRequest((r) => r ? { ...r, phone: e.target.value || null } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-6">
+                <Label>Charter type</Label>
+                <Input type="select" value={editRequest.charter_type} onChange={(e) => setEditRequest((r) => r ? { ...r, charter_type: e.target.value } : null)}>
+                  <option value="cruiser">Cruiser</option>
+                  <option value="power_boat">Power boat</option>
+                  <option value="racer">Racer</option>
+                  <option value="yacht">Yacht</option>
+                </Input>
+              </FormGroup>
+              <FormGroup className="col-md-6">
+                <Label>Status</Label>
+                <Input type="select" value={editRequest.status} onChange={(e) => setEditRequest((r) => r ? { ...r, status: e.target.value } : null)}>
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="cancelled">Cancelled</option>
+                </Input>
+              </FormGroup>
+              <FormGroup className="col-md-4">
+                <Label>Date from</Label>
+                <Input type="date" value={editRequest.date_from} onChange={(e) => setEditRequest((r) => r ? { ...r, date_from: e.target.value } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-4">
+                <Label>Date to</Label>
+                <Input type="date" value={editRequest.date_to} onChange={(e) => setEditRequest((r) => r ? { ...r, date_to: e.target.value } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-4">
+                <Label>Group size</Label>
+                <Input type="number" min={1} value={editRequest.group_size} onChange={(e) => setEditRequest((r) => r ? { ...r, group_size: Number(e.target.value) || 1 } : null)} />
+              </FormGroup>
+              <FormGroup className="col-12">
+                <Label>Note</Label>
+                <Input type="textarea" rows={3} value={editRequest.note || ""} onChange={(e) => setEditRequest((r) => r ? { ...r, note: e.target.value || null } : null)} />
+              </FormGroup>
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={() => setEditRequest(null)}>Cancel</Button>
+          <Button color="primary" onClick={handleSaveEdit} disabled={saving}>{saving ? "Saving..." : "Save"}</Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 };

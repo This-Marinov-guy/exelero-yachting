@@ -72,14 +72,6 @@ export interface PropertyDropDownProps {
 }
 
 export interface FooterSectionProps {
-  data: Array<{
-    title: string;
-    contactList?: boolean;
-    links: Array<{
-      title: string;
-      url?: string;
-      icon?: string;
-    }>;
-  }>;
+  data: FooterDetailType[];
   footerDemo?: boolean;
 }

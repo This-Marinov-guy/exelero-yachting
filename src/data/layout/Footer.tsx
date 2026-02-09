@@ -45,8 +45,7 @@ export const FooterDetailData: FooterDetailType[] = [
   {
     title: "Navigation",
     links: [
-      { title: "Boats", url: RouteList.Pages.Boats },
-      { title: "Gallery", url: RouteList.Pages.Gallery },
+      // { title: "Gallery", url: RouteList.Pages.Gallery },
       { title: "About", url: RouteList.Pages.About },
       { title: "Contact", url: RouteList.Pages.Other.ContactUs1 },
     ],

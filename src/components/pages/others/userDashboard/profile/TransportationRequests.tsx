@@ -5,6 +5,7 @@ import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input } from "reactstrap";
 import { UncontrolledTooltip } from "reactstrap";
 import { Edit, Eye, Trash2 } from "lucide-react";
 
@@ -13,10 +14,17 @@ type TransportationRequest = {
   created_at: string;
   name: string;
   email: string;
+  phone?: string | null;
   date_start: string;
   deadline_date: string;
   start_point: string | null;
   end_point: string | null;
+  boat_weight_kg?: number | null;
+  boat_length_m?: number | null;
+  boat_beam_m?: number | null;
+  boat_draft_m?: number | null;
+  boat_height_m?: number | null;
+  note?: string | null;
   status: string;
 };
 
@@ -24,6 +32,9 @@ const TransportationRequests = () => {
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState<TransportationRequest[]>([]);
   const [deleting, setDeleting] = useState<Set<string>>(new Set());
+  const [previewRequest, setPreviewRequest] = useState<TransportationRequest | null>(null);
+  const [editRequest, setEditRequest] = useState<TransportationRequest | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -82,14 +93,46 @@ const TransportationRequests = () => {
   };
 
   const handlePreview = (request: TransportationRequest) => {
-    const summary = `Route: ${request.start_point || "N/A"} → ${request.end_point || "N/A"}
-Dates: ${request.date_start} → ${request.deadline_date}
-Status: ${request.status}`;
-    toast.info(summary.replace(/\n/g, " | "));
+    setPreviewRequest(request);
   };
 
   const handleEdit = (request: TransportationRequest) => {
-    toast.info("Edit transportation request coming soon");
+    setEditRequest({ ...request });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editRequest) return;
+    setSaving(true);
+    const supabase = getSupabaseBrowserClient();
+    try {
+      const { error } = await supabase
+        .from("transportation_requests")
+        .update({
+          name: editRequest.name,
+          email: editRequest.email,
+          phone: editRequest.phone || null,
+          date_start: editRequest.date_start,
+          deadline_date: editRequest.deadline_date,
+          start_point: editRequest.start_point || null,
+          end_point: editRequest.end_point || null,
+          boat_weight_kg: editRequest.boat_weight_kg != null ? Number(editRequest.boat_weight_kg) : null,
+          boat_length_m: editRequest.boat_length_m != null ? Number(editRequest.boat_length_m) : null,
+          boat_beam_m: editRequest.boat_beam_m != null ? Number(editRequest.boat_beam_m) : null,
+          boat_draft_m: editRequest.boat_draft_m != null ? Number(editRequest.boat_draft_m) : null,
+          boat_height_m: editRequest.boat_height_m != null ? Number(editRequest.boat_height_m) : null,
+          note: editRequest.note || null,
+          status: editRequest.status,
+        })
+        .eq("id", editRequest.id);
+      if (error) throw error;
+      setRequests((prev) => prev.map((r) => (r.id === editRequest.id ? editRequest : r)));
+      toast.success("Transportation request updated");
+      setEditRequest(null);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to update");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
@@ -172,7 +215,7 @@ Status: ${request.status}`;
                         >
                           <Edit className="h-4 w-4" />
                         </button>
-                        <Tooltip target={`transport-edit-${request.id}`} placement="top">Edit</Tooltip>
+                        <UncontrolledTooltip target={`transport-edit-${request.id}`} placement="top">Edit</UncontrolledTooltip>
                         <button
                           type="button"
                           id={`transport-delete-${request.id}`}
@@ -197,6 +240,107 @@ Status: ${request.status}`;
           </Table>
         </motion.div>
       )}
+
+      {/* Preview modal */}
+      <Modal isOpen={!!previewRequest} toggle={() => setPreviewRequest(null)} size="md">
+        <ModalHeader toggle={() => setPreviewRequest(null)}>Transportation request</ModalHeader>
+        <ModalBody>
+          {previewRequest && (
+            <div className="small">
+              <p><strong>Created:</strong> {new Date(previewRequest.created_at).toLocaleString()}</p>
+              <p><strong>Name:</strong> {previewRequest.name}</p>
+              <p><strong>Email:</strong> {previewRequest.email}</p>
+              {previewRequest.phone && <p><strong>Phone:</strong> {previewRequest.phone}</p>}
+              <p><strong>Dates:</strong> {previewRequest.date_start} → {previewRequest.deadline_date}</p>
+              <p><strong>From:</strong> {previewRequest.start_point || "—"}</p>
+              <p><strong>To:</strong> {previewRequest.end_point || "—"}</p>
+              {(previewRequest.boat_weight_kg != null || previewRequest.boat_length_m != null) && (
+                <p><strong>Boat:</strong>{" "}
+                  {[previewRequest.boat_weight_kg != null && `${previewRequest.boat_weight_kg} kg`, previewRequest.boat_length_m != null && `${previewRequest.boat_length_m} m`, previewRequest.boat_beam_m != null && `beam ${previewRequest.boat_beam_m} m`, previewRequest.boat_draft_m != null && `draft ${previewRequest.boat_draft_m} m`, previewRequest.boat_height_m != null && `height ${previewRequest.boat_height_m} m`].filter(Boolean).join(", ") || "—"}
+                </p>
+              )}
+              <p><strong>Status:</strong> {previewRequest.status}</p>
+              {previewRequest.note && <p><strong>Note:</strong><br />{previewRequest.note}</p>}
+            </div>
+          )}
+        </ModalBody>
+      </Modal>
+
+      {/* Edit modal */}
+      <Modal isOpen={!!editRequest} toggle={() => setEditRequest(null)} size="lg">
+        <ModalHeader toggle={() => setEditRequest(null)}>Edit transportation request</ModalHeader>
+        <ModalBody>
+          {editRequest && (
+            <div className="row g-2">
+              <FormGroup className="col-md-6">
+                <Label>Name</Label>
+                <Input value={editRequest.name} onChange={(e) => setEditRequest((r) => r ? { ...r, name: e.target.value } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-6">
+                <Label>Email</Label>
+                <Input type="email" value={editRequest.email} onChange={(e) => setEditRequest((r) => r ? { ...r, email: e.target.value } : null)} />
+              </FormGroup>
+              <FormGroup className="col-12">
+                <Label>Phone</Label>
+                <Input value={editRequest.phone || ""} onChange={(e) => setEditRequest((r) => r ? { ...r, phone: e.target.value || null } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-6">
+                <Label>Date start</Label>
+                <Input type="date" value={editRequest.date_start} onChange={(e) => setEditRequest((r) => r ? { ...r, date_start: e.target.value } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-6">
+                <Label>Deadline date</Label>
+                <Input type="date" value={editRequest.deadline_date} onChange={(e) => setEditRequest((r) => r ? { ...r, deadline_date: e.target.value } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-6">
+                <Label>Start point</Label>
+                <Input value={editRequest.start_point || ""} onChange={(e) => setEditRequest((r) => r ? { ...r, start_point: e.target.value || null } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-6">
+                <Label>End point</Label>
+                <Input value={editRequest.end_point || ""} onChange={(e) => setEditRequest((r) => r ? { ...r, end_point: e.target.value || null } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-4">
+                <Label>Boat weight (kg)</Label>
+                <Input type="number" value={editRequest.boat_weight_kg ?? ""} onChange={(e) => setEditRequest((r) => r ? { ...r, boat_weight_kg: e.target.value === "" ? null : Number(e.target.value) } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-4">
+                <Label>Boat length (m)</Label>
+                <Input type="number" step="0.01" value={editRequest.boat_length_m ?? ""} onChange={(e) => setEditRequest((r) => r ? { ...r, boat_length_m: e.target.value === "" ? null : Number(e.target.value) } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-4">
+                <Label>Boat beam (m)</Label>
+                <Input type="number" step="0.01" value={editRequest.boat_beam_m ?? ""} onChange={(e) => setEditRequest((r) => r ? { ...r, boat_beam_m: e.target.value === "" ? null : Number(e.target.value) } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-4">
+                <Label>Boat draft (m)</Label>
+                <Input type="number" step="0.01" value={editRequest.boat_draft_m ?? ""} onChange={(e) => setEditRequest((r) => r ? { ...r, boat_draft_m: e.target.value === "" ? null : Number(e.target.value) } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-4">
+                <Label>Boat height (m)</Label>
+                <Input type="number" step="0.01" value={editRequest.boat_height_m ?? ""} onChange={(e) => setEditRequest((r) => r ? { ...r, boat_height_m: e.target.value === "" ? null : Number(e.target.value) } : null)} />
+              </FormGroup>
+              <FormGroup className="col-md-4">
+                <Label>Status</Label>
+                <Input type="select" value={editRequest.status} onChange={(e) => setEditRequest((r) => r ? { ...r, status: e.target.value } : null)}>
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="cancelled">Cancelled</option>
+                </Input>
+              </FormGroup>
+              <FormGroup className="col-12">
+                <Label>Note</Label>
+                <Input type="textarea" rows={3} value={editRequest.note || ""} onChange={(e) => setEditRequest((r) => r ? { ...r, note: e.target.value || null } : null)} />
+              </FormGroup>
+            </div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={() => setEditRequest(null)}>Cancel</Button>
+          <Button color="primary" onClick={handleSaveEdit} disabled={saving}>{saving ? "Saving..." : "Save"}</Button>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 };

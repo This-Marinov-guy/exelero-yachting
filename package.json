@@ -72,6 +72,7 @@
     "@types/isotope-layout": "^3.0.14",
     "@types/lodash": "^4.17.14",
     "@types/node": "^22",
+    "@types/nodemailer": "^7.0.9",
     "@types/react": "^19",
     "@types/react-copy-to-clipboard": "^5.0.7",
     "@types/react-dom": "^19",

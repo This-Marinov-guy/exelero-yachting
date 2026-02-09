@@ -282,7 +282,7 @@ export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
               <View style={styles.kvTable}>
                 {specs.length ? (
                   specs.map(([k, v], idx) => (
-                    <View key={`${k}-${idx}`} style={[styles.kvRow, idx === specs.length - 1 ? { borderBottom: "none" } : null]}>
+                    <View key={`${k}-${idx}`} style={[styles.kvRow, idx === specs.length - 1 ? { borderBottom: "none" } : {}]}>
                       <Text style={styles.kvKey}>{k}</Text>
                       <Text style={styles.kvValue}>{v}</Text>
                     </View>

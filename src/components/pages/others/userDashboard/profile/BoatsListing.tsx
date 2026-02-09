@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { UncontrolledTooltip } from "reactstrap";
 import { Eye, Edit, Trash2 } from "lucide-react";
+import EditBoatModal from "./EditBoatModal";
 
 type Boat = {
     id: string;
@@ -34,6 +35,7 @@ const BoatsListing = () => {
     const [boats, setBoats] = useState<Boat[]>([]);
     const [updatingActive, setUpdatingActive] = useState<Set<string>>(new Set());
     const [deleting, setDeleting] = useState<Set<string>>(new Set());
+    const [editBoatId, setEditBoatId] = useState<string | null>(null);
 
     useEffect(() => {
         const checkDealerInfo = async () => {
@@ -183,7 +185,10 @@ const BoatsListing = () => {
         const supabase = getSupabaseBrowserClient();
 
         try {
-            // Delete boat (cascade will handle related records)
+            // Unlink dealer (broker_data) from this boat so the dealer is not deleted
+            await supabase.from("broker_data").update({ boat_id: null }).eq("boat_id", boatId);
+
+            // Delete boat (cascade will handle boat_data, boat_images, inqueries, etc.)
             const { error } = await supabase.from("boats").delete().eq("id", boatId);
 
             if (error) {
@@ -206,13 +211,38 @@ const BoatsListing = () => {
     };
 
     const handlePreview = (boatId: string) => {
-        // TODO: Implement preview functionality
-        toast.info("Preview functionality coming soon");
+        const numericId = parseInt(boatId.replace(/-/g, "").substring(0, 8), 16) % 10000000;
+        window.open(`/services/brokerage/${numericId}`, "_blank", "noopener,noreferrer");
     };
 
     const handleEdit = (boatId: string) => {
-        // TODO: Implement edit functionality
-        toast.info("Edit functionality coming soon");
+        setEditBoatId(boatId);
+    };
+
+    const refreshBoats = async () => {
+        const supabase = getSupabaseBrowserClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) return;
+        const { data: boatsData, error: boatsError } = await supabase
+            .from("boats")
+            .select(`id, active, boat_data(title)`)
+            .eq("user_id", session.user.id)
+            .order("created_at", { ascending: false });
+        if (!boatsError && boatsData) {
+            const boatsWithDetails = await Promise.all(
+                boatsData.map(async (boat: any) => {
+                    const { data: brokerData } = await supabase.from("broker_data").select("name, dealer").eq("boat_id", boat.id).single();
+                    const { data: imagesData } = await supabase.from("boat_images").select("link").eq("boat_id", boat.id).order("display_order", { ascending: true }).limit(1).single();
+                    return { ...boat, broker_data: brokerData, main_image: imagesData?.link || null };
+                })
+            );
+            setBoats(boatsWithDetails);
+        }
+    };
+
+    const handleEditSaved = () => {
+        setEditBoatId(null);
+        refreshBoats();
     };
 
     if (loading) {
@@ -238,6 +268,7 @@ const BoatsListing = () => {
     }
 
     return (
+        <>
         <div className="boats-listing-section">
             <h4 className="dashboard-title mb-4">Boats Listing</h4>
 
@@ -396,6 +427,13 @@ const BoatsListing = () => {
                 </motion.div>
             )}
         </div>
+        <EditBoatModal
+            boatId={editBoatId}
+            isOpen={editBoatId !== null}
+            onClose={() => setEditBoatId(null)}
+            onSaved={handleEditSaved}
+        />
+        </>
     );
 };
 
