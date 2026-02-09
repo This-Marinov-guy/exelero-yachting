@@ -39,12 +39,13 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
             {data.image.map((src, i) => {
               return (
                 <SwiperSlide key={i}>
-                  <div style={{ position: "relative", width: "100%", height: "268px" }}>
+                  <div style={{ position: "relative", width: "100%", aspectRatio: "16/9" }}>
                     <Image 
                       src={src} 
                       alt='boat-img' 
                       fill
-                      className='bg-img object-cover' 
+                      className='bg-img' 
+                      style={{ objectFit: "contain" }}
                       unoptimized={isExternalUrl(src)} 
                     />
                   </div>

@@ -34,7 +34,7 @@ const BoatBoxSlider: FC<PropertyBoxSliderType> = ({ view, data }) => {
             {data.image.map((img, index) => (
               <SwiperSlide key={index} className="bg-size">
                 <div className="bg-img" style={{ position: "relative", width: "100%", height: "100%" }}>
-                  <Image src={getImageSrc(img)} alt="boat-img" fill className="object-cover" unoptimized={isExternalUrl(img)} />
+                  <Image src={getImageSrc(img)} alt="boat-img" fill className="object-contain" unoptimized={isExternalUrl(img)} />
                 </div>
               </SwiperSlide>
             ))}
@@ -46,7 +46,7 @@ const BoatBoxSlider: FC<PropertyBoxSliderType> = ({ view, data }) => {
               <SwiperSlide key={i}>
                 <a href={Href}>
                   <div style={{ position: "relative", width: "100%", height: "100px" }}>
-                    <Image src={getImageSrc(img)} alt="boat-img" fill className="object-cover img-fluid" unoptimized={isExternalUrl(img)} />
+                    <Image src={getImageSrc(img)} alt="boat-img" fill className="object-contain img-fluid" unoptimized={isExternalUrl(img)} />
                   </div>
                 </a>
               </SwiperSlide>
@@ -55,14 +55,14 @@ const BoatBoxSlider: FC<PropertyBoxSliderType> = ({ view, data }) => {
         </Fragment>
       ) : view === "image" ? (
         <div className="bg-img" style={{ position: "relative", width: "100%", height: "100%" }}>
-          <Image src={getImageSrc(data.image[0] || "")} alt="boat-img" fill className="object-cover img-fluid" unoptimized={isExternalUrl(data.image[0] || "")} />
+          <Image src={getImageSrc(data.image[0] || "")} alt="boat-img" fill className="object-contain img-fluid" unoptimized={isExternalUrl(data.image[0] || "")} />
         </div>
       ) : (
         <Swiper {...ProductSwiperSetting} onInit={(swiper: SwiperType) => (swiperRef.current = swiper)}>
           {data.image.map((img, index) => (
             <SwiperSlide key={index} className="bg-size">
               <div className="bg-img" style={{ position: "relative", width: "100%", height: "100%" }}>
-                <Image src={getImageSrc(img)} alt="boat-img" fill className="object-cover" unoptimized={isExternalUrl(img)} />
+                <Image src={getImageSrc(img)} alt="boat-img" fill className="object-contain" unoptimized={isExternalUrl(img)} />
               </div>
             </SwiperSlide>
           ))}

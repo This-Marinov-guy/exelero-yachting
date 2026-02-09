@@ -217,7 +217,6 @@
 
             .form-control {
               font-size: calc(14px + (18 - 14) * ((100vw - 320px) / (1920 - 320)));
-              color: rgba(255, 255, 255, 0.7);
 
               &::placeholder {
                 font-size: calc(14px + (18 - 14) * ((100vw - 320px) / (1920 - 320)));

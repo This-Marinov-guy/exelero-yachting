@@ -15,6 +15,7 @@ const RichTextEditor = dynamic(
 );
 import Image from "next/image";
 import Dropzone from "react-dropzone";
+import { X, Star, ImagePlus, GripVertical, Info, FileText, Trash2 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
     updateFormField,
@@ -678,6 +679,7 @@ const UploadBoat = () => {
             }
 
             toast.success("Boat uploaded successfully!");
+            window.dispatchEvent(new CustomEvent("boatsListingRefresh"));
 
             // Reset form (Redux will handle localStorage cleanup)
             dispatch(resetForm());
@@ -1045,7 +1047,7 @@ const UploadBoat = () => {
                                         }}
                                     >
                                         <input {...getInputProps()} />
-                                        <i className="ri-image-add-line" style={{ fontSize: "48px", color: "rgba(var(--theme-color), 1)", marginBottom: "16px" }} />
+                                        <ImagePlus style={{ fontSize: "48px", color: "rgba(var(--theme-color), 1)", marginBottom: "16px" }} />
                                         <h5 style={{ marginBottom: "8px", color: "rgba(var(--title-color), 1)" }}>
                                             {isDragActive ? "Drop images here" : uploadedImages.length >= 15 ? "Maximum 15 images reached" : "Drag & drop images here, or click to select"}
                                         </h5>
@@ -1127,7 +1129,7 @@ const UploadBoat = () => {
                                                                 zIndex: 10,
                                                             }}
                                                         >
-                                                            <i className="ri-star-fill" /> Main
+                                                            <Star className="h-4 w-4" fill="currentColor" /> Main
                                                         </div>
                                                     )}
 
@@ -1143,7 +1145,7 @@ const UploadBoat = () => {
                                                             onMouseDown={(e) => e.stopPropagation()}
                                                             style={{ zIndex: 100 }}
                                                         >
-                                                            <i className="ri-close-line" />
+                                                            <X className="h-4 w-4" />
                                                         </button>
                                                     )}
 
@@ -1159,7 +1161,7 @@ const UploadBoat = () => {
                                                             onMouseDown={(e) => e.stopPropagation()}
                                                             style={{ zIndex: 10 }}
                                                         >
-                                                            <i className="ri-star-line" />
+                                                            <Star className="h-4 w-4" />
                                                         </button>
                                                     )}
 
@@ -1177,7 +1179,7 @@ const UploadBoat = () => {
                                                                 cursor: "grab",
                                                             }}
                                                         >
-                                                            <i className="ri-drag-move-2-line" /> {index + 1}
+                                                            <GripVertical className="h-4 w-4" /> {index + 1}
                                                         </div>
                                                     )}
                                                 </div>
@@ -1190,7 +1192,7 @@ const UploadBoat = () => {
                                             {uploadedImages.length} / 15 images selected
                                         </p>
                                         <p className="text-muted mb-0 small">
-                                            <i className="ri-information-line" /> Drag images to reorder • Click the star icon to set main image
+                                            <Info className="h-4 w-4" /> Drag images to reorder • Click the star icon to set main image
                                         </p>
                                     </div>
                                 </>
@@ -1209,14 +1211,14 @@ const UploadBoat = () => {
                             {brochureFileName && (
                                 <div className="mt-2 d-flex align-items-center gap-2">
                                     <span className="text-muted">
-                                        <i className="ri-file-line" /> {brochureFileName}
+                                        <FileText className="h-4 w-4" /> {brochureFileName}
                                     </span>
                                     <button
                                         type="button"
                                         className="btn btn-sm btn-outline-danger"
                                         onClick={removeBrochure}
                                     >
-                                        <i className="ri-delete-bin-line" /> Remove
+                                        <Trash2 className="h-4 w-4" /> Remove
                                     </button>
                                 </div>
                             )}

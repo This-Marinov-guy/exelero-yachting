@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, X } from "lucide-react";
 import ImageMenuList from "./ImageMenuList";
 import PagesMegaMenu from "./PagesMegaMenu";
 import SidebarSubMenu from "./SidebarSubMenu";
@@ -37,7 +37,7 @@ const MainMenu = () => {
       <div className='menu-header'>
         <h5 className='menu-title'>Menu</h5>
         <Link scroll={false} href={Href} className='close-btn' onClick={toggle}>
-          <i className='ri-close-line' />
+          <X className="h-5 w-5" />
         </Link>
       </div>
       <ul className='menu-items'>

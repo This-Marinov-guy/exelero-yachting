@@ -10,6 +10,7 @@ import { fetchProductApiData } from "@/redux/reducers/ProductSlice";
 import { GridViewType } from "@/types/Product";
 import { FC, Fragment, useEffect, useMemo } from "react";
 import { Button, Col, Offcanvas, OffcanvasBody, OffcanvasHeader, Row } from "reactstrap";
+import { X } from "lucide-react";
 import FilterSidebar from "./filter";
 import FilterTags from "./filter/FilterTags";
 import GridLayout from "./GridLayout";
@@ -84,7 +85,7 @@ const GridView: FC<GridViewType> = ({ type, gridSize, gridType, view, scrollType
         <OffcanvasHeader>
           {Filters}
           <Button className="close-btn" onClick={() => dispatch(setOpenFilterSidebar())}>
-            <i className="ri-close-line" />
+            <X className="h-4 w-4" />
           </Button>
         </OffcanvasHeader>
         <OffcanvasBody>

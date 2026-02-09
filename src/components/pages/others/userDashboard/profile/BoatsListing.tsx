@@ -36,6 +36,7 @@ const BoatsListing = () => {
     const [updatingActive, setUpdatingActive] = useState<Set<string>>(new Set());
     const [deleting, setDeleting] = useState<Set<string>>(new Set());
     const [editBoatId, setEditBoatId] = useState<string | null>(null);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     useEffect(() => {
         const checkDealerInfo = async () => {
@@ -139,7 +140,13 @@ const BoatsListing = () => {
         };
 
         fetchBoats();
-    }, [isLocked, loading]);
+    }, [isLocked, loading, refreshTrigger]);
+
+    useEffect(() => {
+        const onRefresh = () => setRefreshTrigger((t) => t + 1);
+        window.addEventListener("boatsListingRefresh", onRefresh);
+        return () => window.removeEventListener("boatsListingRefresh", onRefresh);
+    }, []);
 
     const handleToggleActive = async (boatId: string, currentActive: boolean) => {
         setUpdatingActive((prev) => new Set(prev).add(boatId));

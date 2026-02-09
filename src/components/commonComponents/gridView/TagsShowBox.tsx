@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { removeFilter, clearAllFilters } from "@/redux/reducers/FilterSlice";
 import Link from "next/link";
 import React from "react";
+import { X } from "lucide-react";
 
 const TagsShowBox = () => {
   const dispatch = useAppDispatch();
@@ -30,7 +31,7 @@ const TagsShowBox = () => {
               <li key={index}>
                 <Link scroll={false} href={Href} onClick={() => dispatch(removeFilter({ label: filter.label, value: filter.value }))} style={{ cursor: "pointer" }}>
                   {`${filter.label.replace(/([A-Z])/g, " $1").trim()} : ${filter.value}`}
-                  <i className='ri-close-line' />
+                  <X className="h-4 w-4" />
                 </Link>
               </li>
             ))}

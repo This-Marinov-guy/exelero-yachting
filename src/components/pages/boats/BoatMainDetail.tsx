@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Href } from "@/constants";
 import ShareModal from "@/components/commonComponents/productDetail/mainDetail/ShareModal";
 import { useAppDispatch } from "@/redux/hooks";
-import { setShareModal } from "@/redux/reducers/LayoutSlice";
+import { setShareModal, setShareData } from "@/redux/reducers/LayoutSlice";
 import { Share2, FileDown, Bookmark } from "lucide-react";
 import { toast } from "sonner";
 import { usePathname } from "next/navigation";
@@ -30,6 +30,16 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
 
   const handleShare = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+    const mainImage = boat.image?.[0] ?? "";
+    const priceStr = boat.price != null ? `${formatPrice(boat.price)} €` : "";
+    const descriptionParts = [boat.location, boat.boatType, priceStr].filter(Boolean);
+    dispatch(
+      setShareData({
+        title: boat.title || "Boat listing",
+        description: descriptionParts.join(" · "),
+        imageUrl: mainImage,
+      })
+    );
     dispatch(setShareModal());
   };
 

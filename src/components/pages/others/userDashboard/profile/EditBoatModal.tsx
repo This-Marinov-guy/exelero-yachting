@@ -19,6 +19,7 @@ import dynamic from "next/dynamic";
 import DOMPurify from "dompurify";
 import Image from "next/image";
 import Dropzone from "react-dropzone";
+import { X, Star, ImagePlus, ChevronLeft, ChevronRight } from "lucide-react";
 
 const RichTextEditor = dynamic(
   () => import("@/components/commonComponents/RichTextEditor"),
@@ -562,7 +563,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                       }}
                     >
                       <input {...getInputProps()} />
-                      <i className="ri-image-add-line fs-2 text-muted" />
+                      <ImagePlus className="fs-2 text-muted" style={{ width: "1.5rem", height: "1.5rem" }} />
                       <p className="mb-0 small text-muted">
                         {images.length >= 15 ? "Max 15 images" : "Drop or click to add images"}
                       </p>
@@ -585,20 +586,20 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                       )}
                       <div className="position-absolute bottom-0 start-0 end-0 d-flex justify-content-between p-1 bg-dark bg-opacity-75">
                         <button type="button" className="btn btn-sm btn-outline-light py-0 px-1" onClick={() => setMainImage(index)} disabled={index === 0} title="Set as main">
-                          <i className="ri-star-line" />
+                          <Star className="h-4 w-4" />
                         </button>
                         <button type="button" className="btn btn-sm btn-outline-danger py-0 px-1" onClick={() => removeImage(index)} title="Remove">
-                          <i className="ri-close-line" />
+                          <X className="h-4 w-4" />
                         </button>
                       </div>
                       {index > 0 && (
                         <button type="button" className="position-absolute top-0 end-0 btn btn-sm btn-outline-light py-0 px-1 m-1" onClick={() => moveImage(index, index - 1)} title="Move left">
-                          <i className="ri-arrow-left-s-line" />
+                          <ChevronLeft className="h-4 w-4" />
                         </button>
                       )}
                       {index < images.length - 1 && (
                         <button type="button" className="position-absolute top-0 start-0 btn btn-sm btn-outline-light py-0 px-1 m-1" onClick={() => moveImage(index, index + 1)} title="Move right">
-                          <i className="ri-arrow-right-s-line" />
+                          <ChevronRight className="h-4 w-4" />
                         </button>
                       )}
                     </div>

@@ -1,5 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export type ShareData = {
+  title: string;
+  description: string;
+  imageUrl: string;
+} | null;
+
 const initialState = {
   sidebarOpen: false,
   openFilterSidebar: false,
@@ -8,6 +14,7 @@ const initialState = {
   searchModal: false,
   mapModal: false,
   shareModal: false,
+  shareData: null as ShareData,
   videoModal: false,
   reviewModal: false,
   testDriverModal: false,
@@ -51,6 +58,9 @@ const LayoutSlice = createSlice({
     setShareModal: (state) => {
       state.shareModal = !state.shareModal;
     },
+    setShareData: (state, action: { payload: ShareData }) => {
+      state.shareData = action.payload;
+    },
     setVideoModal: (state) => {
       state.videoModal = !state.videoModal;
     },
@@ -93,5 +103,5 @@ const LayoutSlice = createSlice({
   },
 });
 
-export const {setScrollActive, setSignUpModal, setCartData, setTotalProduct, setOpenFilterSidebar, setSidebarOpen, setCardToShow, setSearchModal, setMapModal, setShareModal, setVideoModal, setReviewModal, setTestDriverModal, setOfferPriceModal, setActiveTab, setUserDashboardSidebar, setLogoutModal, setMoreDetailModal, setPersonInfoModal, setAddressModal,setLoginModal } = LayoutSlice.actions;
+export const {setScrollActive, setSignUpModal, setCartData, setTotalProduct, setOpenFilterSidebar, setSidebarOpen, setCardToShow, setSearchModal, setMapModal, setShareModal, setShareData, setVideoModal, setReviewModal, setTestDriverModal, setOfferPriceModal, setActiveTab, setUserDashboardSidebar, setLogoutModal, setMoreDetailModal, setPersonInfoModal, setAddressModal,setLoginModal } = LayoutSlice.actions;
 export default LayoutSlice.reducer;

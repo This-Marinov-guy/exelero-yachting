@@ -401,7 +401,6 @@
       width: 100%;
       padding: calc(10px + (12 - 10) * ((100vw - 320px) / (1920 - 320))) calc(12px + (16 - 12) * ((100vw - 320px) / (1920 - 320)));
       font-size: calc(15px + (16 - 15) * ((100vw - 320px) / (1920 - 320)));
-      color: rgba(var(--content-color), 1);
       background: rgba(var(--white), 1);
       border: 1px solid rgba(var(--title-color), 0.12);
       border-radius: 10px;
