@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input } from "reactstrap";
 import { UncontrolledTooltip } from "reactstrap";
 import { Edit, Eye, Trash2 } from "lucide-react";
+import { formatAccountDate } from "@/lib/utils";
 
 type TransportationRequest = {
   id: string;
@@ -184,14 +185,14 @@ const TransportationRequests = () => {
                     transition={{ duration: 0.2, delay: index * 0.03 }}
                     className="border-b transition-colors hover:bg-muted/50"
                   >
-                    <TableCell>{new Date(request.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell>{formatAccountDate(request.created_at)}</TableCell>
                     <TableCell>{request.name}</TableCell>
                     <TableCell>{request.email}</TableCell>
                     <TableCell>
                       {(request.start_point || "N/A") + " → " + (request.end_point || "N/A")}
                     </TableCell>
                     <TableCell>
-                      {request.date_start} → {request.deadline_date}
+                      {formatAccountDate(request.date_start)} → {formatAccountDate(request.deadline_date)}
                     </TableCell>
                     <TableCell className="capitalize">{request.status}</TableCell>
                     <TableCell style={{ width: "auto", minWidth: "140px", textAlign: "right" }} className="text-right">
@@ -247,11 +248,11 @@ const TransportationRequests = () => {
         <ModalBody>
           {previewRequest && (
             <div className="small">
-              <p><strong>Created:</strong> {new Date(previewRequest.created_at).toLocaleString()}</p>
+              <p><strong>Created:</strong> {formatAccountDate(previewRequest.created_at)}</p>
               <p><strong>Name:</strong> {previewRequest.name}</p>
               <p><strong>Email:</strong> {previewRequest.email}</p>
               {previewRequest.phone && <p><strong>Phone:</strong> {previewRequest.phone}</p>}
-              <p><strong>Dates:</strong> {previewRequest.date_start} → {previewRequest.deadline_date}</p>
+              <p><strong>Dates:</strong> {formatAccountDate(previewRequest.date_start)} → {formatAccountDate(previewRequest.deadline_date)}</p>
               <p><strong>From:</strong> {previewRequest.start_point || "—"}</p>
               <p><strong>To:</strong> {previewRequest.end_point || "—"}</p>
               {(previewRequest.boat_weight_kg != null || previewRequest.boat_length_m != null) && (

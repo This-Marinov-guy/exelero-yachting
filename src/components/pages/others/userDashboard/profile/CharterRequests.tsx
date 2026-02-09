@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, Input } from "reactstrap";
 import { UncontrolledTooltip } from "reactstrap";
 import { Edit, Eye, Trash2 } from "lucide-react";
+import { formatAccountDate } from "@/lib/utils";
 
 type CharterRequest = {
   id: string;
@@ -175,12 +176,12 @@ const CharterRequests = () => {
                     transition={{ duration: 0.2, delay: index * 0.03 }}
                     className="border-b transition-colors hover:bg-muted/50"
                   >
-                    <TableCell>{new Date(request.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell>{formatAccountDate(request.created_at)}</TableCell>
                     <TableCell>{request.name}</TableCell>
                     <TableCell>{request.email}</TableCell>
                     <TableCell className="capitalize">{request.charter_type.replace("_", " ")}</TableCell>
                     <TableCell>
-                      {request.date_from} → {request.date_to}
+                      {formatAccountDate(request.date_from)} → {formatAccountDate(request.date_to)}
                     </TableCell>
                     <TableCell>{request.group_size}</TableCell>
                     <TableCell className="capitalize">{request.status}</TableCell>
@@ -237,12 +238,12 @@ const CharterRequests = () => {
         <ModalBody>
           {previewRequest && (
             <div className="small">
-              <p><strong>Created:</strong> {new Date(previewRequest.created_at).toLocaleString()}</p>
+              <p><strong>Created:</strong> {formatAccountDate(previewRequest.created_at)}</p>
               <p><strong>Name:</strong> {previewRequest.name}</p>
               <p><strong>Email:</strong> {previewRequest.email}</p>
               {previewRequest.phone && <p><strong>Phone:</strong> {previewRequest.phone}</p>}
               <p><strong>Type:</strong> {previewRequest.charter_type.replace("_", " ")}</p>
-              <p><strong>Dates:</strong> {previewRequest.date_from} → {previewRequest.date_to}</p>
+              <p><strong>Dates:</strong> {formatAccountDate(previewRequest.date_from)} → {formatAccountDate(previewRequest.date_to)}</p>
               <p><strong>Group size:</strong> {previewRequest.group_size}</p>
               <p><strong>Status:</strong> {previewRequest.status}</p>
               {previewRequest.note && <p><strong>Note:</strong><br />{previewRequest.note}</p>}

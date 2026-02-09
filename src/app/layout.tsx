@@ -1,9 +1,13 @@
 /* eslint-disable @next/next/no-page-custom-font */
 import type { Metadata } from "next";
+import Script from "next/script";
 import "../index.scss";
 import { I18nProvider } from "./i18n/i18n-context";
 import { detectLanguage } from "./i18n/server";
 import { Providers } from "./MainProvider";
+
+const CLARITY_PROJECT_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "vekv1ut2zw";
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -69,6 +73,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <I18nProvider language={lng}>
           <Providers>{children}</Providers>
         </I18nProvider>
+        {IS_PRODUCTION && (
+          <Script id="microsoft-clarity" strategy="afterInteractive">
+            {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`}
+          </Script>
+        )}
       </body>
     </html>
   );
