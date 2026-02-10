@@ -45,12 +45,12 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
                       alt='boat-img' 
                       fill
                       className='bg-img' 
-                      style={{ objectFit: "contain" }}
+                      style={{ objectFit: "cover" }}
                       unoptimized={isExternalUrl(src)} 
                     />
                   </div>
                 </SwiperSlide>
-              );
+              );  
             })}
           </div>
           <div className='swiper-button-next' />

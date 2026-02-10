@@ -1443,7 +1443,8 @@ input[type="radio"] {
 
   .detail-images {
     position: relative;
-    background-color: rgba(8, 31, 46, 1);
+    background-color: transparent;
+    // background-size: contain !important;
     padding-block: calc(40px + calc(42px + (66 - 42) * ((100vw - 320px) / (1920 - 320)))) 40px;
 
     .image-radius {

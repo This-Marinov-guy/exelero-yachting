@@ -40,6 +40,8 @@ export interface RatioImageType {
   src: string;
   alt: string;
   style?: { height: number };
+  /** How the background image should fit inside its container. Defaults to "cover". */
+  fit?: "cover" | "contain";
 }
 
 export interface BreadcrumbsType {

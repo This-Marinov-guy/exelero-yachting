@@ -7,6 +7,8 @@ const RatioImage: React.FC<RatioImageType> = (props) => {
 
   useEffect(() => {
     const image = bgImg.current;
+    const fit = props.fit || "cover";
+
     if (image && image.classList.contains("bg-img")) {
       const parentElement = image.parentElement;
       if (parentElement) {
@@ -16,7 +18,7 @@ const RatioImage: React.FC<RatioImageType> = (props) => {
           "style",
           `
           background-image: url(${props.src});
-          background-size: cover;
+          background-size: ${fit};
           background-position: center;
           background-repeat: no-repeat;
           height: 400px;

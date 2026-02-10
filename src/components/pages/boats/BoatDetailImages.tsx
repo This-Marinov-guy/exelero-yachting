@@ -1,7 +1,6 @@
 
 import { FC } from "react";
 import { ProductType } from "@/types/Product";
-import Image from "next/image";
 import RatioImage from "@/utils/RatioImage";
 
 interface BoatDetailImagesProps {
@@ -18,7 +17,8 @@ const BoatDetailImages: FC<BoatDetailImagesProps> = ({ boat }) => {
       <RatioImage 
         src={boat.image[0]} 
         alt={boat.title} 
-        className="img-fluid bg-img" 
+        className="img-fluid bg-img"
+        fit="cover"
       />
     </div>
   );

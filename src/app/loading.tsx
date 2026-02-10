@@ -1,7 +1,7 @@
 "use client";
 
-// Loading UI with slide-right exit is handled by LoadingOverlay in (mainBody)/layout.
-// Return null so we don't double-show; the overlay shows on pathname change and slides right when ready.
+// We handle the full-screen loader globally in the main layout.
+// Keep the route-level fallback minimal to avoid double loaders.
 const Loading: React.FC = () => null;
 
 export default Loading;
