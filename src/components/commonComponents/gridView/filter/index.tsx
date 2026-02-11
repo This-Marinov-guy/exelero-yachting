@@ -12,7 +12,7 @@ import { VatIncludedData } from "@/data/boat";
 
 const FilterSidebar: FC<FilterSidebarType> = ({ value, modalType, filterClass, type }) => {
   const dispatch = useAppDispatch();
-  const { propertyType, bedsRooms, squareFeetStatus, yearBuiltStatus, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory,JobWorkMode ,JobCompanyType ,JobEducation ,JobCheck,JobLocation,JobTopCompanies,JobType, boatType, boatManufacturer, boatDesigner, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded} = useAppSelector((state) => state.filter);
+  const { propertyType, bedsRooms, squareFeetStatus, yearBuiltStatus, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory,JobWorkMode ,JobCompanyType ,JobEducation ,JobCheck,JobLocation,JobTopCompanies,JobType, boatType, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded} = useAppSelector((state) => state.filter);
   const ItemData = ["1", "2", "3", "map-id"];
   const [openItems, setOpenItems] = useState<string[]>(ItemData);
   const toggle = (id: string) => setOpenItems((openItems) => (openItems.includes(id) ? openItems.filter((item) => item !== id) : [...openItems, id]));

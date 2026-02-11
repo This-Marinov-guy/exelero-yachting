@@ -11,7 +11,6 @@ ALTER TABLE boat_data
     ALTER COLUMN price SET NOT NULL,
     ALTER COLUMN vat_included SET NOT NULL,
     ALTER COLUMN description SET NOT NULL,
-    ALTER COLUMN designer SET NOT NULL,
     ALTER COLUMN hull_length SET NOT NULL,
     ALTER COLUMN waterline_length SET NOT NULL,
     ALTER COLUMN beam SET NOT NULL,

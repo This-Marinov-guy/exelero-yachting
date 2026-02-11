@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS boat_data (
     price INTEGER NOT NULL,
     vat_included BOOLEAN NOT NULL DEFAULT FALSE,
     description TEXT NOT NULL,
-    designer VARCHAR(512) NOT NULL,
     hull_length DOUBLE PRECISION NOT NULL,
     waterline_length DOUBLE PRECISION NOT NULL,
     beam DOUBLE PRECISION NOT NULL,

@@ -141,11 +141,6 @@ const BoatDetailPage: FC<BoatDetailPageProps> = ({ boat }) => {
                   </Col>
                   <Col md={6}>
                     <div className="spec-item">
-                      <strong>Designer:</strong> <span>{boat.designer || "N/A"}</span>
-                    </div>
-                  </Col>
-                  <Col md={6}>
-                    <div className="spec-item">
                       <strong>Build Number:</strong> <span>{boat.buildNumber || "N/A"}</span>
                     </div>
                   </Col>

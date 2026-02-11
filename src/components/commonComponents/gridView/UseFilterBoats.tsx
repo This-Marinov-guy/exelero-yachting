@@ -4,7 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 
 const UseFilterBoats = ({ value }: FilterProductsType) => {
-  const { sortBy, popular, priceStatus, yearBuiltStatus, squareFeetStatus, boatType, boatManufacturer, boatDesigner, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded } = useAppSelector((state) => state.filter);
+  const { sortBy, popular, priceStatus, yearBuiltStatus, squareFeetStatus, boatType, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded } = useAppSelector((state) => state.filter);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();

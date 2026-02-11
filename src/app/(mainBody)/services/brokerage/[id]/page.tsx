@@ -107,7 +107,6 @@ async function fetchBoatById(numericId: number): Promise<ProductType | null> {
       // Boat-specific properties
       boatId: boat.id,
       manufacturer: boatData.manufacturer || "",
-      designer: boatData.designer || "",
       buildNumber: boatData.build_number || "",
       buildYear: boatData.build_year || "",
       hullLength: boatData.hull_length || 0,

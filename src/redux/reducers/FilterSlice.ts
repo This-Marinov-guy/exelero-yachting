@@ -35,7 +35,6 @@ const initialState: FilterSliceType = {
   // Boat filters - wide ranges to show all boats initially
   boatType: [],
   boatManufacturer: [],
-  boatDesigner: [],
   boatLocation: [],
   boatBeamStatus: [0, 100],
   boatDraftStatus: [0, 50],
@@ -145,9 +144,6 @@ const FiltersSlice = createSlice({
     setBoatManufacturer: (state, action) => {
       state.boatManufacturer = action.payload;
     },
-    setBoatDesigner: (state, action) => {
-      state.boatDesigner = action.payload;
-    },
     setBoatLocation: (state, action) => {
       state.boatLocation = action.payload;
     },
@@ -194,6 +190,6 @@ const FiltersSlice = createSlice({
   },
 });
 
-export const { setPropertyType, setSortBy, setPopular, setPriceStatus, setBedsRooms, setSquareFeetStatus, setYearBuiltStatus, setAmenities, setCarBrandModel, setMinAndMaxPrice, setBudgetStatus, setCategories, setFuelType, setModelYear, setSeats, setColor, setKmsDriven, setMinAndMaxKilometers, setTransmissions, setOwner, setJobAllCategory, setMinAndMaxSalary, setSalaryStatus, setJobWorkMode, setJobCompanyType, setJobEducation, setJobByCheck, setJobLocation, setJobTopCompanies, setJobType, setBoatType, setBoatManufacturer, setBoatDesigner, setBoatLocation, setBoatBeamStatus, setBoatDraftStatus, setBoatDisplacementStatus, setBoatEnginePowerStatus, setBoatVatIncluded, removeFilter, clearAllFilters } = FiltersSlice.actions;
+export const { setPropertyType, setSortBy, setPopular, setPriceStatus, setBedsRooms, setSquareFeetStatus, setYearBuiltStatus, setAmenities, setCarBrandModel, setMinAndMaxPrice, setBudgetStatus, setCategories, setFuelType, setModelYear, setSeats, setColor, setKmsDriven, setMinAndMaxKilometers, setTransmissions, setOwner, setJobAllCategory, setMinAndMaxSalary, setSalaryStatus, setJobWorkMode, setJobCompanyType, setJobEducation, setJobByCheck, setJobLocation, setJobTopCompanies, setJobType, setBoatType, setBoatManufacturer, setBoatLocation, setBoatBeamStatus, setBoatDraftStatus, setBoatDisplacementStatus, setBoatEnginePowerStatus, setBoatVatIncluded, removeFilter, clearAllFilters } = FiltersSlice.actions;
 
 export default FiltersSlice.reducer;

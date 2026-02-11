@@ -517,7 +517,6 @@ const UploadBoat = () => {
             { field: "location", label: "Location" },
             { field: "price", label: "Price" },
             { field: "description", label: "Description" },
-            { field: "designer", label: "Designer" },
             { field: "hull_length", label: "Hull Length" },
             { field: "waterline_length", label: "Waterline Length" },
             { field: "beam", label: "Beam" },
@@ -599,7 +598,6 @@ const UploadBoat = () => {
                 price: parseInt(formData.price),
                 vat_included: formData.vat_included,
                 description: sanitizedDescription,
-                designer: formData.designer.trim(),
                 hull_length: parseFloat(formData.hull_length),
                 waterline_length: parseFloat(formData.waterline_length),
                 beam: parseFloat(formData.beam),
@@ -844,16 +842,6 @@ const UploadBoat = () => {
                                 value={formData.description}
                                 onChange={(value) => handleFieldChange("description", value)}
                                 rows={4}
-                            />
-                        </div>
-
-                        <div className="mb-3">
-                            <label className="form-label">Designer *</label>
-                            <CommonInput
-                                inputType="text"
-                                value={formData.designer}
-                                onChange={(e) => handleFieldChange("designer", e.target.value)}
-                                required
                             />
                         </div>
 

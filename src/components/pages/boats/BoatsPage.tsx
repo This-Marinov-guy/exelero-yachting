@@ -83,7 +83,6 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
           // Boat-specific properties
           boatId: boat.id,
           manufacturer: boatData?.manufacturer || "",
-          designer: boatData?.designer || "",
           buildNumber: boatData?.build_number || "",
           buildYear: boatData?.build_year || "",
           beam: boatData?.beam || 0,

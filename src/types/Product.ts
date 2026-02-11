@@ -53,7 +53,6 @@ export interface ProductType {
   // Boat-specific fields
   boatId?: string;
   manufacturer?: string;
-  designer?: string;
   buildNumber?: string;
   buildYear?: string;
   beam?: number;
@@ -222,7 +221,6 @@ export interface FilterSliceType {
   // Boat filters
   boatType: string[];
   boatManufacturer: string[];
-  boatDesigner: string[];
   boatLocation: string[];
   boatBeamStatus: number[];
   boatDraftStatus: number[];

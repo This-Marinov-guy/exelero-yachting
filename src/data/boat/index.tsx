@@ -7,5 +7,4 @@ export const VatIncludedData = [
 
 // These will be populated dynamically from actual boat data
 export const BoatManufacturerData: { id: string; label: string; type: string }[] = [];
-export const BoatDesignerData: { id: string; label: string; type: string }[] = [];
 export const BoatLocationData: { id: string; label: string; type: string }[] = [];

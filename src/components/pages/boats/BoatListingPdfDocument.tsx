@@ -193,7 +193,6 @@ function buildSpecs(boat: ProductType) {
   };
 
   add("Manufacturer", boat.manufacturer);
-  add("Designer", boat.designer);
   add("Build year", boat.buildYear || (boat.year ? String(boat.year) : ""));
   add("Build number", boat.buildNumber);
   add("Boat type", boat.boatType);

@@ -38,7 +38,6 @@ export type BoatDataRow = {
   price: number;
   vat_included: boolean;
   description: string;
-  designer: string;
   hull_length: number;
   waterline_length: number;
   beam: number;
@@ -84,7 +83,6 @@ const emptyForm = {
   price: "",
   vat_included: false,
   description: "",
-  designer: "",
   hull_length: "",
   waterline_length: "",
   beam: "",
@@ -141,7 +139,6 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
           price: String(row.price ?? ""),
           vat_included: row.vat_included ?? false,
           description: row.description ?? "",
-          designer: row.designer ?? "",
           hull_length: String(row.hull_length ?? ""),
           waterline_length: String(row.waterline_length ?? ""),
           beam: String(row.beam ?? ""),
@@ -263,7 +260,6 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
         price: parseInt(form.price, 10) || 0,
         vat_included: form.vat_included,
         description: sanitize(form.description),
-        designer: form.designer.trim(),
         hull_length: parseFloat(form.hull_length) || 0,
         waterline_length: parseFloat(form.waterline_length) || 0,
         beam: parseFloat(form.beam) || 0,
@@ -403,11 +399,6 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                   <Label>Description *</Label>
                   <RichTextEditor value={form.description} onChange={(v) => setField("description", v)} rows={4} />
                 </FormGroup>
-                <FormGroup>
-                  <Label>Designer *</Label>
-                  <CommonInput inputType="text" value={form.designer} onChange={(e) => setField("designer", e.target.value)} required />
-                </FormGroup>
-
                 <h6 className="mt-3 mb-2">Dimensions</h6>
                 <div className="row">
                   <div className="col-md-6">

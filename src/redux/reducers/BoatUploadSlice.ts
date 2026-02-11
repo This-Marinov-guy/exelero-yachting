@@ -59,7 +59,6 @@ export interface BoatUploadState {
     price: string;
     vat_included: boolean;
     description: string;
-    designer: string;
     hull_length: string;
     waterline_length: string;
     beam: string;
@@ -94,7 +93,6 @@ const initialState: BoatUploadState = storedData || {
     price: "",
     vat_included: false,
     description: "",
-    designer: "",
     hull_length: "",
     waterline_length: "",
     beam: "",
