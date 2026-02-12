@@ -72,7 +72,7 @@ const AboutPage = () => {
                 </div>
 
                 <div className='about-cta'>
-                  <Link href={RouteList.Pages.Other.ContactUs1} className='btn-solid'>
+                  <Link href={RouteList.Pages.Other.ContactUs1} className='btn-solid p-2'>
                     Contact Us
                   </Link>
                 </div>

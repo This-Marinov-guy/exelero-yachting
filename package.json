@@ -41,6 +41,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.563.0",
     "next": "^15.5.10",
+    "nextjs-toploader": "^3.9.17",
     "nodemailer": "^8.0.0",
     "particles-bg": "^2.5.5",
     "photoswipe": "^5.4.4",

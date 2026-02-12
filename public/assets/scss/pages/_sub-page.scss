@@ -668,8 +668,8 @@
       width: auto;
 
       p {
-        color: rgba(var(--content-color), 1);
-        font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
+        font-size: 18px;
+        color: grey;
       }
 
       h3 {

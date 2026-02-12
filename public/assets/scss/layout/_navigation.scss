@@ -26,6 +26,10 @@
     box-shadow: 0 20px 50px 0 rgba(0, 0, 0, 0.05);
     padding-inline: 20px !important;
     padding-block: 15px 4px;
+
+    @media (max-width: 1199px) {
+        background: transparent;
+    }
 }
 
 .sidebar-nav .menu-right {

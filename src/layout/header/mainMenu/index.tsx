@@ -6,6 +6,7 @@ import { setSidebarOpen } from "@/redux/reducers/LayoutSlice";
 import UseOutsideDropdown from "@/utils/UseOutsideDropdown";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
@@ -14,6 +15,7 @@ import PagesMegaMenu from "./PagesMegaMenu";
 import SidebarSubMenu from "./SidebarSubMenu";
 
 const MainMenu = () => {
+  const pathname = usePathname();
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
   const { sidebarOpen } = useAppSelector((state) => state.layout);
   const dispatch = useAppDispatch();
@@ -32,6 +34,12 @@ const MainMenu = () => {
   }, [dispatch, isComponentVisible]);
 
   useEffect(() => setIsComponentVisible(sidebarOpen), [sidebarOpen, setIsComponentVisible]);
+
+  // Close mobile nav when route changes (e.g. after clicking a page link)
+  useEffect(() => {
+    dispatch(setSidebarOpen(false));
+    setIsComponentVisible(false);
+  }, [pathname, dispatch, setIsComponentVisible]);
   return (
     <nav ref={ref} className={`sidebar-nav ${isComponentVisible ? "open" : ""}`}>
       <div className='menu-header'>
@@ -52,7 +60,7 @@ const MainMenu = () => {
                 scroll={false} 
                 href={hasSubmenu ? Href : (mainMenu.path || Href)} 
                 className={`menu-item ${openSections[mainMenu.title ?? ""] ? "open" : ""}`} 
-                onClick={() => hasSubmenu && mainMenu.title ? toggleSection(mainMenu.title) : undefined}
+                onClick={() => hasSubmenu && mainMenu.title ? toggleSection(mainMenu.title) : toggle}
               >
                 {t(mainMenu.title ?? "")}
                 {hasSubmenu && (
@@ -64,7 +72,7 @@ const MainMenu = () => {
               {hasMegaMenuImage && mainMenu.children && <ImageMenuList mainMenu={mainMenu.children} toggleMain={toggle}/>}
               {!hasMegaMenuImage && !hasMegaMenu && hasSubmenu && mainMenu.children && (
                 <ul className='dropdown-megamenu sample link-list'>
-                  <SidebarSubMenu menu={mainMenu.children} level={0} />
+                  <SidebarSubMenu menu={mainMenu.children} level={0} onNavigate={toggle} />
                 </ul>
               )}
               {hasMegaMenu && mainMenu.children && <PagesMegaMenu mainMenu={mainMenu.children} toggleMain={toggle}/>}

@@ -883,6 +883,9 @@ header {
 
     .mobile-menu-toggle {
         display: none;
+        background-color: white;
+        border-radius: 8px;
+        padding: 1px;
 
         @media (max-width: 991px) {
             display: block;

@@ -7,7 +7,7 @@
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: calc(50px + (120 - 50) * ((100vw - 320px) / (1920 - 320))) 0;
+  padding: calc(50px + (120 - 50) * ((100vw - 320px) / (1920 - 320))) 15px;
   overflow: hidden;
 
   &__bg {

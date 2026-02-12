@@ -29,7 +29,7 @@ const FilterTags: FC<TopPanelType> = ({ topFilter, side, type, mainClass }) => {
 
   const FilterDropdown = (startPoint: number, endPoint: number) => (
     <Dropdown className='select-dropdown' isOpen={dropdownOpen} toggle={() => setDropdownOpen(!dropdownOpen)}>
-      <DropdownToggle className='select-button' color="">{sortBy || "Sort By"}</DropdownToggle>
+      {/* <DropdownToggle className='select-button' color="">{sortBy || "Sort By"}</DropdownToggle> */}
       <DropdownMenu className='select-menu' end>
         {FilterTabsListData.map((item, index) => (
           <DropdownItem onClick={() => handleSortBy(item)} key={index} className="select-item">

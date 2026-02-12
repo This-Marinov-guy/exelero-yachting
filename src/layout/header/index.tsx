@@ -1,7 +1,7 @@
 import { Href } from "@/constants";
 import { ContainerClassMap, HeaderClassMap } from "@/data/layout/Header";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
-import { setCartData } from "@/redux/reducers/LayoutSlice";
+import { setCartData, setSidebarOpen } from "@/redux/reducers/LayoutSlice";
 import { PathTypes } from "@/types/Layout";
 import UseStickyBar from "@/utils/UseStickyBar";
 import Link from "next/link";
@@ -49,7 +49,14 @@ const Header: React.FC<PathTypes> = ({ part }) => {
           {/* <RightHeader part={part} isJobOrProperty={isJobOrProperty} /> */}
         </div>
       </Container>
-      <Link scroll={false} href={Href} className={`overlay ${sidebarOpen ? " overlay--active" : ""}`} />
+      <span
+        role="button"
+        tabIndex={0}
+        aria-label="Close menu"
+        className={`overlay ${sidebarOpen ? " overlay--active" : ""}`}
+        onClick={() => dispatch(setSidebarOpen(false))}
+        onKeyDown={(e) => e.key === "Enter" && dispatch(setSidebarOpen(false))}
+      />
     </header>
   );
 };

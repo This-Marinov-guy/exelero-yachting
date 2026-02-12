@@ -40,22 +40,22 @@ const GetInTouch: FC<GetInTouchProps> = ({ type }) => {
     item: (typeof AboutGetInTouchData)[0],
     iconAtBottom: boolean = false
   ) => (
-    <>
-      {!iconAtBottom && <div className="contact-icon">{item.icon}</div>}
+    <a
+      href={getHref(item.title, item.description)}
+      target={item.title.toLowerCase().includes("location") || item.title.toLowerCase().includes("website") ? "_blank" : undefined}
+      rel={item.title.toLowerCase().includes("location") || item.title.toLowerCase().includes("website") ? "noreferrer" : undefined}
+    >
+      {!iconAtBottom && <div className="contact-icon m-auto">{item.icon}</div>}
       <div className="contact-info">
         <h3>{item.title}</h3>
         <p>
-          <a
-            href={getHref(item.title, item.description)}
-            target={item.title.toLowerCase().includes("location") || item.title.toLowerCase().includes("website") ? "_blank" : undefined}
-            rel={item.title.toLowerCase().includes("location") || item.title.toLowerCase().includes("website") ? "noreferrer" : undefined}
-          >
+          <p>
             {item.description}
-          </a>
+          </p>
         </p>
       </div>
       {iconAtBottom && <div className="contact-icon">{item.icon}</div>}
-    </>
+    </a>
   );
 
   if (type === "contact-1") {
