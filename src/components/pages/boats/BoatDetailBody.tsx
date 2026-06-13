@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useState, useEffect } from "react";
 import { ProductType } from "@/types/Product";
 import { Row, Col } from "reactstrap";
 import DOMPurify from "dompurify";
@@ -19,6 +19,21 @@ interface BoatDetailBodyProps {
 }
 
 const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
+  const [imgDimensions, setImgDimensions] = useState<Record<number, { width: number; height: number }>>({});
+
+  useEffect(() => {
+    boat.image?.forEach((src, index) => {
+      const img = new window.Image();
+      img.onload = () => {
+        setImgDimensions((prev) => ({
+          ...prev,
+          [index]: { width: img.naturalWidth, height: img.naturalHeight },
+        }));
+      };
+      img.src = src;
+    });
+  }, [boat.image]);
+
   const sanitizeHTML = (html: string): string => {
     if (!html || typeof html !== "string") return "";
     return DOMPurify.sanitize(html, {
@@ -69,8 +84,8 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
                   <Item
                     original={img}
                     thumbnail={img}
-                    width={1200}
-                    height={800}
+                    width={imgDimensions[index]?.width ?? 1200}
+                    height={imgDimensions[index]?.height ?? 800}
                   >
                     {({ ref, open }) => (
                       <div
@@ -82,7 +97,7 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
                           src={img}
                           alt={`${boat.title} - Image ${index + 1}`}
                           fill
-                          style={{ objectFit: "cover" }}
+                          style={{ objectFit: "contain" }}
                           className="boat-gallery-image"
                         />
                         <div className="boat-gallery-overlay">

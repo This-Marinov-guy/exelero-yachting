@@ -1,4 +1,19 @@
 // Boat Gallery Carousel Styles
+.boat-detail-preview {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+
+  .boat-detail-preview-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+  }
+}
+
 .boat-gallery-carousel {
   margin-bottom: 2rem;
   
@@ -38,10 +53,11 @@
 .boat-gallery-item {
   position: relative;
   width: 100%;
-  height: 250px;
+  height: clamp(220px, 22vw, 320px);
   cursor: pointer;
   border-radius: 8px;
   overflow: hidden;
+  background: transparent;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   
   &:hover {
@@ -54,6 +70,7 @@
   }
   
   .boat-gallery-image {
+    object-fit: contain !important;
     transition: transform 0.3s ease;
   }
   
@@ -86,7 +103,7 @@
 // Responsive adjustments
 @media (max-width: 768px) {
   .boat-gallery-item {
-    height: 200px;
+    height: 220px;
   }
   
   .boat-gallery-overlay i {

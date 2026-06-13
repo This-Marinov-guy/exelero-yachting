@@ -81,10 +81,9 @@ const styles = StyleSheet.create({
   },
   photo: {
     width: "32%",
-    height: 100,
+    maxHeight: 150,
     borderRadius: 8,
-    objectFit: "cover",
-    border: "1px solid #e2e8f0",
+    objectFit: "contain",
   },
   row: {
     flexDirection: "row",
