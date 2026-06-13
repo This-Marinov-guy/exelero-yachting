@@ -1,5 +1,5 @@
 import { Fragment } from "react/jsx-runtime";
-import { MenuListType } from "../../../types/Layout";
+import { MenuItemType, MenuListType } from "../../../types/Layout";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Link from "next/link";
@@ -13,7 +13,7 @@ const SidebarSubMenu: React.FC<SidebarSubMenuProps> = ({ menu, level, onNavigate
   const { t } = useTranslation();
 
   const toggleSection = (title: string) => setOpenSections((prevState) => ({ [title]: !prevState[title] }));
-  const handleClick = (menuItem: (typeof menu)[number]) => {
+  const handleClick = (menuItem: MenuItemType) => {
     if (menuItem.children && menuItem.title) {
       toggleSection(menuItem.title);
     } else {

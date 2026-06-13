@@ -155,6 +155,18 @@
     height: 100vh;
     background: #141923;
 
+    @media (min-width: 992px) {
+      & > .container-fluid,
+      & > .container-fluid > .row {
+        height: 100%;
+      }
+
+      & > .container-fluid > .row > .col-lg-6:last-child {
+        display: flex;
+        align-items: center;
+      }
+    }
+
     .form-box {
       background: #1a202d;
 
