@@ -2,8 +2,9 @@
 import { useState, useEffect, useRef } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
-import { Button, Card, CardBody, CardTitle } from "reactstrap";
+import { Button, Card, CardBody, CardTitle, Modal, ModalBody, ModalHeader } from "reactstrap";
 import CommonInput from "@/components/commonComponents/CommonInput";
+import CloseBtn from "@/components/commonComponents/CloseBtn";
 import DualUnitInput from "@/components/commonComponents/DualUnitInput";
 import dynamic from "next/dynamic";
 import DOMPurify from "dompurify";
@@ -15,7 +16,7 @@ const RichTextEditor = dynamic(
 );
 import Image from "next/image";
 import Dropzone from "react-dropzone";
-import { X, Star, ImagePlus, GripVertical, Info, FileText, Trash2 } from "lucide-react";
+import { X, Star, ImagePlus, GripVertical, Info, FileText, Trash2, ChevronDown, Plus } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
     updateFormField,
@@ -115,6 +116,13 @@ const UploadBoat = () => {
     const [uploadingImages, setUploadingImages] = useState<Set<number>>(new Set());
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     const [brochureFile, setBrochureFile] = useState<File | null>(null);
+    const [dealerDropdownOpen, setDealerDropdownOpen] = useState(false);
+    const [addDealerModalOpen, setAddDealerModalOpen] = useState(false);
+    const [savingDealer, setSavingDealer] = useState(false);
+    const [newDealerData, setNewDealerData] = useState({ name: "", email: "", phone: "", dealer: "" });
+    const dealerDropdownRef = useRef<HTMLDivElement | null>(null);
+
+    const selectedDealer = brokerDataList.find((d) => d.id === formData.dealer_id);
 
     // Generate unique folder name: timestamp-userId-random
     const generateFolderName = async (): Promise<string> => {
@@ -160,33 +168,37 @@ const UploadBoat = () => {
       // Check lock status based on whether user has any broker_data
       setIsLocked(!allBrokers || allBrokers.length === 0);
 
-      // Fetch only broker_data entries without boats (available for linking to new boats)
+      // Fetch all broker_data entries for this user
       const { data, error } = await supabase
         .from("broker_data")
         .select("id, name, email, phone, dealer, boat_id")
         .eq("user_id", session.user.id)
-        .is("boat_id", null) // Only show dealers without boats
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Error fetching available broker data:", error);
+        console.error("Error fetching broker data:", error);
       }
 
       setBrokerDataList(data || []);
       setLoading(false);
+      return data || [];
         };
 
         checkDealerInfo();
 
-        // Listen for dealer data changes
-        const handleDealerDataChanged = () => {
-            checkDealerInfo();
+        const handleDealerDataChanged = () => { checkDealerInfo(); };
+        const handleClickOutside = (e: MouseEvent) => {
+            if (dealerDropdownRef.current && !dealerDropdownRef.current.contains(e.target as Node)) {
+                setDealerDropdownOpen(false);
+            }
         };
 
         window.addEventListener("dealerDataChanged", handleDealerDataChanged);
+        document.addEventListener("mousedown", handleClickOutside);
 
         return () => {
             window.removeEventListener("dealerDataChanged", handleDealerDataChanged);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
 
@@ -499,6 +511,62 @@ const UploadBoat = () => {
         }
     };
 
+    const openAddDealerModal = () => {
+        setDealerDropdownOpen(false);
+        setNewDealerData({ name: "", email: "", phone: "", dealer: "" });
+        setAddDealerModalOpen(true);
+    };
+
+    const closeAddDealerModal = () => {
+        if (savingDealer) return;
+        setAddDealerModalOpen(false);
+        setNewDealerData({ name: "", email: "", phone: "", dealer: "" });
+    };
+
+    const handleAddDealerSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newDealerData.name.trim() || !newDealerData.email.trim()) {
+            toast.error("Name and email are required");
+            return;
+        }
+        if (!/\S+@\S+\.\S+/.test(newDealerData.email)) {
+            toast.error("Please enter a valid email address");
+            return;
+        }
+        setSavingDealer(true);
+        const supabase = getSupabaseBrowserClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
+            toast.error("You must be signed in to add a dealer");
+            setSavingDealer(false);
+            return;
+        }
+        try {
+            const { data, error } = await supabase
+                .from("broker_data")
+                .insert({
+                    boat_id: null,
+                    user_id: session.user.id,
+                    name: newDealerData.name.trim(),
+                    email: newDealerData.email.trim(),
+                    phone: newDealerData.phone.trim() || null,
+                    dealer: newDealerData.dealer.trim() || null,
+                })
+                .select("id, name, email, phone, dealer, boat_id")
+                .single();
+            if (error) throw error;
+            if (data?.id) handleFieldChange("dealer_id", data.id);
+            window.dispatchEvent(new CustomEvent("dealerDataChanged"));
+            setAddDealerModalOpen(false);
+            setNewDealerData({ name: "", email: "", phone: "", dealer: "" });
+            toast.success("Dealer added successfully");
+        } catch (error: any) {
+            toast.error(error?.message || "Failed to add dealer");
+        } finally {
+            setSavingDealer(false);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -724,19 +792,51 @@ const UploadBoat = () => {
                         {/* Dealer Selection */}
                         <div className="mb-3">
                             <label className="form-label">Dealer *</label>
-                            <select
-                                className="form-control"
-                                value={formData.dealer_id}
-                                onChange={(e) => handleFieldChange("dealer_id", e.target.value)}
-                                required
-                            >
-                                <option value="">Select a dealer</option>
-                                {brokerDataList.map((dealer) => (
-                                    <option key={dealer.id} value={dealer.id}>
-                                        {dealer.name} {dealer.dealer ? `- ${dealer.dealer}` : ""}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="dealer-custom-select" ref={dealerDropdownRef}>
+                                <button
+                                    type="button"
+                                    className={`dealer-select-trigger ${dealerDropdownOpen ? "open" : ""}`}
+                                    onClick={() => setDealerDropdownOpen((o) => !o)}
+                                    aria-haspopup="listbox"
+                                    aria-expanded={dealerDropdownOpen}
+                                >
+                                    <span className={selectedDealer ? "dealer-select-value" : "dealer-select-placeholder text-muted"}>
+                                        {selectedDealer
+                                            ? `${selectedDealer.name}${selectedDealer.dealer ? ` - ${selectedDealer.dealer}` : ""}`
+                                            : "Select a dealer"}
+                                    </span>
+                                    <ChevronDown size={16} className={`ms-2 transition-transform ${dealerDropdownOpen ? "rotate-180" : ""}`} aria-hidden />
+                                </button>
+
+                                {dealerDropdownOpen && (
+                                    <div className="dealer-select-menu" role="listbox">
+                                        {brokerDataList.length > 0 ? (
+                                            brokerDataList.map((dealer) => (
+                                                <button
+                                                    key={dealer.id}
+                                                    type="button"
+                                                    className={`dealer-select-option ${formData.dealer_id === dealer.id ? "selected" : ""}`}
+                                                    onClick={() => { handleFieldChange("dealer_id", dealer.id); setDealerDropdownOpen(false); }}
+                                                    role="option"
+                                                    aria-selected={formData.dealer_id === dealer.id}
+                                                >
+                                                    <span>{dealer.name}</span>
+                                                    {dealer.dealer && <small className="text-muted">{dealer.dealer}</small>}
+                                                </button>
+                                            ))
+                                        ) : (
+                                            <div className="dealer-select-empty text-muted">No dealers yet</div>
+                                        )}
+                                        <button
+                                            type="button"
+                                            className="dealer-select-option dealer-select-add"
+                                            onClick={openAddDealerModal}
+                                        >
+                                            <Plus size={14} aria-hidden /> Add Dealer
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Type Selection */}
@@ -1241,6 +1341,61 @@ const UploadBoat = () => {
                     </form>
                 </CardBody>
             </Card>
+
+            <Modal fade centered className="theme-modal" isOpen={addDealerModalOpen} toggle={closeAddDealerModal}>
+                <ModalHeader toggle={closeAddDealerModal} close={<CloseBtn toggle={closeAddDealerModal} />} />
+                <ModalBody>
+                    <h4 className="modal-title mb-3">Add Dealer</h4>
+                    <form className="dealer-form" onSubmit={handleAddDealerSubmit}>
+                        <div className="mb-3">
+                            <CommonInput
+                                inputType="text"
+                                placeholder="Name *"
+                                value={newDealerData.name}
+                                onChange={(e) => setNewDealerData({ ...newDealerData, name: e.target.value })}
+                                required
+                                disabled={savingDealer}
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <CommonInput
+                                inputType="email"
+                                placeholder="Email *"
+                                value={newDealerData.email}
+                                onChange={(e) => setNewDealerData({ ...newDealerData, email: e.target.value })}
+                                required
+                                disabled={savingDealer}
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <CommonInput
+                                inputType="tel"
+                                placeholder="Phone"
+                                value={newDealerData.phone}
+                                onChange={(e) => setNewDealerData({ ...newDealerData, phone: e.target.value })}
+                                disabled={savingDealer}
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <CommonInput
+                                inputType="text"
+                                placeholder="Dealer / Company"
+                                value={newDealerData.dealer}
+                                onChange={(e) => setNewDealerData({ ...newDealerData, dealer: e.target.value })}
+                                disabled={savingDealer}
+                            />
+                        </div>
+                        <div className="d-flex gap-2">
+                            <Button type="submit" className="btn-solid" disabled={savingDealer}>
+                                {savingDealer ? "Saving..." : "Save Dealer"}
+                            </Button>
+                            <Button type="button" className="btn-outline" onClick={closeAddDealerModal} disabled={savingDealer}>
+                                Cancel
+                            </Button>
+                        </div>
+                    </form>
+                </ModalBody>
+            </Modal>
         </div>
     );
 };

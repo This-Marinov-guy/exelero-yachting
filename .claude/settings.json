@@ -2,7 +2,13 @@
   "permissions": {
     "allow": [
       "Bash(/opt/homebrew/bin/npm run *)",
-      "Bash(node node_modules/.bin/next build)"
+      "Bash(node node_modules/.bin/next build)",
+      "Bash(awk 'NR>=2200 && NR<=2250' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
+      "Bash(awk 'NR>=2100 && NR<=2130' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
+      "Bash(awk 'NR>=1900 && NR<=1920' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
+      "Bash(awk 'NR<=2747 && /^[a-zA-Z&]/' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
+      "Bash(awk 'NR<=2750' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
+      "Bash(awk 'NR>=2950 && NR<=3010' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)"
     ]
   }
 }

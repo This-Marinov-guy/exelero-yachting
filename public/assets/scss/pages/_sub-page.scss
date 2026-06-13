@@ -2981,6 +2981,96 @@
   }
 }
 
+// Custom dealer select dropdown — global so it renders above any overflow context
+.dealer-custom-select {
+  position: relative;
+
+  .dealer-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 12px;
+    background: rgba(var(--white), 1);
+    border: 1px solid rgba(var(--border-color), 1);
+    border-radius: 6px;
+    color: rgba(var(--title-color), 1);
+    font-size: 14px;
+    transition: border-color 0.15s;
+
+    &:hover, &.open { border-color: rgba(var(--theme-color), 0.6); }
+
+    .transition-transform {
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+      &.rotate-180 { transform: rotate(180deg); }
+    }
+  }
+
+  .dealer-select-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: rgba(var(--white), 1);
+    border: 1px solid rgba(var(--border-color), 1);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    z-index: 500;
+    max-height: 240px;
+    overflow-y: auto;
+
+    .dealer-select-option {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      background: none;
+      border: none;
+      border-bottom: 1px solid rgba(var(--border-color), 0.5);
+      padding: 10px 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s;
+      color: rgba(var(--title-color), 1);
+      border-radius: 0;
+      font-size: 14px;
+
+      &:last-child { border-bottom: none; }
+      &:hover { background: rgba(var(--theme-color), 0.06); }
+      &.selected { background: rgba(var(--theme-color), 0.10); font-weight: 500; }
+
+      small {
+        font-size: 12px;
+        margin-top: 2px;
+        color: rgba(var(--content-color), 1);
+      }
+    }
+
+    .dealer-select-empty {
+      font-size: 14px;
+      padding: 12px 14px;
+      color: rgba(var(--content-color), 1);
+    }
+
+    .dealer-select-add {
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 6px;
+      color: rgba(var(--theme-color), 1) !important;
+      font-weight: 500;
+      border-top: 2px solid rgba(var(--border-color), 1) !important;
+      border-bottom: none !important;
+
+      &:hover { background: rgba(var(--theme-color), 0.06); }
+    }
+  }
+}
+
 .chart-box {
   .apexcharts-tooltip-y-group {
     padding: 0;
