@@ -8,6 +8,7 @@ import UploadBoat from "../profile/UploadBoat";
 import BoatsListing from "../profile/BoatsListing";
 import CharterRequests from "../profile/CharterRequests";
 import TransportationRequests from "../profile/TransportationRequests";
+import AccountSettings from "../profile/AccountSettings";
 
 const DashboardTabs = () => {
   const { activeTab } = useAppSelector((state) => state.layout);
@@ -20,6 +21,9 @@ const DashboardTabs = () => {
       <TabContent activeTab={activeTab}>
         <TabPane tabId={"dealer-info"}>
           <DealerInfo />
+        </TabPane>
+        <TabPane tabId={"account-settings"}>
+          <AccountSettings />
         </TabPane>
         <TabPane tabId={"upload-boat"}>
           <UploadBoat />

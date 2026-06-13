@@ -73,7 +73,7 @@ const UserSidebar = () => {
   };
 
   const getItemLockStatus = (item: typeof SidebarItems[0]) => {
-    if (item.id === "dealer-info" || item.id === "charter-requests" || item.id === "transportation-requests") return false;
+    if (item.id === "dealer-info" || item.id === "account-settings" || item.id === "charter-requests" || item.id === "transportation-requests") return false;
     return !hasDealerInfo;
   };
 

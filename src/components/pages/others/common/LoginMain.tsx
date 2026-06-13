@@ -1,7 +1,8 @@
 "use client";
 
 import CommonInput from "@/components/commonComponents/CommonInput";
-import { NotAccount, ImagePath, LogIn, LogInWithFacebook, LogInWithGoogle, LogInYourAccount, Remember, SignUp, Welcome, Href } from "@/constants";
+import { NotAccount, LogIn, LogInYourAccount, SignUp, Welcome } from "@/constants";
+import { getStoredPasskey } from "@/lib/passkeyStorage";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { RouteList } from "@/utils/RouteList";
 import Link from "next/link";
@@ -21,35 +22,52 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [pendingAction, setPendingAction] = useState<"password" | "magic-link" | "passkey" | null>(null);
+
+  const loading = pendingAction !== null;
+  const accountRedirectUrl = () =>
+    typeof window !== "undefined" ? `${window.location.origin}${RouteList.Auth.Account}` : RouteList.Auth.Account;
+
+  const validateEmail = () => {
+    if (!email) {
+      toast.error("Please enter your email address.");
+      return false;
+    }
+
+    if (!email.includes("@")) {
+      toast.error("Please enter a valid email address.");
+      return false;
+    }
+
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate inputs
-    if (!email || !password) {
-      toast.error("Please enter both email and password.");
+    if (!validateEmail()) {
       return;
     }
 
-    if (!email.includes("@")) {
-      toast.error("Please enter a valid email address.");
+    if (!password) {
+      toast.error("Please enter your password.");
       return;
     }
 
-    setLoading(true);
+    setPendingAction("password");
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       
       if (error) {
         toast.error("Invalid email or password. Please try again.");
-        setLoading(false);
+        setPendingAction(null);
         return;
       }
       
       if (!data.session) {
         toast.error("Sign in failed. Please try again.");
-        setLoading(false);
+        setPendingAction(null);
         return;
       }
       
@@ -57,7 +75,63 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
       router.push(RouteList.Auth.Account);
     } catch (err: any) {      
       toast.error(err?.message || "An unexpected error occurred. Please try again.");
-      setLoading(false);
+      setPendingAction(null);
+    }
+  };
+
+  const handleMagicLink = async () => {
+    if (!validateEmail()) return;
+
+    setPendingAction("magic-link");
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: accountRedirectUrl(),
+        },
+      });
+
+      if (error) throw error;
+      toast.success("Magic link sent. Check your email to continue to your account.");
+    } catch (err: any) {
+      toast.error(err?.message || "Unable to send the magic link.");
+    } finally {
+      setPendingAction(null);
+    }
+  };
+
+  const handlePasskeyLogin = async () => {
+    if (!validateEmail()) return;
+
+    if (typeof window === "undefined" || !window.PublicKeyCredential) {
+      toast.error("This browser does not support passkeys.");
+      return;
+    }
+
+    const storedPasskey = getStoredPasskey(email);
+    if (!storedPasskey?.factorId) {
+      toast.error("No passkey is saved for this email on this browser. Sign in first, then add a passkey in account settings.");
+      return;
+    }
+
+    setPendingAction("passkey");
+    try {
+      const { data, error } = await supabase.auth.mfa.webauthn.authenticate({
+        factorId: storedPasskey.factorId,
+        webauthn: {
+          rpId: window.location.hostname,
+          rpOrigins: [window.location.origin],
+        },
+      });
+
+      if (error) throw error;
+      if (!data) throw new Error("Passkey sign in failed.");
+
+      toast.success("Signed in with passkey. Redirecting...");
+      router.push(RouteList.Auth.Account);
+    } catch (err: any) {
+      toast.error(err?.message || "Unable to sign in with passkey.");
+      setPendingAction(null);
     }
   };
 
@@ -91,8 +165,16 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
           <label htmlFor='Remember'>{Remember}</label>
         </div> */}
         <Button className='btn-solid' type='submit' disabled={loading}>
-          {loading ? "Signing in..." : LogIn}
+          {pendingAction === "password" ? "Signing in..." : LogIn}
         </Button>
+        <div className='auth-alt-actions'>
+          <Button className='btn-solid auth-secondary-action' type='button' onClick={handleMagicLink} disabled={loading}>
+            {pendingAction === "magic-link" ? "Sending..." : "Reset pass"}
+          </Button>
+          <Button className='btn-solid auth-secondary-action' type='button' onClick={handlePasskeyLogin} disabled={loading}>
+            {pendingAction === "passkey" ? "Checking..." : "Passkey"}
+          </Button>
+        </div>
         {/* <div className='text-divider'>
           <span>OR</span>
         </div>

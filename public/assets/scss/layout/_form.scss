@@ -132,6 +132,34 @@
             padding: calc(8px + (14 - 8) * ((100vw - 320px) / (1920 - 320))) calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
             margin-top: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
         }
+
+        .auth-alt-actions {
+            display: flex;
+            gap: 14px;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(var(--border-color), 1);
+
+            @media (max-width: 420px) {
+                flex-wrap: wrap;
+            }
+        }
+
+        .auth-secondary-action {
+            flex: 1 1 0;
+            min-width: 145px;
+            margin-top: 0;
+            font-size: 16px;
+            background: rgba(var(--white), 1);
+            color: rgba(var(--title-color), 1);
+            border-color: rgba(var(--border-color), 1);
+
+            &:hover,
+            &:focus {
+                color: rgba(var(--theme-color), 1);
+                border-color: rgba(var(--theme-color), 1);
+            }
+        }
     }
 
     .form-check-box {
