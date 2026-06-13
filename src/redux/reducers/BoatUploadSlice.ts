@@ -68,7 +68,6 @@ export interface BoatUploadState {
     engine_power: string;
     fuel_tank: string;
     water_tank: string;
-    exterior_description: string;
     additional_details: string;
   };
   imageMetadata: ImageMetadata[];
@@ -102,7 +101,6 @@ const initialState: BoatUploadState = storedData || {
     engine_power: "",
     fuel_tank: "",
     water_tank: "",
-    exterior_description: "",
     additional_details: "",
   },
   imageMetadata: [],

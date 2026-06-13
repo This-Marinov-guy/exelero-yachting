@@ -1,5 +1,5 @@
 import { Href, SettingMenu } from "@/constants";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 import { setUserDashboardSidebar } from "@/redux/reducers/LayoutSlice";
 import Link from "next/link";
 import { Col, TabContent, TabPane } from "reactstrap";
@@ -9,9 +9,13 @@ import BoatsListing from "../profile/BoatsListing";
 import CharterRequests from "../profile/CharterRequests";
 import TransportationRequests from "../profile/TransportationRequests";
 import AccountSettings from "../profile/AccountSettings";
+import { AccountTabId } from "../accountTabs";
 
-const DashboardTabs = () => {
-  const { activeTab } = useAppSelector((state) => state.layout);
+type DashboardTabsProps = {
+  activeTab: AccountTabId;
+};
+
+const DashboardTabs = ({ activeTab }: DashboardTabsProps) => {
   const dispatch = useAppDispatch();
   return (
     <Col lg={9} className="mt-3">

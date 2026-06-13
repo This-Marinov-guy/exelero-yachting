@@ -4,14 +4,20 @@ import ModalLogout from "@/components/commonComponents/modal/ModalLogout";
 import { Href, Logout } from "@/constants";
 import { SidebarItems } from "@/data/pages/Others";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setActiveTab, setLogoutModal, setUserDashboardSidebar } from "@/redux/reducers/LayoutSlice";
+import { setLogoutModal, setUserDashboardSidebar } from "@/redux/reducers/LayoutSlice";
 import { Button, Col, Nav, NavItem, NavLink, Tooltip } from "reactstrap";
 import UserProfile from "./UserProfile";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { X, Lock } from "lucide-react";
+import { AccountTabId, isAccountTabId } from "../accountTabs";
 
-const UserSidebar = () => {
-  const { UserDashboardSidebar, activeTab } = useAppSelector((state) => state.layout);
+type UserSidebarProps = {
+  activeTab: AccountTabId;
+  onTabChange: (tab: AccountTabId) => void;
+};
+
+const UserSidebar = ({ activeTab, onTabChange }: UserSidebarProps) => {
+  const { UserDashboardSidebar } = useAppSelector((state) => state.layout);
   const dispatch = useAppDispatch();
   const [hasDealerInfo, setHasDealerInfo] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -103,8 +109,8 @@ const UserSidebar = () => {
                   color='transparent'
                   onClick={(e) => {
                     e.preventDefault();
-                    if (!isLocked) {
-                      dispatch(setActiveTab(item.id));
+                    if (!isLocked && isAccountTabId(item.id)) {
+                      onTabChange(item.id);
                       closeSidebar();
                     }
                   }}

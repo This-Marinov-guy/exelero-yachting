@@ -612,7 +612,6 @@ const UploadBoat = () => {
             { field: "draft", label: "Draft" },
             { field: "displacement", label: "Displacement" },
             { field: "engine_power", label: "Engine Power" },
-            { field: "exterior_description", label: "Exterior Description" },
         ] satisfies Array<{ field: keyof typeof formData; label: string }>;
 
         const invalidRequiredFields = requiredFields.filter(({ field }) => !hasRequiredValue(formData[field]));
@@ -654,7 +653,6 @@ const UploadBoat = () => {
             };
 
             const sanitizedDescription = sanitizeHTML(formData.description.trim());
-            const sanitizedExteriorDescription = sanitizeHTML(formData.exterior_description.trim());
             const sanitizedAdditionalDetails = formData.additional_details.trim()
                 ? sanitizeHTML(formData.additional_details.trim())
                 : null;
@@ -695,9 +693,8 @@ const UploadBoat = () => {
                 engine_power: parseFloat(formData.engine_power),
                 fuel_tank: formData.fuel_tank.trim() ? parseInt(formData.fuel_tank) : null,
                 water_tank: formData.water_tank.trim() ? parseInt(formData.water_tank) : null,
-                brochure: brochureUrl || null, // Optional
-                exterior_description: sanitizedExteriorDescription,
-                additional_details: sanitizedAdditionalDetails, // Optional
+                brochure: brochureUrl || null,
+                additional_details: sanitizedAdditionalDetails,
             };
 
             const { error: boatDataError } = await supabase
@@ -1343,16 +1340,6 @@ const UploadBoat = () => {
                             )}
                         </div>
 
-                        <div className="mb-3">
-                            <label className="form-label">Exterior Description *</label>
-                            <div className={fieldErrorClass("exterior_description")}>
-                                <RichTextEditor
-                                    value={formData.exterior_description}
-                                    onChange={(value) => handleFieldChange("exterior_description", value)}
-                                    rows={4}
-                                />
-                            </div>
-                        </div>
 
                         <div className="mb-3">
                             <label className="form-label">Additional Details</label>

@@ -2860,23 +2860,30 @@
 
       // Upload boat section styles
       .upload-boat-section {
-        .upload-field-invalid {
+        .upload-field-invalid,
+        .form-control.upload-field-invalid,
+        .dealer-select-trigger.upload-field-invalid {
           border-color: rgba(var(--error), 1) !important;
 
           &:focus {
             border-color: rgba(var(--error), 1) !important;
             box-shadow: 0 0 0 0.2rem rgba(var(--error), 0.14) !important;
           }
+        }
 
-          &.input-group,
-          .input-group & {
-            border-color: rgba(var(--error), 1) !important;
-          }
+        select.form-control.upload-field-invalid,
+        input.form-control.upload-field-invalid {
+          border-color: rgba(var(--error), 1) !important;
+        }
 
-          .rich-text-editor-wrapper {
-            border-color: rgba(var(--error), 1) !important;
-            box-shadow: 0 0 0 0.2rem rgba(var(--error), 0.08);
-          }
+        .upload-field-invalid .rich-text-editor-wrapper {
+          border-color: rgba(var(--error), 1) !important;
+          box-shadow: 0 0 0 0.2rem rgba(var(--error), 0.08) !important;
+        }
+
+        .upload-field-invalid .rich-text-toolbar,
+        .upload-field-invalid .rich-text-editor-content {
+          border-color: rgba(var(--error), 1) !important;
         }
 
         .input-group {
