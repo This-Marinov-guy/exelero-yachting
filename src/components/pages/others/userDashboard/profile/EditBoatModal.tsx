@@ -39,14 +39,14 @@ export type BoatDataRow = {
   vat_included: boolean;
   description: string;
   hull_length: number;
-  waterline_length: number;
+  waterline_length: number | null;
   beam: number;
   draft: number;
-  ballast: number;
+  ballast: number | null;
   displacement: number;
   engine_power: number;
-  fuel_tank: number;
-  water_tank: number;
+  fuel_tank: number | null;
+  water_tank: number | null;
   brochure: string | null;
   exterior_description: string;
   additional_details: string | null;
@@ -261,14 +261,14 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
         vat_included: form.vat_included,
         description: sanitize(form.description),
         hull_length: parseFloat(form.hull_length) || 0,
-        waterline_length: parseFloat(form.waterline_length) || 0,
+        waterline_length: form.waterline_length.trim() ? parseFloat(form.waterline_length) : null,
         beam: parseFloat(form.beam) || 0,
         draft: parseFloat(form.draft) || 0,
-        ballast: parseInt(form.ballast, 10) || 0,
+        ballast: form.ballast.trim() ? parseInt(form.ballast, 10) : null,
         displacement: parseInt(form.displacement, 10) || 0,
         engine_power: parseFloat(form.engine_power) || 0,
-        fuel_tank: parseInt(form.fuel_tank, 10) || 0,
-        water_tank: parseInt(form.water_tank, 10) || 0,
+        fuel_tank: form.fuel_tank.trim() ? parseInt(form.fuel_tank, 10) : null,
+        water_tank: form.water_tank.trim() ? parseInt(form.water_tank, 10) : null,
         brochure: form.brochure?.trim() || null,
         exterior_description: sanitize(form.exterior_description),
         additional_details: form.additional_details?.trim() ? sanitize(form.additional_details) : null,
@@ -416,7 +416,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                   </div>
                   <div className="col-md-6">
                     <DualUnitInput
-                      label="Waterline length (m) *"
+                      label="Waterline length (m)"
                       value={form.waterline_length}
                       onChange={(v) => setField("waterline_length", v)}
                       metricUnit="m"
@@ -425,6 +425,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                       formatImperial={(ft) => `${Math.floor(ft)}'`}
                       type="number"
                       step="0.01"
+                      required={false}
                     />
                   </div>
                 </div>
@@ -459,7 +460,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                 <div className="row">
                   <div className="col-md-6">
                     <DualUnitInput
-                      label="Ballast (kg) *"
+                      label="Ballast (kg)"
                       value={form.ballast}
                       onChange={(v) => setField("ballast", v)}
                       metricUnit="kg"
@@ -467,6 +468,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                       metricToImperial={(k) => k * 2.20462}
                       formatImperial={(lbs) => Math.round(lbs).toString()}
                       type="number"
+                      required={false}
                     />
                   </div>
                   <div className="col-md-6">
@@ -498,7 +500,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                   </div>
                   <div className="col-md-6">
                     <DualUnitInput
-                      label="Fuel tank (L) *"
+                      label="Fuel tank (L)"
                       value={form.fuel_tank}
                       onChange={(v) => setField("fuel_tank", v)}
                       metricUnit="ltr"
@@ -506,12 +508,13 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                       metricToImperial={(l) => l * 0.264172}
                       formatImperial={(g) => Math.round(g).toString()}
                       type="number"
+                      required={false}
                     />
                   </div>
                 </div>
                 <FormGroup>
                   <DualUnitInput
-                    label="Water tank (L) *"
+                    label="Water tank (L)"
                     value={form.water_tank}
                     onChange={(v) => setField("water_tank", v)}
                     metricUnit="ltr"
@@ -519,6 +522,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                     metricToImperial={(l) => l * 0.264172}
                     formatImperial={(g) => Math.round(g).toString()}
                     type="number"
+                    required={false}
                   />
                 </FormGroup>
                 <FormGroup>

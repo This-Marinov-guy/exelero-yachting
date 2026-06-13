@@ -608,14 +608,10 @@ const UploadBoat = () => {
             { field: "price", label: "Price" },
             { field: "description", label: "Description" },
             { field: "hull_length", label: "Hull Length" },
-            { field: "waterline_length", label: "Waterline Length" },
             { field: "beam", label: "Beam" },
             { field: "draft", label: "Draft" },
-            { field: "ballast", label: "Ballast" },
             { field: "displacement", label: "Displacement" },
             { field: "engine_power", label: "Engine Power" },
-            { field: "fuel_tank", label: "Fuel Tank" },
-            { field: "water_tank", label: "Water Tank" },
             { field: "exterior_description", label: "Exterior Description" },
         ] satisfies Array<{ field: keyof typeof formData; label: string }>;
 
@@ -691,14 +687,14 @@ const UploadBoat = () => {
                 vat_included: formData.vat_included,
                 description: sanitizedDescription,
                 hull_length: parseFloat(formData.hull_length),
-                waterline_length: parseFloat(formData.waterline_length),
+                waterline_length: formData.waterline_length.trim() ? parseFloat(formData.waterline_length) : null,
                 beam: parseFloat(formData.beam),
                 draft: parseFloat(formData.draft),
-                ballast: parseInt(formData.ballast),
+                ballast: formData.ballast.trim() ? parseInt(formData.ballast) : null,
                 displacement: parseInt(formData.displacement),
                 engine_power: parseFloat(formData.engine_power),
-                fuel_tank: parseInt(formData.fuel_tank),
-                water_tank: parseInt(formData.water_tank),
+                fuel_tank: formData.fuel_tank.trim() ? parseInt(formData.fuel_tank) : null,
+                water_tank: formData.water_tank.trim() ? parseInt(formData.water_tank) : null,
                 brochure: brochureUrl || null, // Optional
                 exterior_description: sanitizedExteriorDescription,
                 additional_details: sanitizedAdditionalDetails, // Optional
@@ -999,7 +995,7 @@ const UploadBoat = () => {
                             </div>
                             <div className="col-md-6 mb-3">
                                 <DualUnitInput
-                                    label="Waterline Length *"
+                                    label="Waterline Length"
                                     value={formData.waterline_length}
                                     onChange={(value: string) => handleFieldChange("waterline_length", value)}
                                     metricUnit="m"
@@ -1012,8 +1008,7 @@ const UploadBoat = () => {
                                     }}
                                     type="number"
                                     step="0.01"
-                                    className={`form-control ${fieldErrorClass("waterline_length")}`}
-                                    required
+                                    className="form-control"
                                 />
                             </div>
                         </div>
@@ -1062,7 +1057,7 @@ const UploadBoat = () => {
                         <div className="row">
                             <div className="col-md-6 mb-3">
                                 <DualUnitInput
-                                    label="Ballast - Std *"
+                                    label="Ballast - Std"
                                     value={formData.ballast}
                                     onChange={(value: string) => handleFieldChange("ballast", value)}
                                     metricUnit="kg"
@@ -1070,8 +1065,7 @@ const UploadBoat = () => {
                                     metricToImperial={(kg: number) => kg * 2.20462}
                                     formatImperial={(lbs: number) => Math.round(lbs).toLocaleString()}
                                     type="number"
-                                    className={`form-control ${fieldErrorClass("ballast")}`}
-                                    required
+                                    className="form-control"
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
@@ -1110,7 +1104,7 @@ const UploadBoat = () => {
                             </div>
                             <div className="col-md-6 mb-3">
                                 <DualUnitInput
-                                    label="Fuel Tank - Std *"
+                                    label="Fuel Tank - Std"
                                     value={formData.fuel_tank}
                                     onChange={(value: string) => handleFieldChange("fuel_tank", value)}
                                     metricUnit="ltr"
@@ -1118,8 +1112,7 @@ const UploadBoat = () => {
                                     metricToImperial={(ltr: number) => ltr * 0.264172}
                                     formatImperial={(gal: number) => Math.round(gal).toString()}
                                     type="number"
-                                    className={`form-control ${fieldErrorClass("fuel_tank")}`}
-                                    required
+                                    className="form-control"
                                 />
                             </div>
                         </div>
@@ -1127,7 +1120,7 @@ const UploadBoat = () => {
                         <div className="row">
                             <div className="col-md-6 mb-3">
                                 <DualUnitInput
-                                    label="Water Tank - Std *"
+                                    label="Water Tank - Std"
                                     value={formData.water_tank}
                                     onChange={(value: string) => handleFieldChange("water_tank", value)}
                                     metricUnit="ltr"
@@ -1135,8 +1128,7 @@ const UploadBoat = () => {
                                     metricToImperial={(ltr: number) => ltr * 0.264172}
                                     formatImperial={(gal: number) => Math.round(gal).toString()}
                                     type="number"
-                                    className={`form-control ${fieldErrorClass("water_tank")}`}
-                                    required
+                                    className="form-control"
                                 />
                             </div>
                         </div>

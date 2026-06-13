@@ -23,14 +23,14 @@ CREATE TABLE IF NOT EXISTS boat_data (
     vat_included BOOLEAN NOT NULL DEFAULT FALSE,
     description TEXT NOT NULL,
     hull_length DOUBLE PRECISION NOT NULL,
-    waterline_length DOUBLE PRECISION NOT NULL,
+    waterline_length DOUBLE PRECISION,
     beam DOUBLE PRECISION NOT NULL,
     draft DOUBLE PRECISION NOT NULL,
-    ballast INTEGER NOT NULL,
+    ballast INTEGER,
     displacement INTEGER NOT NULL,
     engine_power DOUBLE PRECISION NOT NULL,
-    fuel_tank INTEGER NOT NULL,
-    water_tank INTEGER NOT NULL,
+    fuel_tank INTEGER,
+    water_tank INTEGER,
     brochure VARCHAR(500), -- Optional
     exterior_description TEXT NOT NULL,
     additional_details TEXT, -- Optional
