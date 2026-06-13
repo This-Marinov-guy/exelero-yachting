@@ -274,7 +274,7 @@ const UserProfile = () => {
           src={profileImage} 
           alt={displayName} 
           className='img-fluid' 
-          style={{ width: '100px', height: '100px', objectFit: 'cover', border: '3px solid #1dbae7' }}
+          style={{ width: '100px', height: '100px', objectFit: 'cover', border: '3px solid #1dbae7', borderRadius: '50%' }}
           unoptimized 
         />
         <button

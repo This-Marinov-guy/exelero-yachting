@@ -8,7 +8,9 @@
       "Bash(awk 'NR>=1900 && NR<=1920' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
       "Bash(awk 'NR<=2747 && /^[a-zA-Z&]/' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
       "Bash(awk 'NR<=2750' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
-      "Bash(awk 'NR>=2950 && NR<=3010' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)"
+      "Bash(awk 'NR>=2950 && NR<=3010' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
+      "Bash(npx sass *)",
+      "Bash(kill 86633)"
     ]
   }
 }

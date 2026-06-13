@@ -254,7 +254,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
       const payload: Record<string, unknown> = {
         title: form.title.trim(),
         manufacturer: form.manufacturer.trim(),
-        build_number: form.build_number.trim(),
+        build_number: form.build_number.trim() || null,
         build_year: form.build_year.trim(),
         location: form.location.trim(),
         price: parseInt(form.price, 10) || 0,
@@ -354,8 +354,8 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                   </div>
                   <div className="col-md-6">
                     <FormGroup>
-                      <Label>Build number *</Label>
-                      <CommonInput inputType="text" value={form.build_number} onChange={(e) => setField("build_number", e.target.value)} required />
+                      <Label>Build number</Label>
+                      <CommonInput inputType="text" value={form.build_number} onChange={(e) => setField("build_number", e.target.value)} />
                     </FormGroup>
                   </div>
                 </div>

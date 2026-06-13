@@ -15,7 +15,13 @@ export function getSupabaseBrowserClient() {
     );
   }
 
-  browserClient = createClient(url, anonKey);
+  browserClient = createClient(url, anonKey, {
+    auth: {
+      experimental: {
+        passkey: true,
+      },
+    },
+  });
   return browserClient;
 }
 

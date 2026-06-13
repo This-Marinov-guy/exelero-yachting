@@ -95,7 +95,7 @@ type BrokerData = {
     email: string;
     phone: string | null;
     dealer: string | null;
-    boat_id: string;
+    boat_id: string | null;
 };
 
 const UploadBoat = () => {
@@ -120,9 +120,33 @@ const UploadBoat = () => {
     const [addDealerModalOpen, setAddDealerModalOpen] = useState(false);
     const [savingDealer, setSavingDealer] = useState(false);
     const [newDealerData, setNewDealerData] = useState({ name: "", email: "", phone: "", dealer: "" });
+    const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
     const dealerDropdownRef = useRef<HTMLDivElement | null>(null);
 
     const selectedDealer = brokerDataList.find((d) => d.id === formData.dealer_id);
+
+    const stripHtml = (value: string) =>
+        value
+            .replace(/<[^>]*>/g, "")
+            .replace(/&nbsp;/g, " ")
+            .trim();
+
+    const hasRequiredValue = (value: unknown) => {
+        if (typeof value !== "string") return value !== null && value !== undefined;
+        return stripHtml(value).length > 0;
+    };
+
+    const clearInvalidField = (field: keyof typeof formData) => {
+        setInvalidFields((current) => {
+            if (!current.has(field)) return current;
+            const next = new Set(current);
+            next.delete(field);
+            return next;
+        });
+    };
+
+    const fieldErrorClass = (field: keyof typeof formData) =>
+        invalidFields.has(field) ? "upload-field-invalid" : "";
 
     // Generate unique folder name: timestamp-userId-random
     const generateFolderName = async (): Promise<string> => {
@@ -137,6 +161,9 @@ const UploadBoat = () => {
     // Helper function to update form fields
     const handleFieldChange = (field: keyof typeof formData, value: string | boolean) => {
         dispatch(updateFormField({ field, value }));
+        if (typeof value !== "string" || hasRequiredValue(value)) {
+            clearInvalidField(field);
+        }
     };
 
     useEffect(() => {
@@ -570,17 +597,12 @@ const UploadBoat = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.dealer_id) {
-            toast.error("Please select a dealer");
-            return;
-        }
-
         // Validate required fields
         const requiredFields = [
+            { field: "dealer_id", label: "Dealer" },
             { field: "type", label: "Type" },
             { field: "title", label: "Title" },
             { field: "manufacturer", label: "Manufacturer" },
-            { field: "build_number", label: "Build Number" },
             { field: "build_year", label: "Build Year" },
             { field: "location", label: "Location" },
             { field: "price", label: "Price" },
@@ -595,15 +617,17 @@ const UploadBoat = () => {
             { field: "fuel_tank", label: "Fuel Tank" },
             { field: "water_tank", label: "Water Tank" },
             { field: "exterior_description", label: "Exterior Description" },
-        ];
+        ] satisfies Array<{ field: keyof typeof formData; label: string }>;
 
-        for (const { field, label } of requiredFields) {
-            const value = formData[field as keyof typeof formData];
-            if (!value || (typeof value === "string" && !value.trim())) {
-                toast.error(`${label} is required`);
-                return;
-            }
+        const invalidRequiredFields = requiredFields.filter(({ field }) => !hasRequiredValue(formData[field]));
+
+        if (invalidRequiredFields.length > 0) {
+            setInvalidFields(new Set(invalidRequiredFields.map(({ field }) => field)));
+            toast.error(`Please complete: ${invalidRequiredFields.map(({ label }) => label).join(", ")}`);
+            return;
         }
+
+        setInvalidFields(new Set());
 
         setSubmitting(true);
         const supabase = getSupabaseBrowserClient();
@@ -660,7 +684,7 @@ const UploadBoat = () => {
                 type: formData.type.trim(),
                 title: formData.title.trim(),
                 manufacturer: formData.manufacturer.trim(),
-                build_number: formData.build_number.trim(),
+                build_number: formData.build_number.trim() || null,
                 build_year: formData.build_year.trim(),
                 location: formData.location.trim(),
                 price: parseInt(formData.price),
@@ -788,14 +812,14 @@ const UploadBoat = () => {
             <Card className="dealer-form-card">
                 <CardBody>
                     <CardTitle tag="h5">Boat Information</CardTitle>
-                    <form onSubmit={handleSubmit} className="dealer-form">
+                    <form onSubmit={handleSubmit} className="dealer-form" noValidate>
                         {/* Dealer Selection */}
                         <div className="mb-3">
                             <label className="form-label">Dealer *</label>
                             <div className="dealer-custom-select" ref={dealerDropdownRef}>
                                 <button
                                     type="button"
-                                    className={`dealer-select-trigger ${dealerDropdownOpen ? "open" : ""}`}
+                                    className={`dealer-select-trigger ${dealerDropdownOpen ? "open" : ""} ${fieldErrorClass("dealer_id")}`}
                                     onClick={() => setDealerDropdownOpen((o) => !o)}
                                     aria-haspopup="listbox"
                                     aria-expanded={dealerDropdownOpen}
@@ -843,7 +867,7 @@ const UploadBoat = () => {
                         <div className="mb-3">
                             <label className="form-label">Type *</label>
                             <select
-                                className="form-control"
+                                className={`form-control ${fieldErrorClass("type")}`}
                                 value={formData.type}
                                 onChange={(e) => handleFieldChange("type", e.target.value)}
                                 required
@@ -862,6 +886,7 @@ const UploadBoat = () => {
                             <CommonInput
                                 inputType="text"
                                 value={formData.title}
+                                inputClass={fieldErrorClass("title")}
                                 onChange={(e) => handleFieldChange("title", e.target.value)}
                                 required
                             />
@@ -873,17 +898,17 @@ const UploadBoat = () => {
                                 <CommonInput
                                     inputType="text"
                                     value={formData.manufacturer}
+                                    inputClass={fieldErrorClass("manufacturer")}
                                     onChange={(e) => handleFieldChange("manufacturer", e.target.value)}
                                     required
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Build Number *</label>
+                                <label className="form-label">Build Number</label>
                                 <CommonInput
                                     inputType="text"
                                     value={formData.build_number}
                                     onChange={(e) => handleFieldChange("build_number", e.target.value)}
-                                    required
                                 />
                             </div>
                         </div>
@@ -894,6 +919,7 @@ const UploadBoat = () => {
                                 <CommonInput
                                     inputType="text"
                                     value={formData.build_year}
+                                    inputClass={fieldErrorClass("build_year")}
                                     onChange={(e) => handleFieldChange("build_year", e.target.value)}
                                     required
                                 />
@@ -903,6 +929,7 @@ const UploadBoat = () => {
                                 <CommonInput
                                     inputType="text"
                                     value={formData.location}
+                                    inputClass={fieldErrorClass("location")}
                                     onChange={(e) => handleFieldChange("location", e.target.value)}
                                     required
                                 />
@@ -916,6 +943,7 @@ const UploadBoat = () => {
                                     inputType="number"
                                     value={formData.price}
                                     leftText="€"
+                                    inputClass={fieldErrorClass("price")}
                                     onChange={(e) => handleFieldChange("price", e.target.value)}
                                     required
                                 />
@@ -938,11 +966,13 @@ const UploadBoat = () => {
 
                         <div className="mb-3">
                             <label className="form-label">Description *</label>
-                            <RichTextEditor
-                                value={formData.description}
-                                onChange={(value) => handleFieldChange("description", value)}
-                                rows={4}
-                            />
+                            <div className={fieldErrorClass("description")}>
+                                <RichTextEditor
+                                    value={formData.description}
+                                    onChange={(value) => handleFieldChange("description", value)}
+                                    rows={4}
+                                />
+                            </div>
                         </div>
 
                         {/* Dimensions */}
@@ -963,6 +993,7 @@ const UploadBoat = () => {
                                     }}
                                     type="number"
                                     step="0.01"
+                                    className={`form-control ${fieldErrorClass("hull_length")}`}
                                     required
                                 />
                             </div>
@@ -981,6 +1012,7 @@ const UploadBoat = () => {
                                     }}
                                     type="number"
                                     step="0.01"
+                                    className={`form-control ${fieldErrorClass("waterline_length")}`}
                                     required
                                 />
                             </div>
@@ -1002,6 +1034,7 @@ const UploadBoat = () => {
                                     }}
                                     type="number"
                                     step="0.01"
+                                    className={`form-control ${fieldErrorClass("beam")}`}
                                     required
                                 />
                             </div>
@@ -1020,6 +1053,7 @@ const UploadBoat = () => {
                                     }}
                                     type="number"
                                     step="0.01"
+                                    className={`form-control ${fieldErrorClass("draft")}`}
                                     required
                                 />
                             </div>
@@ -1036,6 +1070,7 @@ const UploadBoat = () => {
                                     metricToImperial={(kg: number) => kg * 2.20462}
                                     formatImperial={(lbs: number) => Math.round(lbs).toLocaleString()}
                                     type="number"
+                                    className={`form-control ${fieldErrorClass("ballast")}`}
                                     required
                                 />
                             </div>
@@ -1049,6 +1084,7 @@ const UploadBoat = () => {
                                     metricToImperial={(kg: number) => kg * 2.20462}
                                     formatImperial={(lbs: number) => Math.round(lbs).toLocaleString()}
                                     type="number"
+                                    className={`form-control ${fieldErrorClass("displacement")}`}
                                     required
                                 />
                             </div>
@@ -1068,6 +1104,7 @@ const UploadBoat = () => {
                                     formatImperial={(hp: number) => Math.round(hp).toString()}
                                     type="number"
                                     step="0.01"
+                                    className={`form-control ${fieldErrorClass("engine_power")}`}
                                     required
                                 />
                             </div>
@@ -1081,6 +1118,7 @@ const UploadBoat = () => {
                                     metricToImperial={(ltr: number) => ltr * 0.264172}
                                     formatImperial={(gal: number) => Math.round(gal).toString()}
                                     type="number"
+                                    className={`form-control ${fieldErrorClass("fuel_tank")}`}
                                     required
                                 />
                             </div>
@@ -1097,6 +1135,7 @@ const UploadBoat = () => {
                                     metricToImperial={(ltr: number) => ltr * 0.264172}
                                     formatImperial={(gal: number) => Math.round(gal).toString()}
                                     type="number"
+                                    className={`form-control ${fieldErrorClass("water_tank")}`}
                                     required
                                 />
                             </div>
@@ -1313,12 +1352,14 @@ const UploadBoat = () => {
                         </div>
 
                         <div className="mb-3">
-                            <label className="form-label">Exterior Description</label>
-                            <RichTextEditor
-                                value={formData.exterior_description}
-                                onChange={(value) => handleFieldChange("exterior_description", value)}
-                                rows={4}
-                            />
+                            <label className="form-label">Exterior Description *</label>
+                            <div className={fieldErrorClass("exterior_description")}>
+                                <RichTextEditor
+                                    value={formData.exterior_description}
+                                    onChange={(value) => handleFieldChange("exterior_description", value)}
+                                    rows={4}
+                                />
+                            </div>
                         </div>
 
                         <div className="mb-3">

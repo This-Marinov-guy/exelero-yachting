@@ -1,7 +1,6 @@
 "use client";
 
 import CommonInput from "@/components/commonComponents/CommonInput";
-import { saveStoredPasskey } from "@/lib/passkeyStorage";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { KeyRound, Mail, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -12,6 +11,7 @@ type PasskeyFactor = {
   id: string;
   friendly_name?: string;
   created_at?: string;
+  last_used_at?: string;
   updated_at?: string;
 };
 
@@ -21,7 +21,6 @@ const AccountSettings = () => {
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [passkeyName, setPasskeyName] = useState("");
   const [passkeys, setPasskeys] = useState<PasskeyFactor[]>([]);
   const [loading, setLoading] = useState(true);
   const [pendingAction, setPendingAction] = useState<"email" | "password" | "passkey" | null>(null);
@@ -39,10 +38,10 @@ const AccountSettings = () => {
       setCurrentEmail(email);
       setNewEmail(email);
 
-      const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
-      if (factorsError) throw factorsError;
+      const { data: passkeyData, error: passkeyError } = await supabase.auth.passkey.list();
+      if (passkeyError) throw passkeyError;
 
-      setPasskeys(factorsData?.webauthn ?? []);
+      setPasskeys(passkeyData ?? []);
     } catch (err: any) {
       toast.error(err?.message || "Unable to load account settings.");
     } finally {
@@ -117,65 +116,32 @@ const AccountSettings = () => {
     }
   };
 
-  const handleAddPasskey = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleAddPasskey = async () => {
     if (typeof window === "undefined" || !window.PublicKeyCredential) {
       toast.error("This browser does not support passkeys.");
       return;
     }
 
-    const friendlyName = passkeyName.trim() || `${currentEmail || "Excelero"} passkey`;
-    const rpId = window.location.hostname;
-    const rpOrigins = [window.location.origin];
-
     setPendingAction("passkey");
-    let enrolledFactorId: string | null = null;
-
     try {
-      const { data: factor, error: enrollError } = await supabase.auth.mfa.webauthn.enroll({
-        friendlyName,
+      const { data, error } = await supabase.auth.registerPasskey();
+      if (error) throw error;
+      if (!data?.id) throw new Error("Unable to create a passkey.");
+
+      await supabase.auth.passkey.update({
+        passkeyId: data.id,
+        friendlyName: "Excelero",
       });
-      if (enrollError) throw enrollError;
-      if (!factor?.id) throw new Error("Unable to create a passkey factor.");
 
-      enrolledFactorId = factor.id;
-
-      const { data: challenge, error: challengeError } =
-        await supabase.auth.mfa.webauthn.challenge({
-          factorId: factor.id,
-          friendlyName: factor.friendly_name,
-          webauthn: { rpId, rpOrigins },
-        });
-      if (challengeError) throw challengeError;
-      if (!challenge) throw new Error("Unable to create a passkey challenge.");
-
-      const { error: verifyError } = await supabase.auth.mfa.webauthn.verify({
-        factorId: factor.id,
-        challengeId: challenge.challengeId,
-        webauthn: {
-          type: challenge.webauthn.type,
-          rpId,
-          rpOrigins,
-          credential_response: challenge.webauthn.credential_response,
-        },
-      });
-      if (verifyError) throw verifyError;
-
-      if (currentEmail) {
-        saveStoredPasskey(currentEmail, {
-          factorId: factor.id,
-          friendlyName,
-        });
+      const { data: passkeyData, error: passkeyError } = await supabase.auth.passkey.list();
+      if (passkeyError) {
+        await loadAccountSettings();
+      } else {
+        setPasskeys(passkeyData ?? []);
       }
 
-      setPasskeyName("");
-      await loadAccountSettings();
       toast.success("Passkey added.");
     } catch (err: any) {
-      if (enrolledFactorId) {
-        await supabase.auth.mfa.unenroll({ factorId: enrolledFactorId });
-      }
       toast.error(err?.message || "Unable to add passkey.");
     } finally {
       setPendingAction(null);
@@ -255,12 +221,15 @@ const AccountSettings = () => {
 
       <Card className="dealer-form-card">
         <CardBody>
-          <CardTitle tag="h5" className="d-flex align-items-center gap-2">
+          <CardTitle tag="h5" className="d-flex align-items-center gap-2 mb-3">
             <KeyRound className="iconsax" style={{ width: "18px", height: "18px" }} />
             Passkeys
           </CardTitle>
+          <Button type="button" className="btn-solid mb-3" onClick={handleAddPasskey} disabled={pendingAction !== null}>
+            {pendingAction === "passkey" ? "Adding passkey..." : "Add passkey"}
+          </Button>
           {passkeys.length > 0 && (
-            <div className="mb-3">
+            <div>
               {passkeys.map((passkey) => (
                 <div key={passkey.id} className="d-flex justify-content-between align-items-center border rounded-2 p-3 mb-2">
                   <span>{passkey.friendly_name || "Passkey"}</span>
@@ -269,21 +238,6 @@ const AccountSettings = () => {
               ))}
             </div>
           )}
-          <form onSubmit={handleAddPasskey} className="dealer-form">
-            <div className="mb-3">
-              <CommonInput
-                inputType="text"
-                placeholder="Passkey name"
-                value={passkeyName}
-                onChange={(e) => setPasskeyName(e.target.value)}
-                autoComplete="off"
-                disabled={pendingAction === "passkey"}
-              />
-            </div>
-            <Button type="submit" className="btn-solid" disabled={pendingAction !== null}>
-              {pendingAction === "passkey" ? "Adding passkey..." : "Add passkey"}
-            </Button>
-          </form>
         </CardBody>
       </Card>
     </div>

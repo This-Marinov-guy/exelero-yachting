@@ -72,6 +72,12 @@ const UserSidebar = () => {
     }));
   };
 
+  const closeSidebar = () => {
+    if (UserDashboardSidebar) {
+      dispatch(setUserDashboardSidebar());
+    }
+  };
+
   const getItemLockStatus = (item: typeof SidebarItems[0]) => {
     if (item.id === "dealer-info" || item.id === "account-settings" || item.id === "charter-requests" || item.id === "transportation-requests") return false;
     return !hasDealerInfo;
@@ -80,8 +86,8 @@ const UserSidebar = () => {
   return (
     <Col lg={3}>
       <div className={`left-sidebar filter-sidebar ${UserDashboardSidebar ? "open" : ""}`}>
-        <Button className='close-btn' onClick={() => dispatch(setUserDashboardSidebar())}>
-          <X className='iconsax' style={{ width: '20px', height: '20px' }} />
+        <Button className='close-btn' onClick={closeSidebar} aria-label="Close menu">
+          <X className='iconsax' />
         </Button>
         <UserProfile />
         <Nav pills className='flex-column sidebar-list'>
@@ -99,6 +105,7 @@ const UserSidebar = () => {
                     e.preventDefault();
                     if (!isLocked) {
                       dispatch(setActiveTab(item.id));
+                      closeSidebar();
                     }
                   }}
                   id={tooltipId}

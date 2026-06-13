@@ -1445,6 +1445,26 @@
       top: 10px;
       right: 10px;
       display: block;
+      padding: 6px;
+      border: none;
+      background: transparent;
+      color: #dc3545;
+      line-height: 1;
+      z-index: 3;
+
+      .iconsax,
+      svg {
+        width: 32px;
+        height: 32px;
+        stroke-width: 2.6;
+      }
+
+      &:hover,
+      &:focus {
+        background: transparent;
+        color: #b02a37;
+        box-shadow: none;
+      }
 
       @media (min-width: 991px) {
         display: none;
@@ -1461,6 +1481,16 @@
         height: calc(90px + (110 - 90) * ((100vw - 320px) / (1920 - 320)));
         border: 6px solid rgba(var(--white), 1);
         margin-inline: auto;
+
+        @media (max-width: 991px) {
+          width: 112px;
+          height: 112px;
+          aspect-ratio: 1 / 1;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
 
         .iconsax {
           position: absolute;
@@ -1529,6 +1559,15 @@
 
         img {
           border-radius: 100%;
+
+          @media (max-width: 991px) {
+            width: 100% !important;
+            height: 100% !important;
+            aspect-ratio: 1 / 1;
+            border-radius: 50% !important;
+            object-fit: cover;
+            display: block;
+          }
         }
       }
 
@@ -2326,6 +2365,82 @@
       padding: calc(15px + (25 - 15) * ((100vw - 320px) / (1920 - 320)));
     }
 
+    // Mobile sidebar toggle header
+    .profile-mobile-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      margin-bottom: 12px;
+
+      .profile-menu-toggle {
+        background: none;
+        border: 1px solid rgba(var(--border-color), 1);
+        border-radius: 8px;
+        padding: 6px 16px;
+        cursor: pointer;
+        color: rgba(var(--title-color), 1);
+        display: flex;
+        align-items: center;
+      }
+
+      .profile-mobile-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: rgba(var(--title-color), 1);
+      }
+    }
+
+    // Mobile sidebar drawer
+    @media (max-width: 991px) {
+      .profile-sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 1040;
+      }
+
+      .profile-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100dvh;
+        width: 280px;
+        z-index: 1050;
+        border-radius: 0;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        overflow-y: auto;
+        margin-bottom: 0;
+
+        &.is-open {
+          transform: translateX(0);
+        }
+
+        .profile-sidebar-close {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #dc3545;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          width: 100%;
+          padding: 4px 16px 12px;
+
+          svg {
+            width: 32px;
+            height: 32px;
+            stroke-width: 2.6;
+          }
+
+          &:hover {
+            color: #b02a37;
+          }
+        }
+      }
+    }
+
     // Dealer info styles
     .dealer-info-container {
       .dealer-info-loading {
@@ -2745,6 +2860,33 @@
 
       // Upload boat section styles
       .upload-boat-section {
+        .upload-field-invalid {
+          border-color: rgba(var(--error), 1) !important;
+
+          &:focus {
+            border-color: rgba(var(--error), 1) !important;
+            box-shadow: 0 0 0 0.2rem rgba(var(--error), 0.14) !important;
+          }
+
+          &.input-group,
+          .input-group & {
+            border-color: rgba(var(--error), 1) !important;
+          }
+
+          .rich-text-editor-wrapper {
+            border-color: rgba(var(--error), 1) !important;
+            box-shadow: 0 0 0 0.2rem rgba(var(--error), 0.08);
+          }
+        }
+
+        .input-group {
+          .form-control.upload-field-invalid,
+          .form-control.upload-field-invalid + .input-group-text,
+          .input-group-text:has(+ .form-control.upload-field-invalid) {
+            border-color: rgba(var(--error), 1) !important;
+          }
+        }
+
         // Dual unit input styles
         .dual-unit-input-wrapper {
           .dual-unit-input-container {
@@ -3003,6 +3145,11 @@
     transition: border-color 0.15s;
 
     &:hover, &.open { border-color: rgba(var(--theme-color), 0.6); }
+
+    &.upload-field-invalid {
+      border-color: rgba(var(--error), 1) !important;
+      box-shadow: 0 0 0 0.2rem rgba(var(--error), 0.1);
+    }
 
     .transition-transform {
       flex-shrink: 0;

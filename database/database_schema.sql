@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS boat_data (
     boat_id UUID UNIQUE NOT NULL REFERENCES boats(id) ON DELETE CASCADE,
     title VARCHAR(512) NOT NULL,
     manufacturer VARCHAR(512) NOT NULL,
-    build_number VARCHAR(100) NOT NULL,
+    build_number VARCHAR(100),
     build_year VARCHAR(4) NOT NULL,
     location VARCHAR(512) NOT NULL,
     price INTEGER NOT NULL,

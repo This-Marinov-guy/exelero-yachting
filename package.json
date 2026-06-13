@@ -13,7 +13,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@react-pdf/renderer": "^4.3.2",
     "@reduxjs/toolkit": "^2.5.0",
-    "@supabase/supabase-js": "^2.90.1",
+    "@supabase/supabase-js": "^2.108.1",
     "@tiptap/extension-color": "^3.17.1",
     "@tiptap/extension-highlight": "^3.17.1",
     "@tiptap/extension-link": "^3.17.1",

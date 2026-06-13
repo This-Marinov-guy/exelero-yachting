@@ -2,7 +2,6 @@
 
 import CommonInput from "@/components/commonComponents/CommonInput";
 import { NotAccount, LogIn, LogInYourAccount, SignUp, Welcome } from "@/constants";
-import { getStoredPasskey } from "@/lib/passkeyStorage";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { RouteList } from "@/utils/RouteList";
 import Link from "next/link";
@@ -101,31 +100,17 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
   };
 
   const handlePasskeyLogin = async () => {
-    if (!validateEmail()) return;
-
     if (typeof window === "undefined" || !window.PublicKeyCredential) {
       toast.error("This browser does not support passkeys.");
       return;
     }
 
-    const storedPasskey = getStoredPasskey(email);
-    if (!storedPasskey?.factorId) {
-      toast.error("No passkey is saved for this email on this browser. Sign in first, then add a passkey in account settings.");
-      return;
-    }
-
     setPendingAction("passkey");
     try {
-      const { data, error } = await supabase.auth.mfa.webauthn.authenticate({
-        factorId: storedPasskey.factorId,
-        webauthn: {
-          rpId: window.location.hostname,
-          rpOrigins: [window.location.origin],
-        },
-      });
+      const { data, error } = await supabase.auth.signInWithPasskey();
 
       if (error) throw error;
-      if (!data) throw new Error("Passkey sign in failed.");
+      if (!data?.session) throw new Error("Passkey sign in failed.");
 
       toast.success("Signed in with passkey. Redirecting...");
       router.push(RouteList.Auth.Account);

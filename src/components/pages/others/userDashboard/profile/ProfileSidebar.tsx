@@ -2,15 +2,17 @@
 import { useState, useEffect } from "react";
 import { Nav, NavItem, NavLink, Tooltip } from "reactstrap";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
-import { Lock } from "lucide-react";
+import { Lock, X } from "lucide-react";
 
 type ProfileSidebarProps = {
     activeTab: string;
     onTabChange: (tab: string) => void;
     refreshTrigger?: number;
+    isOpen?: boolean;
+    onClose?: () => void;
 };
 
-const ProfileSidebar = ({ activeTab, onTabChange, refreshTrigger }: ProfileSidebarProps) => {
+const ProfileSidebar = ({ activeTab, onTabChange, refreshTrigger, isOpen, onClose }: ProfileSidebarProps) => {
     const [hasDealerInfo, setHasDealerInfo] = useState(false);
     const [loading, setLoading] = useState(true);
     const [tooltipOpen, setTooltipOpen] = useState<{ [key: string]: boolean }>({});
@@ -58,7 +60,10 @@ const ProfileSidebar = ({ activeTab, onTabChange, refreshTrigger }: ProfileSideb
     }
 
     return (
-        <div className="profile-sidebar">
+        <div className={`profile-sidebar${isOpen ? " is-open" : ""}`}>
+            <button className="profile-sidebar-close d-lg-none" onClick={onClose} aria-label="Close menu">
+                <X size={26} />
+            </button>
             <Nav pills className="flex-column profile-sidebar-nav">
                 {menuItems.map((item) => {
                     const isLocked = item.locked;
