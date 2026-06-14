@@ -16,7 +16,7 @@ const RichTextEditor = dynamic(
 );
 import Image from "next/image";
 import Dropzone from "react-dropzone";
-import { X, Star, ImagePlus, GripVertical, Info, FileText, Trash2, ChevronDown, Plus } from "lucide-react";
+import { X, Star, ImagePlus, GripVertical, Info, FileText, Trash2, ChevronDown, Plus, BookImage } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
     updateFormField,
@@ -121,6 +121,9 @@ const UploadBoat = () => {
     const [savingDealer, setSavingDealer] = useState(false);
     const [newDealerData, setNewDealerData] = useState({ name: "", email: "", phone: "", dealer: "" });
     const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
+    const [coverImageIndex, setCoverImageIndex] = useState<number>(0);
+    const [draftId, setDraftId] = useState<string | null>(null);
+    const [savingDraft, setSavingDraft] = useState(false);
     const dealerDropdownRef = useRef<HTMLDivElement | null>(null);
 
     const selectedDealer = brokerDataList.find((d) => d.id === formData.dealer_id);
@@ -735,7 +738,7 @@ const UploadBoat = () => {
                     boat_id: boatData.id,
                     link: img.url,
                     display_order: img.order,
-                    is_cover: index === mainImageIndex,
+                    is_cover: index === coverImageIndex,
                 }));
 
                 const { error: imagesError } = await supabase
@@ -777,6 +780,111 @@ const UploadBoat = () => {
         }
     };
 
+    const handleSaveDraft = async () => {
+        setSavingDraft(true);
+        const supabase = getSupabaseBrowserClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user?.id) {
+            toast.error("Must be logged in to save a draft");
+            setSavingDraft(false);
+            return;
+        }
+
+        const payload = {
+            user_id: session.user.id,
+            title: formData.title || null,
+            type: formData.type || null,
+            manufacturer: formData.manufacturer || null,
+            build_number: formData.build_number || null,
+            build_year: formData.build_year || null,
+            location: formData.location || null,
+            price: formData.price ? parseInt(formData.price) : null,
+            vat_included: formData.vat_included,
+            description: formData.description || null,
+            hull_length: formData.hull_length ? parseFloat(formData.hull_length) : null,
+            waterline_length: formData.waterline_length ? parseFloat(formData.waterline_length) : null,
+            beam: formData.beam ? parseFloat(formData.beam) : null,
+            draft: formData.draft ? parseFloat(formData.draft) : null,
+            ballast: formData.ballast ? parseInt(formData.ballast) : null,
+            displacement: formData.displacement ? parseInt(formData.displacement) : null,
+            engine_power: formData.engine_power ? parseFloat(formData.engine_power) : null,
+            fuel_tank: formData.fuel_tank ? parseInt(formData.fuel_tank) : null,
+            water_tank: formData.water_tank ? parseInt(formData.water_tank) : null,
+            brochure: brochureUrl || null,
+            brochure_file_name: brochureFileName || null,
+            additional_details: formData.additional_details || null,
+            dealer_id: formData.dealer_id || null,
+            upload_folder_name: uploadFolderName || null,
+            images: uploadedImages,
+            main_image_index: mainImageIndex,
+            updated_at: new Date().toISOString(),
+        };
+
+        const { data, error } = draftId
+            ? await supabase.from("boat_drafts").update(payload).eq("id", draftId).select("id").single()
+            : await supabase.from("boat_drafts").insert(payload).select("id").single();
+
+        if (error) {
+            toast.error("Failed to save draft");
+            setSavingDraft(false);
+            return;
+        }
+        if (data?.id) setDraftId(data.id);
+        toast.success("Draft saved");
+        window.dispatchEvent(new CustomEvent("draftSaved"));
+        setSavingDraft(false);
+    };
+
+    // Listen for loadDraft custom events dispatched by BoatDraftsList
+    useEffect(() => {
+        const handleLoadDraft = (e: Event) => {
+            const draft = (e as CustomEvent).detail;
+            if (!draft) return;
+
+            dispatch(resetForm());
+
+            const fields: Array<keyof typeof formData> = [
+                "title", "type", "manufacturer", "build_number", "build_year",
+                "location", "price", "description", "hull_length", "waterline_length",
+                "beam", "draft", "ballast", "displacement", "engine_power",
+                "fuel_tank", "water_tank", "additional_details", "dealer_id",
+            ];
+            fields.forEach((field) => {
+                const val = draft[field];
+                if (val !== null && val !== undefined) {
+                    dispatch(updateFormField({ field, value: String(val) }));
+                }
+            });
+            if (typeof draft.vat_included === "boolean") {
+                dispatch(updateFormField({ field: "vat_included", value: draft.vat_included }));
+            }
+
+            if (Array.isArray(draft.images)) {
+                dispatch(setUploadedImages(draft.images));
+            }
+            if (typeof draft.main_image_index === "number") {
+                dispatch(setMainImageIndex(draft.main_image_index));
+            }
+            if (draft.upload_folder_name) {
+                dispatch(setUploadFolderName(draft.upload_folder_name));
+            }
+            if (draft.brochure) {
+                dispatch(setBrochureUrl(draft.brochure));
+            }
+            if (draft.brochure_file_name) {
+                dispatch(setBrochureFileName(draft.brochure_file_name));
+            }
+
+            setDraftId(draft.id);
+
+            const section = document.getElementById("upload-boat-section");
+            if (section) section.scrollIntoView({ behavior: "smooth" });
+        };
+
+        window.addEventListener("loadDraft", handleLoadDraft);
+        return () => window.removeEventListener("loadDraft", handleLoadDraft);
+    }, [dispatch]);
+
     if (loading) {
         return (
             <div className="locked-section">
@@ -800,7 +908,7 @@ const UploadBoat = () => {
     }
 
     return (
-        <div className="upload-boat-section">
+        <div id="upload-boat-section" className="upload-boat-section">
             <h4 className="dashboard-title mb-4">Upload Boat</h4>
 
             <Card className="dealer-form-card">
@@ -1232,23 +1340,46 @@ const UploadBoat = () => {
                                                         </div>
                                                     )}
 
-                                                    {/* Main Image Badge */}
-                                                    {mainImageIndex === index && (
-                                                        <div
-                                                            className="position-absolute top-0 start-0 m-2"
-                                                            style={{
-                                                                backgroundColor: "rgba(var(--theme-color), 1)",
-                                                                color: "#fff",
-                                                                padding: "4px 8px",
-                                                                borderRadius: "4px",
-                                                                fontSize: "12px",
-                                                                fontWeight: "600",
-                                                                zIndex: 10,
-                                                            }}
-                                                        >
-                                                            <Star className="h-4 w-4" fill="currentColor" /> Main
-                                                        </div>
-                                                    )}
+                                                    {/* Image Badges */}
+                                                    <div
+                                                        className="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1"
+                                                        style={{ zIndex: 10 }}
+                                                    >
+                                                        {mainImageIndex === index && (
+                                                            <div
+                                                                style={{
+                                                                    backgroundColor: "rgba(var(--theme-color), 1)",
+                                                                    color: "#fff",
+                                                                    padding: "4px 8px",
+                                                                    borderRadius: "4px",
+                                                                    fontSize: "12px",
+                                                                    fontWeight: "600",
+                                                                    display: "inline-flex",
+                                                                    alignItems: "center",
+                                                                    gap: "4px",
+                                                                }}
+                                                            >
+                                                                <Star className="h-4 w-4" fill="currentColor" /> Main
+                                                            </div>
+                                                        )}
+                                                        {coverImageIndex === index && (
+                                                            <div
+                                                                style={{
+                                                                    backgroundColor: "#198754",
+                                                                    color: "#fff",
+                                                                    padding: "4px 8px",
+                                                                    borderRadius: "4px",
+                                                                    fontSize: "12px",
+                                                                    fontWeight: "600",
+                                                                    display: "inline-flex",
+                                                                    alignItems: "center",
+                                                                    gap: "4px",
+                                                                }}
+                                                            >
+                                                                <BookImage className="h-4 w-4" /> Cover
+                                                            </div>
+                                                        )}
+                                                    </div>
 
                                                     {/* Remove Button */}
                                                     {!uploadingImages.has(index) && (
@@ -1266,20 +1397,36 @@ const UploadBoat = () => {
                                                         </button>
                                                     )}
 
-                                                    {/* Set as Main Button */}
-                                                    {mainImageIndex !== index && !uploadingImages.has(index) && (
-                                                        <button
-                                                            type="button"
-                                                            className="btn btn-sm btn-warning position-absolute bottom-0 start-0 m-1"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setAsMainImage(index);
-                                                            }}
-                                                            onMouseDown={(e) => e.stopPropagation()}
+                                                    {/* Image Action Buttons */}
+                                                    {!uploadingImages.has(index) && (mainImageIndex !== index || coverImageIndex !== index) && (
+                                                        <div
+                                                            className="position-absolute bottom-0 start-0 m-1 d-flex gap-1"
                                                             style={{ zIndex: 10 }}
                                                         >
-                                                            <Star className="h-4 w-4" />
-                                                        </button>
+                                                            {mainImageIndex !== index && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-sm btn-warning"
+                                                                    onClick={(e) => { e.stopPropagation(); setAsMainImage(index); }}
+                                                                    onMouseDown={(e) => e.stopPropagation()}
+                                                                    title="Set as main image"
+                                                                >
+                                                                    <Star className="h-4 w-4" />
+                                                                </button>
+                                                            )}
+                                                            {coverImageIndex !== index && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-sm"
+                                                                    style={{ backgroundColor: "#198754", borderColor: "#198754", color: "#fff" }}
+                                                                    onClick={(e) => { e.stopPropagation(); setCoverImageIndex(index); }}
+                                                                    onMouseDown={(e) => e.stopPropagation()}
+                                                                    title="Set as cover image"
+                                                                >
+                                                                    <BookImage className="h-4 w-4" />
+                                                                </button>
+                                                            )}
+                                                        </div>
                                                     )}
 
                                                     {/* Drag Handle */}
@@ -1304,13 +1451,19 @@ const UploadBoat = () => {
                                         ))}
                                     </div>
 
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <p className="text-muted mb-0">
+                                    <div className="row g-1 small" style={{ color: "#6c757d" }}>
+                                        <div className="col-6 col-sm-auto d-flex align-items-center gap-1">
                                             {uploadedImages.length} / 15 images selected
-                                        </p>
-                                        <p className="text-muted mb-0 small">
-                                            <Info className="h-4 w-4" /> Drag images to reorder • Click the star icon to set main image
-                                        </p>
+                                        </div>
+                                        <div className="col-6 col-sm-auto ms-sm-auto d-flex align-items-center gap-1">
+                                            <Info className="h-4 w-4" /> Drag to reorder
+                                        </div>
+                                        <div className="col-6 col-sm-auto d-flex align-items-center gap-1">
+                                            <Star className="h-4 w-4" style={{ color: "#ffc107" }} /> Set main
+                                        </div>
+                                        <div className="col-6 col-sm-auto d-flex align-items-center gap-1">
+                                            <BookImage className="h-4 w-4" style={{ color: "#198754" }} /> Set cover
+                                        </div>
                                     </div>
                                 </>
                             )}
@@ -1355,8 +1508,11 @@ const UploadBoat = () => {
                         </div>
 
                         <div className="d-flex gap-2 mt-4">
-                            <Button type="submit" className="btn-solid" disabled={submitting}>
+                            <Button type="submit" className="btn-solid" disabled={submitting || savingDraft}>
                                 {submitting ? "Uploading..." : "Upload Boat"}
+                            </Button>
+                            <Button type="button" style={{ background: "#f9c72c", borderColor: "#f9c72c", color: "#000", fontWeight: 600 }} onClick={handleSaveDraft} disabled={submitting || savingDraft}>
+                                {savingDraft ? "Saving..." : "Save as Draft"}
                             </Button>
                         </div>
                     </form>

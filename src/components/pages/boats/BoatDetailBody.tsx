@@ -48,11 +48,26 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
   const litersToGallons = (liters: number): number => Math.round(liters * 0.264172 * 10) / 10;
   const kwToHp = (kw: number): number => Math.round(kw * 1.34102 * 10) / 10;
 
-  const formatDualUnit = (metricValue: number | undefined, metricUnit: string, converter: (val: number) => number, imperialUnit: string): string => {
-    if (!metricValue) return "N/A";
+  const formatDualUnit = (metricValue: number | undefined | null, metricUnit: string, converter: (val: number) => number, imperialUnit: string): string | null => {
+    if (!metricValue) return null;
     const imperialValue = converter(metricValue);
     return `${metricValue}${metricUnit} (${imperialValue}${imperialUnit})`;
   };
+
+  const specs: { label: string; value: string | null | undefined }[] = [
+    { label: "Manufacturer",      value: boat.manufacturer || null },
+    { label: "Build Number",      value: boat.buildNumber || null },
+    { label: "Build Year",        value: boat.buildYear || null },
+    { label: "Hull Length",       value: formatDualUnit(boat.hullLength,       "m",  metersToFeet,    "ft")  },
+    { label: "Waterline Length",  value: formatDualUnit(boat.waterlineLength,  "m",  metersToFeet,    "ft")  },
+    { label: "Beam",              value: formatDualUnit(boat.beam,             "m",  metersToFeet,    "ft")  },
+    { label: "Draft",             value: formatDualUnit(boat.draft,            "m",  metersToFeet,    "ft")  },
+    { label: "Ballast",           value: formatDualUnit(boat.ballast,          "kg", kgToLbs,         "lbs") },
+    { label: "Displacement",      value: formatDualUnit(boat.displacement,     "kg", kgToLbs,         "lbs") },
+    { label: "Engine Power",      value: formatDualUnit(boat.enginePower,      "kW", kwToHp,          "hp")  },
+    { label: "Fuel Tank",         value: formatDualUnit(boat.fuelTank,         "L",  litersToGallons, "gal") },
+    { label: "Water Tank",        value: formatDualUnit(boat.waterTank,        "L",  litersToGallons, "gal") },
+  ].filter((s) => s.value);
 
   return (
     <div className="detail-body">
@@ -114,85 +129,26 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
       )}
 
       {/* Overview / Specifications */}
-      <div id="overview" className="mb-4">
-        <h4 className="detail-page-title">Specifications</h4>
-        <Row className="g-3">
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Manufacturer:</strong> <span>{boat.manufacturer || "N/A"}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Build Number:</strong> <span>{boat.buildNumber || "N/A"}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Build Year:</strong> <span>{boat.buildYear || "N/A"}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Hull Length:</strong> <span>{formatDualUnit(boat.hullLength, "m", metersToFeet, "ft")}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Waterline Length:</strong> <span>{formatDualUnit(boat.waterlineLength, "m", metersToFeet, "ft")}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Beam:</strong> <span>{formatDualUnit(boat.beam, "m", metersToFeet, "ft")}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Draft:</strong> <span>{formatDualUnit(boat.draft, "m", metersToFeet, "ft")}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Ballast:</strong> <span>{formatDualUnit(boat.ballast, "kg", kgToLbs, "lbs")}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Displacement:</strong> <span>{formatDualUnit(boat.displacement, "kg", kgToLbs, "lbs")}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Engine Power:</strong> <span>{formatDualUnit(boat.enginePower, "kW", kwToHp, "hp")}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Fuel Tank:</strong> <span>{formatDualUnit(boat.fuelTank, "L", litersToGallons, "gal")}</span>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="spec-item">
-              <strong>Water Tank:</strong> <span>{formatDualUnit(boat.waterTank, "L", litersToGallons, "gal")}</span>
-            </div>
-          </Col>
-        </Row>
-      </div>
+      {specs.length > 0 && (
+        <div id="overview" className="mb-4">
+          <h4 className="detail-page-title">Specifications</h4>
+          <Row className="g-3">
+            {specs.map(({ label, value }) => (
+              <Col md={6} key={label}>
+                <div className="spec-item">
+                  <strong>{label}:</strong> <span>{value}</span>
+                </div>
+              </Col>
+            ))}
+          </Row>
+        </div>
+      )}
 
       {/* Description */}
       {boat.description && (
         <div id="description" className="mb-4">
           <h4 className="detail-page-title">Description</h4>
           <div dangerouslySetInnerHTML={{ __html: sanitizeHTML(boat.description) }} />
-        </div>
-      )}
-
-      {/* Exterior Description */}
-      {boat.exteriorDescription && (
-        <div id="exterior" className="mb-4">
-          <h4 className="detail-page-title">Exterior Description</h4>
-          <div dangerouslySetInnerHTML={{ __html: sanitizeHTML(boat.exteriorDescription) }} />
         </div>
       )}
 

@@ -122,7 +122,6 @@ async function fetchBoatById(numericId: number): Promise<ProductType | null> {
       vatIncluded: boatData.vat_included ?? false,
       dealer: brokerData?.dealer || "",
       boatType: boatData.type || "",
-      exteriorDescription: boatData.exterior_description || "",
       additionalDetails: boatData.additional_details || "",
       brochure: boatData.brochure || "",
       brokerName: brokerData?.name || "",

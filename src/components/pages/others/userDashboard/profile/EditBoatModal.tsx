@@ -48,7 +48,6 @@ export type BoatDataRow = {
   fuel_tank: number | null;
   water_tank: number | null;
   brochure: string | null;
-  exterior_description: string;
   additional_details: string | null;
 };
 
@@ -93,7 +92,6 @@ const emptyForm = {
   fuel_tank: "",
   water_tank: "",
   brochure: "" as string | null,
-  exterior_description: "",
   additional_details: "",
 };
 
@@ -149,7 +147,6 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
           fuel_tank: String(row.fuel_tank ?? ""),
           water_tank: String(row.water_tank ?? ""),
           brochure: row.brochure ?? "",
-          exterior_description: row.exterior_description ?? "",
           additional_details: row.additional_details ?? "",
         });
 
@@ -270,7 +267,6 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
         fuel_tank: form.fuel_tank.trim() ? parseInt(form.fuel_tank, 10) : null,
         water_tank: form.water_tank.trim() ? parseInt(form.water_tank, 10) : null,
         brochure: form.brochure?.trim() || null,
-        exterior_description: sanitize(form.exterior_description),
         additional_details: form.additional_details?.trim() ? sanitize(form.additional_details) : null,
       };
 
@@ -528,10 +524,6 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                 <FormGroup>
                   <Label>Brochure URL</Label>
                   <CommonInput inputType="text" value={form.brochure || ""} onChange={(e) => setField("brochure", e.target.value)} />
-                </FormGroup>
-                <FormGroup>
-                  <Label>Exterior description</Label>
-                  <RichTextEditor value={form.exterior_description} onChange={(v) => setField("exterior_description", v)} rows={3} />
                 </FormGroup>
                 <FormGroup>
                   <Label>Additional details</Label>
