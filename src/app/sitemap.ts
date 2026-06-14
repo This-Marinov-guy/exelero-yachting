@@ -14,22 +14,33 @@ function getBaseUrl(): string {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
 
+  const getAlternates = (path: string) => ({
+    languages: {
+      en: `${baseUrl}${path}`,
+      de: `${baseUrl}${path}?lng=ge`,
+      fr: `${baseUrl}${path}?lng=fr`,
+      es: `${baseUrl}${path}?lng=sp`,
+      ko: `${baseUrl}${path}?lng=ko`,
+    },
+  });
+
   const partnerSlugs = Object.keys(Partners);
   const partnerRoutes: MetadataRoute.Sitemap = partnerSlugs.map((slug) => ({
     url: `${baseUrl}/partners/${slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.8,
+    alternates: getAlternates(`/partners/${slug}`),
   }));
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: baseUrl, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
-    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${baseUrl}/services/brokerage`, lastModified: new Date(), changeFrequency: "daily", priority: 0.95 },
-    { url: `${baseUrl}/services/charters`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${baseUrl}/services/transportation`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${baseUrl}/gallery`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: baseUrl, lastModified: new Date(), changeFrequency: "weekly", priority: 1, alternates: getAlternates("/") },
+    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9, alternates: getAlternates("/about") },
+    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9, alternates: getAlternates("/contact") },
+    { url: `${baseUrl}/services/brokerage`, lastModified: new Date(), changeFrequency: "daily", priority: 0.95, alternates: getAlternates("/services/brokerage") },
+    { url: `${baseUrl}/services/charters`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9, alternates: getAlternates("/services/charters") },
+    { url: `${baseUrl}/services/transportation`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9, alternates: getAlternates("/services/transportation") },
+    { url: `${baseUrl}/gallery`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8, alternates: getAlternates("/gallery") },
     ...partnerRoutes,
   ];
 
@@ -42,12 +53,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .eq("active", true);
 
     if (boats?.length) {
-      boatUrls = boats.map((b) => ({
-        url: `${baseUrl}/services/brokerage/${generateNumericId(b.id)}`,
-        lastModified: b.updated_at ? new Date(b.updated_at) : new Date(),
-        changeFrequency: "weekly" as const,
-        priority: 0.85,
-      }));
+      boatUrls = boats.map((b) => {
+        const boatId = generateNumericId(b.id);
+        const path = `/services/brokerage/${boatId}`;
+        return {
+          url: `${baseUrl}${path}`,
+          lastModified: b.updated_at ? new Date(b.updated_at) : new Date(),
+          changeFrequency: "weekly" as const,
+          priority: 0.85,
+          alternates: getAlternates(path),
+        };
+      });
     }
   } catch {
     // omit boat URLs if DB unavailable (e.g. build time)

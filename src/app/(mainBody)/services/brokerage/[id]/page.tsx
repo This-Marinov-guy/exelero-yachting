@@ -189,7 +189,65 @@ const BoatDetail = async ({ params }: Props) => {
     notFound();
   }
 
-  return <BoatDetailContainer boat={boat} />;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://exelero.com";
+  const boatUrl = `${siteUrl}/services/brokerage/${id}`;
+
+  const vehicleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Vehicle",
+    "name": boat.title,
+    "description": boat.description,
+    "image": boat.image,
+    "manufacturer": boat.manufacturer,
+    "modelDate": boat.buildYear,
+    "vehicleConfiguration": boat.boatType,
+    "offers": {
+      "@type": "Offer",
+      "price": boat.price,
+      "priceCurrency": "EUR",
+      "availability": "https://schema.org/InStock",
+      "url": boatUrl
+    }
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": siteUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Brokerage",
+        "item": `${siteUrl}/services/brokerage`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": boat.title,
+        "item": boatUrl
+      }
+    ]
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(vehicleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <BoatDetailContainer boat={boat} />
+    </>
+  );
 };
 
 export default BoatDetail;

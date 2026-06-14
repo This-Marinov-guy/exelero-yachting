@@ -3,14 +3,14 @@ import Layout from "./(mainBody)/layout";
 import CarDemo1Container from "@/components/themes/carDemo1/Index";
 
 export const metadata: Metadata = {
-  title: "Exelero Group — Yachting and more",
+  title: "Exelero Yachting | Luxury Yachts, Brokerage & Charters",
   description:
-    "Exelero Yachting: performance and luxury yachts, brokerage & charters, and sailing gear. Explore our brands and services.",
+    "Exelero Yachting: Your premier partner for performance and luxury yachts, brokerage, charters, and professional marine services. Explore our elite brands.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Exelero Group — Yachting and more",
+    title: "Exelero Yachting | Luxury Yachts, Brokerage & Charters",
     description:
       "Performance and luxury yachts, brokerage & charters, and sailing gear. Explore partners and services with Exelero Yachting.",
     url: "/",
@@ -21,13 +21,13 @@ export const metadata: Metadata = {
         url: "/assets/images/hero/x-yachts.jpg",
         width: 1200,
         height: 630,
-        alt: "Exelero Yachting — hero image",
+        alt: "Exelero Yachting — Luxury Yachts",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Exelero Group — Yachting and more",
+    title: "Exelero Yachting | Luxury Yachts, Brokerage & Charters",
     description:
       "Performance and luxury yachts, brokerage & charters, and sailing gear. Explore partners and services with Exelero Yachting.",
     images: ["/assets/images/hero/x-yachts.jpg"],
@@ -60,9 +60,25 @@ export default function Home() {
     "@type": "Organization",
     name: "Exelero Yachting",
     url: siteUrl,
+    logo: `${siteUrl}/assets/images/logo/logo.png`,
     description:
       "Exelero Yachting — luxury yachts, brokerage, charters, sailing gear and marine services.",
-    sameAs: [],
+    sameAs: [
+      // Add social media URLs here
+    ],
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": siteUrl
+      }
+    ]
   };
 
   return (
@@ -74,6 +90,10 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Layout>
         <CarDemo1Container />

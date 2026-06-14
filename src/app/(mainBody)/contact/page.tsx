@@ -2,11 +2,11 @@ import ContactContainer from "@/components/pages/contact";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: "Contact Exelero Yachting | Get in Touch",
   description:
-    "Get in touch with Exelero Yachting. Contact us for yacht brokerage, charters, transportation and marine services.",
+    "Get in touch with Exelero Yachting today. Contact us for expert advice on yacht brokerage, charters, transportation, and marine services.",
   openGraph: {
-    title: "Contact | Exelero Yachting",
+    title: "Contact Exelero Yachting | Get in Touch",
     description: "Contact Exelero Yachting for yacht brokerage, charters and marine services.",
     url: "/contact",
     type: "website",
@@ -16,7 +16,48 @@ export const metadata: Metadata = {
 };
 
 const Contact1Page = () => {
-  return <ContactContainer />;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://exelero.com";
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": siteUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Contact",
+        "item": `${siteUrl}/contact`
+      }
+    ]
+  };
+
+  const contactJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact Exelero Yachting",
+    "description": "Contact us for yacht brokerage, charters and marine services.",
+    "url": `${siteUrl}/contact`
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }}
+      />
+      <ContactContainer />
+    </>
+  );
 };
 
 export default Contact1Page;

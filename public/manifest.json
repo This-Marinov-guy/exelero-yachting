@@ -1,0 +1,21 @@
+{
+  "name": "Exelero Yachting",
+  "short_name": "Exelero",
+  "description": "Exelero Yachting — luxury yachts, brokerage, charters, sailing gear and marine services.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/assets/images/favicons/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/assets/images/favicons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

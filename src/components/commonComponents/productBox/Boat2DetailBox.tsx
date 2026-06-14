@@ -43,8 +43,9 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
                   <div style={{ position: "relative", width: "100%", aspectRatio: "16/9" }}>
                     <Image 
                       src={src} 
-                      alt='boat-img' 
+                      alt={`${data.title} - ${i + 1}`} 
                       fill
+                      sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 33vw"
                       className='bg-img' 
                       style={{ objectFit: "cover" }}
                       unoptimized={isExternalUrl(src)} 
@@ -84,9 +85,9 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
           <h4>
             {formatPrice(data.price || 0)} <span style={{fontFamily: 'Satisfy'}}>€</span>
           </h4>
-          <a href={`/services/brokerage/${data.id}`} target="_blank" className='btn-solid'>
+          <Link href={`/services/brokerage/${data.id}`} className='btn-solid'>
             View
-          </a>
+          </Link>
         </div>
       </div>
     </article>

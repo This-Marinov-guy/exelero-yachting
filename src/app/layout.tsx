@@ -31,8 +31,10 @@ export const metadata: Metadata = {
     "luxury yacht",
     "Exelero",
   ],
+  manifest: "/manifest.json",
   icons: {
     icon: "/assets/images/favicons/favicon.ico",
+    apple: "/assets/images/favicons/apple-touch-icon.png",
   },
   openGraph: {
     siteName: "Exelero Yachting",
@@ -56,6 +58,13 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "/",
+    languages: {
+      "en": "/",
+      "de": "/?lng=ge",
+      "fr": "/?lng=fr",
+      "es": "/?lng=sp",
+      "ko": "/?lng=ko",
+    },
   },
 };
 
