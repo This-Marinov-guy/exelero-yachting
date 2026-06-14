@@ -604,6 +604,7 @@ const UploadBoat = () => {
         const requiredFields = [
             { field: "dealer_id", label: "Dealer" },
             { field: "type", label: "Type" },
+            { field: "condition", label: "Condition" },
             { field: "title", label: "Title" },
             { field: "manufacturer", label: "Manufacturer" },
             { field: "build_year", label: "Build Year" },
@@ -679,6 +680,7 @@ const UploadBoat = () => {
             const boatDataPayload: any = {
                 boat_id: boatData.id,
                 type: formData.type.trim(),
+                condition: formData.condition.trim(),
                 title: formData.title.trim(),
                 manufacturer: formData.manufacturer.trim(),
                 build_number: formData.build_number.trim() || null,
@@ -794,6 +796,7 @@ const UploadBoat = () => {
             user_id: session.user.id,
             title: formData.title || null,
             type: formData.type || null,
+            condition: formData.condition || null,
             manufacturer: formData.manufacturer || null,
             build_number: formData.build_number || null,
             build_year: formData.build_year || null,
@@ -844,7 +847,7 @@ const UploadBoat = () => {
             dispatch(resetForm());
 
             const fields: Array<keyof typeof formData> = [
-                "title", "type", "manufacturer", "build_number", "build_year",
+                "title", "type", "condition", "manufacturer", "build_number", "build_year",
                 "location", "price", "description", "hull_length", "waterline_length",
                 "beam", "draft", "ballast", "displacement", "engine_power",
                 "fuel_tank", "water_tank", "additional_details", "dealer_id",
@@ -965,21 +968,35 @@ const UploadBoat = () => {
                             </div>
                         </div>
 
-                        {/* Type Selection */}
-                        <div className="mb-3">
-                            <label className="form-label">Type *</label>
-                            <select
-                                className={`form-control ${fieldErrorClass("type")}`}
-                                value={formData.type}
-                                onChange={(e) => handleFieldChange("type", e.target.value)}
-                                required
-                            >
-                                <option value="">Select a type</option>
-                                <option value="racer">Racer</option>
-                                <option value="sport-cruiser">Sport-Cruiser</option>
-                                <option value="cruiser">Cruiser</option>
-                                <option value="power">Power</option>
-                            </select>
+                        <div className="row">
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">Type *</label>
+                                <select
+                                    className={`form-control ${fieldErrorClass("type")}`}
+                                    value={formData.type}
+                                    onChange={(e) => handleFieldChange("type", e.target.value)}
+                                    required
+                                >
+                                    <option value="">Select a type</option>
+                                    <option value="racer">Racer</option>
+                                    <option value="sport-cruiser">Sport-Cruiser</option>
+                                    <option value="cruiser">Cruiser</option>
+                                    <option value="power-boat">Power Boat</option>
+                                </select>
+                            </div>
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label">Condition *</label>
+                                <select
+                                    className={`form-control ${fieldErrorClass("condition")}`}
+                                    value={formData.condition}
+                                    onChange={(e) => handleFieldChange("condition", e.target.value)}
+                                    required
+                                >
+                                    <option value="">Select condition</option>
+                                    <option value="new">New</option>
+                                    <option value="pre-owned">Pre-owned</option>
+                                </select>
+                            </div>
                         </div>
 
                         {/* Basic Information */}

@@ -25,6 +25,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
   const powerKw = data.enginePower ?? 0;
   const powerHp = Math.round(powerKw * 1.34102 * 10) / 10;
   const powerText = powerKw > 0 ? `${powerKw} kW (${powerHp} hp)` : "—";
+  const conditionLabel = data.condition === "new" ? "New" : data.condition === "pre-owned" ? "Pre-owned" : label || "For Sale";
 
   // Check if image is external URL
   const isExternalUrl = (img: string): boolean => {
@@ -57,7 +58,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
           <div className='swiper-button-prev' />
         </Swiper>
         <div className='car2-label-flex'>
-          <span className='bg-white'>{label || 'For Sale'}</span>
+          <span className='bg-white'>{conditionLabel}</span>
           {data.year && <span className='text-white'>{data.buildYear || data.year}</span>}
         </div>
       </Link>

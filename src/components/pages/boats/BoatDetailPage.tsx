@@ -58,6 +58,11 @@ const BoatDetailPage: FC<BoatDetailPageProps> = ({ boat }) => {
                   {boat.manufacturer && (
                     <label className="detail-label ms-2">{boat.manufacturer}</label>
                   )}
+                  {boat.condition && (
+                    <label className="detail-label ms-2">
+                      {boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : boat.condition}
+                    </label>
+                  )}
                 </div>
               </div>
               <div className="price-box">

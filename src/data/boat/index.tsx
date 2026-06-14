@@ -1,5 +1,10 @@
 // Boat filter data
 
+export const BoatConditionData = [
+  { id: "condition-new", label: "New", type: "new" },
+  { id: "condition-pre-owned", label: "Pre-owned", type: "pre-owned" },
+];
+
 export const VatIncludedData = [
   { id: "vat-yes", label: "VAT Included", type: "vat_included", value: "true" },
   { id: "vat-no", label: "VAT Not Included", type: "vat_included", value: "false" },

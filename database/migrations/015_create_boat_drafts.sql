@@ -7,6 +7,7 @@ CREATE TABLE boat_drafts (
   user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   title text,
   type text,
+  condition text,
   manufacturer text,
   build_number text,
   build_year text,

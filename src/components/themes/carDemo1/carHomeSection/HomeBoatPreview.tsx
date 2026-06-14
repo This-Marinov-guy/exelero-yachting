@@ -77,6 +77,7 @@ async function fetchFeaturedBoats(): Promise<ProductType[]> {
           vatIncluded: boatData?.vat_included ?? false,
           dealer: brokerData?.dealer || "",
           boatType: boatData?.type || "",
+          condition: boatData?.condition || "pre-owned",
         } as ProductType;
       })
     );

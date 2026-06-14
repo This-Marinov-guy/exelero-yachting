@@ -1,13 +1,35 @@
 import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
+import { setBoatCondition } from "@/redux/reducers/FilterSlice";
 import { FilterProductsType, ProductType } from "@/types/Product";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+type BoatConditionValue = "new" | "pre-owned";
+
+const normalizeCondition = (condition: string | null): BoatConditionValue | null => {
+  if (!condition) return null;
+  const normalized = condition.toLowerCase().trim();
+  if (normalized === "new") return "new";
+  if (["pre-owned", "pre_owned", "preowned", "used"].includes(normalized)) return "pre-owned";
+  return null;
+};
+
+const parseConditionParam = (condition: string | null) => {
+  const values = (condition || "")
+    .split(",")
+    .map((value) => normalizeCondition(value))
+    .filter((value): value is BoatConditionValue => Boolean(value));
+  return Array.from(new Set(values));
+};
 
 const UseFilterBoats = ({ value }: FilterProductsType) => {
-  const { sortBy, popular, priceStatus, yearBuiltStatus, squareFeetStatus, boatType, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded } = useAppSelector((state) => state.filter);
+  const { sortBy, popular, priceStatus, yearBuiltStatus, squareFeetStatus, boatType, boatCondition, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded } = useAppSelector((state) => state.filter);
+  const dispatch = useAppDispatch();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [paramsReady, setParamsReady] = useState(false);
 
   const filteredProducts = useMemo(() => {
     return value
@@ -19,7 +41,10 @@ const UseFilterBoats = ({ value }: FilterProductsType) => {
         // squareFeetStatus is used for hull length filtering (stored in squareFeet field as meters * 10.764)
         const filterHullLength = product.squareFeet !== undefined && squareFeetStatus ? squareFeetStatus[0] <= product.squareFeet && squareFeetStatus[1] >= product.squareFeet : true;
 
-        const filterBoatType = boatType.length === 0 || (product.boatType && boatType.includes(product.boatType));
+        const allBoatTypes = ["racer", "sport-cruiser", "cruiser", "power-boat"];
+        const filterBoatType = boatType.length === 0 || boatType.length >= allBoatTypes.length || (product.boatType && boatType.includes(product.boatType));
+
+        const filterCondition = boatCondition.length === 0 || (product.condition && boatCondition.includes(product.condition));
 
         const filterManufacturer = boatManufacturer.length === 0 || (Array.isArray(product.category) ? product.category.some(cat => boatManufacturer.includes(cat)) : boatManufacturer.includes(product.category || ""));
 
@@ -37,7 +62,7 @@ const UseFilterBoats = ({ value }: FilterProductsType) => {
 
         const filterMostPopular = !popular || product.productState === popular;
 
-        return filterMostPopular && filteredPrice && filterYearBuilt && filterHullLength && filterBoatType && filterManufacturer && filterLocation && filterBeam && filterDraft && filterDisplacement && filterEnginePower && filterVatIncluded;
+        return filterMostPopular && filteredPrice && filterYearBuilt && filterHullLength && filterBoatType && filterCondition && filterManufacturer && filterLocation && filterBeam && filterDraft && filterDisplacement && filterEnginePower && filterVatIncluded;
       })
       .sort((product1, product2) => {
         if (sortBy === "Price (High to Low)") return (product2.price ?? 0) - (product1.price ?? 0);
@@ -48,17 +73,25 @@ const UseFilterBoats = ({ value }: FilterProductsType) => {
         if (sortBy === "Year (Oldest First)") return (product1.year ?? 0) - (product2.year ?? 0);
         return 0;
       });
-  }, [value, sortBy, popular, priceStatus, yearBuiltStatus, squareFeetStatus, boatType, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded]);
+  }, [value, sortBy, popular, priceStatus, yearBuiltStatus, squareFeetStatus, boatType, boatCondition, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded]);
 
   useEffect(() => {
+    dispatch(setBoatCondition(parseConditionParam(searchParams?.get("condition") ?? null)));
+    setParamsReady(true);
+  }, [dispatch, searchParams]);
+
+  useEffect(() => {
+    if (!paramsReady) return;
+
     const baseParams = searchParams ? searchParams.toString() : "";
     const newSearchParams = new URLSearchParams(baseParams);
 
-    ["price", "year", "length", "manufacturer", "location", "beam", "draft", "displacement", "power", "vat"].forEach((name) => newSearchParams.delete(name));
+    ["price", "year", "length", "condition", "manufacturer", "location", "beam", "draft", "displacement", "power", "vat"].forEach((name) => newSearchParams.delete(name));
 
     if (priceStatus) newSearchParams.set("price", `${priceStatus[0]}-${priceStatus[1]}`);
     if (yearBuiltStatus) newSearchParams.set("year", `${yearBuiltStatus[0]}-${yearBuiltStatus[1]}`);
     if (squareFeetStatus) newSearchParams.set("length", `${squareFeetStatus[0]}-${squareFeetStatus[1]}`);
+    if (boatCondition.length) newSearchParams.set("condition", boatCondition.join(","));
     if (boatManufacturer.length) newSearchParams.set("manufacturer", boatManufacturer.join(","));
     if (boatLocation.length) newSearchParams.set("location", boatLocation.join(","));
     if (boatBeamStatus) newSearchParams.set("beam", `${boatBeamStatus[0]}-${boatBeamStatus[1]}`);
@@ -70,7 +103,7 @@ const UseFilterBoats = ({ value }: FilterProductsType) => {
     if (newSearchParams.toString() !== baseParams) {
       router.push(`${pathname}?${newSearchParams}`);
     }
-  }, [pathname, priceStatus, router, searchParams, yearBuiltStatus, squareFeetStatus, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded]);
+  }, [pathname, priceStatus, router, searchParams, yearBuiltStatus, squareFeetStatus, boatCondition, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded, paramsReady]);
 
   return filteredProducts;
 };

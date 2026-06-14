@@ -30,6 +30,7 @@ export type BoatDataRow = {
   id: string;
   boat_id: string;
   type?: string;
+  condition?: string;
   title: string;
   manufacturer: string;
   build_number: string;
@@ -74,6 +75,7 @@ type EditBoatModalProps = {
 
 const emptyForm = {
   type: "",
+  condition: "",
   title: "",
   manufacturer: "",
   build_number: "",
@@ -129,6 +131,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
         const row = boatDataRow as BoatDataRow;
         setForm({
           type: row.type ?? "",
+          condition: row.condition ?? "",
           title: row.title ?? "",
           manufacturer: row.manufacturer ?? "",
           build_number: row.build_number ?? "",
@@ -249,6 +252,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
           : "";
 
       const payload: Record<string, unknown> = {
+        condition: form.condition.trim(),
         title: form.title.trim(),
         manufacturer: form.manufacturer.trim(),
         build_number: form.build_number.trim() || null,
@@ -335,6 +339,20 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                     <option value="sport-cruiser">Sport-Cruiser</option>
                     <option value="cruiser">Cruiser</option>
                     <option value="power-boat">Power Boat</option>
+                  </Input>
+                </FormGroup>
+                <FormGroup>
+                  <Label>Condition *</Label>
+                  <Input
+                    type="select"
+                    value={form.condition}
+                    onChange={(e) => setField("condition", e.target.value)}
+                    className="form-control"
+                    required
+                  >
+                    <option value="">Select condition</option>
+                    <option value="new">New</option>
+                    <option value="pre-owned">Pre-owned</option>
                   </Input>
                 </FormGroup>
                 <FormGroup>

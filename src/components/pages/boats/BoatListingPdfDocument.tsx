@@ -195,6 +195,7 @@ function buildSpecs(boat: ProductType) {
   add("Build year", boat.buildYear || (boat.year ? String(boat.year) : ""));
   add("Build number", boat.buildNumber);
   add("Boat type", boat.boatType);
+  add("Condition", boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : boat.condition);
   add("Hull length (m)", boat.hullLength);
   add("Waterline length (m)", boat.waterlineLength);
   add("Beam (m)", boat.beam);
@@ -221,6 +222,7 @@ export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
 
   const chips: string[] = [
     boat.boatType ? `Type: ${boat.boatType}` : "",
+    boat.condition ? `Condition: ${boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : boat.condition}` : "",
     boat.manufacturer ? `Manufacturer: ${boat.manufacturer}` : "",
     boat.buildYear ? `Year: ${boat.buildYear}` : boat.year ? `Year: ${boat.year}` : "",
   ].filter(Boolean);

@@ -35,13 +35,13 @@ export const MenuItem: MenuItemType[] = [
   {
     title: "New Yachts",
     type: "link",
-    path: RouteList.Pages.Boats,
+    path: RouteList.Pages.NewYachts,
     active: false,
   },
   {
     title: "Pre-owned Yachts",
     type: "link",
-    path: RouteList.Pages.Boats,
+    path: RouteList.Pages.PreOwnedYachts,
     active: false,
   },
   {

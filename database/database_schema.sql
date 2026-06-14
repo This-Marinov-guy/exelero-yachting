@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS boats (
 CREATE TABLE IF NOT EXISTS boat_data (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     boat_id UUID UNIQUE NOT NULL REFERENCES boats(id) ON DELETE CASCADE,
+    condition VARCHAR(20) NOT NULL DEFAULT 'pre-owned' CHECK (condition IN ('new', 'pre-owned')),
     title VARCHAR(512) NOT NULL,
     manufacturer VARCHAR(512) NOT NULL,
     build_number VARCHAR(100),
@@ -88,6 +89,7 @@ CREATE TABLE IF NOT EXISTS profile_image (
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_boats_user_id ON boats(user_id);
 CREATE INDEX IF NOT EXISTS idx_boat_data_boat_id ON boat_data(boat_id);
+CREATE INDEX IF NOT EXISTS idx_boat_data_condition ON boat_data(condition);
 CREATE INDEX IF NOT EXISTS idx_broker_data_boat_id ON broker_data(boat_id);
 CREATE INDEX IF NOT EXISTS idx_broker_data_user_id ON broker_data(user_id);
 CREATE INDEX IF NOT EXISTS idx_inqueries_boat_id ON inqueries(boat_id);

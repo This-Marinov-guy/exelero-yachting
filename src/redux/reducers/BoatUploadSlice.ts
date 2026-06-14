@@ -51,6 +51,7 @@ export interface BoatUploadState {
   formData: {
     dealer_id: string;
     type: string;
+    condition: string;
     title: string;
     manufacturer: string;
     build_number: string;
@@ -78,30 +79,41 @@ export interface BoatUploadState {
   brochureUrl: string | null; // URL of uploaded brochure
 }
 
+const defaultFormData: BoatUploadState["formData"] = {
+  dealer_id: "",
+  type: "",
+  condition: "",
+  title: "",
+  manufacturer: "",
+  build_number: "",
+  build_year: "",
+  location: "",
+  price: "",
+  vat_included: false,
+  description: "",
+  hull_length: "",
+  waterline_length: "",
+  beam: "",
+  draft: "",
+  ballast: "",
+  displacement: "",
+  engine_power: "",
+  fuel_tank: "",
+  water_tank: "",
+  additional_details: "",
+};
+
 const storedData = loadFromStorage();
 
-const initialState: BoatUploadState = storedData || {
+const initialState: BoatUploadState = storedData ? {
+  ...storedData,
   formData: {
-    dealer_id: "",
-    type: "",
-    title: "",
-    manufacturer: "",
-    build_number: "",
-    build_year: "",
-    location: "",
-    price: "",
-    vat_included: false,
-    description: "",
-    hull_length: "",
-    waterline_length: "",
-    beam: "",
-    draft: "",
-    ballast: "",
-    displacement: "",
-    engine_power: "",
-    fuel_tank: "",
-    water_tank: "",
-    additional_details: "",
+    ...defaultFormData,
+    ...storedData.formData,
+  },
+} : {
+  formData: {
+    ...defaultFormData,
   },
   imageMetadata: [],
   uploadedImages: [],
@@ -249,7 +261,7 @@ const BoatUploadSlice = createSlice({
       saveToStorage(state);
     },
     resetForm: (state) => {
-      state.formData = initialState.formData;
+      state.formData = { ...defaultFormData };
       state.imageMetadata = [];
       state.uploadedImages = [];
       state.uploadFolderName = null;

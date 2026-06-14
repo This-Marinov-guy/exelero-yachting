@@ -10,6 +10,7 @@ interface BoatDraft {
     user_id: string;
     title: string | null;
     type: string | null;
+    condition: string | null;
     manufacturer: string | null;
     build_number: string | null;
     build_year: string | null;

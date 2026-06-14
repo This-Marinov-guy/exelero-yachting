@@ -32,7 +32,8 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
     e.preventDefault();
     const mainImage = boat.image?.[0] ?? "";
     const priceStr = boat.price != null ? `${formatPrice(boat.price)} €` : "";
-    const descriptionParts = [boat.location, boat.boatType, priceStr].filter(Boolean);
+    const conditionLabel = boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : "";
+    const descriptionParts = [boat.location, conditionLabel, boat.boatType, priceStr].filter(Boolean);
     dispatch(
       setShareData({
         title: boat.title || "Boat listing",
@@ -91,6 +92,11 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
             {boat.boatType && (
               <label className="detail-label">
                 {boat.boatType === "racer" ? "Racer" : boat.boatType === "cruiser" ? "Cruiser" : boat.boatType}
+              </label>
+            )}
+            {boat.condition && (
+              <label className="detail-label">
+                {boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : boat.condition}
               </label>
             )}
             {boat.manufacturer && (

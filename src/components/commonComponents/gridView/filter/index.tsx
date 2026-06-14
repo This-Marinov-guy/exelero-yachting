@@ -8,11 +8,11 @@ import BrandsFilter from "./BrandsFilter";
 import { setMinAndMaxKilometers, setMinAndMaxPrice, setMinAndMaxSalary } from "@/redux/reducers/FilterSlice";
 import { ColorData, FilterCategory, FuelType, ModelYearData, OwnerData, SeatsData, TransmissionData } from "@/data/car";
 import { AllCategoriesData, ByData, CompanyTypeData, EducationData, JobTypeData, LocationData, TopCompaniesData, WorkModeData } from "@/data/job";
-import { VatIncludedData } from "@/data/boat";
+import { BoatConditionData, VatIncludedData } from "@/data/boat";
 
 const FilterSidebar: FC<FilterSidebarType> = ({ value, modalType, filterClass, type }) => {
   const dispatch = useAppDispatch();
-  const { propertyType, bedsRooms, squareFeetStatus, yearBuiltStatus, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory,JobWorkMode ,JobCompanyType ,JobEducation ,JobCheck,JobLocation,JobTopCompanies,JobType, boatType, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded} = useAppSelector((state) => state.filter);
+  const { propertyType, bedsRooms, squareFeetStatus, yearBuiltStatus, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory,JobWorkMode ,JobCompanyType ,JobEducation ,JobCheck,JobLocation,JobTopCompanies,JobType, boatType, boatCondition, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded} = useAppSelector((state) => state.filter);
   const ItemData = ["1", "2", "3", "map-id"];
   const [openItems, setOpenItems] = useState<string[]>(ItemData);
   const toggle = (id: string) => setOpenItems((openItems) => (openItems.includes(id) ? openItems.filter((item) => item !== id) : [...openItems, id]));
@@ -31,7 +31,7 @@ const FilterSidebar: FC<FilterSidebarType> = ({ value, modalType, filterClass, t
     return Array.from(manufacturers).map(manufacturer => ({
       id: `manufacturer-${manufacturer.toLowerCase().replace(/\s+/g, '-')}`,
       label: manufacturer,
-      type: "manufacturer",
+      type: manufacturer,
     }));
   }, [value, type]);
 
@@ -44,7 +44,7 @@ const FilterSidebar: FC<FilterSidebarType> = ({ value, modalType, filterClass, t
     return Array.from(locations).map(location => ({
       id: `location-${location.toLowerCase().replace(/\s+/g, '-')}`,
       label: location,
-      type: "location",
+      type: location,
     }));
   }, [value, type]);
 
@@ -87,6 +87,7 @@ const FilterSidebar: FC<FilterSidebarType> = ({ value, modalType, filterClass, t
               checkValue={boatType}
             />
           )}
+          {type === "boat" && <CommonAccordion title='Condition' id='boat-condition' data={BoatConditionData} checkValue={boatCondition} type={type} />}
           <CommonAccordion title='Price Range' id='1' priceRange type={type} maxPrice={maxPrice?.price} minPrice={minPrice?.price} />
           <CommonAccordion title='Year Built' id='2' squareFeet values={yearBuiltStatus} />
           <CommonAccordion title='Hull Length (m)' id='3' squareFeet values={squareFeetStatus} />

@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setAmenities, setBedsRooms, setCategories, setColor, setFuelType, setJobAllCategory, setJobByCheck, setJobCompanyType, setJobEducation, setJobLocation, setJobTopCompanies, setJobType, setJobWorkMode, setModelYear, setOwner, setPropertyType, setSeats, setSquareFeetStatus, setTransmissions, setYearBuiltStatus, setBoatType, setBoatManufacturer, setBoatLocation, setBoatBeamStatus, setBoatDraftStatus, setBoatDisplacementStatus, setBoatEnginePowerStatus, setBoatVatIncluded } from "@/redux/reducers/FilterSlice";
+import { setAmenities, setBedsRooms, setCategories, setColor, setFuelType, setJobAllCategory, setJobByCheck, setJobCompanyType, setJobEducation, setJobLocation, setJobTopCompanies, setJobType, setJobWorkMode, setModelYear, setOwner, setPropertyType, setSeats, setSquareFeetStatus, setTransmissions, setYearBuiltStatus, setBoatType, setBoatCondition, setBoatManufacturer, setBoatLocation, setBoatBeamStatus, setBoatDraftStatus, setBoatDisplacementStatus, setBoatEnginePowerStatus, setBoatVatIncluded } from "@/redux/reducers/FilterSlice";
 import { CommonFilterType } from "@/types/Product";
 import { ChangeEvent, FC } from "react";
 import { AccordionBody, AccordionHeader, AccordionItem, Input, Label } from "reactstrap";
@@ -17,7 +17,7 @@ const boatTypeFilterData = [
 
 const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValue, priceRange, squareFeet, values, modalType, type, radio }) => {
   const dispatch = useAppDispatch();
-  const { propertyType, bedsRooms, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory, JobWorkMode, JobCompanyType, JobEducation, JobCheck, JobLocation, JobTopCompanies, JobType, boatType, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded } = useAppSelector(state => state.filter);
+  const { propertyType, bedsRooms, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory, JobWorkMode, JobCompanyType, JobEducation, JobCheck, JobLocation, JobTopCompanies, JobType, boatType, boatCondition, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded } = useAppSelector(state => state.filter);
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>, title: string, field?: string) => {
     const value = event.target.value;
@@ -80,6 +80,7 @@ const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValu
       "Job Type": () => dispatch(setJobType(actionCreator(JobType))),
       // Boat filters
       "Boat Type": () => dispatch(setBoatType(actionCreator(boatType))),
+      Condition: () => dispatch(setBoatCondition(actionCreator(boatCondition))),
       "Manufacturer": () => dispatch(setBoatManufacturer(actionCreator(boatManufacturer))),
       "Beam (m)": () => dispatch(setBoatBeamStatus(actionCreator())),
       "Draft (m)": () => dispatch(setBoatDraftStatus(actionCreator())),

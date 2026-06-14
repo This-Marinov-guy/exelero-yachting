@@ -67,6 +67,7 @@ export interface ProductType {
   vatIncluded?: boolean;
   dealer?: string;
   boatType?: string; // Boat type: racer or cruiser
+  condition?: string;
   exteriorDescription?: string;
   additionalDetails?: string;
   brochure?: string;
@@ -220,6 +221,7 @@ export interface FilterSliceType {
   JobType: string[];
   // Boat filters
   boatType: string[];
+  boatCondition: string[];
   boatManufacturer: string[];
   boatLocation: string[];
   boatBeamStatus: number[];
