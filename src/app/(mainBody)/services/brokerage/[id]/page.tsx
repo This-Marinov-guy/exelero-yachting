@@ -66,15 +66,16 @@ async function fetchBoatById(numericId: number): Promise<ProductType | null> {
       brokerProfileImage = profileImageData?.image_url || null;
     }
 
-    // Fetch images
+    // Fetch images — cover image first, then by display_order
     const { data: imagesData } = await supabase
       .from("boat_images")
-      .select("link")
+      .select("link, is_cover")
       .eq("boat_id", boat.id)
       .order("display_order", { ascending: true });
 
-    // Convert to ProductType format
-    const images = imagesData?.map((img) => img.link) || [];
+    const images = (imagesData || [])
+      .sort((a, b) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))
+      .map((img) => img.link);
     const mainImage = images[0] || "";
 
     return {

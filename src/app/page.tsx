@@ -5,7 +5,7 @@ import CarDemo1Container from "@/components/themes/carDemo1/Index";
 export const metadata: Metadata = {
   title: "Exelero Group — Yachting and more",
   description:
-    "Exelero Yachting: performance and luxury yachts, brokerage & charters, and sailing gear. Explore our partners and services.",
+    "Exelero Yachting: performance and luxury yachts, brokerage & charters, and sailing gear. Explore our brands and services.",
   alternates: {
     canonical: "/",
   },

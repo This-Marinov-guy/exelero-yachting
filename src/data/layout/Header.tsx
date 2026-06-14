@@ -33,9 +33,27 @@ export const MenuItem: MenuItemType[] = [
     active: false,
   },
   {
-    title: "Brokerage",
+    title: "New Yachts",
     type: "link",
     path: RouteList.Pages.Boats,
+    active: false,
+  },
+  {
+    title: "Pre-owned Yachts",
+    type: "link",
+    path: RouteList.Pages.Boats,
+    active: false,
+  },
+  {
+    title: "Transportation",
+    type: "link",
+    path: RouteList.Pages.Services.Transportation,
+    active: false,
+  },
+  {
+    title: "Charters",
+    type: "link",
+    path: RouteList.Pages.Services.Charters,
     active: false,
   },
   // {
@@ -44,7 +62,7 @@ export const MenuItem: MenuItemType[] = [
   //   path: RouteList.Pages.Gallery,
   //   active: false,
   // },
-  
+
   // {
   //   title: "Partners",
   //   type: "sub",
@@ -79,7 +97,7 @@ export const MenuItem: MenuItemType[] = [
   //       image: "logo/elvstrom-sailwear.webp",
   //       active: false,
   //     },
-     
+
   //     {
   //       title: "Zhik",
   //       type: "link",
@@ -89,55 +107,55 @@ export const MenuItem: MenuItemType[] = [
   //     },
   //   ],
   // },
-  {
-    title: "Services",
-    type: "sub",
-    active: false,
-    children: [
-      // {
-      //   title: "Sails",
-      //   type: "link",
-      //   path: RouteList.Pages.Services.Sails,
-      //   active: false,
-      // },
-      // {
-      //   title: "Clothes",
-      //   type: "link",
-      //   path: RouteList.Pages.Services.Clothes,
-      //   active: false,
-      // },
-      {
-        title: "Brokerage",
-        type: "link",
-        path: RouteList.Pages.Services.Boats,
-        active: false,
-      },
-      {
-        title: "Transportation",
-        type: "link",
-        path: RouteList.Pages.Services.Transportation,
-        active: false,
-      },
-      // {
-      //   title: "Sell Your Boat",
-      //   type: "link",
-      //   path: RouteList.Pages.Services.SellYourBoat,
-      //   active: false,
-      // },
-      {
-        title: "Charters",
-        type: "link",
-        path: RouteList.Pages.Services.Charters,
-        active: false,
-      },
-      // {
-      //   title: "Parts",
-      //   type: "link",
-      //   path: RouteList.Pages.Services.Parts,
-      //   active: false,
-      // },
-    ],
-  },
+  // {
+  //   title: "Services",
+  //   type: "sub",
+  //   active: false,
+  //   children: [
+  //     // {
+  //     //   title: "Sails",
+  //     //   type: "link",
+  //     //   path: RouteList.Pages.Services.Sails,
+  //     //   active: false,
+  //     // },
+  //     // {
+  //     //   title: "Clothes",
+  //     //   type: "link",
+  //     //   path: RouteList.Pages.Services.Clothes,
+  //     //   active: false,
+  //     // },
+  //     {
+  //       title: "Brokerage",
+  //       type: "link",
+  //       path: RouteList.Pages.Services.Boats,
+  //       active: false,
+  //     },
+  //     {
+  //       title: "Transportation",
+  //       type: "link",
+  //       path: RouteList.Pages.Services.Transportation,
+  //       active: false,
+  //     },
+  //     // {
+  //     //   title: "Sell Your Boat",
+  //     //   type: "link",
+  //     //   path: RouteList.Pages.Services.SellYourBoat,
+  //     //   active: false,
+  //     // },
+  //     {
+  //       title: "Charters",
+  //       type: "link",
+  //       path: RouteList.Pages.Services.Charters,
+  //       active: false,
+  //     },
+  //     // {
+  //     //   title: "Parts",
+  //     //   type: "link",
+  //     //   path: RouteList.Pages.Services.Parts,
+  //     //   active: false,
+  //     // },
+  //   ],
+  // },
   {
     title: "Contact",
     type: "link",

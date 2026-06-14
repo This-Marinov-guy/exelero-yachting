@@ -194,9 +194,9 @@ export const RouteList = {
     },
     Partners: {
       XYachts: `/partners/x-yachts`,
+      OmayaYachts: `/partners/omaya-yachts`,
       Elvstrom: `/partners/elvstrom`,
       ElvstromSailWear: `/partners/elvstrom-sailwear`,
-      OmayaYachts: `/partners/omaya-yachts`,
       Zhik: `/partners/zhik`,
     },
     Boats: `/services/brokerage`,

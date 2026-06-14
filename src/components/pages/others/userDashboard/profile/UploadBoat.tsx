@@ -731,10 +731,11 @@ const UploadBoat = () => {
 
             // Step 5: Create boat_images records (images are already uploaded)
             if (uploadedImages.length > 0) {
-                const imageRecords = uploadedImages.map((img) => ({
+                const imageRecords = uploadedImages.map((img, index) => ({
                     boat_id: boatData.id,
                     link: img.url,
                     display_order: img.order,
+                    is_cover: index === mainImageIndex,
                 }));
 
                 const { error: imagesError } = await supabase

@@ -100,7 +100,7 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
         </div>
         <div className="price-box">
           <h4>
-            {formatPrice(boat.price || 0)} <span style={{ fontFamily: "Satisfy" }}>€</span>
+            {formatPrice(boat.price || 0)} <span style={{ fontFamily: "Satisfy", color: 'black' }}>€</span>
             {boat.vatIncluded && <span className="text-muted" style={{ fontSize: "14px" }}> (VAT Included)</span>}
           </h4>
           <ul className="detail-social-list">

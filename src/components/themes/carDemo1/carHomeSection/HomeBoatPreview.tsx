@@ -1,62 +1,42 @@
+import React from "react";
+import Link from "next/link";
+import { Col, Container, Row } from "reactstrap";
+import { ArrowRight } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
-import BoatsPageClient from "./BoatsPageClient";
+import { RouteList } from "@/utils/RouteList";
 import { ProductType } from "@/types/Product";
+import Boat2DetailBox from "@/components/commonComponents/productBox/Boat2DetailBox";
 
-async function fetchActiveBoats(): Promise<ProductType[]> {
-  const supabase = getSupabaseServerClient();
-
+async function fetchFeaturedBoats(): Promise<ProductType[]> {
   try {
-    // Fetch active boats with related data
-    const { data: boatsData, error: boatsError } = await supabase
+    const supabase = getSupabaseServerClient();
+
+    const { data: boatsData } = await supabase
       .from("boats")
       .select("id, created_at")
       .eq("active", true)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(6);
 
-    if (boatsError) {
-      console.error("Error fetching boats:", boatsError);
-      return [];
-    }
+    if (!boatsData || boatsData.length === 0) return [];
 
-    if (!boatsData || boatsData.length === 0) {
-      return [];
-    }
-
-    // Fetch boat_data, broker_data, and images for each boat
-    const boatsWithDetails = await Promise.all(
+    const boats = await Promise.all(
       boatsData.map(async (boat) => {
-        // Fetch boat_data
-        const { data: boatData } = await supabase
-          .from("boat_data")
-          .select("*")
-          .eq("boat_id", boat.id)
-          .single();
+        const [{ data: boatData }, { data: brokerData }, { data: imagesData }] = await Promise.all([
+          supabase.from("boat_data").select("*").eq("boat_id", boat.id).single(),
+          supabase.from("broker_data").select("name, dealer").eq("boat_id", boat.id).single(),
+          supabase.from("boat_images").select("link, is_cover").eq("boat_id", boat.id).order("display_order", { ascending: true }),
+        ]);
 
-        // Fetch broker_data
-        const { data: brokerData } = await supabase
-          .from("broker_data")
-          .select("name, dealer")
-          .eq("boat_id", boat.id)
-          .single();
-
-        // Fetch images — cover image first, then by display_order
-        const { data: imagesData } = await supabase
-          .from("boat_images")
-          .select("link, is_cover")
-          .eq("boat_id", boat.id)
-          .order("display_order", { ascending: true });
-
-        const images = (imagesData || [])
+        const images = ((imagesData || []) as { link: string; is_cover: boolean }[])
           .sort((a, b) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))
           .map((img) => img.link);
-        const mainImage = images[0] || "";
 
-        // Generate a numeric ID from UUID
         const numericId = parseInt(boat.id.replace(/-/g, "").substring(0, 8), 16) % 10000000;
 
         return {
           id: numericId || Math.floor(Math.random() * 1000000),
-          image: images.length > 0 ? images : [mainImage],
+          image: images.length > 0 ? images : ["/assets/images/hero/boats.jpg"],
           title: boatData?.title || "Untitled Boat",
           type: "boat",
           category: boatData?.manufacturer ? [boatData.manufacturer] : [],
@@ -69,7 +49,7 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
           description: boatData?.description || "",
           location: boatData?.location || "",
           year: parseInt(boatData?.build_year || "0"),
-          squareFeet: Math.round((boatData?.hull_length || 0) * 10.764), // Convert meters to square feet for filtering
+          squareFeet: Math.round((boatData?.hull_length || 0) * 10.764),
           bhk: boatData?.build_year || "",
           amenities: boatData?.manufacturer || "",
           productState: "active",
@@ -81,7 +61,6 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
           owner: "",
           jobTags: [],
           company: brokerData?.dealer || brokerData?.name || "",
-          // Boat-specific properties
           boatId: boat.id,
           manufacturer: boatData?.manufacturer || "",
           buildNumber: boatData?.build_number || "",
@@ -102,36 +81,39 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
       })
     );
 
-    return boatsWithDetails;
-  } catch (error) {
-    console.error("Error fetching boats:", error);
+    return boats;
+  } catch {
     return [];
   }
 }
 
-const BoatsPage = async () => {
-  const boats = await fetchActiveBoats();
+const HomeBoatPreview = async () => {
+  const boats = await fetchFeaturedBoats();
 
-  // Add JSON-LD structured data for SEO
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "Yachts & Boats for Sale",
-    description: "Explore our exclusive collection of high-performance yachts and boats for sale",
-    url: "/boats",
-    numberOfItems: boats.length,
-  };
+  if (boats.length === 0) return null;
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <BoatsPageClient boats={boats} />
-    </>
+    <section className="exelero-boat-preview section-t-space section-b-space">
+      <Container>
+        <div className="boat-preview-header" data-aos="fade-up" data-aos-duration={500}>
+          <div>
+            <h2 className="boat-preview-title">Featured Yachts</h2>
+          </div>
+          <Link href={RouteList.Pages.Boats} className="boat-preview-all">
+            View All Listings <ArrowRight size={16} />
+          </Link>
+        </div>
+
+        <Row className="g-3 g-lg-4">
+          {boats.map((boat, idx) => (
+            <Col className="col-lg-4 col-sm-6" key={boat.id} data-aos="fade-up" data-aos-duration={500 + idx * 80}>
+              <Boat2DetailBox data={boat} label="For Sale" index={idx} />
+            </Col>
+          ))}
+        </Row>
+      </Container>
+    </section>
   );
 };
 
-export default BoatsPage;
-
+export default HomeBoatPreview;

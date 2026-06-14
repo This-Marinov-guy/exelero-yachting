@@ -34,7 +34,7 @@ const Header: React.FC<PathTypes> = ({ part }) => {
   }, []);
 
   return (
-    <header className={`px-0${HeaderClassMap[part] || ""} ${isSticky && !isMobile && !isHome ? "sticky-header" : ""}`} id='header'>
+    <header className={`px-0${HeaderClassMap[part] || ""} ${isSticky ? "sticky-header" : ""}`} id='header'>
       {isTopBar && <TapTop part={part} />}
       <Container className={ContainerClassMap[part] || ""}>
         <div className='header-flex'>

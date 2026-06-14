@@ -10,7 +10,16 @@
       "Bash(awk 'NR<=2750' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
       "Bash(awk 'NR>=2950 && NR<=3010' /Users/vlady/Desktop/excelero/public/assets/scss/pages/_sub-page.scss)",
       "Bash(npx sass *)",
-      "Bash(kill 86633)"
+      "Bash(kill 86633)",
+      "WebFetch(domain:www.fortismarine.net)",
+      "Bash(grep -v \"^$\")",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(npx playwright *)",
+      "Bash(node -e ' *)",
+      "WebFetch(domain:localhost)",
+      "Bash(curl -s http://localhost:3000)"
     ]
   }
 }

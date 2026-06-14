@@ -82,7 +82,7 @@ const AboutPage = () => {
 
           <div className='about-partners'>
             <div className='content-title text-center'>
-              <h2>Our Partners</h2>
+              <h2>Our Brands</h2>
               <p>We collaborate with leading brands to deliver exceptional results.</p>
             </div>
 
@@ -93,13 +93,13 @@ const AboutPage = () => {
                 </Link>
               </Col>
               <Col md={3} sm={6} xs={6} className='partner-col'>
-                <Link className='partner-card' href={RouteList.Pages.Partners.Elvstrom}>
-                  <Image src='/assets/images/logo/elvstrom.png' alt='Elvstrom' width={220} height={120} className='partner-logo' />
+                <Link className='partner-card' href={RouteList.Pages.Partners.OmayaYachts}>
+                  <Image src='/assets/images/logo/omaya-yachts.jpg' alt='Omaya Yachts' width={220} height={120} className='partner-logo' />
                 </Link>
               </Col>
               <Col md={3} sm={6} xs={6} className='partner-col'>
-                <Link className='partner-card' href={RouteList.Pages.Partners.OmayaYachts}>
-                  <Image src='/assets/images/logo/omaya-yachts.jpg' alt='Omaya Yachts' width={220} height={120} className='partner-logo' />
+                <Link className='partner-card' href={RouteList.Pages.Partners.Elvstrom}>
+                  <Image src='/assets/images/logo/elvstrom.png' alt='Elvstrom' width={220} height={120} className='partner-logo' />
                 </Link>
               </Col>
               <Col md={3} sm={6} xs={6} className='partner-col'>
