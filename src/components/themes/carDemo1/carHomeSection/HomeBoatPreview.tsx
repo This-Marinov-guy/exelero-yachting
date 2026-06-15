@@ -1,13 +1,37 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Col, Container, Row } from "reactstrap";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MapPin, Ruler, Zap } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
 import { RouteList } from "@/utils/RouteList";
-import { ProductType } from "@/types/Product";
-import Boat2DetailBox from "@/components/commonComponents/productBox/Boat2DetailBox";
 
-async function fetchFeaturedBoats(): Promise<ProductType[]> {
+type FeaturedBoat = {
+  id: number;
+  title: string;
+  mainImage: string;
+  location: string;
+  price: number;
+  buildYear: string;
+  hullLength: number;
+  enginePower: number;
+  condition: string;
+};
+
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(price);
+};
+
+const conditionLabel = (condition: string) => {
+  if (condition === "new") return "New";
+  if (condition === "pre-owned") return "Pre-owned";
+  return "For Sale";
+};
+
+async function fetchFeaturedBoats(): Promise<FeaturedBoat[]> {
   try {
     const supabase = getSupabaseServerClient();
 
@@ -16,69 +40,34 @@ async function fetchFeaturedBoats(): Promise<ProductType[]> {
       .select("id, created_at")
       .eq("active", true)
       .order("created_at", { ascending: false })
-      .limit(6);
+      .limit(3);
 
     if (!boatsData || boatsData.length === 0) return [];
 
     const boats = await Promise.all(
       boatsData.map(async (boat) => {
-        const [{ data: boatData }, { data: brokerData }, { data: imagesData }] = await Promise.all([
+        const [{ data: boatData }, { data: imagesData }] = await Promise.all([
           supabase.from("boat_data").select("*").eq("boat_id", boat.id).single(),
-          supabase.from("broker_data").select("name, dealer").eq("boat_id", boat.id).single(),
           supabase.from("boat_images").select("link, is_cover").eq("boat_id", boat.id).order("display_order", { ascending: true }),
         ]);
 
-        const images = ((imagesData || []) as { link: string; is_cover: boolean }[])
+        const mainImage = ((imagesData || []) as { link: string; is_cover: boolean }[])
           .sort((a, b) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))
-          .map((img) => img.link);
+          .map((img) => img.link)[0] || "/assets/images/hero/boats.jpg";
 
         const numericId = parseInt(boat.id.replace(/-/g, "").substring(0, 8), 16) % 10000000;
 
         return {
           id: numericId || Math.floor(Math.random() * 1000000),
-          image: images.length > 0 ? images : ["/assets/images/hero/boats.jpg"],
+          mainImage,
           title: boatData?.title || "Untitled Boat",
-          type: "boat",
-          category: boatData?.manufacturer ? [boatData.manufacturer] : [],
-          features: [
-            { icon: "length", text: `${boatData?.hull_length || 0}m Length` },
-            { icon: "beam", text: `${boatData?.beam || 0}m Beam` },
-            { icon: "power", text: `${boatData?.engine_power || 0}hp` },
-          ],
           price: boatData?.price || 0,
-          description: boatData?.description || "",
           location: boatData?.location || "",
-          year: parseInt(boatData?.build_year || "0"),
-          squareFeet: Math.round((boatData?.hull_length || 0) * 10.764),
-          bhk: boatData?.build_year || "",
-          amenities: boatData?.manufacturer || "",
-          productState: "active",
-          wishlist: false,
-          seats: "",
-          color: "",
-          kilometers: 0,
-          transmission: "",
-          owner: "",
-          jobTags: [],
-          company: brokerData?.dealer || brokerData?.name || "",
-          boatId: boat.id,
-          manufacturer: boatData?.manufacturer || "",
-          buildNumber: boatData?.build_number || "",
           buildYear: boatData?.build_year || "",
-          beam: boatData?.beam || 0,
           hullLength: boatData?.hull_length || 0,
-          draft: boatData?.draft || 0,
-          waterlineLength: boatData?.waterline_length || 0,
-          ballast: boatData?.ballast || 0,
-          displacement: boatData?.displacement || 0,
           enginePower: boatData?.engine_power || 0,
-          fuelTank: boatData?.fuel_tank || 0,
-          waterTank: boatData?.water_tank || 0,
-          vatIncluded: boatData?.vat_included ?? false,
-          dealer: brokerData?.dealer || "",
-          boatType: boatData?.type || "",
           condition: boatData?.condition || "pre-owned",
-        } as ProductType;
+        };
       })
     );
 
@@ -108,7 +97,54 @@ const HomeBoatPreview = async () => {
         <Row className="g-3 g-lg-4">
           {boats.map((boat, idx) => (
             <Col className="col-lg-4 col-sm-6" key={boat.id} data-aos="fade-up" data-aos-duration={500 + idx * 80}>
-              <Boat2DetailBox data={boat} label="For Sale" index={idx} />
+              <article className="car2-featured-box property2-featured-box">
+                <Link href={`/services/brokerage/${boat.id}`} className="car2-featured-img">
+                  <div style={{ position: "relative", width: "100%", aspectRatio: "16/9" }}>
+                    <Image
+                      src={boat.mainImage}
+                      alt={boat.title}
+                      fill
+                      sizes="(max-width: 575px) 100vw, (max-width: 1199px) 50vw, 33vw"
+                      quality={70}
+                      className="bg-img"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </div>
+                  <div className="car2-label-flex">
+                    <span className="bg-white">{conditionLabel(boat.condition)}</span>
+                    {boat.buildYear && <span className="text-white">{boat.buildYear}</span>}
+                  </div>
+                </Link>
+                <div className="car2-featured-content">
+                  <Link href={`/services/brokerage/${boat.id}`}>
+                    <h4>{boat.title}</h4>
+                  </Link>
+                  {boat.location && (
+                    <div className="location-flex">
+                      <MapPin className="boat-feature-icon" aria-hidden />
+                      <h6>{boat.location}</h6>
+                    </div>
+                  )}
+                  <ul className="featured-list" style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "flex-start" }}>
+                    <li>
+                      <Ruler className="boat-feature-icon" aria-hidden />
+                      <span>{boat.hullLength > 0 ? `${boat.hullLength} m` : "Length on request"}</span>
+                    </li>
+                    <li>
+                      <Zap className="boat-feature-icon" aria-hidden />
+                      <span>{boat.enginePower > 0 ? `${boat.enginePower} kW` : "Power on request"}</span>
+                    </li>
+                  </ul>
+                  <div className="price-flex">
+                    <h4>
+                      {formatPrice(boat.price)} <span style={{ fontFamily: "Satisfy" }}>€</span>
+                    </h4>
+                    <Link href={`/services/brokerage/${boat.id}`} className="btn-solid">
+                      View
+                    </Link>
+                  </div>
+                </div>
+              </article>
             </Col>
           ))}
         </Row>
