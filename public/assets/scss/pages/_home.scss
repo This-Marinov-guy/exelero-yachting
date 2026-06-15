@@ -3736,7 +3736,8 @@ main {
     inset: 0;
     z-index: 0;
 
-    .home-hero-video {
+    .home-hero-video,
+    .home-hero-image {
       position: absolute;
       inset: 0;
       width: 100%;

@@ -3,7 +3,6 @@ import Customizer from "@/layout/Customizer";
 import { PathSettings } from "@/types/Layout";
 import { setFavicon } from "@/utils/SetFavicon";
 import { CustomToaster } from "@/utils/Toaster";
-import Aos from "aos";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
@@ -28,9 +27,25 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
     useEffect(() => {
         document.body.className = className;
         setFavicon("/assets/images/favicons/favicon.ico");
-        Aos.init({ once: true });
+        const browserWindow = window as Window & typeof globalThis & {
+            requestIdleCallback?: (callback: IdleRequestCallback) => number;
+            cancelIdleCallback?: (handle: number) => void;
+        };
+        const initAos = () => {
+            import("aos").then(({ default: Aos }) => Aos.init({ once: true }));
+        };
+        const idleId = browserWindow.requestIdleCallback
+            ? browserWindow.requestIdleCallback(initAos)
+            : browserWindow.setTimeout(initAos, 1);
 
-        return () => setFavicon("/assets/images/favicons/favicon.ico");
+        return () => {
+            if (browserWindow.cancelIdleCallback) {
+                browserWindow.cancelIdleCallback(idleId);
+            } else {
+                browserWindow.clearTimeout(idleId);
+            }
+            setFavicon("/assets/images/favicons/favicon.ico");
+        };
     }, [className]);
 
     return (

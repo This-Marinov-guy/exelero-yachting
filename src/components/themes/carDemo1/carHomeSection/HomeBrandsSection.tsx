@@ -65,6 +65,8 @@ const HomeBrandsSection = () => {
                 src={brand.image}
                 alt={brand.name}
                 fill
+                sizes="(max-width: 767px) 100vw, 25vw"
+                quality={72}
                 className="brand-block-photo"
                 style={{ objectFit: "cover" }}
               />
@@ -78,6 +80,7 @@ const HomeBrandsSection = () => {
                   alt={brand.name}
                   width={60}
                   height={60}
+                  sizes="60px"
                   className="brand-block-logo"
                   style={{ ...brand.logoStyle, objectFit: "contain" }}
                 />

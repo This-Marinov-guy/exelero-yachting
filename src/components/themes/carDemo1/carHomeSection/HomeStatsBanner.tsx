@@ -19,6 +19,8 @@ const HomeStatsBanner = () => {
           src="/assets/images/hero/boats.jpg"
           alt=""
           fill
+          sizes="100vw"
+          quality={72}
           className="stats-banner-img"
           style={{ objectFit: "cover" }}
         />

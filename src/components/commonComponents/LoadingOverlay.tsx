@@ -10,8 +10,6 @@ const LoadingOverlay = () => {
   const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
-    // When the app is ready (window load) start the slide-down exit animation,
-    // then unmount the overlay to reveal the page.
     const startExit = () => {
       setExiting(true);
       setTimeout(() => setVisible(false), EXIT_ANIMATION_MS);
@@ -19,13 +17,8 @@ const LoadingOverlay = () => {
 
     if (typeof window === "undefined") return;
 
-    if (document.readyState === "complete") {
-      // If the page is already loaded, exit immediately.
-      startExit();
-    } else {
-      window.addEventListener("load", startExit);
-      return () => window.removeEventListener("load", startExit);
-    }
+    const id = window.setTimeout(startExit, 120);
+    return () => window.clearTimeout(id);
   }, []);
 
   if (!visible) return null;

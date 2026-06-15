@@ -27,11 +27,6 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
   const powerText = powerKw > 0 ? `${powerKw} kW (${powerHp} hp)` : "—";
   const conditionLabel = data.condition === "new" ? "New" : data.condition === "pre-owned" ? "Pre-owned" : label || "For Sale";
 
-  // Check if image is external URL
-  const isExternalUrl = (img: string): boolean => {
-    return !!(img && (img.startsWith("http://") || img.startsWith("https://")));
-  };
-
   return (
     <article className='car2-featured-box property2-featured-box'>
       <Link href={`/services/brokerage/${data.id}`} className='car2-featured-img'>
@@ -45,10 +40,10 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
                       src={src} 
                       alt={`${data.title} - ${i + 1}`} 
                       fill
-                      sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 33vw"
+                      sizes="(max-width: 575px) 100vw, (max-width: 1199px) 50vw, 25vw"
+                      quality={72}
                       className='bg-img' 
                       style={{ objectFit: "cover" }}
-                      unoptimized={isExternalUrl(src)} 
                     />
                   </div>
                 </SwiperSlide>

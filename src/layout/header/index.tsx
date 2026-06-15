@@ -42,7 +42,7 @@ const Header: React.FC<PathTypes> = ({ part }) => {
           <MainMenu />
           <AuthAccountIcon />
           <div className='mobile-menu-toggle'>
-            <Link scroll={false} href={Href} className={`toggle ${sidebarOpen ? "open" : ""}`} onClick={() => dispatch(setCartData())}>
+            <Link scroll={false} href={Href} className={`toggle ${sidebarOpen ? "open" : ""}`} aria-label="Open menu" onClick={() => dispatch(setCartData())}>
               <Menu className='iconsax' style={{ width: '24px', height: '24px' }} />
             </Link>
           </div>

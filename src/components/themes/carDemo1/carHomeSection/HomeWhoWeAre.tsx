@@ -36,6 +36,7 @@ const HomeWhoWeAre = () => {
                   alt="Exelero Yachting team"
                   fill
                   sizes="(max-width: 991px) 100vw, 50vw"
+                  quality={74}
                   className="who-img"
                   style={{ objectFit: "cover" }}
                 />

@@ -1,23 +1,24 @@
 "use client";
 import CookieBanner from "@/components/commonComponents/CookieBanner";
 import LoadingOverlay from "@/components/commonComponents/LoadingOverlay";
-import SearchModal from "@/components/commonComponents/modal/SearchModal";
 import { SearchModalData } from "@/data/layout/Header";
-import Customizer from "@/layout/Customizer";
 import Footer from "@/layout/footer";
 import FooterDemo2 from "@/layout/footer/FooterDemo2";
 import Header from "@/layout/header";
-import MobileMenu from "@/layout/MobileMenu";
 import TapTop from "@/layout/TapTop";
 import { PathSettings } from "@/types/Layout";
 import { setFavicon } from "@/utils/SetFavicon";
 import { CustomToaster } from "@/utils/Toaster";
-import Aos from "aos";
+import { useAppSelector } from "@/redux/hooks";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
+const SearchModal = dynamic(() => import("@/components/commonComponents/modal/SearchModal"));
+
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   const pathname = usePathname() || "";
+  const { searchModal } = useAppSelector((state) => state.layout);
   const segments = pathname.split("/").slice(1);
   const symbolRegex = /[!@#\$%\^\*\(\)_\+\{\}\[\]:;"'<>,.?/\\|`~=]/g;
   const [firstPart] = segments.map((item) => item.replace(symbolRegex, " "));
@@ -38,9 +39,25 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
     document.body.className = className;
     document.body.classList.toggle("home-scrollbar-hidden", pathname === "/");
     setFavicon("/assets/images/favicons/favicon.ico");
-    Aos.init({ once: true });
+    const browserWindow = window as Window & typeof globalThis & {
+      requestIdleCallback?: (callback: IdleRequestCallback) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const initAos = () => {
+      import("aos").then(({ default: Aos }) => Aos.init({ once: true }));
+    };
+    const idleId = browserWindow.requestIdleCallback
+      ? browserWindow.requestIdleCallback(initAos)
+      : browserWindow.setTimeout(initAos, 1);
 
-    return () => setFavicon("/assets/images/favicons/favicon.ico");
+    return () => {
+      if (browserWindow.cancelIdleCallback) {
+        browserWindow.cancelIdleCallback(idleId);
+      } else {
+        browserWindow.clearTimeout(idleId);
+      }
+      setFavicon("/assets/images/favicons/favicon.ico");
+    };
   }, [className, pathname]);
   
   const isJobOrProperty = ["car-2", "job-3", "job-2", "property-2"].some((item) => firstPart.includes(item));
@@ -58,7 +75,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
       {segments[2] !== "portfolio-vertical-slider" && (isJobOrProperty ? <FooterDemo2 part={firstPart} /> : <Footer part={firstPart} />)}
       {!isHomePage && <TapTop part={firstPart} />}
       {/* <Customizer part={segments} />       */}
-      <SearchModal type={SearchModalData[firstPart] || SearchModalData.car} carSpaceClass={carSpaceClass} />
+      {searchModal && <SearchModal type={SearchModalData[firstPart] || SearchModalData.car} carSpaceClass={carSpaceClass} />}
       <CookieBanner />
       <CustomToaster/>
     </div>
