@@ -1,7 +1,7 @@
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
 import BoatDetailContainer from "@/components/pages/boats/BoatDetailContainer";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ProductType } from "@/types/Product";
 
 // Helper function to generate numeric ID from UUID (same as in BoatsPage)
@@ -9,15 +9,33 @@ const generateNumericId = (uuid: string): number => {
   return parseInt(uuid.replace(/-/g, "").substring(0, 8), 16) % 10000000;
 };
 
-async function fetchBoatById(numericId: number): Promise<ProductType | null> {
+const slugifyBoatTitle = (title: string) =>
+  title
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const buildLegacyBoatSlug = (title: string, buildYear: string) => {
+  const normalizedTitle = title.trim();
+  const normalizedBuildYear = buildYear.trim();
+  const slugSource = normalizedBuildYear && !normalizedTitle.includes(normalizedBuildYear)
+    ? `${normalizedTitle} ${normalizedBuildYear}`
+    : normalizedTitle;
+
+  return slugifyBoatTitle(slugSource);
+};
+
+async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | null> {
   const supabase = getSupabaseServerClient();
 
   try {
     // Fetch all active boats
     const { data: boatsData, error: boatsError } = await supabase
       .from("boats")
-      .select("id, created_at")
+      .select("id, user_id, slug, dealer_id, created_at")
       .eq("active", true)
+      .eq("bought", false)
       .order("created_at", { ascending: false });
 
     if (boatsError) {
@@ -29,8 +47,26 @@ async function fetchBoatById(numericId: number): Promise<ProductType | null> {
       return null;
     }
 
-    // Find the boat with matching numeric ID
-    const boat = boatsData.find((b) => generateNumericId(b.id) === numericId);
+    const numericId = Number.parseInt(identifier, 10);
+    const isNumericIdentifier = /^\d+$/.test(identifier);
+    let boat = boatsData.find((b) =>
+      b.slug === identifier || (isNumericIdentifier && generateNumericId(b.id) === numericId)
+    );
+
+    if (!boat && !isNumericIdentifier) {
+      const { data: legacyBoatData } = await supabase
+        .from("boat_data")
+        .select("boat_id, title, build_year")
+        .in("boat_id", boatsData.map((b) => b.id));
+
+      const legacyMatch = (legacyBoatData || []).find((row) =>
+        buildLegacyBoatSlug(row.title || "", row.build_year || "") === identifier
+      );
+
+      if (legacyMatch) {
+        boat = boatsData.find((b) => b.id === legacyMatch.boat_id);
+      }
+    }
 
     if (!boat) {
       return null;
@@ -48,11 +84,33 @@ async function fetchBoatById(numericId: number): Promise<ProductType | null> {
     }
 
     // Fetch broker_data
-    const { data: brokerData } = await supabase
-      .from("broker_data")
-      .select("name, dealer, email, phone, user_id")
-      .eq("boat_id", boat.id)
-      .single();
+    let brokerData = null;
+    if (boat.dealer_id) {
+      const { data } = await supabase
+        .from("broker_data")
+        .select("name, dealer, email, phone, user_id")
+        .eq("id", boat.dealer_id)
+        .maybeSingle();
+      brokerData = data;
+    }
+    if (!brokerData) {
+      const { data } = await supabase
+        .from("broker_data")
+        .select("name, dealer, email, phone, user_id")
+        .eq("boat_id", boat.id)
+        .maybeSingle();
+      brokerData = data;
+    }
+    if (!brokerData) {
+      const { data } = await supabase
+        .from("broker_data")
+        .select("name, dealer, email, phone, user_id")
+        .eq("user_id", boat.user_id)
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      brokerData = data;
+    }
 
     // Fetch broker profile image if user_id exists
     let brokerProfileImage = null;
@@ -66,21 +124,29 @@ async function fetchBoatById(numericId: number): Promise<ProductType | null> {
       brokerProfileImage = profileImageData?.image_url || null;
     }
 
-    // Fetch images — cover image first, then by display_order
+    // Fetch media — cover item first, then by display_order
     const { data: imagesData } = await supabase
       .from("boat_images")
-      .select("link, is_cover")
+      .select("link, is_cover, media_type")
       .eq("boat_id", boat.id)
       .order("display_order", { ascending: true });
 
-    const images = (imagesData || [])
+    const media = (imagesData || [])
       .sort((a, b) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))
-      .map((img) => img.link);
-    const mainImage = images[0] || "";
+      .map((item, index) => ({
+        url: item.link,
+        type: item.media_type === "video" ? "video" as const : "image" as const,
+        isCover: Boolean(item.is_cover),
+        order: index,
+      }));
+    const images = media.filter((item) => item.type === "image").map((item) => item.url);
+    const mainImage = images[0] || "/assets/images/hero/boats.jpg";
+    const publicId = generateNumericId(boat.id);
 
     return {
-      id: numericId,
+      id: publicId,
       image: images.length > 0 ? images : [mainImage],
+      media,
       title: boatData.title || "Untitled Boat",
       type: "boat",
       category: boatData.manufacturer ? [boatData.manufacturer] : [],
@@ -89,7 +155,7 @@ async function fetchBoatById(numericId: number): Promise<ProductType | null> {
         { icon: "beam", text: `${boatData.beam || 0}m Beam` },
         { icon: "power", text: `${boatData.engine_power || 0}kW` },
       ],
-      price: boatData.price || 0,
+      price: boatData.price ?? undefined,
       description: boatData.description || "",
       location: boatData.location || "",
       year: parseInt(boatData.build_year || "0"),
@@ -107,6 +173,7 @@ async function fetchBoatById(numericId: number): Promise<ProductType | null> {
       company: brokerData?.dealer || brokerData?.name || "",
       // Boat-specific properties
       boatId: boat.id,
+      slug: boat.slug || "",
       manufacturer: boatData.manufacturer || "",
       buildNumber: boatData.build_number || "",
       buildYear: boatData.build_year || "",
@@ -123,8 +190,16 @@ async function fetchBoatById(numericId: number): Promise<ProductType | null> {
       dealer: brokerData?.dealer || "",
       boatType: boatData.type || "",
       condition: boatData.condition || "pre-owned",
+      keelType: boatData.keel_type || "",
+      ceDesignCategory: boatData.ce_design_category || "",
+      material: boatData.material || "",
       additionalDetails: boatData.additional_details || "",
       brochure: boatData.brochure || "",
+      brochures: Array.isArray(boatData.brochures) && boatData.brochures.length > 0
+        ? boatData.brochures
+        : boatData.brochure
+          ? [{ url: boatData.brochure, name: "Brochure", order: 0 }]
+          : [],
       brokerName: brokerData?.name || "",
       brokerEmail: brokerData?.email || "",
       brokerPhone: brokerData?.phone || "",
@@ -140,10 +215,40 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+const stripHtml = (value?: string) => {
+  if (!value) return "";
+  return value
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<\/p>/gi, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
+const truncateMetaDescription = (value: string, maxLength = 180) => {
+  if (value.length <= maxLength) return value;
+  const truncated = value.slice(0, maxLength).replace(/\s+\S*$/, "");
+  return `${truncated}...`;
+};
+
+const buildBoatMetaDescription = (boat: ProductType) => {
+  const plainDescription = stripHtml(boat.description);
+  if (plainDescription) return truncateMetaDescription(plainDescription);
+
+  return truncateMetaDescription(
+    `Explore ${boat.title} - ${boat.manufacturer} yacht for sale. ${boat.location ? `Located in ${boat.location}.` : ""}`
+  );
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const numericId = parseInt(id);
-  const boat = await fetchBoatById(numericId);
+  const boat = await fetchBoatByIdentifier(id);
 
   if (!boat) {
     return {
@@ -151,13 +256,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  if (boat.slug && id !== boat.slug && !/^\d+$/.test(id)) {
+    redirect(`/services/brokerage/${boat.slug}`);
+  }
+
+  const metaDescription = buildBoatMetaDescription(boat);
+  const canonicalPath = `/services/brokerage/${boat.slug || id}`;
+
   return {
     title: `${boat.title} | Exelero Yachting`,
-    description: boat.description || `Explore ${boat.title} - ${boat.manufacturer} yacht for sale. ${boat.location ? `Located in ${boat.location}.` : ""}`,
+    description: metaDescription,
     openGraph: {
       title: `${boat.title} | Exelero Yachting`,
-      description: boat.description || `Explore ${boat.title} yacht for sale.`,
-      url: `/boats/${id}`,
+      description: metaDescription,
+      url: canonicalPath,
       siteName: "Exelero Yachting",
       type: "website",
       images: boat.image && boat.image.length > 0 ? [
@@ -169,45 +281,52 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
       ] : [],
     },
+    twitter: {
+      card: "summary_large_image",
+      title: `${boat.title} | Exelero Yachting`,
+      description: metaDescription,
+      images: boat.image && boat.image.length > 0 ? [boat.image[0]] : [],
+    },
     alternates: {
-      canonical: `/boats/${id}`,
+      canonical: canonicalPath,
     },
   };
 }
 
 const BoatDetail = async ({ params }: Props) => {
   const { id } = await params;
-  const numericId = parseInt(id);
-
-  if (isNaN(numericId)) {
-    notFound();
-  }
-
-  const boat = await fetchBoatById(numericId);
+  const boat = await fetchBoatByIdentifier(id);
 
   if (!boat) {
     notFound();
   }
 
+  if (boat.slug && id !== boat.slug && !/^\d+$/.test(id)) {
+    redirect(`/services/brokerage/${boat.slug}`);
+  }
+
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://exelero.com";
-  const boatUrl = `${siteUrl}/services/brokerage/${id}`;
+  const boatUrl = `${siteUrl}/services/brokerage/${boat.slug || id}`;
+  const plainDescription = buildBoatMetaDescription(boat);
 
   const vehicleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Vehicle",
     "name": boat.title,
-    "description": boat.description,
+    "description": plainDescription,
     "image": boat.image,
     "manufacturer": boat.manufacturer,
     "modelDate": boat.buildYear,
     "vehicleConfiguration": boat.boatType,
-    "offers": {
-      "@type": "Offer",
-      "price": boat.price,
-      "priceCurrency": "EUR",
-      "availability": "https://schema.org/InStock",
-      "url": boatUrl
-    }
+    ...(boat.price != null ? {
+      "offers": {
+        "@type": "Offer",
+        "price": boat.price,
+        "priceCurrency": "EUR",
+        "availability": "https://schema.org/InStock",
+        "url": boatUrl
+      }
+    } : {})
   };
 
   const breadcrumbJsonLd = {

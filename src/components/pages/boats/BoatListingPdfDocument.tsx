@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
 });
 
 function formatPrice(price: number | undefined) {
-  const value = Number(price || 0);
-  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value);
+  if (price == null) return "Price upon inquiry";
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(price);
 }
 
 /** Strip HTML tags for plain text in PDF. */
@@ -196,6 +196,9 @@ function buildSpecs(boat: ProductType) {
   add("Build number", boat.buildNumber);
   add("Boat type", boat.boatType);
   add("Condition", boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : boat.condition);
+  add("Keel type", boat.keelType);
+  add("CE design category", boat.ceDesignCategory);
+  add("Material", boat.material);
   add("Hull length (m)", boat.hullLength);
   add("Waterline length (m)", boat.waterlineLength);
   add("Beam (m)", boat.beam);
@@ -258,7 +261,7 @@ export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
           </View>
           <View style={{ width: 190 }}>
             <Text style={styles.price}>
-              {formatPrice(boat.price)} €
+              {boat.price != null ? `${formatPrice(boat.price)} €` : formatPrice(boat.price)}
             </Text>
             <Text style={styles.vat}>{boat.vatIncluded ? "VAT Included" : "VAT not included"}</Text>
           </View>
@@ -343,7 +346,7 @@ export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
 
         <View style={styles.footer}>
           <Text>Generated {new Date().toLocaleDateString()}</Text>
-          <Text>{toAbsoluteUrl(`/services/brokerage/${boat.id}`, baseUrl)}</Text>
+          <Text>{toAbsoluteUrl(`/services/brokerage/${boat.slug || boat.id}`, baseUrl)}</Text>
         </View>
       </Page>
     </Document>

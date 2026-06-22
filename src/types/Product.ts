@@ -9,9 +9,18 @@ export interface Label {
   class?: string;
 }
 
+export interface BoatMedia {
+  url: string;
+  type: "image" | "video";
+  id?: string;
+  order?: number;
+  isCover?: boolean;
+}
+
 export interface ProductType {
   id: number;
   image: string[];
+  media?: BoatMedia[];
   title: string;
   emi?: string;
   type: string;
@@ -52,6 +61,7 @@ export interface ProductType {
   moreDescription?: string;
   // Boat-specific fields
   boatId?: string;
+  slug?: string;
   manufacturer?: string;
   buildNumber?: string;
   buildYear?: string;
@@ -68,9 +78,13 @@ export interface ProductType {
   dealer?: string;
   boatType?: string; // Boat type: racer or cruiser
   condition?: string;
+  keelType?: string;
+  ceDesignCategory?: string;
+  material?: string;
   exteriorDescription?: string;
   additionalDetails?: string;
   brochure?: string;
+  brochures?: { url: string; name: string; filePath?: string; order?: number }[];
   brokerName?: string;
   brokerEmail?: string;
   brokerPhone?: string;

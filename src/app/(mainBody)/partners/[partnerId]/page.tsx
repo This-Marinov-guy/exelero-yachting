@@ -1,5 +1,6 @@
 import PartnerPage from "@/components/pages/partners/PartnerPage";
 import { Partners } from "@/data/partners";
+import { openGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ partnerId: string }> };
@@ -20,14 +21,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: partner.description,
       url: `/partners/${partnerId}`,
       type: "website",
-      images: partner.heroImage ? [
-        {
-          url: partner.heroImage,
-          width: 1200,
-          height: 630,
-          alt: partner.name,
-        },
-      ] : [],
+      images: partner.breadcrumbImage ? [openGraphImage(partner.breadcrumbImage, partner.name)] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${partner.name} | Exelero Yachting Partners`,
+      description: partner.description,
+      images: partner.breadcrumbImage ? [partner.breadcrumbImage] : [],
     },
     alternates: { canonical: `/partners/${partnerId}` },
     robots: { index: true, follow: true },

@@ -13,12 +13,14 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { UncontrolledTooltip } from "reactstrap";
-import { Eye, Edit, Trash2 } from "lucide-react";
+import { Eye, Edit, Trash2, BadgeCheck } from "lucide-react";
 import EditBoatModal from "./EditBoatModal";
 
 type Boat = {
     id: string;
+    slug: string | null;
     active: boolean;
+    bought: boolean;
     boat_data: {
         title: string;
     } | null;
@@ -34,6 +36,7 @@ const BoatsListing = () => {
     const [loading, setLoading] = useState(true);
     const [boats, setBoats] = useState<Boat[]>([]);
     const [updatingActive, setUpdatingActive] = useState<Set<string>>(new Set());
+    const [updatingBought, setUpdatingBought] = useState<Set<string>>(new Set());
     const [deleting, setDeleting] = useState<Set<string>>(new Set());
     const [editBoatId, setEditBoatId] = useState<string | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -88,7 +91,9 @@ const BoatsListing = () => {
                     .from("boats")
                     .select(`
             id,
+            slug,
             active,
+            bought,
             boat_data(title)
           `)
                     .eq("user_id", session.user.id)
@@ -120,6 +125,7 @@ const BoatsListing = () => {
                             .from("boat_images")
                             .select("link")
                             .eq("boat_id", boat.id)
+                            .eq("media_type", "image")
                             .order("display_order", { ascending: true })
                             .limit(1)
                             .single();
@@ -149,6 +155,12 @@ const BoatsListing = () => {
     }, []);
 
     const handleToggleActive = async (boatId: string, currentActive: boolean) => {
+        const boat = boats.find((item) => item.id === boatId);
+        if (boat?.bought) {
+            toast.error("Bought boats cannot be active on brokerage");
+            return;
+        }
+
         setUpdatingActive((prev) => new Set(prev).add(boatId));
 
         const supabase = getSupabaseBrowserClient();
@@ -175,6 +187,50 @@ const BoatsListing = () => {
             toast.error("Failed to update boat status");
         } finally {
             setUpdatingActive((prev) => {
+                const next = new Set(prev);
+                next.delete(boatId);
+                return next;
+            });
+        }
+    };
+
+    const handleToggleBought = async (boatId: string, currentBought: boolean) => {
+        setUpdatingBought((prev) => new Set(prev).add(boatId));
+
+        const supabase = getSupabaseBrowserClient();
+        const nextBought = !currentBought;
+        const payload = nextBought
+            ? { bought: true, active: false }
+            : { bought: false };
+
+        try {
+            const { error } = await supabase
+                .from("boats")
+                .update(payload)
+                .eq("id", boatId);
+
+            if (error) {
+                console.error("Error updating boat bought status:", error);
+                toast.error("Failed to update bought status");
+            } else {
+                setBoats((prev) =>
+                    prev.map((boat) =>
+                        boat.id === boatId
+                            ? {
+                                ...boat,
+                                bought: nextBought,
+                                active: nextBought ? false : boat.active,
+                            }
+                            : boat
+                    )
+                );
+                toast.success(nextBought ? "Boat marked as bought" : "Boat marked as available");
+            }
+        } catch (error) {
+            console.error("Error toggling boat bought status:", error);
+            toast.error("Failed to update bought status");
+        } finally {
+            setUpdatingBought((prev) => {
                 const next = new Set(prev);
                 next.delete(boatId);
                 return next;
@@ -217,9 +273,9 @@ const BoatsListing = () => {
         }
     };
 
-    const handlePreview = (boatId: string) => {
-        const numericId = parseInt(boatId.replace(/-/g, "").substring(0, 8), 16) % 10000000;
-        window.open(`/services/brokerage/${numericId}`, "_blank", "noopener,noreferrer");
+    const handlePreview = (boat: Boat) => {
+        const numericId = parseInt(boat.id.replace(/-/g, "").substring(0, 8), 16) % 10000000;
+        window.open(`/services/brokerage/${boat.slug || numericId}`, "_blank", "noopener,noreferrer");
     };
 
     const handleEdit = (boatId: string) => {
@@ -232,14 +288,14 @@ const BoatsListing = () => {
         if (!session?.user) return;
         const { data: boatsData, error: boatsError } = await supabase
             .from("boats")
-            .select(`id, active, boat_data(title)`)
+            .select(`id, slug, active, bought, boat_data(title)`)
             .eq("user_id", session.user.id)
             .order("created_at", { ascending: false });
         if (!boatsError && boatsData) {
             const boatsWithDetails = await Promise.all(
                 boatsData.map(async (boat: any) => {
                     const { data: brokerData } = await supabase.from("broker_data").select("name, dealer").eq("boat_id", boat.id).single();
-                    const { data: imagesData } = await supabase.from("boat_images").select("link").eq("boat_id", boat.id).order("display_order", { ascending: true }).limit(1).single();
+                    const { data: imagesData } = await supabase.from("boat_images").select("link").eq("boat_id", boat.id).eq("media_type", "image").order("display_order", { ascending: true }).limit(1).single();
                     return { ...boat, broker_data: brokerData, main_image: imagesData?.link || null };
                 })
             );
@@ -298,6 +354,7 @@ const BoatsListing = () => {
                         <TableHeader>
                             <tr>
                                 <TableHead style={{ width: "100px" }}>Active</TableHead>
+                                <TableHead style={{ width: "100px" }}>Bought</TableHead>
                                 <TableHead style={{ width: "140px" }}>Image</TableHead>
                                 <TableHead>Title</TableHead>
                                 <TableHead>Dealer</TableHead>
@@ -323,7 +380,7 @@ const BoatsListing = () => {
                                                         style={{ position: "absolute", opacity: 0, width: 0, height: 0 }}
                                                         checked={boat.active}
                                                         onChange={() => handleToggleActive(boat.id, boat.active)}
-                                                        disabled={updatingActive.has(boat.id)}
+                                                        disabled={updatingActive.has(boat.id) || boat.bought}
                                                     />
                                                     <div
                                                         className="toggle-switch"
@@ -334,8 +391,8 @@ const BoatsListing = () => {
                                                             borderRadius: "12px",
                                                             position: "relative",
                                                             transition: "background-color 0.3s ease",
-                                                            cursor: updatingActive.has(boat.id) ? "not-allowed" : "pointer",
-                                                            opacity: updatingActive.has(boat.id) ? 0.6 : 1,
+                                                            cursor: updatingActive.has(boat.id) || boat.bought ? "not-allowed" : "pointer",
+                                                            opacity: updatingActive.has(boat.id) || boat.bought ? 0.6 : 1,
                                                         }}
                                                     >
                                                         <div
@@ -356,6 +413,46 @@ const BoatsListing = () => {
                                                 </label>
                                             </div>
                                         </TableCell>
+                                        <TableCell style={{ width: "100px" }}>
+                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                <label style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "pointer" }}>
+                                                    <input
+                                                        type="checkbox"
+                                                        style={{ position: "absolute", opacity: 0, width: 0, height: 0 }}
+                                                        checked={boat.bought}
+                                                        onChange={() => handleToggleBought(boat.id, boat.bought)}
+                                                        disabled={updatingBought.has(boat.id)}
+                                                    />
+                                                    <div
+                                                        className="toggle-switch"
+                                                        style={{
+                                                            width: "44px",
+                                                            height: "24px",
+                                                            backgroundColor: boat.bought ? "#198754" : "rgba(var(--border-color), 0.5)",
+                                                            borderRadius: "12px",
+                                                            position: "relative",
+                                                            transition: "background-color 0.3s ease",
+                                                            cursor: updatingBought.has(boat.id) ? "not-allowed" : "pointer",
+                                                            opacity: updatingBought.has(boat.id) ? 0.6 : 1,
+                                                        }}
+                                                    >
+                                                        <div
+                                                            style={{
+                                                                position: "absolute",
+                                                                top: "2px",
+                                                                left: boat.bought ? "22px" : "2px",
+                                                                width: "20px",
+                                                                height: "20px",
+                                                                backgroundColor: "#fff",
+                                                                borderRadius: "50%",
+                                                                transition: "left 0.3s ease",
+                                                                boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </TableCell>
                                         <TableCell style={{ width: "140px" }}>
                                             <div style={{ width: "120px", height: "80px", position: "relative", borderRadius: "8px", overflow: "hidden" }}>
                                                 {boat.main_image ? (
@@ -373,7 +470,14 @@ const BoatsListing = () => {
                                             </div>
                                         </TableCell>
                                         <TableCell style={{ minWidth: "200px" }}>
-                                            <div className="font-medium" style={{ wordBreak: "break-word" }}>{boat.boat_data?.title || "Untitled"}</div>
+                                            <div className="font-medium d-flex align-items-center gap-2" style={{ wordBreak: "break-word" }}>
+                                                {boat.boat_data?.title || "Untitled"}
+                                                {boat.bought && (
+                                                    <span className="badge bg-success d-inline-flex align-items-center gap-1">
+                                                        <BadgeCheck className="h-4 w-4" /> Bought
+                                                    </span>
+                                                )}
+                                            </div>
                                         </TableCell>
                                         <TableCell style={{ minWidth: "200px" }}>
                                             {boat.broker_data ? (
@@ -392,7 +496,7 @@ const BoatsListing = () => {
                                                 <button
                                                     type="button"
                                                     id={`boat-preview-${boat.id}`}
-                                                    onClick={() => handlePreview(boat.id)}
+                                                    onClick={() => handlePreview(boat)}
                                                     className="profile-table-action-btn"
                                                     aria-label="Preview"
                                                 >

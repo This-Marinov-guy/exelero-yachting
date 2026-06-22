@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS boats (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     active BOOLEAN NOT NULL DEFAULT FALSE,
+    bought BOOLEAN NOT NULL DEFAULT FALSE,
+    slug TEXT NOT NULL,
+    dealer_id UUID,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -15,12 +18,15 @@ CREATE TABLE IF NOT EXISTS boat_data (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     boat_id UUID UNIQUE NOT NULL REFERENCES boats(id) ON DELETE CASCADE,
     condition VARCHAR(20) NOT NULL DEFAULT 'pre-owned' CHECK (condition IN ('new', 'pre-owned')),
+    keel_type VARCHAR(50) NOT NULL DEFAULT 'Fin Keel' CHECK (keel_type IN ('Fin Keel', 'Bulb Keel', 'Winged keel', 'Long keel', 'Bilge Keel', 'Keel Sword', 'Canting Keel', 'Swiveling Keel', 'Lifting Keel')),
+    ce_design_category VARCHAR(50) NOT NULL DEFAULT 'A - Ocean' CHECK (ce_design_category IN ('A - Ocean', 'B - Offshore', 'C - Inshore', 'D - Sheltered Waters')),
+    material VARCHAR(50) NOT NULL DEFAULT 'GRP' CHECK (material IN ('GRP', 'Wood', 'Aluminium', 'Steel', 'Polyethylene', 'Ferro Cement', 'Carbon Fiber')),
     title VARCHAR(512) NOT NULL,
     manufacturer VARCHAR(512) NOT NULL,
     build_number VARCHAR(100),
     build_year VARCHAR(4) NOT NULL,
     location VARCHAR(512) NOT NULL,
-    price INTEGER NOT NULL,
+    price INTEGER,
     vat_included BOOLEAN NOT NULL DEFAULT FALSE,
     description TEXT NOT NULL,
     hull_length DOUBLE PRECISION NOT NULL,
@@ -32,7 +38,8 @@ CREATE TABLE IF NOT EXISTS boat_data (
     engine_power DOUBLE PRECISION NOT NULL,
     fuel_tank INTEGER,
     water_tank INTEGER,
-    brochure VARCHAR(500), -- Optional
+    brochure VARCHAR(500), -- Optional primary brochure URL
+    brochures JSONB DEFAULT '[]'::jsonb,
     exterior_description TEXT NOT NULL,
     additional_details TEXT, -- Optional
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -53,6 +60,19 @@ CREATE TABLE IF NOT EXISTS broker_data (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'boats_dealer_id_fkey'
+    ) THEN
+        ALTER TABLE boats
+            ADD CONSTRAINT boats_dealer_id_fkey
+            FOREIGN KEY (dealer_id) REFERENCES broker_data(id) ON DELETE SET NULL;
+    END IF;
+END $$;
+
 -- Inquiries table (one-to-one relationship with boats)
 -- Note: "inqueries" is kept as per user request, though "inquiries" is the standard spelling
 CREATE TABLE IF NOT EXISTS inqueries (
@@ -72,6 +92,8 @@ CREATE TABLE IF NOT EXISTS boat_images (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     boat_id UUID NOT NULL REFERENCES boats(id) ON DELETE CASCADE,
     link VARCHAR(1000) NOT NULL,
+    media_type VARCHAR(20) NOT NULL DEFAULT 'image' CHECK (media_type IN ('image', 'video')),
+    is_cover BOOLEAN NOT NULL DEFAULT FALSE,
     display_order INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -88,6 +110,9 @@ CREATE TABLE IF NOT EXISTS profile_image (
 
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_boats_user_id ON boats(user_id);
+CREATE INDEX IF NOT EXISTS idx_boats_active_bought ON boats(active, bought);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_boats_slug_unique ON boats(slug);
+CREATE INDEX IF NOT EXISTS idx_boats_dealer_id ON boats(dealer_id);
 CREATE INDEX IF NOT EXISTS idx_boat_data_boat_id ON boat_data(boat_id);
 CREATE INDEX IF NOT EXISTS idx_boat_data_condition ON boat_data(condition);
 CREATE INDEX IF NOT EXISTS idx_broker_data_boat_id ON broker_data(boat_id);

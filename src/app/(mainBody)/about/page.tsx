@@ -1,4 +1,5 @@
 import AboutPage from "@/components/pages/about/AboutPage";
+import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,14 +12,14 @@ export const metadata: Metadata = {
       "Learn about Exelero Yachting — our story, expertise in yacht brokerage, charters and marine services.",
     url: "/about",
     type: "website",
-    images: [
-      {
-        url: "/assets/images/other/about/general.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Exelero Yachting Team",
-      },
-    ],
+    images: [breadcrumbOpenGraphImage("About Exelero Yachting")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Exelero Yachting | Our Story & Expertise",
+    description:
+      "Learn about Exelero Yachting — our story, expertise in yacht brokerage, charters and marine services.",
+    images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/about" },
   robots: { index: true, follow: true },

@@ -21,7 +21,9 @@
       "WebFetch(domain:localhost)",
       "Bash(curl -s http://localhost:3000)",
       "Bash(awk 'NR<=60')",
-      "Bash(awk 'NR<=40')"
+      "Bash(awk 'NR<=40')",
+      "Bash(awk 'NR<=20')",
+      "Bash(awk 'NR<=10')"
     ]
   }
 }

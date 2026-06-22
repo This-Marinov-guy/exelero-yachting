@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import "../index.scss";
 import { I18nProvider } from "./i18n/i18n-context";
 import { detectLanguage } from "./i18n/server";
 import { Providers } from "./MainProvider";
+import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 
 const CLARITY_PROJECT_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "vekv1ut2zw";
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
@@ -11,6 +12,11 @@ const IS_PRODUCTION = process.env.NODE_ENV === "production";
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://exelero.com");
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -39,17 +45,11 @@ export const metadata: Metadata = {
     siteName: "Exelero Yachting",
     type: "website",
     locale: "en_US",
-    images: [
-      {
-        url: "/assets/images/hero/x-yachts.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Exelero Yachting",
-      },
-    ],
+    images: [breadcrumbOpenGraphImage("Exelero Yachting")],
   },
   twitter: {
     card: "summary_large_image",
+    images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   robots: {
     index: true,
@@ -72,7 +72,11 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
   return (
     <html lang={lng}>
-      <head />
+      <head>
+        <link rel='preconnect' href='https://fonts.googleapis.com' />
+        <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
+        <link href='https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap' rel='stylesheet' />
+      </head>
       <body suppressHydrationWarning={true}>
         <I18nProvider language={lng}>
           <Providers>{children}</Providers>

@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Container } from "reactstrap";
 import { ArrowRight } from "lucide-react";
@@ -10,17 +9,17 @@ const HomeHeroSection = () => {
   return (
     <section className="exelero-home-hero">
       <div className="home-hero-bg" aria-hidden="true">
-        <Image
-          src="/assets/images/hero/x-yachts.jpg"
-          alt=""
-          fill
-          priority
-          fetchPriority="high"
-          sizes="100vw"
-          quality={82}
-          className="home-hero-image"
-          style={{ objectFit: "cover" }}
-        />
+        <video
+          className="home-hero-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/assets/images/hero/x-yachts.jpg"
+        >
+          <source src="/assets/video/hero/performance.m4v" type="video/mp4" />
+        </video>
         <div className="home-hero-overlay" />
       </div>
 

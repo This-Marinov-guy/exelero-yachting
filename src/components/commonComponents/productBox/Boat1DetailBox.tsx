@@ -30,6 +30,11 @@ const Boat1DetailBox: FC<ProductCardType> = ({ data, view, wishlist }) => {
       maximumFractionDigits: 0,
     }).format(price);
   };
+  const priceLabel = data.price != null ? (
+    <>
+      {formatPrice(data.price)} <span style={{fontFamily: 'Satisfy'}}>€</span>
+    </>
+  ) : "Price upon inquiry";
 
   return (
     <article className='featured-box'>
@@ -63,7 +68,7 @@ const Boat1DetailBox: FC<ProductCardType> = ({ data, view, wishlist }) => {
           })}
         </ul>
         <div className='featured-price'>
-          <h5>{formatPrice(data.price || 0)} <span style={{fontFamily: 'Satisfy'}}>€</span></h5>
+          <h5>{priceLabel}</h5>
           <Link href={`/boats/${data.id}`} className='btn-solid'>
             More
           </Link>

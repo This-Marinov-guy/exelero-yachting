@@ -1,4 +1,5 @@
 import ContactContainer from "@/components/pages/contact";
+import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,6 +11,13 @@ export const metadata: Metadata = {
     description: "Contact Exelero Yachting for yacht brokerage, charters and marine services.",
     url: "/contact",
     type: "website",
+    images: [breadcrumbOpenGraphImage("Contact Exelero Yachting")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Exelero Yachting | Get in Touch",
+    description: "Contact Exelero Yachting for yacht brokerage, charters and marine services.",
+    images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/contact" },
   robots: { index: true, follow: true },

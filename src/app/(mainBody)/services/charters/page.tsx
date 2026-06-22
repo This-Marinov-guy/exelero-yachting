@@ -1,4 +1,5 @@
 import CharterPage from "@/components/pages/charters/CharterPage";
+import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,14 +11,13 @@ export const metadata: Metadata = {
     description: "Book luxury yacht charters with Exelero Yachting. Explore our fleet of cruiser, power boat, and racer yachts.",
     url: "/services/charters",
     type: "website",
-    images: [
-      {
-        url: "/assets/images/hero/charters.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Luxury Yacht Charters",
-      },
-    ],
+    images: [breadcrumbOpenGraphImage("Luxury Yacht Charters")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Yacht Charters | Luxury Boat Rental & Experiences",
+    description: "Book luxury yacht charters with Exelero Yachting. Explore our fleet of cruiser, power boat, and racer yachts.",
+    images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/services/charters" },
   robots: { index: true, follow: true },

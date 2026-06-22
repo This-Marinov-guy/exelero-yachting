@@ -1,4 +1,5 @@
 import TransportationPage from "@/components/pages/transportation/TransportationPage";
+import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,14 +11,13 @@ export const metadata: Metadata = {
     description: "Professional yacht and boat transportation services by Exelero Yachting. land and sea delivery, safe and insured.",
     url: "/services/transportation",
     type: "website",
-    images: [
-      {
-        url: "/assets/images/hero/transportation.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Yacht Transportation",
-      },
-    ],
+    images: [breadcrumbOpenGraphImage("Yacht Transportation")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Yacht Transportation & Logistics | Global Boat Delivery",
+    description: "Professional yacht and boat transportation services by Exelero Yachting. land and sea delivery, safe and insured.",
+    images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/services/transportation" },
   robots: { index: true, follow: true },

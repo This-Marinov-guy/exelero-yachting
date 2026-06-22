@@ -22,6 +22,7 @@ const saveToStorage = (state: BoatUploadState) => {
       formData: state.formData,
       imageMetadata: state.imageMetadata,
       uploadedImages: state.uploadedImages,
+      uploadedBrochures: state.uploadedBrochures,
       uploadFolderName: state.uploadFolderName,
       mainImageIndex: state.mainImageIndex,
       brochureFileName: state.brochureFileName,
@@ -44,7 +45,16 @@ export interface UploadedImage {
   url: string;
   order: number;
   name: string;
-  filePath: string; // Path in storage bucket
+  filePath: string; // Path in storage bucket; empty for linked videos
+  mediaType?: "image" | "video";
+  sourceType?: "upload" | "link";
+}
+
+export interface UploadedBrochure {
+  url: string;
+  order: number;
+  name: string;
+  filePath: string;
 }
 
 export interface BoatUploadState {
@@ -52,6 +62,9 @@ export interface BoatUploadState {
     dealer_id: string;
     type: string;
     condition: string;
+    keel_type: string;
+    ce_design_category: string;
+    material: string;
     title: string;
     manufacturer: string;
     build_number: string;
@@ -73,6 +86,7 @@ export interface BoatUploadState {
   };
   imageMetadata: ImageMetadata[];
   uploadedImages: UploadedImage[]; // Images already uploaded to storage
+  uploadedBrochures: UploadedBrochure[];
   uploadFolderName: string | null; // Unique folder name for this upload session
   mainImageIndex: number;
   brochureFileName: string | null;
@@ -83,6 +97,9 @@ const defaultFormData: BoatUploadState["formData"] = {
   dealer_id: "",
   type: "",
   condition: "",
+  keel_type: "Fin Keel",
+  ce_design_category: "A - Ocean",
+  material: "GRP",
   title: "",
   manufacturer: "",
   build_number: "",
@@ -111,12 +128,19 @@ const initialState: BoatUploadState = storedData ? {
     ...defaultFormData,
     ...storedData.formData,
   },
+  uploadedBrochures: storedData.uploadedBrochures || (storedData.brochureUrl ? [{
+    url: storedData.brochureUrl,
+    order: 0,
+    name: storedData.brochureFileName || "Brochure",
+    filePath: "",
+  }] : []),
 } : {
   formData: {
     ...defaultFormData,
   },
   imageMetadata: [],
   uploadedImages: [],
+  uploadedBrochures: [],
   uploadFolderName: null,
   mainImageIndex: 0,
   brochureFileName: null,
@@ -194,6 +218,34 @@ const BoatUploadSlice = createSlice({
       state.brochureUrl = action.payload;
       saveToStorage(state);
     },
+    addUploadedBrochures: (state, action: PayloadAction<UploadedBrochure[]>) => {
+      state.uploadedBrochures.push(...action.payload);
+      state.uploadedBrochures.sort((a, b) => a.order - b.order);
+      const firstBrochure = state.uploadedBrochures[0] || null;
+      state.brochureFileName = firstBrochure?.name || null;
+      state.brochureUrl = firstBrochure?.url || null;
+      saveToStorage(state);
+    },
+    removeUploadedBrochure: (state, action: PayloadAction<number>) => {
+      state.uploadedBrochures.splice(action.payload, 1);
+      state.uploadedBrochures.forEach((brochure, index) => {
+        brochure.order = index;
+      });
+      const firstBrochure = state.uploadedBrochures[0] || null;
+      state.brochureFileName = firstBrochure?.name || null;
+      state.brochureUrl = firstBrochure?.url || null;
+      saveToStorage(state);
+    },
+    setUploadedBrochures: (state, action: PayloadAction<UploadedBrochure[]>) => {
+      state.uploadedBrochures = action.payload.map((brochure, index) => ({
+        ...brochure,
+        order: index,
+      }));
+      const firstBrochure = state.uploadedBrochures[0] || null;
+      state.brochureFileName = firstBrochure?.name || null;
+      state.brochureUrl = firstBrochure?.url || null;
+      saveToStorage(state);
+    },
     setUploadFolderName: (state, action: PayloadAction<string | null>) => {
       state.uploadFolderName = action.payload;
       saveToStorage(state);
@@ -255,7 +307,7 @@ const BoatUploadSlice = createSlice({
       state.imageMetadata = action.payload.map((img, index) => ({
         name: img.name,
         size: 0, // Size not needed for uploaded images
-        type: img.name.split(".").pop() || "image/jpeg",
+        type: img.mediaType === "video" ? "video" : img.name.split(".").pop() || "image/jpeg",
         order: index,
       }));
       saveToStorage(state);
@@ -264,6 +316,7 @@ const BoatUploadSlice = createSlice({
       state.formData = { ...defaultFormData };
       state.imageMetadata = [];
       state.uploadedImages = [];
+      state.uploadedBrochures = [];
       state.uploadFolderName = null;
       state.mainImageIndex = 0;
       state.brochureFileName = null;
@@ -283,6 +336,9 @@ export const {
   setMainImageIndex,
   setBrochureFileName,
   setBrochureUrl,
+  addUploadedBrochures,
+  removeUploadedBrochure,
+  setUploadedBrochures,
   setUploadFolderName,
   addUploadedImage,
   removeUploadedImage,

@@ -67,7 +67,11 @@ const BoatDetailPage: FC<BoatDetailPageProps> = ({ boat }) => {
               </div>
               <div className="price-box">
                 <h4>
-                  {formatPrice(boat.price || 0)} <span style={{ fontFamily: "Satisfy" }}>€</span>
+                  {boat.price != null ? (
+                    <>
+                      {formatPrice(boat.price)} <span style={{ fontFamily: "Satisfy" }}>€</span>
+                    </>
+                  ) : "Price upon inquiry"}
                   {boat.vatIncluded && <span className="text-muted small ms-2">(VAT Included)</span>}
                 </h4>
                 <ul className="detail-social-list">
@@ -156,6 +160,21 @@ const BoatDetailPage: FC<BoatDetailPageProps> = ({ boat }) => {
                   </Col>
                   <Col md={6}>
                     <div className="spec-item">
+                      <strong>Keel Type:</strong> <span>{boat.keelType || "N/A"}</span>
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="spec-item">
+                      <strong>CE Design Category:</strong> <span>{boat.ceDesignCategory || "N/A"}</span>
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="spec-item">
+                      <strong>Material:</strong> <span>{boat.material || "N/A"}</span>
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="spec-item">
                       <strong>Hull Length:</strong> <span>{boat.hullLength ? `${boat.hullLength}m` : "N/A"}</span>
                     </div>
                   </Col>
@@ -225,13 +244,17 @@ const BoatDetailPage: FC<BoatDetailPageProps> = ({ boat }) => {
               )}
 
               {/* Brochure Download */}
-              {boat.brochure && (
+              {(boat.brochures?.length || boat.brochure) && (
                 <div className="boat-brochure mb-4">
-                  <h5 className="mb-3">Brochure</h5>
-                  <a href={boat.brochure} target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary">
-                    <i className="ri-download-line me-2" />
-                    Download Brochure
-                  </a>
+                  <h5 className="mb-3">Brochures</h5>
+                  <div className="d-flex flex-wrap gap-2">
+                    {(boat.brochures?.length ? boat.brochures : [{ url: boat.brochure || "", name: "Brochure" }]).map((brochure, index) => (
+                      <a key={`${brochure.url}-${index}`} href={brochure.url} target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary">
+                        <i className="ri-download-line me-2" />
+                        Download {brochure.name || `Brochure ${index + 1}`}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               )}
             </Col>

@@ -2,7 +2,7 @@
 
 import { FC, useState, useEffect } from "react";
 import { ProductType } from "@/types/Product";
-import { Row, Col } from "reactstrap";
+import { Row, Col, Modal, ModalBody } from "reactstrap";
 import DOMPurify from "dompurify";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs } from "swiper/modules";
@@ -20,6 +20,10 @@ interface BoatDetailBodyProps {
 
 const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
   const [imgDimensions, setImgDimensions] = useState<Record<number, { width: number; height: number }>>({});
+  const [previewVideo, setPreviewVideo] = useState<string | null>(null);
+  const mediaItems = boat.media?.length
+    ? boat.media
+    : (boat.image || []).map((url) => ({ url, type: "image" as const }));
 
   useEffect(() => {
     boat.image?.forEach((src, index) => {
@@ -58,6 +62,9 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
     { label: "Manufacturer",      value: boat.manufacturer || null },
     { label: "Build Number",      value: boat.buildNumber || null },
     { label: "Build Year",        value: boat.buildYear || null },
+    { label: "Keel Type",         value: boat.keelType || null },
+    { label: "CE Design Category", value: boat.ceDesignCategory || null },
+    { label: "Material",          value: boat.material || null },
     { label: "Hull Length",       value: formatDualUnit(boat.hullLength,       "m",  metersToFeet,    "ft")  },
     { label: "Waterline Length",  value: formatDualUnit(boat.waterlineLength,  "m",  metersToFeet,    "ft")  },
     { label: "Beam",              value: formatDualUnit(boat.beam,             "m",  metersToFeet,    "ft")  },
@@ -72,7 +79,7 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
   return (
     <div className="detail-body">
       {/* Image Gallery Carousel */}
-      {boat.image && boat.image.length > 0 && (
+      {mediaItems.length > 0 && (
         <div id="gallery" className="mb-5">
           <h4 className="detail-page-title mb-3">Gallery</h4>
           <Gallery>
@@ -94,22 +101,50 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
               }}
               className="boat-gallery-carousel"
             >
-              {boat.image.map((img, index) => (
-                <SwiperSlide key={index}>
-                  <Item
-                    original={img}
-                    thumbnail={img}
-                    width={imgDimensions[index]?.width ?? 1200}
-                    height={imgDimensions[index]?.height ?? 800}
-                  >
-                    {({ ref, open }) => (
+              {mediaItems.map((media, index) => (
+                <SwiperSlide key={`${media.url}-${index}`}>
+                  {media.type === "video" ? (
+                    <div
+                      className="boat-gallery-item"
+                      onClick={() => setPreviewVideo(media.url)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          setPreviewVideo(media.url);
+                        }
+                      }}
+                    >
+                      <video
+                        src={media.url}
+                        muted
+                        loop
+                        autoPlay
+                        playsInline
+                        preload="metadata"
+                        className="boat-gallery-image"
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                      <div className="boat-gallery-overlay">
+                        <i className="ri-play-circle-line" />
+                      </div>
+                    </div>
+                  ) : (
+                    <Item
+                      original={media.url}
+                      thumbnail={media.url}
+                      width={imgDimensions[index]?.width ?? 1200}
+                      height={imgDimensions[index]?.height ?? 800}
+                    >
+                      {({ ref, open }) => (
                       <div
                         ref={ref}
                         className="boat-gallery-item"
                         onClick={open}
                       >
                         <Image
-                          src={img}
+                          src={media.url}
                           alt={`${boat.title} - Image ${index + 1}`}
                           fill
                           style={{ objectFit: "contain" }}
@@ -119,12 +154,26 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
                           <i className="ri-zoom-in-line" />
                         </div>
                       </div>
-                    )}
-                  </Item>
+                      )}
+                    </Item>
+                  )}
                 </SwiperSlide>
               ))}
             </Swiper>
           </Gallery>
+          <Modal isOpen={Boolean(previewVideo)} toggle={() => setPreviewVideo(null)} centered size="lg">
+            <ModalBody className="p-0 bg-dark">
+              {previewVideo && (
+                <video
+                  src={previewVideo}
+                  controls
+                  autoPlay
+                  playsInline
+                  style={{ width: "100%", maxHeight: "80vh", display: "block", background: "#000" }}
+                />
+              )}
+            </ModalBody>
+          </Modal>
         </div>
       )}
 
@@ -161,12 +210,16 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
       )}
 
       {/* Brochure Download */}
-      {boat.brochure && (
+      {(boat.brochures?.length || boat.brochure) && (
         <div id="brochure" className="mb-4">
-          <h4 className="detail-page-title">Brochure</h4>
-          <a href={boat.brochure} target="_blank" rel="noopener noreferrer" className="btn-solid">
-            Download Brochure
-          </a>
+          <h4 className="detail-page-title">Brochures</h4>
+          <div className="d-flex flex-wrap gap-2">
+            {(boat.brochures?.length ? boat.brochures : [{ url: boat.brochure || "", name: "Brochure" }]).map((brochure, index) => (
+              <a key={`${brochure.url}-${index}`} href={brochure.url} target="_blank" rel="noopener noreferrer" className="btn-solid">
+                Download {brochure.name || `Brochure ${index + 1}`}
+              </a>
+            ))}
+          </div>
         </div>
       )}
     </div>

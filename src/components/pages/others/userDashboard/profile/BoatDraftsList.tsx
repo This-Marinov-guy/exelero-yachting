@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { Button } from "reactstrap";
-import { UploadedImage } from "@/redux/reducers/BoatUploadSlice";
+import { UploadedBrochure, UploadedImage } from "@/redux/reducers/BoatUploadSlice";
 
 interface BoatDraft {
     id: string;
@@ -11,6 +11,9 @@ interface BoatDraft {
     title: string | null;
     type: string | null;
     condition: string | null;
+    keel_type: string | null;
+    ce_design_category: string | null;
+    material: string | null;
     manufacturer: string | null;
     build_number: string | null;
     build_year: string | null;
@@ -29,6 +32,7 @@ interface BoatDraft {
     water_tank: number | null;
     brochure: string | null;
     brochure_file_name: string | null;
+    brochures: UploadedBrochure[];
     additional_details: string | null;
     dealer_id: string | null;
     upload_folder_name: string | null;

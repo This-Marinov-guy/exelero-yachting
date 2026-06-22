@@ -31,7 +31,7 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
   const handleShare = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const mainImage = boat.image?.[0] ?? "";
-    const priceStr = boat.price != null ? `${formatPrice(boat.price)} €` : "";
+    const priceStr = boat.price != null ? `${formatPrice(boat.price)} €` : "Price upon inquiry";
     const conditionLabel = boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : "";
     const descriptionParts = [boat.location, conditionLabel, boat.boatType, priceStr].filter(Boolean);
     dispatch(
@@ -106,7 +106,11 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
         </div>
         <div className="price-box">
           <h4>
-            {formatPrice(boat.price || 0)} <span style={{ fontFamily: "Satisfy", color: 'black' }}>€</span>
+            {boat.price != null ? (
+              <>
+                {formatPrice(boat.price)} <span style={{ fontFamily: "Satisfy", color: 'black' }}>€</span>
+              </>
+            ) : "Price upon inquiry"}
             {boat.vatIncluded && <span className="text-muted" style={{ fontSize: "14px" }}> (VAT Included)</span>}
           </h4>
           <ul className="detail-social-list">

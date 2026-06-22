@@ -48,8 +48,9 @@ const FilterSidebar: FC<FilterSidebarType> = ({ value, modalType, filterClass, t
     }));
   }, [value, type]);
 
-  let minPrice = Array.isArray(value) && value.length > 0 ? value.reduce((res: any, obj: any) => (Math.round(obj?.price) < Math.round(res?.price) ? obj : res)) : undefined;
-  let maxPrice = Array.isArray(value) && value.length > 0 ? value.reduce((res: any, obj: any) => (Math.round(obj?.price) > Math.round(res?.price) ? obj : res)) : undefined;
+  const pricedValues = Array.isArray(value) ? value.filter((item: any) => typeof item?.price === "number" && Number.isFinite(item.price)) : [];
+  let minPrice = pricedValues.length > 0 ? pricedValues.reduce((res: any, obj: any) => (Math.round(obj?.price) < Math.round(res?.price) ? obj : res)) : undefined;
+  let maxPrice = pricedValues.length > 0 ? pricedValues.reduce((res: any, obj: any) => (Math.round(obj?.price) > Math.round(res?.price) ? obj : res)) : undefined;
 
   let minKiloMeters = Array.isArray(value) && value.length > 0 ? value.reduce((res: any, obj: any) => (Math.round(obj?.kilometers) < Math.round(res?.kilometers) ? obj : res)) : undefined;
   let maxKiloMeters = Array.isArray(value) && value.length > 0 ? value.reduce((res: any, obj: any) => (Math.round(obj?.kilometers) > Math.round(res?.kilometers) ? obj : res)) : undefined;

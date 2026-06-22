@@ -9,8 +9,9 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
     // Fetch active boats with related data
     const { data: boatsData, error: boatsError } = await supabase
       .from("boats")
-      .select("id, created_at")
+      .select("id, user_id, slug, dealer_id, created_at")
       .eq("active", true)
+      .eq("bought", false)
       .order("created_at", { ascending: false });
 
     if (boatsError) {
@@ -33,23 +34,51 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
           .single();
 
         // Fetch broker_data
-        const { data: brokerData } = await supabase
-          .from("broker_data")
-          .select("name, dealer")
-          .eq("boat_id", boat.id)
-          .single();
+        let brokerData = null;
+        if (boat.dealer_id) {
+          const { data } = await supabase
+            .from("broker_data")
+            .select("name, dealer")
+            .eq("id", boat.dealer_id)
+            .maybeSingle();
+          brokerData = data;
+        }
+        if (!brokerData) {
+          const { data } = await supabase
+            .from("broker_data")
+            .select("name, dealer")
+            .eq("boat_id", boat.id)
+            .maybeSingle();
+          brokerData = data;
+        }
+        if (!brokerData) {
+          const { data } = await supabase
+            .from("broker_data")
+            .select("name, dealer")
+            .eq("user_id", boat.user_id)
+            .order("created_at", { ascending: true })
+            .limit(1)
+            .maybeSingle();
+          brokerData = data;
+        }
 
-        // Fetch images — cover image first, then by display_order
+        // Fetch media — cover item first, then by display_order
         const { data: imagesData } = await supabase
           .from("boat_images")
-          .select("link, is_cover")
+          .select("link, is_cover, media_type")
           .eq("boat_id", boat.id)
           .order("display_order", { ascending: true });
 
-        const images = (imagesData || [])
+        const media = (imagesData || [])
           .sort((a, b) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))
-          .map((img) => img.link);
-        const mainImage = images[0] || "";
+          .map((item, index) => ({
+            url: item.link,
+            type: item.media_type === "video" ? "video" as const : "image" as const,
+            isCover: Boolean(item.is_cover),
+            order: index,
+          }));
+        const images = media.filter((item) => item.type === "image").map((item) => item.url);
+        const mainImage = images[0] || "/assets/images/hero/boats.jpg";
 
         // Generate a numeric ID from UUID
         const numericId = parseInt(boat.id.replace(/-/g, "").substring(0, 8), 16) % 10000000;
@@ -57,6 +86,7 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
         return {
           id: numericId || Math.floor(Math.random() * 1000000),
           image: images.length > 0 ? images : [mainImage],
+          media,
           title: boatData?.title || "Untitled Boat",
           type: "boat",
           category: boatData?.manufacturer ? [boatData.manufacturer] : [],
@@ -65,7 +95,7 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
             { icon: "beam", text: `${boatData?.beam || 0}m Beam` },
             { icon: "power", text: `${boatData?.engine_power || 0}hp` },
           ],
-          price: boatData?.price || 0,
+          price: boatData?.price ?? undefined,
           description: boatData?.description || "",
           location: boatData?.location || "",
           year: parseInt(boatData?.build_year || "0"),
@@ -83,6 +113,7 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
           company: brokerData?.dealer || brokerData?.name || "",
           // Boat-specific properties
           boatId: boat.id,
+          slug: boat.slug || "",
           manufacturer: boatData?.manufacturer || "",
           buildNumber: boatData?.build_number || "",
           buildYear: boatData?.build_year || "",
@@ -99,6 +130,10 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
           dealer: brokerData?.dealer || "",
           boatType: boatData?.type || "",
           condition: boatData?.condition || "pre-owned",
+          keelType: boatData?.keel_type || "",
+          ceDesignCategory: boatData?.ce_design_category || "",
+          material: boatData?.material || "",
+          brochures: Array.isArray(boatData?.brochures) ? boatData.brochures : [],
         } as ProductType;
       })
     );

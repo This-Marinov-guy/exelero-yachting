@@ -49,13 +49,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const supabase = getSupabaseServerClient();
     const { data: boats } = await supabase
       .from("boats")
-      .select("id, updated_at")
-      .eq("active", true);
+      .select("id, slug, updated_at")
+      .eq("active", true)
+      .eq("bought", false);
 
     if (boats?.length) {
       boatUrls = boats.map((b) => {
         const boatId = generateNumericId(b.id);
-        const path = `/services/brokerage/${boatId}`;
+        const path = `/services/brokerage/${b.slug || boatId}`;
         return {
           url: `${baseUrl}${path}`,
           lastModified: b.updated_at ? new Date(b.updated_at) : new Date(),

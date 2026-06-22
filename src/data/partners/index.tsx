@@ -27,9 +27,9 @@ export const Partners: Record<string, Partner> = {
   "elvstrom": {
     id: "elvstrom",
     name: "Elvstrom",
-    heroImage: "/assets/images/hero/elvstrom.png",
+    heroImage: "/assets/images/hero/elvstrom.jpg",
     logoImage: "/assets/images/logo/elvstrom.png",
-    breadcrumbImage: "/assets/images/breadcrumbs/elvstrom.png",
+    breadcrumbImage: "/assets/images/breadcrumbs/elvstrom.jpg",
     affiliateLink: "https://www.elvstrom.com",
     primaryColor: "#003366",
     secondaryColor: "#ffffff",
@@ -39,7 +39,7 @@ export const Partners: Record<string, Partner> = {
   "elvstrom-sailwear": {
     id: "elvstrom-sailwear",
     name: "Elvstrom SailWear",
-    heroImage: "/assets/images/hero/elvstrom.png",
+    heroImage: "/assets/images/hero/elvstrom.jpg",
     logoImage: "/assets/images/logo/elvstrom-sailwear.webp",
     breadcrumbImage: "/assets/images/breadcrumbs/evs-sailwear.jpg",
     affiliateLink: "https://www.elvstrom.com",

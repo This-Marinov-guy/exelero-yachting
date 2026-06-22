@@ -8,10 +8,12 @@ import { RouteList } from "@/utils/RouteList";
 
 type FeaturedBoat = {
   id: number;
+  slug: string;
   title: string;
-  mainImage: string;
+  mainMediaUrl: string;
+  mainMediaType: "image" | "video";
   location: string;
-  price: number;
+  price?: number;
   buildYear: string;
   hullLength: number;
   enginePower: number;
@@ -37,8 +39,9 @@ async function fetchFeaturedBoats(): Promise<FeaturedBoat[]> {
 
     const { data: boatsData } = await supabase
       .from("boats")
-      .select("id, created_at")
+      .select("id, slug, created_at")
       .eq("active", true)
+      .eq("bought", false)
       .order("created_at", { ascending: false })
       .limit(3);
 
@@ -48,20 +51,21 @@ async function fetchFeaturedBoats(): Promise<FeaturedBoat[]> {
       boatsData.map(async (boat) => {
         const [{ data: boatData }, { data: imagesData }] = await Promise.all([
           supabase.from("boat_data").select("*").eq("boat_id", boat.id).single(),
-          supabase.from("boat_images").select("link, is_cover").eq("boat_id", boat.id).order("display_order", { ascending: true }),
+          supabase.from("boat_images").select("link, is_cover, media_type").eq("boat_id", boat.id).order("display_order", { ascending: true }),
         ]);
 
-        const mainImage = ((imagesData || []) as { link: string; is_cover: boolean }[])
-          .sort((a, b) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))
-          .map((img) => img.link)[0] || "/assets/images/hero/boats.jpg";
+        const mainMedia = ((imagesData || []) as { link: string; is_cover: boolean; media_type?: string }[])
+          .sort((a, b) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))[0];
 
         const numericId = parseInt(boat.id.replace(/-/g, "").substring(0, 8), 16) % 10000000;
 
         return {
           id: numericId || Math.floor(Math.random() * 1000000),
-          mainImage,
+          slug: boat.slug || "",
+          mainMediaUrl: mainMedia?.link || "/assets/images/hero/boats.jpg",
+          mainMediaType: mainMedia?.media_type === "video" ? "video" as const : "image" as const,
           title: boatData?.title || "Untitled Boat",
-          price: boatData?.price || 0,
+          price: boatData?.price ?? undefined,
           location: boatData?.location || "",
           buildYear: boatData?.build_year || "",
           hullLength: boatData?.hull_length || 0,
@@ -98,17 +102,30 @@ const HomeBoatPreview = async () => {
           {boats.map((boat, idx) => (
             <Col className="col-lg-4 col-sm-6" key={boat.id} data-aos="fade-up" data-aos-duration={500 + idx * 80}>
               <article className="car2-featured-box property2-featured-box">
-                <Link href={`/services/brokerage/${boat.id}`} className="car2-featured-img">
+                <Link href={`/services/brokerage/${boat.slug || boat.id}`} className="car2-featured-img">
                   <div style={{ position: "relative", width: "100%", aspectRatio: "16/9" }}>
-                    <Image
-                      src={boat.mainImage}
-                      alt={boat.title}
-                      fill
-                      sizes="(max-width: 575px) 100vw, (max-width: 1199px) 50vw, 33vw"
-                      quality={70}
-                      className="bg-img"
-                      style={{ objectFit: "cover" }}
-                    />
+                    {boat.mainMediaType === "video" ? (
+                      <video
+                        src={boat.mainMediaUrl}
+                        muted
+                        loop
+                        autoPlay
+                        playsInline
+                        preload="metadata"
+                        className="bg-img"
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    ) : (
+                      <Image
+                        src={boat.mainMediaUrl}
+                        alt={boat.title}
+                        fill
+                        sizes="(max-width: 575px) 100vw, (max-width: 1199px) 50vw, 33vw"
+                        quality={70}
+                        className="bg-img"
+                        style={{ objectFit: "cover" }}
+                      />
+                    )}
                   </div>
                   <div className="car2-label-flex">
                     <span className="bg-white">{conditionLabel(boat.condition)}</span>
@@ -116,7 +133,7 @@ const HomeBoatPreview = async () => {
                   </div>
                 </Link>
                 <div className="car2-featured-content">
-                  <Link href={`/services/brokerage/${boat.id}`}>
+                  <Link href={`/services/brokerage/${boat.slug || boat.id}`}>
                     <h4>{boat.title}</h4>
                   </Link>
                   {boat.location && (
@@ -137,9 +154,13 @@ const HomeBoatPreview = async () => {
                   </ul>
                   <div className="price-flex">
                     <h4>
-                      {formatPrice(boat.price)} <span style={{ fontFamily: "Satisfy" }}>€</span>
+                      {boat.price != null ? (
+                        <>
+                          {formatPrice(boat.price)} <span style={{ fontFamily: "Satisfy" }}>€</span>
+                        </>
+                      ) : "Price upon inquiry"}
                     </h4>
-                    <Link href={`/services/brokerage/${boat.id}`} className="btn-solid">
+                    <Link href={`/services/brokerage/${boat.slug || boat.id}`} className="btn-solid">
                       View
                     </Link>
                   </div>
