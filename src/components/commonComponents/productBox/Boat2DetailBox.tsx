@@ -23,21 +23,15 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
     </>
   ) : "Price upon inquiry";
 
-  // Length: meters and feet (1 m ≈ 3.28084 ft)
   const lengthM = data.hullLength ?? 0;
-  const lengthFt = Math.round(lengthM * 3.28084 * 10) / 10;
-  const lengthText = lengthM > 0 ? `${lengthM} m (${lengthFt} ft)` : "—";
+  const lengthText = lengthM > 0 ? `${lengthM} m` : "—";
 
-  // Engine: kW and hp (1 kW ≈ 1.34102 hp). DB stores engine_power in kW.
   const powerKw = data.enginePower ?? 0;
-  const powerHp = Math.round(powerKw * 1.34102 * 10) / 10;
-  const powerText = powerKw > 0 ? `${powerKw} kW (${powerHp} hp)` : "—";
+  const powerText = powerKw > 0 ? `${powerKw} kW` : "—";
   const beamM = data.beam ?? 0;
-  const beamFt = Math.round(beamM * 3.28084 * 10) / 10;
-  const beamText = beamM > 0 ? `${beamM} m (${beamFt} ft)` : "—";
+  const beamText = beamM > 0 ? `${beamM} m` : "—";
   const draftM = data.draft ?? 0;
-  const draftFt = Math.round(draftM * 3.28084 * 10) / 10;
-  const draftText = draftM > 0 ? `${draftM} m (${draftFt} ft)` : "—";
+  const draftText = draftM > 0 ? `${draftM} m` : "—";
   const conditionLabel = data.condition === "new" ? "New" : data.condition === "pre-owned" ? "Pre-owned" : label || "For Sale";
   const mediaItems = data.media?.length
     ? data.media

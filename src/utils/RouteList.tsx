@@ -200,7 +200,7 @@ export const RouteList = {
       Zhik: `/partners/zhik`,
     },
     Boats: `/services/brokerage`,
-    NewYachts: `/services/brokerage?condition=new`,
+    NewYachts: `/new-yachts`,
     PreOwnedYachts: `/services/brokerage?condition=pre-owned`,
     Charters: `/services/charters`,
     About: `/about`,
