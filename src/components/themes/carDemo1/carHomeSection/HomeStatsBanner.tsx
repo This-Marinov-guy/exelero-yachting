@@ -42,7 +42,7 @@ const HomeStatsBanner = () => {
             </Link>
           </Col>
 
-          <Col lg={6} data-aos="fade-left" data-aos-duration={600}>
+          {/* <Col lg={6} data-aos="fade-left" data-aos-duration={600}>
             <div className="stats-grid">
               {stats.map((stat, idx) => (
                 <div key={idx} className="stat-item">
@@ -51,7 +51,7 @@ const HomeStatsBanner = () => {
                 </div>
               ))}
             </div>
-          </Col>
+          </Col> */}
         </Row>
       </Container>
     </section>
