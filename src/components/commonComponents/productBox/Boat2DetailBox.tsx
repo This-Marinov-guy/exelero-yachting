@@ -112,20 +112,28 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
             <h6>{data.location}</h6>
           </div>
           <ul className='featured-list boat-spec-list'>
-            <li title="Length">
-              <Ruler className="boat-feature-icon" aria-hidden />
+            <li>
+              <span className="boat-spec-icon" data-tooltip="Length" aria-label="Length" tabIndex={0}>
+                <Ruler className="boat-feature-icon" aria-hidden />
+              </span>
               <span>{lengthText}</span>
             </li>
-            <li title="Engine power">
-              <Zap className="boat-feature-icon" aria-hidden />
+            <li>
+              <span className="boat-spec-icon" data-tooltip="Engine power" aria-label="Engine power" tabIndex={0}>
+                <Zap className="boat-feature-icon" aria-hidden />
+              </span>
               <span>{powerText}</span>
             </li>
-            <li title="Beam">
-              <MoveHorizontal className="boat-feature-icon" aria-hidden />
+            <li className="boat-spec-secondary">
+              <span className="boat-spec-icon" data-tooltip="Beam" aria-label="Beam" tabIndex={0}>
+                <MoveHorizontal className="boat-feature-icon" aria-hidden />
+              </span>
               <span>{beamText}</span>
             </li>
-            <li title="Draft">
-              <ArrowDownToLine className="boat-feature-icon" aria-hidden />
+            <li className="boat-spec-secondary">
+              <span className="boat-spec-icon" data-tooltip="Draft" aria-label="Draft" tabIndex={0}>
+                <ArrowDownToLine className="boat-feature-icon" aria-hidden />
+              </span>
               <span>{draftText}</span>
             </li>
           </ul>

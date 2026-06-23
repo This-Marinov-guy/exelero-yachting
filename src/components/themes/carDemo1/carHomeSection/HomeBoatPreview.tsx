@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Col, Container, Row } from "reactstrap";
-import { ArrowRight, MapPin, Ruler, Zap } from "lucide-react";
+import { ArrowDownToLine, ArrowRight, MapPin, MoveHorizontal, Ruler, Zap } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
 import { RouteList } from "@/utils/RouteList";
 
@@ -16,6 +16,8 @@ type FeaturedBoat = {
   price?: number;
   buildYear: string;
   hullLength: number;
+  beam: number;
+  draft: number;
   enginePower: number;
   condition: string;
 };
@@ -69,6 +71,8 @@ async function fetchFeaturedBoats(): Promise<FeaturedBoat[]> {
           location: boatData?.location || "",
           buildYear: boatData?.build_year || "",
           hullLength: boatData?.hull_length || 0,
+          beam: boatData?.beam || 0,
+          draft: boatData?.draft || 0,
           enginePower: boatData?.engine_power || 0,
           condition: boatData?.condition || "pre-owned",
         };
@@ -133,25 +137,43 @@ const HomeBoatPreview = async () => {
                   </div>
                 </Link>
                 <div className="car2-featured-content">
-                  <Link href={`/services/brokerage/${boat.slug || boat.id}`}>
-                    <h4>{boat.title}</h4>
-                  </Link>
-                  {boat.location && (
-                    <div className="location-flex">
-                      <MapPin className="boat-feature-icon" aria-hidden />
-                      <h6>{boat.location}</h6>
-                    </div>
-                  )}
-                  <ul className="featured-list" style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "flex-start" }}>
-                    <li>
-                      <Ruler className="boat-feature-icon" aria-hidden />
-                      <span>{boat.hullLength > 0 ? `${boat.hullLength} m` : "Length on request"}</span>
-                    </li>
-                    <li>
-                      <Zap className="boat-feature-icon" aria-hidden />
-                      <span>{boat.enginePower > 0 ? `${boat.enginePower} kW` : "Power on request"}</span>
-                    </li>
-                  </ul>
+                  <div className="boat-card-body">
+                    <Link href={`/services/brokerage/${boat.slug || boat.id}`}>
+                      <h4>{boat.title}</h4>
+                    </Link>
+                    {boat.location && (
+                      <div className="location-flex">
+                        <MapPin className="boat-feature-icon" aria-hidden />
+                        <h6>{boat.location}</h6>
+                      </div>
+                    )}
+                    <ul className="featured-list boat-spec-list">
+                      <li>
+                        <span className="boat-spec-icon" data-tooltip="Length" aria-label="Length" tabIndex={0}>
+                          <Ruler className="boat-feature-icon" aria-hidden />
+                        </span>
+                        <span>{boat.hullLength > 0 ? `${boat.hullLength} m` : "—"}</span>
+                      </li>
+                      <li>
+                        <span className="boat-spec-icon" data-tooltip="Engine power" aria-label="Engine power" tabIndex={0}>
+                          <Zap className="boat-feature-icon" aria-hidden />
+                        </span>
+                        <span>{boat.enginePower > 0 ? `${boat.enginePower} kW` : "—"}</span>
+                      </li>
+                      <li className="boat-spec-secondary">
+                        <span className="boat-spec-icon" data-tooltip="Beam" aria-label="Beam" tabIndex={0}>
+                          <MoveHorizontal className="boat-feature-icon" aria-hidden />
+                        </span>
+                        <span>{boat.beam > 0 ? `${boat.beam} m` : "—"}</span>
+                      </li>
+                      <li className="boat-spec-secondary">
+                        <span className="boat-spec-icon" data-tooltip="Draft" aria-label="Draft" tabIndex={0}>
+                          <ArrowDownToLine className="boat-feature-icon" aria-hidden />
+                        </span>
+                        <span>{boat.draft > 0 ? `${boat.draft} m` : "—"}</span>
+                      </li>
+                    </ul>
+                  </div>
                   <div className="price-flex">
                     <h4>
                       {boat.price != null ? (
