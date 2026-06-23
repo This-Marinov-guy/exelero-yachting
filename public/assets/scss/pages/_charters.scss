@@ -6,15 +6,23 @@
   position: relative;
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  padding: calc(50px + (120 - 50) * ((100vw - 320px) / (1920 - 320))) 15px;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: clamp(105px, 14vh, 170px) clamp(20px, 6vw, 112px) clamp(48px, 8vh, 96px);
   overflow: hidden;
+
+  > .container {
+    display: flex;
+    justify-content: flex-end;
+    max-width: none;
+    padding: 0;
+  }
 
   &__bg {
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(160deg, rgba(var(--theme-color), 0.4) 0%, rgba(0, 20, 50, 0.5) 40%, rgba(0, 0, 0, 0.35) 100%),
+      linear-gradient(160deg, rgba(var(--theme-color), 0.1) 0%, rgba(0, 20, 50, 0.16) 45%, rgba(0, 0, 0, 0.2) 100%),
       url("/assets/images/charter/charter-bg.jpg") center / cover no-repeat;
     z-index: 0;
     transform: translateY(var(--hero-parallax-y, 0));
@@ -24,7 +32,7 @@
     position: absolute;
     inset: 0;
     z-index: 1;
-    opacity: 0.04;
+    opacity: 0.025;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     pointer-events: none;
   }
@@ -32,26 +40,18 @@
   &__glass {
     position: relative;
     z-index: 2;
-    padding: calc(24px + (48 - 24) * ((100vw - 320px) / (1920 - 320)));
-    border-radius: 20px;
-    background: linear-gradient(
-      145deg,
-      rgba(var(--theme-color), 0.28) 0%,
-      rgba(var(--theme-color), 0.12) 50%,
-      rgba(var(--theme-color), 0.05) 100%
-    );
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow:
-      0 20px 50px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
 
     &--center {
-      max-width: 640px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: center;
+      max-width: min(800px, 88vw);
+      margin: 0;
+      text-align: right;
     }
   }
 
@@ -66,13 +66,13 @@
   }
 
   &__title {
-    font-size: calc(26px + (42 - 26) * ((100vw - 320px) / (1920 - 320)));
+    font-size: clamp(44px, 5.8vw, 92px);
     font-weight: 700;
     color: rgba(var(--white), 1);
     margin-bottom: 12px;
     line-height: 1.2;
     letter-spacing: -0.02em;
-    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 3px 28px rgba(0, 0, 0, 0.7);
   }
 
   &__description {
@@ -88,7 +88,7 @@
   &__line {
     width: 60px;
     height: 3px;
-    margin: 0 auto;
+    margin: 0 0 0 auto;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
     border-radius: 2px;
   }
@@ -106,6 +106,7 @@
 
 .charter-content {
   position: relative;
+  scroll-margin-top: 96px;
 
   &__intro {
     font-size: calc(12px + (14 - 12) * ((100vw - 320px) / (1920 - 320)));
@@ -210,7 +211,6 @@
   flex-direction: column;
   justify-content: flex-start;
   gap: 8px;
-  border-top: 3px solid rgba(var(--theme-color), 0.5);
   transition: box-shadow 0.35s ease;
 
   .charter-bento__cell:hover & {
@@ -504,6 +504,11 @@
 
 .charter-request-cta {
   &--sticky {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
     position: fixed;
     bottom: calc(24px + (40 - 24) * ((100vw - 320px) / (1920 - 320)));
     left: 50%;
@@ -534,6 +539,26 @@
       box-shadow:
         0 12px 40px rgba(var(--theme-color), 0.5),
         0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__learn {
+    align-items: center;
+    background: rgba(var(--white), 1);
+    border: 1px solid rgba(var(--theme-color), 0.45);
+    border-radius: 50px;
+    color: rgba(var(--theme-color), 1);
+    display: inline-flex;
+    font-weight: 600;
+    justify-content: center;
+    padding: calc(13px + (17 - 13) * ((100vw - 320px) / (1920 - 320))) calc(24px + (34 - 24) * ((100vw - 320px) / (1920 - 320)));
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+
+    &:hover {
+      background: rgba(var(--theme-color), 1);
+      border-color: rgba(var(--theme-color), 1);
+      color: rgba(var(--white), 1);
+      transform: translateY(-2px);
     }
   }
 }

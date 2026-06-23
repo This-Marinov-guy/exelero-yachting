@@ -7,6 +7,7 @@ import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 
 const FORM_ID = "charter-form";
+const INFORMATION_ID = "charter-information";
 
 const initialFormState = {
   name: "",
@@ -134,6 +135,9 @@ export default function CharterRequestSection() {
       >
         <a href={`#${FORM_ID}`} className="btn-solid charter-request-cta__btn">
           Request a Charter
+        </a>
+        <a href={`#${INFORMATION_ID}`} className="charter-request-cta__learn">
+          Learn more
         </a>
       </div>
 

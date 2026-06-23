@@ -55,7 +55,7 @@ const CharterPage = () => {
       </HeroParallaxSection>
 
       {/* Bento grid content */}
-      <section className="charter-content section-b-space mt-5">
+          <section id="charter-information" className="charter-content section-b-space mt-5">
         <Container>
           <div className="charter-bento">
             <article className="charter-bento__cell charter-bento__cell--large">

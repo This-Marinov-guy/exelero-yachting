@@ -7,6 +7,7 @@ import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 
 const FORM_ID = "transportation-form";
+const INFORMATION_ID = "transportation-information";
 
 const initialFormState = {
   name: "",
@@ -148,6 +149,9 @@ export default function TransportationRequestSection() {
       >
         <a href={`#${FORM_ID}`} className="btn-solid transportation-request-cta__btn text-center">
           Request Transportation
+        </a>
+        <a href={`#${INFORMATION_ID}`} className="transportation-request-cta__learn text-center">
+          Learn more
         </a>
       </div>
 

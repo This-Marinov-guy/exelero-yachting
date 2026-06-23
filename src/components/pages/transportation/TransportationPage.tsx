@@ -45,7 +45,7 @@ const TransportationPage = () => {
       </HeroParallaxSection>
 
       {/* Bento grid content */}
-      <section className="transportation-content section-b-space mt-5">
+          <section id="transportation-information" className="transportation-content section-b-space mt-5">
         <Container>
           <article className="transportation-bento__cell transportation-bento__cell--small transportation-bento__cell--small-row">
             <div className="transportation-bento__image-wrap transportation-bento__image-wrap--small transportation-bento__image-wrap--compact">
