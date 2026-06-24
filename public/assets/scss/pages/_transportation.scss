@@ -284,21 +284,23 @@
   }
 }
 
-/* Labels under the small-row (desktop: under both image + card) */
+/* Labels */
 .transportation-bento__labels {
   margin-top: calc(10px + (16 - 10) * ((100vw - 320px) / (1920 - 320)));
   display: flex;
-  gap: 18px;
-  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
 
   @media (min-width: 992px) {
-    flex: 0 0 100%;
+    flex-direction: row;
+    justify-content: center;
+    gap: 18px;
   }
 }
 
 .transportation-bento__label {
   display: inline-flex;
-  margin-bottom: 40px;
+  margin-bottom: 0;
   align-items: center;
   gap: 12px;
   padding: 8px 10px;
@@ -460,11 +462,35 @@
   }
 }
 
+/* 2-column layout: info left, form right */
+.transportation-layout {
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: calc(32px + (48 - 32) * ((100vw - 992px) / (1920 - 992)));
+    align-items: start;
+
+    @media (max-width: 991px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__info,
+  &__form {
+    min-width: 0;
+  }
+}
+
+/* Form fills its column */
+.transportation-layout__form .transportation-form-wrapper {
+  max-width: none;
+  margin: 0;
+}
+
 .transportation-request-cta {
   &--sticky {
     align-items: center;
     display: flex;
-    flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
     position: fixed;
@@ -472,8 +498,13 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
     visibility: visible;
+
+    /* Form always visible on desktop — hide sticky CTA */
+    @media (min-width: 992px) {
+      display: none;
+    }
 
     &[aria-hidden="true"] {
       visibility: hidden;
@@ -497,26 +528,6 @@
       box-shadow:
         0 12px 40px rgba(var(--theme-color), 0.5),
         0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-  }
-
-  &__learn {
-    align-items: center;
-    background: rgba(var(--white), 1);
-    border: 1px solid rgba(var(--theme-color), 0.45);
-    border-radius: 50px;
-    color: rgba(var(--theme-color), 1);
-    display: inline-flex;
-    font-weight: 600;
-    justify-content: center;
-    padding: calc(13px + (17 - 13) * ((100vw - 320px) / (1920 - 320))) calc(24px + (34 - 24) * ((100vw - 320px) / (1920 - 320)));
-    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
-
-    &:hover {
-      background: rgba(var(--theme-color), 1);
-      border-color: rgba(var(--theme-color), 1);
-      color: rgba(var(--white), 1);
-      transform: translateY(-2px);
     }
   }
 }

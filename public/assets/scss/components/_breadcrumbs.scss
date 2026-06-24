@@ -12,6 +12,9 @@
   &.top-filter-section {
     background: transparent;
     overflow: hidden;
+    padding-top: clamp(72px, 9vh, 100px);
+    padding-bottom: 20px;
+    margin-bottom: calc(36px + (52 - 36) * ((100vw - 320px) / (1920 - 320)));
 
     .top-filter-background {
       position: absolute;
@@ -43,21 +46,22 @@
 
       .top-filter-title {
         color: #fff;
-        font-size: clamp(34px, 5vw, 68px);
+        font-size: clamp(26px, 3.8vw, 52px);
         font-weight: 500;
         letter-spacing: -0.04em;
         line-height: 1;
-        margin: 0 0 12px;
+        margin: 18px 0 10px;
         text-shadow: 0 3px 20px rgba(0, 0, 0, 0.45);
 
-        @media (max-width: 767px) {
-          margin-top: 22px;
+        @media (min-width: 992px) {
+          padding-top: 48px;
+          margin-top: 48px;
         }
       }
 
       .top-filter-description {
         color: rgba(255, 255, 255, 0.88);
-        font-size: clamp(15px, 1.3vw, 19px);
+        font-size: clamp(13px, 1.1vw, 16px);
         line-height: 1.55;
         margin: 0 auto;
         max-width: 720px;

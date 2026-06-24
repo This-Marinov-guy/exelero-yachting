@@ -1,13 +1,12 @@
 "use client";
 
-import { Col, Container, Row } from "reactstrap";
+import { Col, Row } from "reactstrap";
 import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 
 const FORM_ID = "charter-form";
-const INFORMATION_ID = "charter-information";
 
 const initialFormState = {
   name: "",
@@ -94,7 +93,6 @@ export default function CharterRequestSection() {
         return;
       }
 
-      // Notify exelerodev@gmail.com (fire-and-forget)
       fetch("/api/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -113,7 +111,7 @@ export default function CharterRequestSection() {
         }),
       }).catch(() => {});
 
-      toast.success("Charter request sent successfully! We’ll get back to you soon.");
+      toast.success("Charter request sent successfully! We'll get back to you soon.");
       setForm(initialFormState);
     } catch (err: any) {
       toast.error(err?.message || "Failed to send charter request. Please try again.");
@@ -124,7 +122,7 @@ export default function CharterRequestSection() {
 
   return (
     <>
-      {/* Sticky CTA: visible only when form is not in view */}
+      {/* Sticky CTA: mobile only, visible when form is not in view */}
       <div
         className="charter-request-cta charter-request-cta--sticky"
         aria-hidden={!showStickyBtn}
@@ -136,157 +134,152 @@ export default function CharterRequestSection() {
         <a href={`#${FORM_ID}`} className="btn-solid charter-request-cta__btn">
           Request a Charter
         </a>
-        <a href={`#${INFORMATION_ID}`} className="charter-request-cta__learn">
-          Learn more
-        </a>
       </div>
 
-      {/* Form section */}
+      {/* Form */}
       <section
         id={FORM_ID}
         ref={formRef}
-        className="charter-form-section section-b-space"
+        className="charter-form-section"
       >
-        <Container>
-          <div className="charter-form-wrapper">
-            <h2 className="charter-form__title text-center">Request a Charter</h2>
-            <p className="charter-form__subtitle text-center">
-              Fill in the form below and we’ll get back to you with options.
-            </p>
-            <form className="charter-form" onSubmit={handleSubmit}>
-              <Row className="g-3">
-                <Col md={6}>
-                  <div className="form-input">
-                    <label htmlFor="charter-name" className="form-label">
-                      Your name
-                    </label>
-                    <input
-                      id="charter-name"
-                      type="text"
-                      className="form-control"
-                      name="name"
-                      value={form.name}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                </Col>
-                <Col md={6}>
-                  <div className="form-input">
-                    <label htmlFor="charter-email" className="form-label">
-                      Email
-                    </label>
-                    <input
-                      id="charter-email"
-                      type="email"
-                      className="form-control"
-                      name="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                </Col>
-                <Col md={6}>
-                  <div className="form-input">
-                    <label htmlFor="charter-phone" className="form-label">
-                      Phone (optional)
-                    </label>
-                    <input
-                      id="charter-phone"
-                      type="tel"
-                      className="form-control"
-                      name="phone"
-                      value={form.phone}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </Col>
-                <Col md={6}>
-                  <div className="form-input">
-                    <label htmlFor="charter-type" className="form-label">
-                      Type of boat
-                    </label>
-                    <select
-                      id="charter-type"
-                      className="form-control"
-                      name="type"
-                      value={form.type}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Select type</option>
-                      <option value="cruiser">Cruiser</option>
-                      <option value="power_boat">Power boat</option>
-                      <option value="racer">Racer</option>
-                      <option value="yacht">Yacht</option>
-                    </select>
-                  </div>
-                </Col>
-                <Col xs={12} md={6}>
-                  <div className="form-input">
-                    <label className="form-label">Date from</label>
-                    <DatePicker
-                      selected={form.dateFrom ? new Date(form.dateFrom) : null}
-                      onChange={(date) => handleDateChange("dateFrom", date as Date | null)}
-                      className="form-control"
-                      dateFormat="yyyy-MM-dd"
-                    />
-                  </div>
-                </Col>
-                <Col xs={12} md={6}>
-                  <div className="form-input">
-                    <label className="form-label">Date to</label>
-                    <DatePicker
-                      selected={form.dateTo ? new Date(form.dateTo) : null}
-                      onChange={(date) => handleDateChange("dateTo", date as Date | null)}
-                      className="form-control"
-                      dateFormat="yyyy-MM-dd"
-                      minDate={form.dateFrom ? new Date(form.dateFrom) : undefined}
-                    />
-                  </div>
-                </Col>
-                <Col xs={12} md={6}>
-                  <div className="form-input">
-                    <label htmlFor="charter-group-size" className="form-label">
-                      Group size
-                    </label>
-                    <input
-                      id="charter-group-size"
-                      type="number"
-                      className="form-control"
-                      name="groupSize"
-                      value={form.groupSize}
-                      onChange={handleChange}
-                      min={1}
-                      required
-                    />
-                  </div>
-                </Col>
-                <Col xs={12}>
-                  <div className="form-input">
-                    <label htmlFor="charter-note" className="form-label">
-                      Note to agent
-                    </label>
-                    <textarea
-                      id="charter-note"
-                      className="form-control"
-                      rows={4}
-                      name="note"
-                      value={form.note}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </Col>
-                <Col xs={12} className="form-submit-col">
-                  <button type="submit" className="btn-solid px-2" disabled={submitting}>
-                    {submitting ? "Sending..." : "Send request"}
-                  </button>
-                </Col>
-              </Row>
-            </form>
-          </div>
-        </Container>
+        <div className="charter-form-wrapper">
+          <h2 className="charter-form__title text-center">Request a Charter</h2>
+          <p className="charter-form__subtitle text-center">
+            Fill in the form below and we'll get back to you with options.
+          </p>
+          <form className="charter-form" onSubmit={handleSubmit}>
+            <Row className="g-3">
+              <Col md={6}>
+                <div className="form-input">
+                  <label htmlFor="charter-name" className="form-label">
+                    Your name
+                  </label>
+                  <input
+                    id="charter-name"
+                    type="text"
+                    className="form-control"
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </Col>
+              <Col md={6}>
+                <div className="form-input">
+                  <label htmlFor="charter-email" className="form-label">
+                    Email
+                  </label>
+                  <input
+                    id="charter-email"
+                    type="email"
+                    className="form-control"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </Col>
+              <Col md={6}>
+                <div className="form-input">
+                  <label htmlFor="charter-phone" className="form-label">
+                    Phone (optional)
+                  </label>
+                  <input
+                    id="charter-phone"
+                    type="tel"
+                    className="form-control"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                  />
+                </div>
+              </Col>
+              <Col md={6}>
+                <div className="form-input">
+                  <label htmlFor="charter-type" className="form-label">
+                    Type of boat
+                  </label>
+                  <select
+                    id="charter-type"
+                    className="form-control"
+                    name="type"
+                    value={form.type}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select type</option>
+                    <option value="cruiser">Cruiser</option>
+                    <option value="power_boat">Power boat</option>
+                    <option value="racer">Racer</option>
+                    <option value="yacht">Yacht</option>
+                  </select>
+                </div>
+              </Col>
+              <Col xs={12} md={6}>
+                <div className="form-input">
+                  <label className="form-label">Date from</label>
+                  <DatePicker
+                    selected={form.dateFrom ? new Date(form.dateFrom) : null}
+                    onChange={(date) => handleDateChange("dateFrom", date as Date | null)}
+                    className="form-control"
+                    dateFormat="yyyy-MM-dd"
+                  />
+                </div>
+              </Col>
+              <Col xs={12} md={6}>
+                <div className="form-input">
+                  <label className="form-label">Date to</label>
+                  <DatePicker
+                    selected={form.dateTo ? new Date(form.dateTo) : null}
+                    onChange={(date) => handleDateChange("dateTo", date as Date | null)}
+                    className="form-control"
+                    dateFormat="yyyy-MM-dd"
+                    minDate={form.dateFrom ? new Date(form.dateFrom) : undefined}
+                  />
+                </div>
+              </Col>
+              <Col xs={12} md={6}>
+                <div className="form-input">
+                  <label htmlFor="charter-group-size" className="form-label">
+                    Group size
+                  </label>
+                  <input
+                    id="charter-group-size"
+                    type="number"
+                    className="form-control"
+                    name="groupSize"
+                    value={form.groupSize}
+                    onChange={handleChange}
+                    min={1}
+                    required
+                  />
+                </div>
+              </Col>
+              <Col xs={12}>
+                <div className="form-input">
+                  <label htmlFor="charter-note" className="form-label">
+                    Note to agent
+                  </label>
+                  <textarea
+                    id="charter-note"
+                    className="form-control"
+                    rows={4}
+                    name="note"
+                    value={form.note}
+                    onChange={handleChange}
+                  />
+                </div>
+              </Col>
+              <Col xs={12} className="form-submit-col">
+                <button type="submit" className="btn-solid px-2" disabled={submitting}>
+                  {submitting ? "Sending..." : "Send request"}
+                </button>
+              </Col>
+            </Row>
+          </form>
+        </div>
       </section>
     </>
   );

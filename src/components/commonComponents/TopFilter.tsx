@@ -7,14 +7,15 @@ import ParticleComponent from "./ParticleComponent";
 type TopFilterProps = {
   title?: string;
   description?: string;
+  image?: string;
 };
 
-const TopFilter = ({ title, description }: TopFilterProps = {}) => {
+const TopFilter = ({ title, description, image = "/assets/images/hero/main2.png" }: TopFilterProps = {}) => {
   return (
     <div className='breadcrumbs-section top-filter-section'>
       <div className="top-filter-background">
         <Image
-          src="/assets/images/hero/main2.png"
+          src={image}
           alt="Exelero Yachting"
           fill
           className="top-filter-bg-image"

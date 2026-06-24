@@ -133,6 +133,12 @@
     grid-template-rows: 1fr 1fr;
     min-height: 520px;
   }
+
+  &--column {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+    min-height: 0 !important;
+  }
 }
 
 .charter-bento__cell {
@@ -502,6 +508,31 @@
   }
 }
 
+/* 2-column layout: info left, form right */
+.charter-layout {
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: calc(32px + (48 - 32) * ((100vw - 992px) / (1920 - 992)));
+    align-items: start;
+
+    @media (max-width: 991px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__info,
+  &__form {
+    min-width: 0;
+  }
+}
+
+/* Form fills its column — remove centred max-width constraint */
+.charter-layout__form .charter-form-wrapper {
+  max-width: none;
+  margin: 0;
+}
+
 .charter-request-cta {
   &--sticky {
     align-items: center;
@@ -514,8 +545,13 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
     visibility: visible;
+
+    /* Form is always visible on desktop — hide the sticky CTA */
+    @media (min-width: 992px) {
+      display: none;
+    }
 
     &[aria-hidden="true"] {
       visibility: hidden;
@@ -541,24 +577,95 @@
         0 4px 15px rgba(0, 0, 0, 0.2);
     }
   }
+}
 
-  &__learn {
-    align-items: center;
-    background: rgba(var(--white), 1);
-    border: 1px solid rgba(var(--theme-color), 0.45);
-    border-radius: 50px;
-    color: rgba(var(--theme-color), 1);
-    display: inline-flex;
-    font-weight: 600;
-    justify-content: center;
-    padding: calc(13px + (17 - 13) * ((100vw - 320px) / (1920 - 320))) calc(24px + (34 - 24) * ((100vw - 320px) / (1920 - 320)));
-    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+/* Expanding media panel */
+.charter-media-panel-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-    &:hover {
-      background: rgba(var(--theme-color), 1);
-      border-color: rgba(var(--theme-color), 1);
-      color: rgba(var(--white), 1);
-      transform: translateY(-2px);
+.charter-media-panel {
+  display: flex;
+  gap: 8px;
+  height: 340px;
+  border-radius: 16px;
+  overflow: hidden;
+
+  @media (max-width: 575px) {
+    height: 240px;
+  }
+
+  &__item {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    cursor: pointer;
+    transition: flex 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 12px;
+
+    &--active {
+      flex: 4;
+    }
+
+    &:not(&--active):hover {
+      flex: 1.4;
     }
   }
+
+  &__media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.45) 0%, transparent 55%);
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  &__item:not(&__item--active) &__overlay {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Progress bars — now rendered outside via .charter-media-panel-wrap */
+  &__progress {
+    display: flex;
+    gap: 6px;
+  }
+
+  &__progress-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(var(--title-color), 0.15);
+    border-radius: 999px;
+    overflow: hidden;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+
+  &__progress-fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: rgba(var(--theme-color), 1);
+    border-radius: 999px;
+
+    &--active {
+      animation: charter-progress linear forwards;
+      animation-duration: 4000ms;
+    }
+  }
+}
+
+@keyframes charter-progress {
+  from { width: 0; }
+  to   { width: 100%; }
 }
