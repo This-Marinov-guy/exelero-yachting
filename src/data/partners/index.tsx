@@ -54,11 +54,11 @@ export const Partners: Record<string, Partner> = {
     heroImage: "/assets/images/hero/omaya-yachts.jpg",
     logoImage: "/assets/images/logo/omaya-yachts.jpg",
     breadcrumbImage: "/assets/images/breadcrumbs/omaya-yachts.jpg",
-    affiliateLink: "https://www.omayayachts.com",
+    affiliateLink: "https://www.omaya-yachts.com",
     primaryColor: "#0a4d68",
     secondaryColor: "#ffffff",
     description: "Omaya Yachts specializes in luxury yacht design and manufacturing, creating bespoke vessels that combine elegance with exceptional performance. Each yacht is crafted with meticulous attention to detail and the finest materials.",
-    website: "https://www.omayayachts.com",
+    website: "https://www.omaya-yachts.com",
   },
   "zhik": {
     id: "zhik",
