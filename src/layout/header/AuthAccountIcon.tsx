@@ -7,10 +7,14 @@ import { useEffect, useState } from "react";
 import { UserCircle } from "lucide-react";
 
 export default function AuthAccountIcon() {
-  const supabase = getSupabaseBrowserClient();
+  const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    ? getSupabaseBrowserClient()
+    : null;
   const [isAuthed, setIsAuthed] = useState<boolean | null>(null);
 
   useEffect(() => {
+    if (!supabase) return;
+
     let mounted = true;
 
     const init = async () => {
@@ -43,4 +47,3 @@ export default function AuthAccountIcon() {
     </div>
   );
 }
-
