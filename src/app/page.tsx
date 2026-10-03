@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
 import Layout from "./(mainBody)/layout";
 import CarDemo1Container from "@/components/themes/carDemo1/Index";
+import { getSiteUrl } from "@/lib/siteUrl";
+import {
+  LINKEDIN_URL,
+  MAIN_CONTACT_EMAIL,
+  MAIN_CONTACT_NUMBER,
+} from "@/utils/defines/CONTACTS";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Exelero Yachting | Luxury Yachts, Brokerage & Charters",
+  title: { absolute: "Exelero Yachting | Luxury Yachts, Brokerage & Charters" },
   description:
-    "Exelero Yachting: Your premier partner for performance and luxury yachts, brokerage, charters, and professional marine services. Explore our elite brands.",
+    "Explore yachts for sale, brokerage, charters, and marine services with Exelero Yachting in Southeast Europe.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "Exelero Yachting | Luxury Yachts, Brokerage & Charters",
     description:
-      "Performance and luxury yachts, brokerage & charters, and sailing gear. Explore partners and services with Exelero Yachting.",
+      "Yachts for sale, brokerage, charters, and marine services across Southeast Europe.",
     url: "/",
     siteName: "Exelero Yachting",
     type: "website",
@@ -29,7 +37,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Exelero Yachting | Luxury Yachts, Brokerage & Charters",
     description:
-      "Performance and luxury yachts, brokerage & charters, and sailing gear. Explore partners and services with Exelero Yachting.",
+      "Yachts for sale, brokerage, charters, and marine services across Southeast Europe.",
     images: ["/assets/images/hero/x-yachts.jpg"],
   },
   robots: {
@@ -38,9 +46,7 @@ export const metadata: Metadata = {
   },
 };
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://exelero.com");
+const siteUrl = getSiteUrl();
 
 export default function Home() {
   const webSiteJsonLd = {
@@ -48,11 +54,6 @@ export default function Home() {
     "@type": "WebSite",
     name: "Exelero Yachting",
     url: siteUrl,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${siteUrl}/services/brokerage?query={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   };
 
   const organizationJsonLd = {
@@ -60,12 +61,17 @@ export default function Home() {
     "@type": "Organization",
     name: "Exelero Yachting",
     url: siteUrl,
-    logo: `${siteUrl}/assets/images/logo/logo.png`,
+    logo: `${siteUrl}/assets/images/logo/1.png`,
     description:
-      "Exelero Yachting — luxury yachts, brokerage, charters, sailing gear and marine services.",
-    sameAs: [
-      // Add social media URLs here
-    ],
+      "Exelero Yachting — yacht sales, brokerage, charters, and marine services across Southeast Europe.",
+    telephone: MAIN_CONTACT_NUMBER,
+    email: MAIN_CONTACT_EMAIL,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Burgas",
+      addressCountry: "BG",
+    },
+    sameAs: [LINKEDIN_URL],
   };
 
   const breadcrumbJsonLd = {

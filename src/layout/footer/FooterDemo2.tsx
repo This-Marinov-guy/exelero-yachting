@@ -6,6 +6,7 @@ import FooterSearch from "./FooterSearch";
 import FooterSocial from "./FooterSocial";
 import FooterDetailSection from "./FooterDetailSection";
 import RatioImage from "@/utils/RatioImage";
+import CookieSettingsButton from "@/components/commonComponents/CookieSettingsButton";
 
 const FooterDemo2: React.FC<PathTypes> = ({ part }) => {
   const slicedData = FooterDetailData.slice(2, 5).reverse();
@@ -30,6 +31,7 @@ const FooterDemo2: React.FC<PathTypes> = ({ part }) => {
         </div>
         <div className='copyright-box'>
           <p className="text-white">@ 2025 All Rights Reserved</p>
+          <CookieSettingsButton />
           <RatioImage src={`${ImagePath}/dark-job/payment-img.png`} alt='payment-img' className='img-fluid' />
         </div>
       </Container>

@@ -1,17 +1,24 @@
 import { FC, useEffect } from "react";
 import { Col } from "reactstrap";
 import { ScrollspyType } from "../../../../../types/Other";
-import SmoothScroll from "smooth-scroll";
 
 const ScrollSpyContent: FC<ScrollspyType> = ({ content }) => {
   useEffect(() => {
-    const scroll = new SmoothScroll('a[href*="#"]', {
-      speed: 800,
-      offset: 30,  
+    let scroll: { destroy: () => void } | undefined;
+    let mounted = true;
+
+    import("smooth-scroll").then(({ default: SmoothScroll }) => {
+      if (mounted) {
+        scroll = new SmoothScroll('a[href*="#"]', {
+          speed: 800,
+          offset: 30,
+        });
+      }
     });
 
     return () => {
-      scroll.destroy();
+      mounted = false;
+      scroll?.destroy();
     };
   }, []);
 

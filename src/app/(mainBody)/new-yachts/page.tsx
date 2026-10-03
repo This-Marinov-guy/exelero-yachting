@@ -1,10 +1,11 @@
 import NewYachtsPage from "@/components/pages/newYachts/NewYachtsPage";
 import type { Metadata } from "next";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 export const metadata: Metadata = {
   title: "New Yachts | X-Yachts & Omaya Yachts",
   description:
-    "Explore new yachts from X-Yachts and Omaya Yachts, exclusively represented by Exelero Yachting.",
+    "Explore new yachts from X-Yachts and Omaya Yachts with Exelero Yachting.",
   openGraph: {
     title: "New Yachts | X-Yachts & Omaya Yachts",
     description:
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
 };
 
 const NewYachts = () => {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://exelero.com";
+  const siteUrl = getSiteUrl();
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [

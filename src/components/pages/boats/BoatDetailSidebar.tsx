@@ -4,6 +4,7 @@ import { ProductType } from "@/types/Product";
 import { Button } from "reactstrap";
 import Image from "next/image";
 import { Mail } from "lucide-react";
+import { trackClarityEvent } from "@/lib/clarity";
 
 interface BoatDetailSidebarProps {
     boat: ProductType;
@@ -46,17 +47,17 @@ const BoatDetailSidebar: FC<BoatDetailSidebarProps> = ({ boat }) => {
                     {boat.brokerEmail && (
                         <div className="contact-item mb-2">
                             <strong>Email:</strong>{" "}
-                            <a href={`mailto:${boat.brokerEmail}`}>{boat.brokerEmail}</a>
+                            <a href={`mailto:${boat.brokerEmail}`} onClick={() => trackClarityEvent("boat_email_clicked")}>{boat.brokerEmail}</a>
                         </div>
                     )}
                     {boat.brokerPhone && (
                         <div className="contact-item mb-2">
                             <strong>Phone:</strong>{" "}
-                            <a href={`tel:${boat.brokerPhone}`}>{boat.brokerPhone}</a>
+                            <a href={`tel:${boat.brokerPhone}`} onClick={() => trackClarityEvent("boat_phone_clicked")}>{boat.brokerPhone}</a>
                         </div>
                     )}
                     {boat.brokerEmail && (
-                        <Button className="btn-solid w-100 mt-3" onClick={() => window.location.href = `mailto:${boat.brokerEmail}`}>
+                        <Button className="btn-solid w-100 mt-3" onClick={() => { trackClarityEvent("boat_email_clicked"); window.location.href = `mailto:${boat.brokerEmail}`; }}>
                             <Mail className="h-4 w-4 me-2" style={{ display: 'inline-block' }} />
                             Contact Dealer
                         </Button>

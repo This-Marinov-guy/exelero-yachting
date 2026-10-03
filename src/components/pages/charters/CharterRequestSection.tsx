@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import { trackClarityEvent } from "@/lib/clarity";
 
 const FORM_ID = "charter-form";
 
@@ -112,6 +113,7 @@ export default function CharterRequestSection() {
       }).catch(() => {});
 
       toast.success("Charter request sent successfully! We'll get back to you soon.");
+      trackClarityEvent("charter_request_submitted");
       setForm(initialFormState);
     } catch (err: any) {
       toast.error(err?.message || "Failed to send charter request. Please try again.");

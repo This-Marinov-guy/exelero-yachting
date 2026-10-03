@@ -9,8 +9,7 @@ import { setShareModal, setShareData } from "@/redux/reducers/LayoutSlice";
 import { Share2, FileDown, Bookmark } from "lucide-react";
 import { toast } from "sonner";
 import { usePathname } from "next/navigation";
-import { pdf } from "@react-pdf/renderer";
-import BoatListingPdfDocument from "@/components/pages/boats/BoatListingPdfDocument";
+import { trackClarityEvent } from "@/lib/clarity";
 
 interface BoatMainDetailProps {
   boat: ProductType;
@@ -20,6 +19,7 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
   const dispatch = useAppDispatch();
   const pathname = usePathname();
   const [saveBoat, setSaveBoat] = useState<boolean>(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -46,10 +46,16 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
 
   const handleDownloadPdf = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+    if (isGeneratingPdf) return;
 
     try {
+      setIsGeneratingPdf(true);
       toast.message("Generating PDF…");
 
+      const [{ pdf }, { default: BoatListingPdfDocument }] = await Promise.all([
+        import("@react-pdf/renderer"),
+        import("@/components/pages/boats/BoatListingPdfDocument"),
+      ]);
       const baseUrl = window.location.origin;
       const blob = await pdf(<BoatListingPdfDocument boat={boat} baseUrl={baseUrl} />).toBlob();
 
@@ -66,8 +72,11 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
       URL.revokeObjectURL(url);
 
       toast.success("PDF downloaded.");
+      trackClarityEvent("boat_pdf_downloaded");
     } catch (err: any) {
       toast.error(err?.message || "Failed to generate PDF. Please try again.");
+    } finally {
+      setIsGeneratingPdf(false);
     }
   };
 
@@ -86,7 +95,7 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
     <div className="property-detail-main">
       <div className="main-detail-flex">
         <div>
-          <h3>{boat.title}</h3>
+          <h1 className="boat-detail-title">{boat.title}</h1>
           <h6>{boat.location || "Location TBD"}</h6>
           <div className="label-flex">
             {boat.boatType && (
@@ -121,9 +130,9 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
               </Link>
             </li>
             <li>
-              <Link scroll={false} href={Href} className="print-button" onClick={handleDownloadPdf}>
+              <Link scroll={false} href={Href} className="print-button" onClick={handleDownloadPdf} aria-disabled={isGeneratingPdf}>
                 <FileDown className="h-5 w-5" />
-                Download PDF
+                {isGeneratingPdf ? "Generating PDF…" : "Download PDF"}
               </Link>
             </li>
             {/* <li>

@@ -46,6 +46,7 @@ export interface RatioImageType {
 
 export interface BreadcrumbsType {
   title: string;
+  headingLevel?: 1 | 2;
   subTitle?: string;
   url: string;
   mainClass?: string;

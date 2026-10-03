@@ -1,6 +1,7 @@
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
 import BoatsPageClient from "./BoatsPageClient";
 import { ProductType } from "@/types/Product";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 async function fetchActiveBoats(): Promise<ProductType[]> {
   const supabase = getSupabaseServerClient();
@@ -15,8 +16,7 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
       .order("created_at", { ascending: false });
 
     if (boatsError) {
-      console.error("Error fetching boats:", boatsError);
-      return [];
+      throw boatsError;
     }
 
     if (!boatsData || boatsData.length === 0) {
@@ -27,11 +27,14 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
     const boatsWithDetails = await Promise.all(
       boatsData.map(async (boat) => {
         // Fetch boat_data
-        const { data: boatData } = await supabase
+        const { data: boatData, error: boatDataError } = await supabase
           .from("boat_data")
           .select("*")
           .eq("boat_id", boat.id)
           .single();
+        if (boatDataError || !boatData) {
+          throw boatDataError || new Error(`Missing public data for boat ${boat.id}`);
+        }
 
         // Fetch broker_data
         let brokerData = null;
@@ -84,7 +87,7 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
         const numericId = parseInt(boat.id.replace(/-/g, "").substring(0, 8), 16) % 10000000;
 
         return {
-          id: numericId || Math.floor(Math.random() * 1000000),
+          id: numericId,
           image: images.length > 0 ? images : [mainImage],
           media,
           title: boatData?.title || "Untitled Boat",
@@ -141,7 +144,7 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
     return boatsWithDetails;
   } catch (error) {
     console.error("Error fetching boats:", error);
-    return [];
+    throw error;
   }
 }
 
@@ -154,7 +157,7 @@ const BoatsPage = async () => {
     "@type": "CollectionPage",
     name: "Yachts & Boats for Sale",
     description: "Explore our exclusive collection of high-performance yachts and boats for sale",
-    url: "/boats",
+    url: `${getSiteUrl()}/services/brokerage`,
     numberOfItems: boats.length,
   };
 

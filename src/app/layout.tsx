@@ -1,17 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import "../index.scss";
 import { I18nProvider } from "./i18n/i18n-context";
-import { detectLanguage } from "./i18n/server";
 import { Providers } from "./MainProvider";
 import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
+import { getSiteUrl } from "@/lib/siteUrl";
 
-const CLARITY_PROJECT_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "vekv1ut2zw";
-const IS_PRODUCTION = process.env.NODE_ENV === "production";
-
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://exelero.com");
+const siteUrl = getSiteUrl();
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -55,37 +49,20 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  alternates: {
-    canonical: "/",
-    languages: {
-      "en": "/",
-      "de": "/?lng=ge",
-      "fr": "/?lng=fr",
-      "es": "/?lng=sp",
-      "ko": "/?lng=ko",
-    },
-  },
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const lng = await detectLanguage();
-
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang={lng}>
+    <html lang="en">
       <head>
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
         <link href='https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap' rel='stylesheet' />
       </head>
       <body suppressHydrationWarning={true}>
-        <I18nProvider language={lng}>
+        <I18nProvider language="en">
           <Providers>{children}</Providers>
         </I18nProvider>
-        {IS_PRODUCTION && (
-          <Script id="microsoft-clarity" strategy="afterInteractive">
-            {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`}
-          </Script>
-        )}
       </body>
     </html>
   );

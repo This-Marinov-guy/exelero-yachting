@@ -19,9 +19,10 @@ const Boat1DetailBox: FC<ProductCardType> = ({ data, view, wishlist }) => {
   const handleWishlist = () => toast.success("Added to Wishlist successfully");
 
   const showDescription = location.includes("listing");
+  const detailHref = `/services/brokerage/${data.slug || data.id}`;
 
   const handleClick = () => {
-    router.push(view === "multiple" ? Href : `/boats/${data.id}`);
+    router.push(view === "multiple" ? Href : detailHref);
   };
 
   const formatPrice = (price: number) => {
@@ -54,7 +55,7 @@ const Boat1DetailBox: FC<ProductCardType> = ({ data, view, wishlist }) => {
         )}
       </div>
       <div className='featured-content'>
-        <Link href={`/boats/${data.id}`}>{data.title}</Link>
+        <Link href={detailHref}>{data.title}</Link>
         {showDescription && <p>{data.description}</p>}
         <p>{data.location}</p>
         <ul className='featured-list'>
@@ -69,7 +70,7 @@ const Boat1DetailBox: FC<ProductCardType> = ({ data, view, wishlist }) => {
         </ul>
         <div className='featured-price'>
           <h5>{priceLabel}</h5>
-          <Link href={`/boats/${data.id}`} className='btn-solid'>
+          <Link href={detailHref} className='btn-solid'>
             More
           </Link>
         </div>

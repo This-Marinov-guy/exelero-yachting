@@ -12,7 +12,7 @@ import FollowUs from "../others/common/FollowUs";
 const ContactContainer = () => {
   return (
     <>
-      <Breadcrumbs title='Contact Us' url={RouteList.Home.CarDemo1} mainClass='page-breadcrumbs-section' image />
+      <Breadcrumbs title='Contact Us' headingLevel={1} url={RouteList.Home.CarDemo1} mainClass='page-breadcrumbs-section' image />
       <section className='contact-section contact-2-section'>
         <Container>
             <GetInTouch type='contact-2' />

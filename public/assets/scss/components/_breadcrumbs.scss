@@ -136,6 +136,7 @@
     }
 
     .breadcrumbs-main {
+      h1,
       h2 {
         text-align: center;
         color: #fff;
@@ -157,6 +158,7 @@
       padding-top: calc(70px + (90 - 70) * ((100vw - 320px) / (1920 - 320)));
     }
 
+    h1,
     h2 {
       color: white;
       font-weight: 400;
@@ -455,6 +457,7 @@
     z-index: -1;
   }
 
+  h1,
   h2 {
     color: #fff;
     line-height: 1;

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/gallery" },
-  robots: { index: true, follow: true },
+  robots: { index: false, follow: false },
 };
 
 const Gallery = () => {

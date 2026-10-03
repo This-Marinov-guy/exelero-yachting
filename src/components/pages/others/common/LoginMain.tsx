@@ -1,7 +1,7 @@
 "use client";
 
 import CommonInput from "@/components/commonComponents/CommonInput";
-import { NotAccount, LogIn, LogInYourAccount, SignUp, Welcome } from "@/constants";
+import { LogIn, LogInYourAccount, Welcome } from "@/constants";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { RouteList } from "@/utils/RouteList";
 import Link from "next/link";
@@ -24,8 +24,20 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
   const [pendingAction, setPendingAction] = useState<"password" | "magic-link" | "passkey" | null>(null);
 
   const loading = pendingAction !== null;
+  const accountDestination = () => {
+    if (typeof window === "undefined") return RouteList.Auth.Account;
+    const requested = new URLSearchParams(window.location.search).get("next");
+    if (!requested) return RouteList.Auth.Account;
+    const parsed = new URL(requested, window.location.origin);
+    return parsed.origin === window.location.origin &&
+      (parsed.pathname === "/account" || parsed.pathname.startsWith("/account/"))
+      ? parsed.pathname + parsed.search
+      : RouteList.Auth.Account;
+  };
   const accountRedirectUrl = () =>
-    typeof window !== "undefined" ? `${window.location.origin}${RouteList.Auth.Account}` : RouteList.Auth.Account;
+    typeof window !== "undefined"
+      ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(accountDestination())}`
+      : RouteList.Auth.Account;
 
   const validateEmail = () => {
     if (!email) {
@@ -71,7 +83,7 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
       }
       
       toast.success("Signed in successfully! Redirecting...");
-      router.push(RouteList.Auth.Account);
+      router.push(accountDestination());
     } catch (err: any) {      
       toast.error(err?.message || "An unexpected error occurred. Please try again.");
       setPendingAction(null);
@@ -86,6 +98,7 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
+          shouldCreateUser: false,
           emailRedirectTo: accountRedirectUrl(),
         },
       });
@@ -113,7 +126,7 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
       if (!data?.session) throw new Error("Passkey sign in failed.");
 
       toast.success("Signed in with passkey. Redirecting...");
-      router.push(RouteList.Auth.Account);
+      router.push(accountDestination());
     } catch (err: any) {
       toast.error(err?.message || "Unable to sign in with passkey.");
       setPendingAction(null);
@@ -154,7 +167,7 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
         </Button>
         <div className='auth-alt-actions'>
           <Button className='btn-solid auth-secondary-action' type='button' onClick={handleMagicLink} disabled={loading}>
-            {pendingAction === "magic-link" ? "Sending..." : "Reset pass"}
+            {pendingAction === "magic-link" ? "Sending..." : "Email sign-in link"}
           </Button>
           <Button className='btn-solid auth-secondary-action' type='button' onClick={handlePasskeyLogin} disabled={loading}>
             {pendingAction === "passkey" ? "Checking..." : "Passkey"}
@@ -178,8 +191,8 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
           </li>
         </ul> */}
         <div className='signup-box'>
-          <h6>{NotAccount}</h6>
-          <Link href={RouteList.Auth.SignUp}>{SignUp}</Link>
+          <h6>Accounts are available by invitation.</h6>
+          <Link href={RouteList.Pages.Other.ContactUs1}>Contact us for access</Link>
         </div>
       </form>
     </div>

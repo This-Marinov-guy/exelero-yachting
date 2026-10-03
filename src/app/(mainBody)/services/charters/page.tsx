@@ -1,6 +1,7 @@
 import CharterPage from "@/components/pages/charters/CharterPage";
 import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 export const metadata: Metadata = {
   title: "Yacht Charters | Luxury Boat Rental & Experiences",
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 const Charters = () => {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://exelero.com";
+  const siteUrl = getSiteUrl();
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -39,12 +40,6 @@ const Charters = () => {
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Services",
-        "item": `${siteUrl}/services`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
         "name": "Charters",
         "item": `${siteUrl}/services/charters`
       }

@@ -1,6 +1,7 @@
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { FooterDetailType } from "@/types/Layout";
 import { RouteList } from "@/utils/RouteList";
+import CookieSettingsButton from "@/components/commonComponents/CookieSettingsButton";
 import {
   MAIN_CONTACT_NUMBER,
   MAIN_CONTACT_EMAIL,
@@ -26,6 +27,7 @@ export const Details = [
 export const Copyright = (
   <div className="copyright">
     <p>@ {new Date().getFullYear()} Exelero Yachting. All Rights Reserved</p>
+    <CookieSettingsButton />
   </div>
 );
 

@@ -20,14 +20,14 @@ const AccountSection = () => {
         </li>
         {AccountData.map((item, index) => (
           <li key={index} className='active-item'>
-            <Link href={RouteList.Pages.Other.UserDashboard}>{item}</Link>
+            <a href={RouteList.Pages.Other.UserDashboard}>{item}</a>
             {item === "Searches" && <Label>New</Label>}
           </li>
         ))}
         <li className='active-item'>
-          <Link href={RouteList.Pages.Other.Login1} className='btn-solid'>
+          <a href={RouteList.Pages.Other.Login1} className='btn-solid'>
             {SignOut}
-          </Link>
+          </a>
         </li>
       </ul>
     </div>

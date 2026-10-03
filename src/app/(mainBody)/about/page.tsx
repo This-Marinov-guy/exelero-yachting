@@ -1,9 +1,10 @@
 import AboutPage from "@/components/pages/about/AboutPage";
 import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 export const metadata: Metadata = {
-  title: "About Exelero Yachting | Our Story & Expertise",
+  title: "About Our Yachting Team",
   description:
     "Learn about Exelero Yachting — our story, deep expertise in yacht brokerage, charters, and marine services, and our unwavering commitment to excellence.",
   openGraph: {
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 const About = () => {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://exelero.com";
+  const siteUrl = getSiteUrl();
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",

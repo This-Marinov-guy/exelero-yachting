@@ -4,22 +4,54 @@ import Link from "next/link";
 import { Container } from "reactstrap";
 import { ArrowRight } from "lucide-react";
 import { RouteList } from "@/utils/RouteList";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const HomeHeroSection = () => {
+  const [loadVideo, setLoadVideo] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+
+  useEffect(() => {
+    const connection = (navigator as Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    }).connection;
+    const prefersStillImage = window.matchMedia(
+      "(max-width: 767px), (prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersStillImage || connection?.saveData || /(?:slow-)?2g/.test(connection?.effectiveType || "")) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => setLoadVideo(true), 1800);
+    return () => window.clearTimeout(timeout);
+  }, []);
+
   return (
     <section className="exelero-home-hero">
       <div className="home-hero-bg" aria-hidden="true">
-        <video
-          className="home-hero-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          poster="/assets/images/hero/x-yachts.jpg"
-        >
-          <source src="/assets/video/hero/performance.m4v" type="video/mp4" />
-        </video>
+        <Image
+          src="/assets/images/hero/x-yachts.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          quality={75}
+          className="home-hero-image"
+        />
+        {loadVideo && (
+          <video
+            className={`home-hero-video${videoPlaying ? " is-playing" : ""}`}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="none"
+            onPlaying={() => setVideoPlaying(true)}
+          >
+            <source src="/assets/video/hero/performance.m4v" type="video/mp4" />
+          </video>
+        )}
         <div className="home-hero-overlay" />
       </div>
 
@@ -29,7 +61,7 @@ const HomeHeroSection = () => {
             {/* <p className="home-hero-eyebrow">Exelero Group</p> */}
             <h1 className="home-hero-title">Performance &amp; Luxury Yachts</h1>
             <p className="home-hero-subtitle">
-              Exclusive dealers for X‑Yachts and Omaya Yachts. Brokerage, charters, and sailing gear — all under one roof.
+              Yachts, brokerage, charters, and marine services for clients across Southeast Europe.
             </p>
           </div>
         </Container>

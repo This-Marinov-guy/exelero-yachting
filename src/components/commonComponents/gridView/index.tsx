@@ -23,7 +23,7 @@ const GridView: FC<GridViewType> = ({ type, gridSize, gridType, view, scrollType
   
   const showProduct = useMemo(() => {
     // Use initialProducts if provided (for SSR), otherwise use Redux state
-    if (initialProducts && initialProducts.length > 0) {
+    if (initialProducts !== undefined) {
       return initialProducts.filter((item) => item.type === type);
     }
     return (productItem || []).filter((item) => item.type === type);
@@ -31,7 +31,7 @@ const GridView: FC<GridViewType> = ({ type, gridSize, gridType, view, scrollType
 
   useEffect(() => {
     // Only fetch from API if no initial products provided
-    if (!initialProducts || initialProducts.length === 0) {
+    if (initialProducts === undefined) {
       dispatch(fetchProductApiData());
     }
     dispatch(setCardToShow(cardShow || 6));

@@ -75,6 +75,7 @@
       }
 
       .cookie-btn {
+        min-height: 44px;
         padding: calc(10px + (14 - 10) * ((100vw - 320px) / (1920 - 320))) calc(20px + (30 - 20) * ((100vw - 320px) / (1920 - 320)));
         font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
         font-weight: 500;
@@ -112,6 +113,27 @@
       }
     }
   }
+}
+
+.cookie-banner .cookie-btn:focus-visible,
+.cookie-settings-button:focus-visible {
+  outline: 3px solid rgba(var(--theme-color), 1);
+  outline-offset: 3px;
+}
+
+.cookie-settings-button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.cookie-settings-button:hover {
+  color: rgba(var(--theme-color), 1);
 }
 
 @keyframes slideUp {

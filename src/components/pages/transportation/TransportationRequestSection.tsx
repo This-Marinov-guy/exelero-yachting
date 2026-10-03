@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import { trackClarityEvent } from "@/lib/clarity";
 
 const FORM_ID = "transportation-form";
 
@@ -126,6 +127,7 @@ export default function TransportationRequestSection() {
       }).catch(() => {});
 
       toast.success("Transportation request sent successfully! We'll get back to you with options.");
+      trackClarityEvent("transport_request_submitted");
       setForm(initialFormState);
     } catch (err: any) {
       toast.error(err?.message || "Failed to send transportation request. Please try again.");

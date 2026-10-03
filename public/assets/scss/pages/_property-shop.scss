@@ -1365,7 +1365,8 @@ input[type="radio"] {
   .property-detail-main {
     padding-block: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
 
-    h3 {
+    h3,
+    .boat-detail-title {
       color: rgba(var(--title-color), 1);
       font-weight: 400;
     }

@@ -2,6 +2,8 @@ import PartnerPage from "@/components/pages/partners/PartnerPage";
 import { Partners } from "@/data/partners";
 import { openGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
+import { getSiteUrl } from "@/lib/siteUrl";
+import { notFound } from "next/navigation";
 
 type Props = { params: Promise<{ partnerId: string }> };
 
@@ -14,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${partner.name} | Exelero Yachting Partners`,
+    title: partner.name,
     description: partner.description || `Learn more about our partnership with ${partner.name}.`,
     openGraph: {
       title: `${partner.name} | Exelero Yachting Partners`,
@@ -37,10 +39,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const PartnerDetailPage = async ({ params }: Props) => {
   const { partnerId } = await params;
   const partner = partnerId ? Partners[partnerId] : undefined;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://exelero.com";
+  const siteUrl = getSiteUrl();
 
   if (!partner) {
-    return <PartnerPage />;
+    notFound();
   }
 
   const breadcrumbJsonLd = {
@@ -56,12 +58,6 @@ const PartnerDetailPage = async ({ params }: Props) => {
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Partners",
-        "item": `${siteUrl}/partners`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
         "name": partner.name,
         "item": `${siteUrl}/partners/${partnerId}`
       }

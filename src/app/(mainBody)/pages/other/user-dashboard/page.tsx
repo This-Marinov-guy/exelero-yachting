@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import UserDashboardContainer from "@/components/pages/others/userDashboard";
 import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "User-dashboard | Exelero Yachting",
@@ -18,10 +18,11 @@ export const metadata: Metadata = {
     description: "Exelero Yachting - User-dashboard - luxury yachts, brokerage, charters and marine services.",
     images: [DEFAULT_BREADCRUMB_IMAGE],
   },
+  robots: { index: false, follow: false },
 };
 
 const UserDashboard = () => {
-  return <UserDashboardContainer />;
+  redirect("/account");
 };
 
 export default UserDashboard;

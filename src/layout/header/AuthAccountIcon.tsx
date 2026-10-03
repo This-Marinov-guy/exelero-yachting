@@ -2,7 +2,6 @@
 
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { RouteList } from "@/utils/RouteList";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { UserCircle } from "lucide-react";
 
@@ -41,9 +40,9 @@ export default function AuthAccountIcon() {
 
   return (
     <div className="header-account-icon">
-      <Link href={RouteList.Auth.Account} className="header-account-link" aria-label="Account">
+      <a href={RouteList.Auth.Account} className="header-account-link" aria-label="Account">
         <UserCircle className="iconsax" style={{ width: '24px', height: '24px' }} />
-      </Link>
+      </a>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import UserDashboardContainer from "@/components/pages/others/userDashboard";
 import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
+import { requireAuthenticatedUser } from "@/lib/supabaseAuthServer";
 
 export const metadata: Metadata = {
   title: "My Account | Exelero Yachting",
@@ -18,10 +19,12 @@ export const metadata: Metadata = {
     description: "Manage your Exelero Yachting account, profile, and preferences.",
     images: [DEFAULT_BREADCRUMB_IMAGE],
   },
+  robots: { index: false, follow: false },
 };
 
-const AccountPage = () => {
-  return <UserDashboardContainer />;
+const AccountPage = async () => {
+  await requireAuthenticatedUser();
+  return <div data-clarity-mask="true"><UserDashboardContainer /></div>;
 };
 
 export default AccountPage;

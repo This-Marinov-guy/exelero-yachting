@@ -26,7 +26,7 @@ export default function AccountClient() {
         if (!sessionEmail) {
           // Keep a loading screen visible while we redirect (prevents a flash of content).
           if (mounted) setStatus("redirecting");
-          router.replace(RouteList.Auth.SignUp);
+          router.replace(RouteList.Auth.SignIn);
           return;
         }
 
@@ -37,7 +37,7 @@ export default function AccountClient() {
       } catch (e: any) {
         // Fail closed
         if (mounted) setStatus("redirecting");
-        router.replace(RouteList.Auth.SignUp);
+        router.replace(RouteList.Auth.SignIn);
       }
     };
 

@@ -1,8 +1,9 @@
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
 import BoatDetailContainer from "@/components/pages/boats/BoatDetailContainer";
 import { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { ProductType } from "@/types/Product";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 // Helper function to generate numeric ID from UUID (same as in BoatsPage)
 const generateNumericId = (uuid: string): number => {
@@ -39,8 +40,7 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
       .order("created_at", { ascending: false });
 
     if (boatsError) {
-      console.error("Error fetching boats:", boatsError);
-      return null;
+      throw boatsError;
     }
 
     if (!boatsData || boatsData.length === 0) {
@@ -73,14 +73,14 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
     }
 
     // Fetch boat_data
-    const { data: boatData } = await supabase
+    const { data: boatData, error: boatDataError } = await supabase
       .from("boat_data")
       .select("*")
       .eq("boat_id", boat.id)
       .single();
 
-    if (!boatData) {
-      return null;
+    if (boatDataError || !boatData) {
+      throw boatDataError || new Error(`Missing public data for boat ${boat.id}`);
     }
 
     // Fetch broker_data
@@ -207,7 +207,7 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
     } as ProductType;
   } catch (error) {
     console.error("Error fetching boat:", error);
-    return null;
+    throw error;
   }
 }
 
@@ -252,19 +252,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!boat) {
     return {
-      title: "Boat Not Found | Exelero Yachting",
+      title: "Boat Not Found",
+      robots: { index: false, follow: false },
     };
   }
 
-  if (boat.slug && id !== boat.slug && !/^\d+$/.test(id)) {
-    redirect(`/services/brokerage/${boat.slug}`);
+  if (boat.slug && id !== boat.slug) {
+    permanentRedirect(`/services/brokerage/${boat.slug}`);
   }
 
   const metaDescription = buildBoatMetaDescription(boat);
   const canonicalPath = `/services/brokerage/${boat.slug || id}`;
 
   return {
-    title: `${boat.title} | Exelero Yachting`,
+    title: boat.title,
     description: metaDescription,
     openGraph: {
       title: `${boat.title} | Exelero Yachting`,
@@ -301,11 +302,11 @@ const BoatDetail = async ({ params }: Props) => {
     notFound();
   }
 
-  if (boat.slug && id !== boat.slug && !/^\d+$/.test(id)) {
-    redirect(`/services/brokerage/${boat.slug}`);
+  if (boat.slug && id !== boat.slug) {
+    permanentRedirect(`/services/brokerage/${boat.slug}`);
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://exelero.com";
+  const siteUrl = getSiteUrl();
   const boatUrl = `${siteUrl}/services/brokerage/${boat.slug || id}`;
   const plainDescription = buildBoatMetaDescription(boat);
 

@@ -62,7 +62,7 @@ async function fetchFeaturedBoats(): Promise<FeaturedBoat[]> {
         const numericId = parseInt(boat.id.replace(/-/g, "").substring(0, 8), 16) % 10000000;
 
         return {
-          id: numericId || Math.floor(Math.random() * 1000000),
+          id: numericId,
           slug: boat.slug || "",
           mainMediaUrl: mainMedia?.link || "/assets/images/hero/boats.jpg",
           mainMediaType: mainMedia?.media_type === "video" ? "video" as const : "image" as const,

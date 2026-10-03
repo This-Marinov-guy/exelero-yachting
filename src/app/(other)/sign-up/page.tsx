@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/sign-up" },
+  robots: { index: false, follow: false },
 };
 
 export default function SignUpPage() {

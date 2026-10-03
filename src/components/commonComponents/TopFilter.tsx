@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { Container } from "reactstrap";
-import ParticleComponent from "./ParticleComponent";
 
 type TopFilterProps = {
   title?: string;
@@ -30,7 +29,6 @@ const TopFilter = ({ title, description, image = "/assets/images/hero/main2.png"
           {description && <p className="top-filter-description">{description}</p>}
         </div>
       </Container>
-      <ParticleComponent />
     </div>
   );
 };

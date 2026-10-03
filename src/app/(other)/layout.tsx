@@ -49,7 +49,7 @@ export default function Layout({ children }: Readonly<{ children: React.ReactNod
     }, [className]);
 
     return (
-        <div>
+        <div data-clarity-mask="true">
             {children}
             <CustomToaster/>
             {/* <Customizer part={segments} /> */}

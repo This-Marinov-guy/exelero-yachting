@@ -30,10 +30,10 @@ const AboutPage = () => {
 
             <Col lg={6}>
               <div className='about-content'>
-                <h2 className='about-title'>Exelero Yachting</h2>
+                <h1 className='about-title'>Exelero Yachting</h1>
                 <p className='about-text'>
-                  Exelero Yachting is a premium yachting group focused on unforgettable experiences, trusted partnerships, and
-                  best-in-class service — from sailing and charters to sourcing boats and parts.
+                  Based in Burgas, Bulgaria, Exelero Yachting helps clients across Southeast Europe with yacht sales,
+                  brokerage, charters, and marine services.
                 </p>
                 <p className='about-text'>
                   We combine expertise, a curated network, and a passion for the sea to help you enjoy every mile with confidence.
@@ -116,4 +116,3 @@ const AboutPage = () => {
 };
 
 export default AboutPage;
-

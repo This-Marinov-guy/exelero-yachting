@@ -1,22 +1,23 @@
 import TransportationPage from "@/components/pages/transportation/TransportationPage";
 import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 export const metadata: Metadata = {
-  title: "Yacht Transportation & Logistics | Global Boat Delivery",
+  title: "Yacht Transportation & Boat Delivery",
   description:
-    "Professional yacht and boat transportation services by Exelero Yachting. We handle delivery by land and sea — safe, insured, and worldwide.",
+    "Ask Exelero Yachting about yacht and boat transportation by land and sea, including planning and delivery options.",
   openGraph: {
-    title: "Yacht Transportation & Logistics | Global Boat Delivery",
-    description: "Professional yacht and boat transportation services by Exelero Yachting. land and sea delivery, safe and insured.",
+    title: "Yacht Transportation & Boat Delivery",
+    description: "Ask Exelero Yachting about yacht transportation by land and sea, including planning and delivery options.",
     url: "/services/transportation",
     type: "website",
     images: [breadcrumbOpenGraphImage("Yacht Transportation")],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Yacht Transportation & Logistics | Global Boat Delivery",
-    description: "Professional yacht and boat transportation services by Exelero Yachting. land and sea delivery, safe and insured.",
+    title: "Yacht Transportation & Boat Delivery",
+    description: "Ask Exelero Yachting about yacht transportation by land and sea, including planning and delivery options.",
     images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/services/transportation" },
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 const Transportation = () => {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://exelero.com";
+  const siteUrl = getSiteUrl();
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -39,12 +40,6 @@ const Transportation = () => {
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Services",
-        "item": `${siteUrl}/services`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
         "name": "Transportation",
         "item": `${siteUrl}/services/transportation`
       }

@@ -5,6 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Button, Col, Form, Row } from "reactstrap";
 import { toast } from "sonner";
 import { useState } from "react";
+import { trackClarityEvent } from "@/lib/clarity";
 
 const ContactForm = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -31,6 +32,7 @@ const ContactForm = () => {
         return;
       }
       toast.success("Message sent successfully. We'll get back to you soon.");
+      trackClarityEvent("contact_inquiry_submitted");
       reset();
     } catch {
       toast.error("Failed to send message. Please try again.");

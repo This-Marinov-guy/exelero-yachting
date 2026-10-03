@@ -3745,6 +3745,15 @@ main {
       object-fit: cover;
     }
 
+    .home-hero-video {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+
+      &.is-playing {
+        opacity: 1;
+      }
+    }
+
     .home-hero-overlay {
       position: absolute;
       inset: 0;

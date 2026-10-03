@@ -1,9 +1,10 @@
 import ContactContainer from "@/components/pages/contact";
 import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
+import { getSiteUrl } from "@/lib/siteUrl";
 
 export const metadata: Metadata = {
-  title: "Contact Exelero Yachting | Get in Touch",
+  title: "Contact & Yacht Enquiries",
   description:
     "Get in touch with Exelero Yachting today. Contact us for expert advice on yacht brokerage, charters, transportation, and marine services.",
   openGraph: {
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 const Contact1Page = () => {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://exelero.com";
+  const siteUrl = getSiteUrl();
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
