@@ -15,7 +15,7 @@ export default function PartnerPage({ partner }: { partner: Partner }) {
         </div>
         <Container><div className="partner-hero-content">
           <div className="partner-logo-wrapper"><Image src={partner.logo_url} alt={`${partner.name} logo`} width={200} height={100} className="partner-logo" style={{ objectFit: "contain" }} unoptimized={partner.logo_url.startsWith("http")} /></div>
-          <h1 className="partner-title">{partner.name}</h1>
+          <h1 className="visually-hidden">{partner.name}</h1>
         </div></Container>
       </div>
       <Container><div className="partner-content-section"><Row className="g-4">
@@ -26,7 +26,6 @@ export default function PartnerPage({ partner }: { partner: Partner }) {
         <Col lg={4}>
           <div className="partner-info-card">
             <h3>Get in touch</h3>
-            <p>Ask our team about {partner.name}.</p>
             <PartnerInquiryForm partner={partner} />
             {partner.website_url && <div className="partner-cta"><Link href={partner.website_url} target="_blank" rel="noopener noreferrer" className="partner-button btn d-inline-flex align-items-center justify-content-center" style={{ backgroundColor: partner.primary_color, borderColor: partner.primary_color }}>Visit {partner.name} <ArrowRight className="ms-2" size={18} /></Link></div>}
           </div>

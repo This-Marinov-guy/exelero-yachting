@@ -71,15 +71,6 @@
   }
 
   &__text {
-    p {
-      color: rgba(255, 255, 255, 0.82);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-
     h2 {
       color: #fff;
       font-size: clamp(42px, 5vw, 78px);
@@ -147,11 +138,6 @@
     }
 
     &__text {
-      p {
-        font-size: 10px;
-        margin-bottom: 6px;
-      }
-
       h2 {
         font-size: clamp(32px, 10vw, 42px);
         margin-bottom: 12px;

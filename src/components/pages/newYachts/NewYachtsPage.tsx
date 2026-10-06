@@ -46,7 +46,6 @@ const NewYachtsPage = async () => {
                   />
                 </div>
                 <div className="new-yachts-panel__text">
-                  <p>Discover the brand</p>
                   <h2>{brand.name}</h2>
                   <span>
                     Details &amp; inquiry <ArrowUpRight aria-hidden size={22} />

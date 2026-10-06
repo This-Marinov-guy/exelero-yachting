@@ -57,7 +57,6 @@
             }
 
             .partner-logo-wrapper {
-                margin-bottom: calc(20px + (40 - 20) * ((100vw - 320px) / (1920 - 320)));
                 display: inline-block;
                 background: rgba(255, 255, 255, 0.95);
                 padding: calc(15px + (25 - 15) * ((100vw - 320px) / (1920 - 320)));
@@ -80,17 +79,6 @@
                 }
             }
 
-            .partner-title {
-                color: #fff;
-                font-size: calc(36px + (64 - 36) * ((100vw - 320px) / (1920 - 320)));
-                font-weight: 700;
-                text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-                margin: 0;
-
-                @media (max-width: 767px) {
-                    font-size: calc(28px + (48 - 28) * ((100vw - 320px) / (767 - 320)));
-                }
-            }
         }
     }
 
