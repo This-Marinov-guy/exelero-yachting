@@ -1,9 +1,8 @@
 
 import { FC } from "react";
 import { ProductType } from "@/types/Product";
-import { Button } from "reactstrap";
+import InquiryForm from "@/components/commonComponents/InquiryForm";
 import Image from "next/image";
-import { Mail } from "lucide-react";
 import { trackClarityEvent } from "@/lib/clarity";
 
 interface BoatDetailSidebarProps {
@@ -33,15 +32,15 @@ const BoatDetailSidebar: FC<BoatDetailSidebarProps> = ({ boat }) => {
                         </div>
                     )}
 
-                    {boat.brokerName && (
-                        <div className="contact-item mb-2">
-                            <strong>Broker Name:</strong> <span>{boat.brokerName}</span>
-                        </div>
-                    )}
-
                     {boat.dealer && (
                         <div className="contact-item mb-2">
                             <strong>Company:</strong> <span>{boat.dealer}</span>
+                        </div>
+                    )}
+
+                    {boat.brokerName && (
+                        <div className="contact-item mb-2">
+                            <strong>Broker Name:</strong> <span>{boat.brokerName}</span>
                         </div>
                     )}
                     {boat.brokerEmail && (
@@ -56,12 +55,8 @@ const BoatDetailSidebar: FC<BoatDetailSidebarProps> = ({ boat }) => {
                             <a href={`tel:${boat.brokerPhone}`} onClick={() => trackClarityEvent("boat_phone_clicked")}>{boat.brokerPhone}</a>
                         </div>
                     )}
-                    {boat.brokerEmail && (
-                        <Button className="btn-solid w-100 mt-3" onClick={() => { trackClarityEvent("boat_email_clicked"); window.location.href = `mailto:${boat.brokerEmail}`; }}>
-                            <Mail className="h-4 w-4 me-2" style={{ display: 'inline-block' }} />
-                            Contact Dealer
-                        </Button>
-                    )}
+                    {boat.boatId && <InquiryForm endpoint={`/api/boats/${boat.boatId}/inquiries`} subject={boat.title} />}
+
                 </div>
             </div>
         </div>

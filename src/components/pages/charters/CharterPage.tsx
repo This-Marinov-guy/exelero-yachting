@@ -31,7 +31,7 @@ const CharterPage = () => {
             </div>
 
             {/* Right: form */}
-            <div className="charter-layout__form">
+            <div className="charter-layout__form" role="region" aria-label="Charter request form" tabIndex={0}>
               <CharterRequestSection />
             </div>
           </div>

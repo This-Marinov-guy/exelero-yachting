@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Nav, NavItem, NavLink, Tooltip } from "reactstrap";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { Lock, X } from "lucide-react";
+import AccountSkeleton from "../AccountSkeleton";
 
 type ProfileSidebarProps = {
     activeTab: string;
@@ -19,6 +20,7 @@ const ProfileSidebar = ({ activeTab, onTabChange, refreshTrigger, isOpen, onClos
 
     useEffect(() => {
         const checkDealerInfo = async () => {
+            setLoading(true);
             const supabase = getSupabaseBrowserClient();
             const { data: { session } } = await supabase.auth.getSession();
 
@@ -55,9 +57,7 @@ const ProfileSidebar = ({ activeTab, onTabChange, refreshTrigger, isOpen, onClos
         { id: "transportation-requests", label: "Transportation Requests", locked: false },
     ];
 
-    if (loading) {
-        return <div className="profile-sidebar-loading">Loading...</div>;
-    }
+    if (loading) return <AccountSkeleton kind="sidebar" />;
 
     return (
         <div className={`profile-sidebar${isOpen ? " is-open" : ""}`}>

@@ -22,6 +22,19 @@
         }
     }
 
+    .footer-contact-list .footer-contact h6 a {
+        color: rgba(var(--theme-color), 1);
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        &:focus-visible {
+            outline: 2px solid rgba(var(--theme-color), 1);
+            outline-offset: 3px;
+        }
+    }
+
     &.job-footer-section {
         background: #2a2928;
 
@@ -240,7 +253,6 @@
         line-height: normal;
         text-transform: uppercase;
         position: relative;
-        cursor: pointer;
     }
 
     .footer-link {
@@ -355,6 +367,14 @@
     border-block: 1px solid rgba(var(--border-color), 0.1);
     padding-block: calc(30px + (50 - 30) * ((100vw - 320px) / (1920 - 320)));
 
+    .footer-brand-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        justify-content: space-between;
+        width: 100%;
+    }
+
     .footer-logo {
         &::after {
             margin-bottom: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
@@ -371,36 +391,42 @@
 
     .dark-footer-social {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: calc(14px + (20 - 14) * ((100vw - 320px) / (1920 - 320)));
-        padding-top: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
+        gap: 8px;
+        flex-shrink: 0;
+        margin: 0;
+        padding: 0;
+
+        @media (max-width: 575px) {
+            margin-left: auto;
+            align-items: flex-end;
+        }
 
         li {
             a {
-                width: calc(30px + (36 - 30) * ((100vw - 320px) / (1920 - 320)));
-                height: calc(30px + (36 - 30) * ((100vw - 320px) / (1920 - 320)));
+                width: 44px;
+                height: 44px;
                 border: 1px solid rgba(255, 255, 255, 0.16);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 border-radius: 100%;
+                color: rgba(var(--theme-color), 1);
                 transition: 0.4s ease;
 
-                i {
-                    color: #fff;
-                    font-size: calc(14px + (16 - 14) * ((100vw - 320px) / (1920 - 320)));
-                    transition: 0.4s ease;
+                &:focus-visible {
+                    outline: 2px solid rgba(var(--theme-color), 1);
+                    outline-offset: 3px;
                 }
-            }
 
-            &:hover {
-                a {
+                &:hover {
                     transform: translateY(-5px);
                     border-color: rgba(var(--theme-color), 1);
+                }
 
-                    i {
-                        color: rgba(var(--theme-color), 1);
-                    }
+                &:active {
+                    transform: scale(0.95);
                 }
             }
         }
@@ -426,7 +452,35 @@
         line-height: normal;
         text-transform: uppercase;
         position: relative;
-        cursor: pointer;
+
+        &__button {
+            display: none;
+            position: relative;
+            width: 100%;
+            padding: 0;
+            border: 0;
+            background: none;
+            color: inherit;
+            font: inherit;
+            text-align: left;
+            text-transform: inherit;
+            cursor: pointer;
+
+            &:focus-visible {
+                outline: 2px solid rgba(var(--theme-color), 1);
+                outline-offset: 4px;
+            }
+
+            @media (max-width: 575px) {
+                display: block;
+            }
+        }
+
+        &__heading {
+            @media (max-width: 575px) {
+                display: none;
+            }
+        }
 
         &::after {
             content: "";
@@ -492,10 +546,15 @@
             }
 
             a {
-                color: rgba(255, 255, 255, 0.6);
+                color: rgba(var(--theme-color), 1);
                 display: flex;
                 align-items: center;
                 gap: 5px;
+
+                &:focus-visible {
+                    outline: 2px solid rgba(var(--theme-color), 1);
+                    outline-offset: 3px;
+                }
 
                 &::before {
                     content: "";
@@ -505,6 +564,25 @@
                     background-color: rgba(var(--theme-color), 1);
                     display: inline-block;
                     transition: 0.4s ease;
+                }
+            }
+
+            .footer-download-link {
+                display: inline-flex;
+                justify-content: center;
+                min-height: 44px;
+                padding: 10px 14px;
+                border: 1px solid rgba(var(--theme-color), 1);
+                border-radius: 8px;
+                text-decoration: none;
+
+                &::before {
+                    display: none;
+                }
+
+                &:hover {
+                    background: rgba(var(--theme-color), 1);
+                    color: #131d27;
                 }
             }
         }

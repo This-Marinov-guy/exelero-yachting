@@ -2,23 +2,25 @@ import NewYachtsPage from "@/components/pages/newYachts/NewYachtsPage";
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/siteUrl";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
-  title: "New Yachts | X-Yachts & Omaya Yachts",
+  title: "New Yachts | Exelero Yachting",
   description:
-    "Explore new yachts from X-Yachts and Omaya Yachts with Exelero Yachting.",
+    "Explore our new yacht brands, discover their ranges, and contact the Exelero Yachting team.",
   openGraph: {
-    title: "New Yachts | X-Yachts & Omaya Yachts",
+    title: "New Yachts | Exelero Yachting",
     description:
-      "Discover performance sailing yachts from X-Yachts and luxury power catamarans from Omaya Yachts.",
+      "Select a yacht brand to discover more and contact our team.",
     url: "/new-yachts",
     type: "website",
     images: ["/assets/images/hero/x-yachts.jpg"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "New Yachts | X-Yachts & Omaya Yachts",
+    title: "New Yachts | Exelero Yachting",
     description:
-      "Discover performance sailing yachts from X-Yachts and luxury power catamarans from Omaya Yachts.",
+      "Select a yacht brand to discover more and contact our team.",
     images: ["/assets/images/hero/x-yachts.jpg"],
   },
   alternates: { canonical: "/new-yachts" },

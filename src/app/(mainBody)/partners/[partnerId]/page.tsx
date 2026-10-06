@@ -1,91 +1,41 @@
 import PartnerPage from "@/components/pages/partners/PartnerPage";
-import { Partners } from "@/data/partners";
-import { openGraphImage } from "@/utils/socialMetadata";
+import { absolutePartnerAssetUrl, getPublishedPartnerBySlug } from "@/lib/partners";
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/siteUrl";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
 type Props = { params: Promise<{ partnerId: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { partnerId } = await params;
-  const partner = partnerId ? Partners[partnerId] : undefined;
-
-  if (!partner) {
-    return { title: "Partner Not Found" };
-  }
-
+  const partner = await getPublishedPartnerBySlug(partnerId);
+  if (!partner) return { title: "Partner Not Found", robots: { index: false } };
+  const description = partner.content.slice(0, 160);
+  const image = absolutePartnerAssetUrl(getSiteUrl(), partner.breadcrumb_image_url);
   return {
     title: partner.name,
-    description: partner.description || `Learn more about our partnership with ${partner.name}.`,
-    openGraph: {
-      title: `${partner.name} | Exelero Yachting Partners`,
-      description: partner.description,
-      url: `/partners/${partnerId}`,
-      type: "website",
-      images: partner.breadcrumbImage ? [openGraphImage(partner.breadcrumbImage, partner.name)] : [],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${partner.name} | Exelero Yachting Partners`,
-      description: partner.description,
-      images: partner.breadcrumbImage ? [partner.breadcrumbImage] : [],
-    },
-    alternates: { canonical: `/partners/${partnerId}` },
+    description,
+    openGraph: { title: `${partner.name} | Exelero Yachting Partners`, description, url: `/partners/${partner.slug}`, type: "website", images: image ? [{ url: image, alt: partner.name }] : [] },
+    twitter: { card: "summary_large_image", title: `${partner.name} | Exelero Yachting Partners`, description, images: image ? [image] : [] },
+    alternates: { canonical: `/partners/${partner.slug}` },
     robots: { index: true, follow: true },
   };
 }
 
-const PartnerDetailPage = async ({ params }: Props) => {
+export default async function PartnerDetailPage({ params }: Props) {
   const { partnerId } = await params;
-  const partner = partnerId ? Partners[partnerId] : undefined;
+  const partner = await getPublishedPartnerBySlug(partnerId);
+  if (!partner) notFound();
   const siteUrl = getSiteUrl();
-
-  if (!partner) {
-    notFound();
-  }
-
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": siteUrl
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": partner.name,
-        "item": `${siteUrl}/partners/${partnerId}`
-      }
-    ]
-  };
-
-  const orgJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": partner.name,
-    "description": partner.description,
-    "logo": partner.logoImage ? `${siteUrl}${partner.logoImage}` : undefined,
-    "url": partner.website
-  };
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-      />
-      <PartnerPage />
-    </>
-  );
-};
-
-export default PartnerDetailPage;
+  const breadcrumbJsonLd = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+    { "@type": "ListItem", position: 2, name: partner.name, item: `${siteUrl}/partners/${partner.slug}` },
+  ] };
+  const orgJsonLd = { "@context": "https://schema.org", "@type": "Organization", name: partner.name, description: partner.content.slice(0, 160), logo: absolutePartnerAssetUrl(siteUrl, partner.logo_url), url: partner.website_url || `${siteUrl}/partners/${partner.slug}` };
+  return <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd).replace(/</g, "\\u003c") }} />
+    <PartnerPage partner={partner} />
+  </>;
+}

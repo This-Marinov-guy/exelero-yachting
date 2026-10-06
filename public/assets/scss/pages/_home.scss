@@ -3983,8 +3983,7 @@ main {
 
   .brands-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    height: calc(340px + (480 - 340) * ((100vw - 767px) / (1920 - 767)));
+    grid-template-columns: repeat(3, 1fr);
 
     @media (max-width: 991px) {
       grid-template-columns: repeat(2, 1fr);
@@ -4000,6 +3999,11 @@ main {
       position: relative;
       overflow: hidden;
       text-decoration: none;
+      min-height: calc(300px + (400 - 300) * ((100vw - 992px) / (1920 - 992)));
+
+      @media (max-width: 991px) {
+        min-height: 280px;
+      }
 
       @media (max-width: 767px) {
         min-height: 220px;
@@ -4010,6 +4014,16 @@ main {
 
         @media (max-width: 991px) {
           border-left: none;
+          border-top: 1px solid rgba(255, 255, 255, 0.12);
+        }
+      }
+
+      @media (min-width: 992px) {
+        &:nth-child(3n + 1) {
+          border-left: none;
+        }
+
+        &:nth-child(n + 4) {
           border-top: 1px solid rgba(255, 255, 255, 0.12);
         }
       }
@@ -4041,6 +4055,16 @@ main {
           opacity: 1;
           transform: translateY(0);
         }
+      }
+
+      &:focus-visible {
+        outline: 3px solid rgba(var(--theme-color), 1);
+        outline-offset: -6px;
+        z-index: 2;
+      }
+
+      &:active .brand-block-photo {
+        transform: scale(1.02) !important;
       }
 
       .brand-block-img {
@@ -4082,6 +4106,20 @@ main {
           display: flex;
           align-items: center;
           justify-content: center;
+        }
+
+        .brand-block-logo-wrap--wide {
+          width: 132px;
+        }
+
+        .brand-block-logo-wrap--full {
+          padding: 0;
+          overflow: hidden;
+
+          .brand-block-logo {
+            width: 100%;
+            height: 100%;
+          }
         }
 
         .brand-block-name {

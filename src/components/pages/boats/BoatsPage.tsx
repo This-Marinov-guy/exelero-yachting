@@ -155,7 +155,7 @@ const BoatsPage = async () => {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Yachts & Boats for Sale",
+    name: "Yachts for Sale",
     description: "Explore our exclusive collection of high-performance yachts and boats for sale",
     url: `${getSiteUrl()}/services/brokerage`,
     numberOfItems: boats.length,

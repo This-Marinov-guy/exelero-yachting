@@ -4,7 +4,7 @@ const PRODUCTION_SITE_URL = "https://www.exeleroyachting.com";
 export function getSiteUrl(): string {
   if (process.env.NODE_ENV === "production") return PRODUCTION_SITE_URL;
 
-  const configured = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3003";
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001";
 
   const url = new URL(configured);
   if (url.protocol !== "https:" && url.hostname !== "localhost" && url.hostname !== "127.0.0.1") {

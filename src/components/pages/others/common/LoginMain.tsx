@@ -2,11 +2,11 @@
 
 import CommonInput from "@/components/commonComponents/CommonInput";
 import { LogIn, LogInYourAccount, Welcome } from "@/constants";
-import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
+import { authErrorMessage } from "@/lib/authErrorMessage";
+import { getSupabaseBrowserClient, isLocalSupabase } from "@/lib/supabaseClient";
 import { RouteList } from "@/utils/RouteList";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "reactstrap";
 
@@ -16,23 +16,39 @@ type LoginMainProps = {
 };
 
 const LoginMain = ({ asPage = false }: LoginMainProps) => {
-  const router = useRouter();
   const supabase = getSupabaseBrowserClient();
+  const localAuth = isLocalSupabase();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [pendingAction, setPendingAction] = useState<"password" | "magic-link" | "passkey" | null>(null);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("error") === "invalid-link") {
+      // Let the layout's toaster subscribe before publishing the notification.
+      const timer = window.setTimeout(() => {
+        toast.error("This sign-in link could not be verified. Request a new link and open it in this browser.", {
+          id: "invalid-sign-in-link",
+        });
+      }, 0);
+      return () => window.clearTimeout(timer);
+    }
+  }, []);
 
   const loading = pendingAction !== null;
   const accountDestination = () => {
     if (typeof window === "undefined") return RouteList.Auth.Account;
     const requested = new URLSearchParams(window.location.search).get("next");
     if (!requested) return RouteList.Auth.Account;
-    const parsed = new URL(requested, window.location.origin);
-    return parsed.origin === window.location.origin &&
-      (parsed.pathname === "/account" || parsed.pathname.startsWith("/account/"))
-      ? parsed.pathname + parsed.search
-      : RouteList.Auth.Account;
+    try {
+      const parsed = new URL(requested, window.location.origin);
+      return parsed.origin === window.location.origin &&
+        (parsed.pathname === "/account" || parsed.pathname.startsWith("/account/"))
+        ? parsed.pathname + parsed.search
+        : RouteList.Auth.Account;
+    } catch {
+      return RouteList.Auth.Account;
+    }
   };
   const accountRedirectUrl = () =>
     typeof window !== "undefined"
@@ -40,7 +56,7 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
       : RouteList.Auth.Account;
 
   const validateEmail = () => {
-    if (!email) {
+    if (!email.trim()) {
       toast.error("Please enter your email address.");
       return false;
     }
@@ -68,13 +84,9 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
 
     setPendingAction("password");
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       
-      if (error) {
-        toast.error("Invalid email or password. Please try again.");
-        setPendingAction(null);
-        return;
-      }
+      if (error) throw error;
       
       if (!data.session) {
         toast.error("Sign in failed. Please try again.");
@@ -83,9 +95,10 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
       }
       
       toast.success("Signed in successfully! Redirecting...");
-      router.push(accountDestination());
-    } catch (err: any) {      
-      toast.error(err?.message || "An unexpected error occurred. Please try again.");
+      // Start a fresh server request with the saved session cookies.
+      window.location.assign(accountDestination());
+    } catch (err: unknown) {
+      toast.error(authErrorMessage(err, "Unable to sign in. Please try again."));
       setPendingAction(null);
     }
   };
@@ -96,7 +109,7 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
     setPendingAction("magic-link");
     try {
       const { error } = await supabase.auth.signInWithOtp({
-        email,
+        email: email.trim(),
         options: {
           shouldCreateUser: false,
           emailRedirectTo: accountRedirectUrl(),
@@ -104,9 +117,9 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
       });
 
       if (error) throw error;
-      toast.success("Magic link sent. Check your email to continue to your account.");
-    } catch (err: any) {
-      toast.error(err?.message || "Unable to send the magic link.");
+      toast.success(localAuth ? "Sign-in link sent to the local email inbox." : "Magic link sent. Check your email to continue to your account.");
+    } catch (err: unknown) {
+      toast.error(authErrorMessage(err, "Unable to send the sign-in link. Please try again."));
     } finally {
       setPendingAction(null);
     }
@@ -126,9 +139,9 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
       if (!data?.session) throw new Error("Passkey sign in failed.");
 
       toast.success("Signed in with passkey. Redirecting...");
-      router.push(accountDestination());
-    } catch (err: any) {
-      toast.error(err?.message || "Unable to sign in with passkey.");
+      window.location.assign(accountDestination());
+    } catch (err: unknown) {
+      toast.error(authErrorMessage(err, "Unable to sign in with passkey."));
       setPendingAction(null);
     }
   };
@@ -169,9 +182,9 @@ const LoginMain = ({ asPage = false }: LoginMainProps) => {
           <Button className='btn-solid auth-secondary-action' type='button' onClick={handleMagicLink} disabled={loading}>
             {pendingAction === "magic-link" ? "Sending..." : "Email sign-in link"}
           </Button>
-          <Button className='btn-solid auth-secondary-action' type='button' onClick={handlePasskeyLogin} disabled={loading}>
+          {!localAuth && <Button className='btn-solid auth-secondary-action' type='button' onClick={handlePasskeyLogin} disabled={loading}>
             {pendingAction === "passkey" ? "Checking..." : "Passkey"}
-          </Button>
+          </Button>}
         </div>
         {/* <div className='text-divider'>
           <span>OR</span>

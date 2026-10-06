@@ -1,10 +1,8 @@
 import { Href } from "@/constants";
 import { MenuItem } from "@/data/layout/Header";
-import { Partners } from "@/data/partners";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setSidebarOpen } from "@/redux/reducers/LayoutSlice";
 import UseOutsideDropdown from "@/utils/UseOutsideDropdown";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,7 +12,7 @@ import ImageMenuList from "./ImageMenuList";
 import PagesMegaMenu from "./PagesMegaMenu";
 import SidebarSubMenu from "./SidebarSubMenu";
 
-const MainMenu = () => {
+const MainMenu = ({ partners }: { partners: { slug: string; name: string }[] }) => {
   const pathname = usePathname();
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
   const { sidebarOpen } = useAppSelector((state) => state.layout);
@@ -49,6 +47,16 @@ const MainMenu = () => {
         </Link>
       </div>
       <ul className='menu-items'>
+        {partners.length > 0 && (
+          <li className="expand-btn dropdown-menus">
+            <button type="button" className={`menu-item ${openSections.Partners ? "open" : ""}`} onClick={() => toggleSection("Partners")} aria-expanded={!!openSections.Partners}>
+              {t("Partners")} <span className="menu-chevron" aria-hidden>{openSections.Partners ? <ChevronUp size={18} /> : <ChevronDown size={18} />}</span>
+            </button>
+            <ul className="dropdown-megamenu sample link-list">
+              {partners.map((partner) => <li key={partner.slug}><Link className="menu-link" href={`/partners/${partner.slug}`} onClick={toggle}>{partner.name}</Link></li>)}
+            </ul>
+          </li>
+        )}
         {MenuItem &&
           MenuItem.map((mainMenu, index) => {
             const hasSubmenu = mainMenu.children && mainMenu.children.length > 0;
@@ -80,32 +88,6 @@ const MainMenu = () => {
             );
           })}
       </ul>
-      {/* <div className="sidebar-partner-logos" aria-label="Partner logos">
-        <span className="sidebar-partner-logos__label">{t("Partners")}</span>
-        <div className="sidebar-partner-logos__list">
-          {Object.values(Partners).map((partner) => (
-            <Link
-              key={partner.id}
-              href={partner.affiliateLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="sidebar-partner-logos__item"
-              title={partner.name}
-              onClick={toggle}
-            >
-              <div className="sidebar-partner-logos__image-wrapper">
-                <Image
-                  src={partner.logoImage}
-                  alt={partner.name}
-                  fill
-                  className="sidebar-partner-logos__image"
-                  style={{ objectFit: "contain" }}
-                />
-              </div>
-            </Link>
-          ))}
-        </div> */}
-      {/* </div> */}
     </nav>
   );
 };

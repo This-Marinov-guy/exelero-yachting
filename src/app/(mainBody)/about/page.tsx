@@ -4,22 +4,22 @@ import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/siteUrl";
 
 export const metadata: Metadata = {
-  title: "About Our Yachting Team",
+  title: "About Exelero Yachting",
   description:
-    "Learn about Exelero Yachting — our story, deep expertise in yacht brokerage, charters, and marine services, and our unwavering commitment to excellence.",
+    "Discover Exelero Yachting's personalised approach, trusted partners, yacht services, and the experience of founder Krasimir Naumov.",
   openGraph: {
-    title: "About Exelero Yachting | Our Story & Expertise",
+    title: "About Exelero Yachting | Premium Yachting Experience",
     description:
-      "Learn about Exelero Yachting — our story, expertise in yacht brokerage, charters and marine services.",
+      "Discover our personalised approach, yacht services, trusted partners, and the experience of founder Krasimir Naumov.",
     url: "/about",
     type: "website",
     images: [breadcrumbOpenGraphImage("About Exelero Yachting")],
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Exelero Yachting | Our Story & Expertise",
+    title: "About Exelero Yachting | Premium Yachting Experience",
     description:
-      "Learn about Exelero Yachting — our story, expertise in yacht brokerage, charters and marine services.",
+      "Discover our personalised approach, yacht services, trusted partners, and the experience of founder Krasimir Naumov.",
     images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/about" },

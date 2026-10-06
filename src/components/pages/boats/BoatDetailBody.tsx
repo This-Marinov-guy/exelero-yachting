@@ -8,6 +8,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs } from "swiper/modules";
 import { Gallery, Item } from "react-photoswipe-gallery";
 import Image from "next/image";
+import { VideoPlayer, VideoPoster } from "@/components/commonComponents/VideoMedia";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -104,32 +105,22 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
               {mediaItems.map((media, index) => (
                 <SwiperSlide key={`${media.url}-${index}`}>
                   {media.type === "video" ? (
-                    <div
-                      className="boat-gallery-item"
+                    <button
+                      type="button"
+                      className="boat-gallery-item border-0 p-0"
                       onClick={() => setPreviewVideo(media.url)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
-                          setPreviewVideo(media.url);
-                        }
-                      }}
+                      aria-label={`Play video ${index + 1} for ${boat.title}`}
                     >
-                      <video
-                        src={media.url}
-                        muted
-                        loop
-                        autoPlay
-                        playsInline
-                        preload="metadata"
+                      <VideoPoster
+                        url={media.url}
+                        title={`${boat.title} - Video ${index + 1}`}
                         className="boat-gallery-image"
                         style={{ width: "100%", height: "100%", objectFit: "cover" }}
                       />
                       <div className="boat-gallery-overlay">
                         <i className="ri-play-circle-line" />
                       </div>
-                    </div>
+                    </button>
                   ) : (
                     <Item
                       original={media.url}
@@ -164,11 +155,9 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
           <Modal isOpen={Boolean(previewVideo)} toggle={() => setPreviewVideo(null)} centered size="lg">
             <ModalBody className="p-0 bg-dark">
               {previewVideo && (
-                <video
-                  src={previewVideo}
-                  controls
-                  autoPlay
-                  playsInline
+                <VideoPlayer
+                  url={previewVideo}
+                  title={`${boat.title} video`}
                   style={{ width: "100%", maxHeight: "80vh", display: "block", background: "#000" }}
                 />
               )}

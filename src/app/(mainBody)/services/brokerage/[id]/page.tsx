@@ -88,7 +88,7 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
     if (boat.dealer_id) {
       const { data } = await supabase
         .from("broker_data")
-        .select("name, dealer, email, phone, user_id")
+        .select("id, name, dealer, email, phone, user_id")
         .eq("id", boat.dealer_id)
         .maybeSingle();
       brokerData = data;
@@ -96,7 +96,7 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
     if (!brokerData) {
       const { data } = await supabase
         .from("broker_data")
-        .select("name, dealer, email, phone, user_id")
+        .select("id, name, dealer, email, phone, user_id")
         .eq("boat_id", boat.id)
         .maybeSingle();
       brokerData = data;
@@ -104,7 +104,7 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
     if (!brokerData) {
       const { data } = await supabase
         .from("broker_data")
-        .select("name, dealer, email, phone, user_id")
+        .select("id, name, dealer, email, phone, user_id")
         .eq("user_id", boat.user_id)
         .order("created_at", { ascending: true })
         .limit(1)
@@ -114,7 +114,15 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
 
     // Fetch broker profile image if user_id exists
     let brokerProfileImage = null;
-    if (brokerData?.user_id) {
+    if (brokerData?.id) {
+      const { data: dealerImage } = await supabase
+        .from("broker_data")
+        .select("image_url")
+        .eq("id", brokerData.id)
+        .maybeSingle();
+      brokerProfileImage = dealerImage?.image_url || null;
+    }
+    if (!brokerProfileImage && brokerData?.user_id) {
       const { data: profileImageData } = await supabase
         .from("profile_image")
         .select("image_url")

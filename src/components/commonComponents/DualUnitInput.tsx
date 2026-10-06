@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 
 interface DualUnitInputProps {
     value: string;
@@ -28,6 +28,7 @@ const DualUnitInput: React.FC<DualUnitInputProps> = ({
     required,
     className = "form-control",
 }) => {
+    const inputId = useId();
     const [imperialValue, setImperialValue] = useState<string>("");
 
     useEffect(() => {
@@ -42,11 +43,11 @@ const DualUnitInput: React.FC<DualUnitInputProps> = ({
 
     return (
         <div className="dual-unit-input-wrapper">
-            <label className="form-label">{label}</label>
+            <label className="form-label" htmlFor={inputId}>{label}</label>
             <div className="dual-unit-input-container">
                 <div className="input-group input-with-unit-wrapper">
                     <span className="input-group-text">{metricUnit}</span>
-                    <input
+                    <input id={inputId}
                         type={type}
                         step={step}
                         className={className}
@@ -60,7 +61,7 @@ const DualUnitInput: React.FC<DualUnitInputProps> = ({
                         </span>
                     )}
                 </div>
-                
+
             </div>
         </div>
     );

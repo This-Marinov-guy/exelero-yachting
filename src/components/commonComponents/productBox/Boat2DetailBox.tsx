@@ -3,6 +3,7 @@ import { Property2SwiperSetting } from "@/data/demo/propertyDemo2";
 import { PropertyCardType } from "@/types/Product";
 import SvgIcon from "@/utils/SvgIcon";
 import Image from "next/image";
+import { VideoPlayer, VideoPoster } from "@/components/commonComponents/VideoMedia";
 import Link from "next/link";
 import { FC, useState } from "react";
 import { Modal, ModalBody } from "reactstrap";
@@ -49,13 +50,9 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
                   <div style={{ position: "relative", width: "100%", aspectRatio: "16/9" }}>
                     {media.type === "video" ? (
                       <>
-                        <video
-                          src={media.url}
-                          muted
-                          loop
-                          autoPlay
-                          playsInline
-                          preload="metadata"
+                        <VideoPoster
+                          url={media.url}
+                          title={`${data.title} - Video ${i + 1}`}
                           className='bg-img'
                           style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />
@@ -142,11 +139,9 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
       <Modal isOpen={Boolean(previewVideo)} toggle={() => setPreviewVideo(null)} centered size="lg">
         <ModalBody className="p-0 bg-dark">
           {previewVideo && (
-            <video
-              src={previewVideo}
-              controls
-              autoPlay
-              playsInline
+            <VideoPlayer
+              url={previewVideo}
+              title={`${data.title} video`}
               style={{ width: "100%", maxHeight: "80vh", display: "block", background: "#000" }}
             />
           )}

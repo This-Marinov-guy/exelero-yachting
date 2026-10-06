@@ -1,24 +1,25 @@
 import TransportationPage from "@/components/pages/transportation/TransportationPage";
-import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/siteUrl";
 
+const transportImage = "/assets/images/transportation/transport.jpg";
+
 export const metadata: Metadata = {
-  title: "Yacht Transportation & Boat Delivery",
+  title: "Yacht Transportation",
   description:
     "Ask Exelero Yachting about yacht and boat transportation by land and sea, including planning and delivery options.",
   openGraph: {
-    title: "Yacht Transportation & Boat Delivery",
+    title: "Yacht Transportation",
     description: "Ask Exelero Yachting about yacht transportation by land and sea, including planning and delivery options.",
     url: "/services/transportation",
     type: "website",
-    images: [breadcrumbOpenGraphImage("Yacht Transportation")],
+    images: [{ url: transportImage, alt: "Yacht Transportation" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Yacht Transportation & Boat Delivery",
+    title: "Yacht Transportation",
     description: "Ask Exelero Yachting about yacht transportation by land and sea, including planning and delivery options.",
-    images: [DEFAULT_BREADCRUMB_IMAGE],
+    images: [transportImage],
   },
   alternates: { canonical: "/services/transportation" },
   robots: { index: true, follow: true },
@@ -40,7 +41,7 @@ const Transportation = () => {
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Transportation",
+        "name": "Yacht Transportation",
         "item": `${siteUrl}/services/transportation`
       }
     ]

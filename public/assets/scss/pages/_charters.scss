@@ -2,6 +2,16 @@
   Charter Page – Enhanced
 ==========================*/
 
+// Match the panel frame used on the public Transportation page.
+@mixin charter-panel-frame($radius) {
+  border: 2px solid transparent;
+  border-radius: $radius;
+  background:
+    linear-gradient(rgba(var(--white), 1), rgba(var(--white), 1)) padding-box,
+    linear-gradient(135deg, var(--charter-frame-accent), rgba(var(--theme-color), 0.82) 52%, var(--charter-frame-accent)) border-box;
+  box-shadow: 0 0 0 4px rgba(var(--theme-color), 0.055);
+}
+
 .charter-hero {
   position: relative;
   min-height: 100vh;
@@ -149,11 +159,6 @@
   overflow: visible;
   background: transparent;
   box-shadow: none;
-  transition: transform 0.35s ease;
-
-  &:hover {
-    transform: translateY(-4px);
-  }
 
   &--large {
     @media (min-width: 992px) {
@@ -206,24 +211,13 @@
 
 /* Text block: separate card with divider above */
 .charter-bento__card {
+  @include charter-panel-frame(24px);
   position: relative;
   padding: calc(20px + (28 - 20) * ((100vw - 320px) / (1920 - 320)));
-  background: rgba(var(--white), 1);
-  border-radius: 16px;
-  box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.08),
-    0 0 0 1px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   gap: 8px;
-  transition: box-shadow 0.35s ease;
-
-  .charter-bento__cell:hover & {
-    box-shadow:
-      0 20px 50px rgba(0, 0, 0, 0.1),
-      0 0 0 1px rgba(var(--theme-color), 0.15);
-  }
 
   .charter-bento__cell--large & {
    display: flex;
@@ -387,29 +381,15 @@
 }
 
 .charter-form-section {
+  scroll-margin-top: 100px;
+
   .charter-form-wrapper {
+    @include charter-panel-frame(24px);
     max-width: 720px;
     margin: 0 auto;
     padding: calc(32px + (56 - 32) * ((100vw - 320px) / (1920 - 320)));
-    border-radius: 24px;
-    background: linear-gradient(180deg, rgba(var(--white), 1) 0%, rgba(var(--white), 0.98) 100%);
-    border: 1px solid rgba(var(--theme-color), 0.15);
-    box-shadow:
-      0 20px 60px rgba(0, 0, 0, 0.08),
-      0 0 0 1px rgba(0, 0, 0, 0.03);
     position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, rgba(var(--theme-color), 1), rgba(var(--theme-color), 0.5));
-      border-radius: 24px 24px 0 0;
-    }
+    overflow: visible;
   }
 
   .charter-form__title {
@@ -510,6 +490,8 @@
 
 /* 2-column layout: info left, form right */
 .charter-layout {
+  --charter-frame-accent: #087da8;
+
   &__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -518,12 +500,37 @@
 
     @media (max-width: 991px) {
       grid-template-columns: 1fr;
+      gap: 28px;
     }
   }
 
   &__info,
   &__form {
     min-width: 0;
+  }
+
+  &__form {
+    &:focus-visible {
+      outline: 2px solid rgba(var(--theme-color), 0.85);
+      outline-offset: 3px;
+      border-radius: 24px;
+    }
+
+    @media (min-width: 992px) {
+      position: sticky;
+      top: 84px;
+      align-self: start;
+      max-height: calc(100dvh - 100px);
+      overflow: auto;
+      padding: 4px 8px 8px 4px;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+      }
+    }
   }
 }
 
@@ -581,9 +588,11 @@
 
 /* Expanding media panel */
 .charter-media-panel-wrap {
+  @include charter-panel-frame(24px);
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 12px;
 }
 
 .charter-media-panel {

@@ -3,6 +3,14 @@ import { copyFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 
 const localEnvPath = ".env.local";
 
+const existingContent = existsSync(localEnvPath) ? readFileSync(localEnvPath, "utf8") : "";
+const existingUrl = existingContent.match(/^NEXT_PUBLIC_SUPABASE_URL\s*=\s*(.*)$/m)?.[1]
+  .trim().replace(/^["']|["']$/g, "");
+if (existingUrl && !/^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?\/?$/.test(existingUrl)
+  && !process.argv.includes("--force")) {
+  throw new Error(".env.local already uses a hosted Supabase project. To intentionally switch to the separate local database, run npm run env:local -- --force.");
+}
+
 const status = execFileSync("supabase", ["status", "-o", "env"], {
   encoding: "utf8",
   stdio: ["ignore", "pipe", "pipe"],

@@ -1,15 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { defaultBoatFormData, hasBoatDraftContent, normalizeBoatDraftSnapshot } from "@/lib/boatDraftCompatibility";
 
 // Helper functions for localStorage
 const STORAGE_KEY = "boat_upload_form_data";
 
 const loadFromStorage = () => {
   if (typeof window === "undefined") return null;
+  let stored: string | null = null;
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : null;
+    stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return null;
+    return JSON.parse(stored);
   } catch (error) {
     console.error("Error loading from localStorage:", error);
+    if (stored) try { localStorage.setItem(`${STORAGE_KEY}_recovery`, stored); } catch { /* Keep the original value if storage is full. */ }
     return null;
   }
 };
@@ -93,64 +97,23 @@ export interface BoatUploadState {
   brochureUrl: string | null; // URL of uploaded brochure
 }
 
-const defaultFormData: BoatUploadState["formData"] = {
-  dealer_id: "",
-  type: "",
-  condition: "",
-  keel_type: "Fin Keel",
-  ce_design_category: "A - Ocean",
-  material: "GRP",
-  title: "",
-  manufacturer: "",
-  build_number: "",
-  build_year: "",
-  location: "",
-  price: "",
-  vat_included: false,
-  description: "",
-  hull_length: "",
-  waterline_length: "",
-  beam: "",
-  draft: "",
-  ballast: "",
-  displacement: "",
-  engine_power: "",
-  fuel_tank: "",
-  water_tank: "",
-  additional_details: "",
-};
-
 const storedData = loadFromStorage();
 
-const initialState: BoatUploadState = storedData ? {
-  ...storedData,
-  formData: {
-    ...defaultFormData,
-    ...storedData.formData,
-  },
-  uploadedBrochures: storedData.uploadedBrochures || (storedData.brochureUrl ? [{
-    url: storedData.brochureUrl,
-    order: 0,
-    name: storedData.brochureFileName || "Brochure",
-    filePath: "",
-  }] : []),
-} : {
-  formData: {
-    ...defaultFormData,
-  },
-  imageMetadata: [],
-  uploadedImages: [],
-  uploadedBrochures: [],
-  uploadFolderName: null,
-  mainImageIndex: 0,
-  brochureFileName: null,
-  brochureUrl: null,
-};
+const initialState: BoatUploadState = normalizeBoatDraftSnapshot(storedData);
 
 const BoatUploadSlice = createSlice({
   name: "boatUpload",
   initialState,
   reducers: {
+    restoreBoatFormFromStorage: (state) => {
+      if (hasBoatDraftContent(state)) return;
+      const saved = loadFromStorage();
+      if (saved) Object.assign(state, normalizeBoatDraftSnapshot(saved));
+    },
+    loadSavedDraft: (state, action: PayloadAction<unknown>) => {
+      Object.assign(state, normalizeBoatDraftSnapshot(action.payload));
+      saveToStorage(state);
+    },
     updateFormField: (
       state,
       action: PayloadAction<{ field: keyof BoatUploadState["formData"]; value: string | boolean }>
@@ -251,6 +214,9 @@ const BoatUploadSlice = createSlice({
       saveToStorage(state);
     },
     addUploadedImage: (state, action: PayloadAction<UploadedImage>) => {
+      if (state.uploadedImages.some(image =>
+        (action.payload.filePath && image.filePath === action.payload.filePath) || image.url === action.payload.url
+      )) return;
       state.uploadedImages.push(action.payload);
       // Sort by order
       state.uploadedImages.sort((a, b) => a.order - b.order);
@@ -313,7 +279,7 @@ const BoatUploadSlice = createSlice({
       saveToStorage(state);
     },
     resetForm: (state) => {
-      state.formData = { ...defaultFormData };
+      state.formData = { ...defaultBoatFormData };
       state.imageMetadata = [];
       state.uploadedImages = [];
       state.uploadedBrochures = [];
@@ -321,12 +287,14 @@ const BoatUploadSlice = createSlice({
       state.mainImageIndex = 0;
       state.brochureFileName = null;
       state.brochureUrl = null;
-      localStorage.removeItem(STORAGE_KEY);
+      if (typeof window !== "undefined") localStorage.removeItem(STORAGE_KEY);
     },
   },
 });
 
 export const {
+  restoreBoatFormFromStorage,
+  loadSavedDraft,
   updateFormField,
   updateFormData,
   setImageMetadata,

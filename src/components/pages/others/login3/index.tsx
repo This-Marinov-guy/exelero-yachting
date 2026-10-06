@@ -24,7 +24,6 @@ const Login3Container = () => {
                   <RatioImage src={`${ImagePath}/logo/1.png`} alt='logo' />
                 </Link>
                 <h2>{FindPlace}</h2>
-                <p>{DiscoveryPlace}</p>
               </div>
             </div>
           </Col>

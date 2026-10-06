@@ -11,10 +11,15 @@
   }
 
   @media (max-width: 767px) {
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    height: calc(100svh - 210px);
-    min-height: 440px;
+    grid-auto-rows: minmax(330px, 45svh);
   }
+}
+
+.new-yachts-empty {
+  grid-column: 1 / -1;
+  padding: 80px 24px;
+  text-align: center;
+  p { margin: 16px 0 24px; }
 }
 
 .new-yachts-panel {
@@ -22,6 +27,8 @@
   min-height: clamp(560px, 72vh, 820px);
   overflow: hidden;
   position: relative;
+
+  &:only-child { grid-column: 1 / -1; }
 
   &__image {
     object-fit: cover;

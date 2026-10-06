@@ -45,7 +45,7 @@ export const MenuItem: MenuItemType[] = [
     active: false,
   },
   {
-    title: "Transportation",
+    title: "Yacht Transportation",
     type: "link",
     path: RouteList.Pages.Services.Transportation,
     active: false,
@@ -56,13 +56,6 @@ export const MenuItem: MenuItemType[] = [
     path: RouteList.Pages.Services.Charters,
     active: false,
   },
-  // {
-  //   title: "Gallery",
-  //   type: "link",
-  //   path: RouteList.Pages.Gallery,
-  //   active: false,
-  // },
-
   // {
   //   title: "Partners",
   //   type: "sub",

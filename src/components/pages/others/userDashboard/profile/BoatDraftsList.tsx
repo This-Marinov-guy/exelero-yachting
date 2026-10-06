@@ -4,6 +4,7 @@ import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { Button } from "reactstrap";
 import { UploadedBrochure, UploadedImage } from "@/redux/reducers/BoatUploadSlice";
+import AccountSkeleton from "../AccountSkeleton";
 
 interface BoatDraft {
     id: string;
@@ -45,23 +46,31 @@ interface BoatDraft {
 const BoatDraftsList = () => {
     const [drafts, setDrafts] = useState<BoatDraft[]>([]);
     const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [loadFailed, setLoadFailed] = useState(false);
 
     const fetchDrafts = async () => {
-        const supabase = getSupabaseBrowserClient();
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session?.user?.id) return;
+        setLoading(true);
+        setLoadFailed(false);
+        try {
+            const supabase = getSupabaseBrowserClient();
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            if (sessionError || !session?.user?.id) throw sessionError || new Error("Session unavailable");
 
-        const { data, error } = await supabase
-            .from("boat_drafts")
-            .select("*")
-            .eq("user_id", session.user.id)
-            .order("updated_at", { ascending: false });
+            const { data, error } = await supabase
+                .from("boat_drafts")
+                .select("*")
+                .eq("user_id", session.user.id)
+                .order("updated_at", { ascending: false });
 
-        if (error) {
+            if (error) throw error;
+            setDrafts(data || []);
+        } catch (error) {
             console.error("Error fetching drafts:", error);
-            return;
+            setLoadFailed(true);
+        } finally {
+            setLoading(false);
         }
-        setDrafts(data || []);
     };
 
     useEffect(() => {
@@ -79,6 +88,7 @@ const BoatDraftsList = () => {
     };
 
     const handleDelete = async (id: string) => {
+        if (!window.confirm("Delete this saved draft? This cannot be undone.")) return;
         setDeletingId(id);
         const supabase = getSupabaseBrowserClient();
         const { error } = await supabase.from("boat_drafts").delete().eq("id", id);
@@ -92,14 +102,17 @@ const BoatDraftsList = () => {
         toast.success("Draft deleted");
     };
 
+    if (loading && drafts.length === 0) return <AccountSkeleton kind="drafts" />;
+    if (loadFailed && drafts.length === 0) return <div className="admin-empty"><p>Saved drafts could not be loaded.</p><Button type="button" className="btn-border" onClick={() => void fetchDrafts()}>Try again</Button></div>;
     if (drafts.length === 0) return null;
 
     return (
         <div className="boat-drafts-list mb-4">
-            <h5 className="dashboard-title mb-3">Saved Drafts</h5>
+            <h2 className="mt-4 mb-3">Saved drafts</h2>
+            {loadFailed && <div className="admin-empty mb-3"><p>Saved drafts could not be refreshed. Your current drafts are still shown.</p><Button type="button" className="btn-border" onClick={() => void fetchDrafts()}>Try again</Button></div>}
             <div className="d-flex flex-column gap-2">
                 {drafts.map((draft) => (
-                    <div key={draft.id} className="draft-card d-flex align-items-center justify-content-between p-3 border rounded">
+                    <div key={draft.id} className="draft-card d-flex flex-wrap gap-3 align-items-center justify-content-between p-3 border rounded">
                         <div>
                             <span className="fw-semibold">
                                 {draft.title || "Untitled Draft"}
@@ -115,7 +128,7 @@ const BoatDraftsList = () => {
                         <div className="d-flex gap-2">
                             <Button
                                 type="button"
-                                className="btn-solid btn-sm"
+                                className="btn-border btn-sm"
                                 onClick={() => handleContinueEditing(draft)}
                                 disabled={deletingId === draft.id}
                             >
@@ -132,6 +145,7 @@ const BoatDraftsList = () => {
                         </div>
                     </div>
                 ))}
+                {loading && <AccountSkeleton kind="drafts" heading={false} rows={1} />}
             </div>
         </div>
     );

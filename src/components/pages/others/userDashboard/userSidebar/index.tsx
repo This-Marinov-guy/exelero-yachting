@@ -1,147 +1,26 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Activity, Anchor, Building2, ChevronDown, FilePlus2, Handshake, LogOut, Mail, Settings, Ship, Truck } from "lucide-react";
 import ModalLogout from "@/components/commonComponents/modal/ModalLogout";
-import { Href, Logout } from "@/constants";
-import { SidebarItems } from "@/data/pages/Others";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setLogoutModal, setUserDashboardSidebar } from "@/redux/reducers/LayoutSlice";
-import { Button, Col, Nav, NavItem, NavLink, Tooltip } from "reactstrap";
-import UserProfile from "./UserProfile";
-import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
-import { X, Lock } from "lucide-react";
-import { AccountTabId, isAccountTabId } from "../accountTabs";
+import { useAppDispatch } from "@/redux/hooks";
+import { setLogoutModal } from "@/redux/reducers/LayoutSlice";
+import type { AccountTabId } from "../accountTabs";
+import styles from "../AdminShell.module.scss";
 
-type UserSidebarProps = {
-  activeTab: AccountTabId;
-  onTabChange: (tab: AccountTabId) => void;
-};
-
-const UserSidebar = ({ activeTab, onTabChange }: UserSidebarProps) => {
-  const { UserDashboardSidebar } = useAppSelector((state) => state.layout);
+const groups = [
+  { title: "Overview", items: [{ id: "tracking", label: "Tracking", icon: Activity }] },
+  { title: "Website", items: [{ id: "partners", label: "Partners", icon: Handshake }, { id: "boats-listing", label: "Boat listings", icon: Ship }, { id: "upload-boat", label: "Add a boat", icon: FilePlus2 }] },
+  { title: "Inquiries", items: [{ id: "charter-requests", label: "Charter", icon: Mail }, { id: "transportation-requests", label: "Transportation", icon: Truck }] },
+  { title: "Settings", items: [{ id: "dealer-info", label: "Dealers", icon: Building2 }, { id: "account-settings", label: "Account settings", icon: Settings }] },
+] as const;
+export default function UserSidebar({ activeTab, onTabChange, canLeave }: { activeTab: AccountTabId; onTabChange: (tab: AccountTabId) => void; canLeave: () => boolean }) {
   const dispatch = useAppDispatch();
-  const [hasDealerInfo, setHasDealerInfo] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [tooltipOpen, setTooltipOpen] = useState<{ [key: string]: boolean }>({});
-
-  useEffect(() => {
-    const checkDealerInfo = async () => {
-      const supabase = getSupabaseBrowserClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session?.user) {
-        setLoading(false);
-        setHasDealerInfo(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("broker_data")
-        .select("id")
-        .eq("user_id", session.user.id)
-        .limit(1);
-
-      setHasDealerInfo(!!data && data.length > 0);
-      setLoading(false);
-    };
-
-    checkDealerInfo();
-
-    // Listen for auth state changes
-    const supabase = getSupabaseBrowserClient();
-    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
-      checkDealerInfo();
-    });
-
-    // Listen for custom event when dealer data changes
-    const handleDealerDataChanged = () => {
-      checkDealerInfo();
-    };
-    
-    window.addEventListener("dealerDataChanged", handleDealerDataChanged);
-
-    // Check periodically for changes (every 5 seconds) as a fallback
-    const interval = setInterval(() => {
-      checkDealerInfo();
-    }, 5000);
-
-    return () => {
-      authListener.subscription.unsubscribe();
-      clearInterval(interval);
-      window.removeEventListener("dealerDataChanged", handleDealerDataChanged);
-    };
-  }, []);
-
-  const toggleTooltip = (id: string) => {
-    setTooltipOpen((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  const closeSidebar = () => {
-    if (UserDashboardSidebar) {
-      dispatch(setUserDashboardSidebar());
-    }
-  };
-
-  const getItemLockStatus = (item: typeof SidebarItems[0]) => {
-    if (item.id === "dealer-info" || item.id === "account-settings" || item.id === "charter-requests" || item.id === "transportation-requests") return false;
-    return !hasDealerInfo;
-  };
-
-  return (
-    <Col lg={3}>
-      <div className={`left-sidebar filter-sidebar ${UserDashboardSidebar ? "open" : ""}`}>
-        <Button className='close-btn' onClick={closeSidebar} aria-label="Close menu">
-          <X className='iconsax' />
-        </Button>
-        <UserProfile />
-        <Nav pills className='flex-column sidebar-list'>
-          {SidebarItems.map((item, i) => {
-            const isLocked = getItemLockStatus(item);
-            const tooltipId = `tooltip-${item.id}`;
-
-            return (
-              <NavItem key={i}>
-                <NavLink
-                  href={Href}
-                  className={`${item.id === activeTab ? " active" : ""} ${isLocked ? "locked" : ""}`}
-                  color='transparent'
-                  onClick={(e) => {
-                    e.preventDefault();
-                    if (!isLocked && isAccountTabId(item.id)) {
-                      onTabChange(item.id);
-                      closeSidebar();
-                    }
-                  }}
-                  id={tooltipId}
-                >
-                  {item.label}
-                  {isLocked && <Lock className='iconsax' style={{ width: '16px', height: '16px' }} />}
-                </NavLink>
-                {isLocked && (
-                  <Tooltip
-                    isOpen={!!tooltipOpen[tooltipId]}
-                    target={tooltipId}
-                    toggle={() => toggleTooltip(tooltipId)}
-                    placement="right"
-                  >
-                    This section is locked until you have a dealer saved
-                  </Tooltip>
-                )}
-              </NavItem>
-            );
-          })}
-          <li>
-            <a href={Href} className='btn-border danger' onClick={() => dispatch(setLogoutModal())}>
-              {Logout}
-            </a>
-          </li>
-        </Nav>
-      </div>
-      <ModalLogout />
-    </Col>
-  );
-};
-
-export default UserSidebar;
+  const [open, setOpen] = useState(false);
+  return <aside className={styles.sidebar}>
+    <button type="button" className={styles.menuButton} aria-expanded={open} aria-controls="account-navigation" onClick={() => setOpen(!open)}><span><Anchor size={18} /> Admin menu</span><ChevronDown size={18} /></button>
+    <nav id="account-navigation" className={styles.navigation} data-open={open} aria-label="Site administration">
+      {groups.map(group => <div key={group.title} className={styles.navGroup}><p>{group.title}</p>{group.items.map(({ id, label, icon: Icon }) => <a key={id} href={`/account?tab=${id}`} aria-current={activeTab === id ? "page" : undefined} onClick={event => { if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return; event.preventDefault(); onTabChange(id); setOpen(false); }}><Icon aria-hidden="true" />{label}</a>)}</div>)}
+      <button className={styles.signout} type="button" onClick={() => { if (canLeave()) dispatch(setLogoutModal()); }}><LogOut size={18} />Sign out</button>
+    </nav><ModalLogout />
+  </aside>;
+}

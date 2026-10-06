@@ -1,20 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import Link from "next/link";
+import styles from "../AdminShell.module.scss";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { UncontrolledTooltip } from "reactstrap";
-import { Eye, Edit, Trash2, BadgeCheck } from "lucide-react";
+import { Eye, Edit, Trash2 } from "lucide-react";
 import EditBoatModal from "./EditBoatModal";
+import AccountSkeleton from "../AccountSkeleton";
 
 type Boat = {
     id: string;
@@ -32,7 +25,10 @@ type Boat = {
 };
 
 const BoatsListing = () => {
-    const [isLocked, setIsLocked] = useState(true);
+    const [query, setQuery] = useState("");
+    const [filter, setFilter] = useState("all");
+    const [loadFailed, setLoadFailed] = useState(false);
+    const [limit, setLimit] = useState(25);
     const [loading, setLoading] = useState(true);
     const [boats, setBoats] = useState<Boat[]>([]);
     const [updatingActive, setUpdatingActive] = useState<Set<string>>(new Set());
@@ -40,50 +36,19 @@ const BoatsListing = () => {
     const [deleting, setDeleting] = useState<Set<string>>(new Set());
     const [editBoatId, setEditBoatId] = useState<string | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const closeBoatEditor = useCallback(() => setEditBoatId(null), []);
 
     useEffect(() => {
-        const checkDealerInfo = async () => {
+        const fetchBoats = async () => {
+            setLoading(true); setLoadFailed(false);
             const supabase = getSupabaseBrowserClient();
             const { data: { session } } = await supabase.auth.getSession();
 
             if (!session?.user) {
-                setIsLocked(true);
+                setLoadFailed(true);
                 setLoading(false);
                 return;
             }
-
-            const { data, error } = await supabase
-                .from("broker_data")
-                .select("id")
-                .eq("user_id", session.user.id)
-                .limit(1);
-
-            setIsLocked(!data || data.length === 0);
-            setLoading(false);
-        };
-
-        checkDealerInfo();
-
-        // Listen for dealer data changes
-        const handleDealerDataChanged = () => {
-            checkDealerInfo();
-        };
-
-        window.addEventListener("dealerDataChanged", handleDealerDataChanged);
-
-        return () => {
-            window.removeEventListener("dealerDataChanged", handleDealerDataChanged);
-        };
-    }, []);
-
-    useEffect(() => {
-        if (isLocked || loading) return;
-
-        const fetchBoats = async () => {
-            const supabase = getSupabaseBrowserClient();
-            const { data: { session } } = await supabase.auth.getSession();
-
-            if (!session?.user) return;
 
             try {
                 // Fetch boats with boat_data
@@ -102,6 +67,7 @@ const BoatsListing = () => {
                 if (boatsError) {
                     console.error("Error fetching boats:", boatsError);
                     toast.error("Failed to load boats");
+                    setLoadFailed(true);
                     return;
                 }
 
@@ -118,7 +84,7 @@ const BoatsListing = () => {
                             .from("broker_data")
                             .select("name, dealer")
                             .eq("boat_id", boat.id)
-                            .single();
+                            .maybeSingle();
 
                         // Fetch main image
                         const { data: imagesData } = await supabase
@@ -128,7 +94,7 @@ const BoatsListing = () => {
                             .eq("media_type", "image")
                             .order("display_order", { ascending: true })
                             .limit(1)
-                            .single();
+                            .maybeSingle();
 
                         return {
                             ...boat,
@@ -142,11 +108,12 @@ const BoatsListing = () => {
             } catch (error) {
                 console.error("Error fetching boats:", error);
                 toast.error("Failed to load boats");
-            }
+                    setLoadFailed(true);
+            } finally { setLoading(false); }
         };
 
         fetchBoats();
-    }, [isLocked, loading, refreshTrigger]);
+    }, [refreshTrigger]);
 
     useEffect(() => {
         const onRefresh = () => setRefreshTrigger((t) => t + 1);
@@ -294,8 +261,8 @@ const BoatsListing = () => {
         if (!boatsError && boatsData) {
             const boatsWithDetails = await Promise.all(
                 boatsData.map(async (boat: any) => {
-                    const { data: brokerData } = await supabase.from("broker_data").select("name, dealer").eq("boat_id", boat.id).single();
-                    const { data: imagesData } = await supabase.from("boat_images").select("link").eq("boat_id", boat.id).eq("media_type", "image").order("display_order", { ascending: true }).limit(1).single();
+                    const { data: brokerData } = await supabase.from("broker_data").select("name, dealer").eq("boat_id", boat.id).maybeSingle();
+                    const { data: imagesData } = await supabase.from("boat_images").select("link").eq("boat_id", boat.id).eq("media_type", "image").order("display_order", { ascending: true }).limit(1).maybeSingle();
                     return { ...boat, broker_data: brokerData, main_image: imagesData?.link || null };
                 })
             );
@@ -308,244 +275,19 @@ const BoatsListing = () => {
         refreshBoats();
     };
 
-    if (loading) {
-        return (
-            <div className="locked-section">
-                <div className="locked-content">
-                    <h4 className="dashboard-title">Boats Listing</h4>
-                    <p className="text-muted">Loading...</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (isLocked) {
-        return (
-            <div className="locked-section">
-                <div className="locked-content">
-                    <h4 className="dashboard-title">Boats Listing</h4>
-                    <p className="text-muted">This section is locked. Please save your dealer information first.</p>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <>
-        <div className="boats-listing-section">
-            <h4 className="dashboard-title mb-4">Boats Listing</h4>
-
-            {boats.length === 0 ? (
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center py-12"
-                >
-                    <p className="text-muted text-lg">No boats found. Upload your first boat to get started.</p>
-                </motion.div>
-            ) : (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                    className="rounded-lg border bg-card shadow-sm"
-                >
-                    <Table>
-                        <TableHeader>
-                            <tr>
-                                <TableHead style={{ width: "100px" }}>Active</TableHead>
-                                <TableHead style={{ width: "100px" }}>Bought</TableHead>
-                                <TableHead style={{ width: "140px" }}>Image</TableHead>
-                                <TableHead>Title</TableHead>
-                                <TableHead>Dealer</TableHead>
-                                <TableHead style={{ width: "120px", textAlign: "right" }}>Actions</TableHead>
-                            </tr>
-                        </TableHeader>
-                        <TableBody>
-                            <AnimatePresence>
-                                {boats.map((boat, index) => (
-                                    <motion.tr
-                                        key={boat.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        transition={{ duration: 0.2, delay: index * 0.05 }}
-                                        className="border-b transition-colors hover:bg-muted/50"
-                                    >
-                                        <TableCell style={{ width: "100px" }}>
-                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                <label style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "pointer" }}>
-                                                    <input
-                                                        type="checkbox"
-                                                        style={{ position: "absolute", opacity: 0, width: 0, height: 0 }}
-                                                        checked={boat.active}
-                                                        onChange={() => handleToggleActive(boat.id, boat.active)}
-                                                        disabled={updatingActive.has(boat.id) || boat.bought}
-                                                    />
-                                                    <div
-                                                        className="toggle-switch"
-                                                        style={{
-                                                            width: "44px",
-                                                            height: "24px",
-                                                            backgroundColor: boat.active ? "rgba(var(--theme-color), 1)" : "rgba(var(--border-color), 0.5)",
-                                                            borderRadius: "12px",
-                                                            position: "relative",
-                                                            transition: "background-color 0.3s ease",
-                                                            cursor: updatingActive.has(boat.id) || boat.bought ? "not-allowed" : "pointer",
-                                                            opacity: updatingActive.has(boat.id) || boat.bought ? 0.6 : 1,
-                                                        }}
-                                                    >
-                                                        <div
-                                                            style={{
-                                                                position: "absolute",
-                                                                top: "2px",
-                                                                left: boat.active ? "22px" : "2px",
-                                                                width: "20px",
-                                                                height: "20px",
-                                                                backgroundColor: "#fff",
-                                                                borderRadius: "50%",
-                                                                transition: "left 0.3s ease",
-                                                                boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-                                                            }}
-                                                        />
-                                                    </div>
-                                                    
-                                                </label>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell style={{ width: "100px" }}>
-                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                <label style={{ position: "relative", display: "inline-flex", alignItems: "center", cursor: "pointer" }}>
-                                                    <input
-                                                        type="checkbox"
-                                                        style={{ position: "absolute", opacity: 0, width: 0, height: 0 }}
-                                                        checked={boat.bought}
-                                                        onChange={() => handleToggleBought(boat.id, boat.bought)}
-                                                        disabled={updatingBought.has(boat.id)}
-                                                    />
-                                                    <div
-                                                        className="toggle-switch"
-                                                        style={{
-                                                            width: "44px",
-                                                            height: "24px",
-                                                            backgroundColor: boat.bought ? "#198754" : "rgba(var(--border-color), 0.5)",
-                                                            borderRadius: "12px",
-                                                            position: "relative",
-                                                            transition: "background-color 0.3s ease",
-                                                            cursor: updatingBought.has(boat.id) ? "not-allowed" : "pointer",
-                                                            opacity: updatingBought.has(boat.id) ? 0.6 : 1,
-                                                        }}
-                                                    >
-                                                        <div
-                                                            style={{
-                                                                position: "absolute",
-                                                                top: "2px",
-                                                                left: boat.bought ? "22px" : "2px",
-                                                                width: "20px",
-                                                                height: "20px",
-                                                                backgroundColor: "#fff",
-                                                                borderRadius: "50%",
-                                                                transition: "left 0.3s ease",
-                                                                boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
-                                                            }}
-                                                        />
-                                                    </div>
-                                                </label>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell style={{ width: "140px" }}>
-                                            <div style={{ width: "120px", height: "80px", position: "relative", borderRadius: "8px", overflow: "hidden" }}>
-                                                {boat.main_image ? (
-                                                    <Image
-                                                        src={boat.main_image}
-                                                        alt={boat.boat_data?.title || "Boat image"}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
-                                                ) : (
-                                                    <div style={{ width: "100%", height: "100%", backgroundColor: "rgba(var(--light-bg-color), 1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", color: "rgba(var(--content-color), 0.7)" }}>
-                                                        No image
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell style={{ minWidth: "200px" }}>
-                                            <div className="font-medium d-flex align-items-center gap-2" style={{ wordBreak: "break-word" }}>
-                                                {boat.boat_data?.title || "Untitled"}
-                                                {boat.bought && (
-                                                    <span className="badge bg-success d-inline-flex align-items-center gap-1">
-                                                        <BadgeCheck className="h-4 w-4" /> Bought
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell style={{ minWidth: "200px" }}>
-                                            {boat.broker_data ? (
-                                                <div className="text-sm text-muted-foreground" style={{ wordBreak: "break-word" }}>
-                                                    {boat.broker_data.name}
-                                                    {boat.broker_data.dealer && (
-                                                        <span className="text-muted-foreground/70"> - {boat.broker_data.dealer}</span>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <span className="text-sm text-muted-foreground">No dealer</span>
-                                            )}
-                                        </TableCell>
-                                                <TableCell style={{ width: "auto", minWidth: "140px", textAlign: "right" }} className="text-right">
-                                            <div className="profile-table-actions-icons d-flex align-items-center justify-content-end gap-1">
-                                                <button
-                                                    type="button"
-                                                    id={`boat-preview-${boat.id}`}
-                                                    onClick={() => handlePreview(boat)}
-                                                    className="profile-table-action-btn"
-                                                    aria-label="Preview"
-                                                >
-                                                    <Eye className="h-4 w-4" />
-                                                </button>
-                                                <UncontrolledTooltip target={`boat-preview-${boat.id}`} placement="top">Preview</UncontrolledTooltip>
-                                                <button
-                                                    type="button"
-                                                    id={`boat-edit-${boat.id}`}
-                                                    onClick={() => handleEdit(boat.id)}
-                                                    className="profile-table-action-btn"
-                                                    aria-label="Edit"
-                                                >
-                                                    <Edit className="h-4 w-4" />
-                                                </button>
-                                                <UncontrolledTooltip target={`boat-edit-${boat.id}`} placement="top">Edit</UncontrolledTooltip>
-                                                <button
-                                                    type="button"
-                                                    id={`boat-delete-${boat.id}`}
-                                                    onClick={() => handleDelete(boat.id)}
-                                                    disabled={deleting.has(boat.id)}
-                                                    className="profile-table-action-btn profile-table-action-btn-danger"
-                                                    aria-label="Delete"
-                                                >
-                                                    {deleting.has(boat.id) ? (
-                                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden />
-                                                    ) : (
-                                                        <Trash2 className="h-4 w-4" />
-                                                    )}
-                                                </button>
-                                                <UncontrolledTooltip target={`boat-delete-${boat.id}`} placement="top">Delete</UncontrolledTooltip>
-                                            </div>
-                                        </TableCell>
-                                    </motion.tr>
-                                ))}
-                            </AnimatePresence>
-                        </TableBody>
-                    </Table>
-                </motion.div>
-            )}
-        </div>
-        <EditBoatModal
-            boatId={editBoatId}
-            isOpen={editBoatId !== null}
-            onClose={() => setEditBoatId(null)}
-            onSaved={handleEditSaved}
-        />
-        </>
-    );
+    const visible = boats.filter(boat => (filter === "all" || (filter === "published" ? boat.active : filter === "sold" ? boat.bought : !boat.active && !boat.bought)) && [boat.boat_data?.title, boat.broker_data?.dealer, boat.broker_data?.name].some(value => value?.toLowerCase().includes(query.toLowerCase())));
+    return <>
+      <div className="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4"><h1 className="dashboard-title mb-0">Boat listings</h1><Link className="btn-solid" href="/account?tab=upload-boat">Add a boat</Link></div>
+      <p className="admin-section-description">Manage your brokerage listings, visibility and availability.</p>
+      {loading ? <AccountSkeleton kind="boats" heading={false} /> : loadFailed ? <div className="admin-empty"><p>The boat list is unavailable.</p><button type="button" className="btn-border" onClick={() => setRefreshTrigger(value => value + 1)}>Try again</button></div> : <>
+        <div className="admin-toolbar"><label>Search boats<input type="search" value={query} placeholder="Boat title or dealer" onChange={event => { setQuery(event.target.value); setLimit(25); }} /></label><label>Status<select value={filter} onChange={event => { setFilter(event.target.value); setLimit(25); }}><option value="all">All boats ({boats.length})</option><option value="published">Published</option><option value="hidden">Hidden</option><option value="sold">Sold</option></select></label></div>
+        {visible.length ? <><div className={styles.tableRegion} role="region" aria-label="Boat listings" tabIndex={0}><table><thead><tr><th scope="col">Boat</th><th scope="col">Dealer</th><th scope="col">Visibility</th><th scope="col">Availability</th><th scope="col">Actions</th></tr></thead><tbody>{visible.slice(0, limit).map(boat => {
+          const busy = updatingActive.has(boat.id) || updatingBought.has(boat.id) || deleting.has(boat.id);
+          const title = boat.boat_data?.title || "Untitled boat";
+          return <tr key={boat.id}><td><div className="d-flex align-items-center gap-3">{boat.main_image && <Image src={boat.main_image} alt="" width={88} height={60} style={{ objectFit: "cover", borderRadius: 4 }} />}<strong>{title}</strong></div></td><td>{boat.broker_data?.dealer || "—"}<small>{boat.broker_data?.name}</small></td><td><button type="button" className="btn-border" aria-label={`${boat.active ? "Hide" : "Publish"} ${title}`} aria-pressed={boat.active} disabled={busy || boat.bought} onClick={() => void handleToggleActive(boat.id, boat.active)}>{updatingActive.has(boat.id) ? "Updating…" : boat.active ? "Published" : "Hidden"}</button></td><td><button type="button" className="btn-border" aria-label={`Mark ${title} as ${boat.bought ? "available" : "sold"}`} aria-pressed={boat.bought} disabled={busy} onClick={() => { if (boat.bought || confirm(`Mark ${title} as sold? It will also be hidden from brokerage.`)) void handleToggleBought(boat.id, boat.bought); }}>{updatingBought.has(boat.id) ? "Updating…" : boat.bought ? "Sold" : "Available"}</button></td><td><div className="d-flex gap-2"><button type="button" className="profile-table-action-btn" aria-label={`View ${title}`} onClick={() => handlePreview(boat)}><Eye /></button><button type="button" className="profile-table-action-btn" aria-label={`Edit ${title}`} disabled={busy} onClick={() => handleEdit(boat.id)}><Edit /></button><button type="button" className="profile-table-action-btn profile-table-action-btn-danger" aria-label={`Delete ${title}`} disabled={busy} onClick={() => void handleDelete(boat.id)}>{deleting.has(boat.id) ? "…" : <Trash2 />}</button></div></td></tr>;
+        })}</tbody></table></div><div className={styles.listFooter}><span>Showing {Math.min(limit, visible.length)} of {visible.length} boats</span>{limit < visible.length && <button type="button" className="btn-border" onClick={() => setLimit(limit + 25)}>Show more</button>}</div></> : <div className="admin-empty"><h2>{boats.length ? "No matching boats" : "Add your first boat"}</h2><p>{boats.length ? "Try another title or status." : "Create a listing or save a draft to finish later."}</p>{boats.length ? <button className="btn-border" onClick={() => { setQuery(""); setFilter("all"); }}>Clear filters</button> : <Link href="/account?tab=upload-boat" className="btn-solid">Add a boat</Link>}</div>}
+      </>}
+      {editBoatId && <EditBoatModal boatId={editBoatId} isOpen={!!editBoatId} onClose={closeBoatEditor} onSaved={handleEditSaved} />}
+    </>;
 };
-
 export default BoatsListing;

@@ -15,7 +15,7 @@ import TopBar from "./topBar";
 import TapTop from "../TapTop";
 import AuthAccountIcon from "./AuthAccountIcon";
 
-const Header: React.FC<PathTypes> = ({ part }) => {
+const Header: React.FC<PathTypes & { partners?: { slug: string; name: string }[] }> = ({ part, partners = [] }) => {
   const { sidebarOpen } = useAppSelector((state) => state.layout);
   const dispatch = useAppDispatch();
   const isTopBar = ["car-2", "property-2"].some((item) => part?.includes(item));
@@ -39,7 +39,7 @@ const Header: React.FC<PathTypes> = ({ part }) => {
       <Container className={ContainerClassMap[part] || ""}>
         <div className='header-flex'>
           <LeftHeader sidebarOpen={sidebarOpen} part={part} isJobOrProperty={isJobOrProperty} />
-          <MainMenu />
+          <MainMenu partners={partners} />
           <AuthAccountIcon />
           <div className='mobile-menu-toggle'>
             <Link scroll={false} href={Href} className={`toggle ${sidebarOpen ? "open" : ""}`} aria-label="Open menu" onClick={() => dispatch(setCartData())}>

@@ -4,6 +4,7 @@
 import { FC, useState } from "react";
 import { ProductType } from "@/types/Product";
 import { Modal, ModalBody } from "reactstrap";
+import { VideoPlayer, VideoPoster } from "@/components/commonComponents/VideoMedia";
 
 interface BoatDetailImagesProps {
   boat: ProductType;
@@ -27,13 +28,9 @@ const BoatDetailImages: FC<BoatDetailImagesProps> = ({ boat }) => {
             onClick={() => setPreviewVideo(media.url)}
             aria-label={`Preview video for ${boat.title}`}
           >
-            <video
-              src={media.url}
-              muted
-              loop
-              autoPlay
-              playsInline
-              preload="metadata"
+            <VideoPoster
+              url={media.url}
+              title={`${boat.title} video preview`}
               className="boat-detail-preview-image"
             />
           </button>
@@ -48,11 +45,9 @@ const BoatDetailImages: FC<BoatDetailImagesProps> = ({ boat }) => {
       <Modal isOpen={Boolean(previewVideo)} toggle={() => setPreviewVideo(null)} centered size="lg">
         <ModalBody className="p-0 bg-dark">
           {previewVideo && (
-            <video
-              src={previewVideo}
-              controls
-              autoPlay
-              playsInline
+            <VideoPlayer
+              url={previewVideo}
+              title={`${boat.title} video`}
               style={{ width: "100%", maxHeight: "80vh", display: "block", background: "#000" }}
             />
           )}

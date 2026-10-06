@@ -651,6 +651,8 @@ export const SidebarItems = [
   { id: "boats-listing", label: "Boats Listing", locked: true },
   { id: "charter-requests", label: "Charter Requests", locked: false },
   { id: "transportation-requests", label: "Transportation Requests", locked: false },
+  { id: "partners", label: "Partners", locked: false },
+  { id: "tracking", label: "Tracking", locked: false },
 ];
 
 export const SaleData = [

@@ -4,19 +4,19 @@ import type { Metadata } from "next";
 import { requireAuthenticatedUser } from "@/lib/supabaseAuthServer";
 
 export const metadata: Metadata = {
-  title: "My Account | Exelero Yachting",
-  description: "Manage your Exelero Yachting account, profile, and preferences.",
+  title: "Site admin",
+  description: "Manage website content, inquiries, traffic reports and account settings.",
   openGraph: {
-    title: "My Account | Exelero Yachting",
-    description: "Manage your Exelero Yachting account, profile, and preferences.",
+    title: "Site admin",
+    description: "Manage website content, inquiries, traffic reports and account settings.",
     url: "/account",
     type: "website",
     images: [breadcrumbOpenGraphImage("Exelero Yachting Account")],
   },
   twitter: {
     card: "summary_large_image",
-    title: "My Account | Exelero Yachting",
-    description: "Manage your Exelero Yachting account, profile, and preferences.",
+    title: "Site admin",
+    description: "Manage website content, inquiries, traffic reports and account settings.",
     images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   robots: { index: false, follow: false },

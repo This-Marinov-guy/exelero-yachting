@@ -3,6 +3,14 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 let browserClient: SupabaseClient | null = null;
 
+export function isLocalSupabase(): boolean {
+  try {
+    return ["localhost", "127.0.0.1", "[::1]"].includes(new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || "").hostname);
+  } catch {
+    return false;
+  }
+}
+
 export function getSupabaseBrowserClient() {
   if (browserClient) return browserClient;
 

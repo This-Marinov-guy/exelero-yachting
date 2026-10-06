@@ -2,8 +2,6 @@ import React from "react";
 import JobApplyButton from "./JobApplyButton";
 import { RightHeaderProps } from "@/types/Layout";
 import AccountSection from "./AccountSection";
-import { RouteList } from "@/utils/RouteList";
-import { PostProperty } from "@/constants";
 import LanguageSection from "./LanguageSection";
 
 const RightHeader: React.FC<RightHeaderProps> = ({ part, isJobOrProperty }) => {
@@ -11,12 +9,7 @@ const RightHeader: React.FC<RightHeaderProps> = ({ part, isJobOrProperty }) => {
   return (
     <div className='right-side-header'>
       {isLogin && <JobApplyButton part={part} />}
-      {part?.includes("property") && (
-        <a href={RouteList.Pages.Other.UserDashboard} className='btn-solid'>
-          {PostProperty}
-        </a>
-      )}
-      {!isJobOrProperty && (
+      {(!isJobOrProperty || part?.includes("property")) && (
         <div className='icon-side'>
           <AccountSection />
           {/* <LanguageSection part={part} /> */}

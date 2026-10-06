@@ -1,5 +1,6 @@
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { FooterDetailType } from "@/types/Layout";
+import { BROCHURE_DOWNLOAD_NAME, BROCHURE_URL } from "@/constants/brochure";
 import { RouteList } from "@/utils/RouteList";
 import CookieSettingsButton from "@/components/commonComponents/CookieSettingsButton";
 import {
@@ -20,7 +21,7 @@ export const HeaderClassMapFooter: { [key: string]: string } = {
 };
 
 export const Details = [
-  "Exelero Yachting - Yachting and more.",
+  "Exelero Yachting",
   "Experience excellence in yachting with personalized service and world-class expertise.",
 ];
 
@@ -38,38 +39,38 @@ export const ContactListData = [
 ];
 
 export const SocialMediaData = [
-  { url: INSTAGRAM_URL, icon: <Instagram size={iconSize} /> },
-  { url: FACEBOOK_URL, icon: <Facebook size={iconSize} /> },
-  { url: LINKEDIN_URL, icon: <Linkedin size={iconSize} /> },
+  { url: INSTAGRAM_URL, label: "Instagram", icon: <Instagram size={iconSize} /> },
+  { url: FACEBOOK_URL, label: "Facebook", icon: <Facebook size={iconSize} /> },
+  { url: LINKEDIN_URL, label: "LinkedIn", icon: <Linkedin size={iconSize} /> },
 ];
 
 export const FooterDetailData: FooterDetailType[] = [
   {
     title: "Navigation",
     links: [
-      // { title: "Gallery", url: RouteList.Pages.Gallery },
-      { title: "About", url: RouteList.Pages.About },
+      { title: "About us", url: RouteList.Pages.About },
       { title: "Contact", url: RouteList.Pages.Other.ContactUs1 },
     ],
   },
-  // {
-  //   title: "Partners",
-  //   links: [
-  //     { title: "X-Yachts", url: RouteList.Pages.Partners.XYachts },
-  //     { title: "Elvstrom", url: RouteList.Pages.Partners.Elvstrom },
-  //     { title: "Omaya Yachts", url: RouteList.Pages.Partners.OmayaYachts },
-  //   ],
-  // },
+  {
+    title: "Yachts",
+    links: [
+      { title: "New yachts", url: RouteList.Pages.NewYachts },
+      { title: "Pre-owned yachts", url: RouteList.Pages.PreOwnedYachts },
+      { title: "Boat brokerage", url: RouteList.Pages.Services.Boats },
+    ],
+  },
   {
     title: "Services",
     links: [
-      // { title: "Sails", url: RouteList.Pages.Services.Sails },
-      // { title: "Clothes", url: RouteList.Pages.Services.Clothes },
-      { title: "Boats", url: RouteList.Pages.Services.Boats },
-      { title: "Transportation", url: RouteList.Pages.Services.Transportation },
-      // { title: "Sell Your Boat", url: RouteList.Pages.Services.SellYourBoat },
+      { title: "Yacht Transportation", url: RouteList.Pages.Services.Transportation },
       { title: "Charters", url: RouteList.Pages.Services.Charters },
-      // { title: "Parts", url: RouteList.Pages.Services.Parts },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { title: "Download brochure", url: BROCHURE_URL, download: BROCHURE_DOWNLOAD_NAME },
     ],
   },
   {

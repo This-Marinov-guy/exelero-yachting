@@ -1,4 +1,5 @@
 "use client";
+import { useUnsavedChanges } from "../useUnsavedChanges";
 import { useState, useEffect, useRef } from "react";
 import {
     closestCenter,
@@ -19,7 +20,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { Button, Card, CardBody, CardTitle, Modal, ModalBody, ModalHeader } from "reactstrap";
+import AccountSkeleton from "../AccountSkeleton";
 import CommonInput from "@/components/commonComponents/CommonInput";
+import { VideoPoster } from "@/components/commonComponents/VideoMedia";
+import { prepareVideoLink } from "@/lib/videoLinks";
 import CloseBtn from "@/components/commonComponents/CloseBtn";
 import DualUnitInput from "@/components/commonComponents/DualUnitInput";
 import dynamic from "next/dynamic";
@@ -38,21 +42,21 @@ import { BoatCeDesignCategoryData, BoatKeelTypeData, BoatMaterialData } from "@/
 import {
     updateFormField,
     setMainImageIndex,
-    setBrochureFileName,
-    setBrochureUrl,
     addUploadedBrochures,
     removeUploadedBrochure,
-    setUploadedBrochures,
     setUploadFolderName,
     addUploadedImage,
     removeUploadedImage,
     reorderUploadedImages,
     setUploadedImages,
+    restoreBoatFormFromStorage,
+    loadSavedDraft,
     resetForm,
     ImageMetadata,
     UploadedImage,
     UploadedBrochure,
 } from "@/redux/reducers/BoatUploadSlice";
+import { hasBoatDraftContent, mergeRecoveredImages } from "@/lib/boatDraftCompatibility";
 
 // Helper function to resize image to max dimensions
 const resizeImage = (file: File, maxWidth: number = 1500, maxHeight: number = 1500): Promise<Blob> => {
@@ -223,13 +227,9 @@ const SortableUploadedImageCard = ({
                 }}
             >
                 {isVideo ? (
-                    <video
-                        src={uploadedImage.url}
-                        muted
-                        loop
-                        autoPlay
-                        playsInline
-                        preload="metadata"
+                    <VideoPoster
+                        url={uploadedImage.url}
+                        title={`Video preview ${index + 1}`}
                         style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                 ) : (
@@ -388,6 +388,7 @@ const SortableUploadedImageCard = ({
 
 const UploadBoat = () => {
     const dispatch = useAppDispatch();
+    const boatUpload = useAppSelector((state) => state.boatUpload);
     const {
         formData,
         uploadedImages,
@@ -396,12 +397,17 @@ const UploadBoat = () => {
         mainImageIndex,
         brochureFileName,
         brochureUrl
-    } = useAppSelector((state) => state.boatUpload);
+    } = boatUpload;
+    const uploadedImagesRef = useRef(uploadedImages);
+    useEffect(() => { uploadedImagesRef.current = uploadedImages; }, [uploadedImages]);
+    useEffect(() => { dispatch(restoreBoatFormFromStorage()); }, [dispatch]);
 
     const [isLocked, setIsLocked] = useState(true);
     const [loading, setLoading] = useState(true);
     const [brokerDataList, setBrokerDataList] = useState<BrokerData[]>([]);
     const [submitting, setSubmitting] = useState(false);
+    const [unsaved, setUnsaved] = useState(false);
+    useUnsavedChanges(unsaved || submitting);
     const [uploadingImages, setUploadingImages] = useState<Set<number>>(new Set());
     const [uploadingBrochures, setUploadingBrochures] = useState<Set<number>>(new Set());
     const [dealerDropdownOpen, setDealerDropdownOpen] = useState(false);
@@ -413,6 +419,8 @@ const UploadBoat = () => {
     const [draftId, setDraftId] = useState<string | null>(null);
     const [savingDraft, setSavingDraft] = useState(false);
     const [videoLink, setVideoLink] = useState("");
+    const [videoLinkError, setVideoLinkError] = useState("");
+    const [addingVideoLink, setAddingVideoLink] = useState(false);
     const dealerDropdownRef = useRef<HTMLDivElement | null>(null);
     const imageDragSensors = useSensors(
         useSensor(PointerSensor, {
@@ -463,6 +471,7 @@ const UploadBoat = () => {
 
     // Helper function to update form fields
     const handleFieldChange = (field: keyof typeof formData, value: string | boolean) => {
+        setUnsaved(true);
         dispatch(updateFormField({ field, value }));
         if (typeof value !== "string" || hasRequiredValue(value)) {
             clearInvalidField(field);
@@ -534,6 +543,7 @@ const UploadBoat = () => {
 
     // Load uploaded images from folder on mount if folder exists
     useEffect(() => {
+        let cancelled = false;
         const loadUploadedImages = async () => {
             if (!uploadFolderName) return;
 
@@ -577,11 +587,9 @@ const UploadBoat = () => {
                     };
                 });
 
-                if (loadedImages.length > 0) {
-                    dispatch(setUploadedImages(loadedImages));
-                    if (mainImageIndex === 0 && loadedImages.length > 0) {
-                        dispatch(setMainImageIndex(0));
-                    }
+                if (!cancelled && loadedImages.length > 0) {
+                    const merged = mergeRecoveredImages(uploadedImagesRef.current, loadedImages);
+                    if (merged !== uploadedImagesRef.current) dispatch(setUploadedImages(merged));
                 }
             } catch (error) {
                 console.error("Error loading uploaded images:", error);
@@ -589,7 +597,8 @@ const UploadBoat = () => {
         };
 
         loadUploadedImages();
-    }, [uploadFolderName, dispatch, mainImageIndex]);
+        return () => { cancelled = true; };
+    }, [uploadFolderName, dispatch]);
 
     const handleImageDrop = async (acceptedFiles: File[]) => {
         if (uploadedImages.length + acceptedFiles.length > 15) {
@@ -734,51 +743,31 @@ const UploadBoat = () => {
         toast.success("Media order updated");
     };
 
-    const validateVideoUrl = (url: string) =>
-        new Promise<void>((resolve, reject) => {
-            const video = document.createElement("video");
-            const timeout = window.setTimeout(() => {
-                video.src = "";
-                reject(new Error("Could not load video metadata"));
-            }, 8000);
-
-            video.preload = "metadata";
-            video.muted = true;
-            video.playsInline = true;
-            video.onloadedmetadata = () => {
-                window.clearTimeout(timeout);
-                resolve();
-            };
-            video.onerror = () => {
-                window.clearTimeout(timeout);
-                reject(new Error("The video link could not be loaded"));
-            };
-            video.src = url;
-        });
-
     const handleAddVideoLink = async () => {
         const url = videoLink.trim();
-        if (!url) return;
+        if (!url || addingVideoLink) return;
 
+        setAddingVideoLink(true);
+        setVideoLinkError("");
         try {
-            const parsed = new URL(url);
-            if (!["http:", "https:"].includes(parsed.protocol)) throw new Error("Please enter a valid video URL");
             if (uploadedImages.length >= 15) throw new Error("Maximum 15 media items allowed");
-
-            await validateVideoUrl(url);
+            const video = await prepareVideoLink(url);
 
             dispatch(addUploadedImage({
-                url,
+                url: video.url,
                 order: uploadedImages.length,
-                name: parsed.pathname.split("/").pop() || "Linked video",
+                name: video.name,
                 filePath: "",
                 mediaType: "video",
                 sourceType: "link",
             }));
             setVideoLink("");
             toast.success("Video link added");
-        } catch (error: any) {
-            toast.error(error?.message || "Could not add video link");
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "Could not add this video link. Try again.";
+      setVideoLinkError(message); toast.error(message);
+        } finally {
+            setAddingVideoLink(false);
         }
     };
 
@@ -1131,12 +1120,14 @@ const UploadBoat = () => {
                 }
             }
 
+            setUnsaved(false);
             toast.success("Boat uploaded successfully!");
             window.dispatchEvent(new CustomEvent("boatsListingRefresh"));
 
             // Reset form (Redux will handle localStorage cleanup)
             dispatch(resetForm());
             setCoverImageIndex(0);
+            setDraftId(null);
         } catch (error: any) {
             console.error("Error uploading boat:", error);
             toast.error(error?.message || "Failed to upload boat. Please try again.");
@@ -1201,6 +1192,7 @@ const UploadBoat = () => {
             return;
         }
         if (data?.id) setDraftId(data.id);
+        setUnsaved(false);
         toast.success("Draft saved");
         window.dispatchEvent(new CustomEvent("draftSaved"));
         setSavingDraft(false);
@@ -1210,51 +1202,12 @@ const UploadBoat = () => {
     useEffect(() => {
         const handleLoadDraft = (e: Event) => {
             const draft = (e as CustomEvent).detail;
-            if (!draft) return;
-
-            dispatch(resetForm());
-
-            const fields: Array<keyof typeof formData> = [
-                "title", "type", "condition", "keel_type", "ce_design_category", "material", "manufacturer", "build_number", "build_year",
-                "location", "price", "description", "hull_length", "waterline_length",
-                "beam", "draft", "ballast", "displacement", "engine_power",
-                "fuel_tank", "water_tank", "additional_details", "dealer_id",
-            ];
-            fields.forEach((field) => {
-                const val = draft[field];
-                if (val !== null && val !== undefined) {
-                    dispatch(updateFormField({ field, value: String(val) }));
-                }
-            });
-            if (typeof draft.vat_included === "boolean") {
-                dispatch(updateFormField({ field: "vat_included", value: draft.vat_included }));
-            }
-
-            if (Array.isArray(draft.images)) {
-                dispatch(setUploadedImages(draft.images));
-            }
-            if (typeof draft.main_image_index === "number") {
-                dispatch(setMainImageIndex(draft.main_image_index));
-            }
-            if (draft.upload_folder_name) {
-                dispatch(setUploadFolderName(draft.upload_folder_name));
-            }
-            if (draft.brochure) {
-                dispatch(setBrochureUrl(draft.brochure));
-            }
-            if (draft.brochure_file_name) {
-                dispatch(setBrochureFileName(draft.brochure_file_name));
-            }
-            if (Array.isArray(draft.brochures) && draft.brochures.length > 0) {
-                dispatch(setUploadedBrochures(draft.brochures));
-            } else if (draft.brochure) {
-                dispatch(setUploadedBrochures([{
-                    url: draft.brochure,
-                    order: 0,
-                    name: draft.brochure_file_name || "Brochure",
-                    filePath: "",
-                }]));
-            }
+            if (!draft || typeof draft !== "object" || typeof draft.id !== "string") return;
+            if ((unsaved || (draftId !== draft.id && hasBoatDraftContent(boatUpload))) && !confirm("Replace the current boat form with this saved draft? Any changes not saved as a draft will be lost.")) return;
+            setUnsaved(false);
+            dispatch(loadSavedDraft(draft));
+            setCoverImageIndex(0);
+            setInvalidFields(new Set());
 
             setDraftId(draft.id);
 
@@ -1264,25 +1217,16 @@ const UploadBoat = () => {
 
         window.addEventListener("loadDraft", handleLoadDraft);
         return () => window.removeEventListener("loadDraft", handleLoadDraft);
-    }, [dispatch]);
+    }, [boatUpload, dispatch, draftId, unsaved]);
 
-    if (loading) {
-        return (
-            <div className="locked-section">
-                <div className="locked-content">
-                    <h4 className="dashboard-title">Upload Boat</h4>
-                    <p className="text-muted">Loading...</p>
-                </div>
-            </div>
-        );
-    }
+    if (loading) return <AccountSkeleton kind="boat-form" />;
 
     if (isLocked) {
         return (
             <div className="locked-section">
                 <div className="locked-content">
                     <h4 className="dashboard-title">Upload Boat</h4>
-                    <p className="text-muted">This section is locked. Please save your dealer information first.</p>
+                    <p className="text-muted">Add a dealer contact before creating a listing.</p><a href="/account?tab=dealer-info" className="btn-solid">Add dealer contact</a>
                 </div>
             </div>
         );
@@ -1290,12 +1234,12 @@ const UploadBoat = () => {
 
     return (
         <div id="upload-boat-section" className="upload-boat-section">
-            <h4 className="dashboard-title mb-4">Upload Boat</h4>
+            <h1 className="dashboard-title mb-4">Add a boat</h1>
 
             <Card className="dealer-form-card">
                 <CardBody>
                     <CardTitle tag="h5">Boat Information</CardTitle>
-                    <form onSubmit={handleSubmit} className="dealer-form" noValidate>
+                    <form onChange={() => setUnsaved(true)} onSubmit={handleSubmit} className="dealer-form" noValidate>
                         {/* Dealer Selection */}
                         <div className="mb-3">
                             <label className="form-label">Dealer *</label>
@@ -1348,8 +1292,8 @@ const UploadBoat = () => {
 
                         <div className="row">
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Type *</label>
-                                <select
+                                <label className="form-label" htmlFor="uploadboat-field-1">Type *</label>
+                                <select id="uploadboat-field-1"
                                     className={`form-control ${fieldErrorClass("type")}`}
                                     value={formData.type}
                                     onChange={(e) => handleFieldChange("type", e.target.value)}
@@ -1363,8 +1307,8 @@ const UploadBoat = () => {
                                 </select>
                             </div>
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Condition *</label>
-                                <select
+                                <label className="form-label" htmlFor="uploadboat-field-2">Condition *</label>
+                                <select id="uploadboat-field-2"
                                     className={`form-control ${fieldErrorClass("condition")}`}
                                     value={formData.condition}
                                     onChange={(e) => handleFieldChange("condition", e.target.value)}
@@ -1379,8 +1323,8 @@ const UploadBoat = () => {
 
                         <div className="row">
                             <div className="col-md-4 mb-3">
-                                <label className="form-label">Keel type *</label>
-                                <select
+                                <label className="form-label" htmlFor="uploadboat-field-3">Keel type *</label>
+                                <select id="uploadboat-field-3"
                                     className={`form-control ${fieldErrorClass("keel_type")}`}
                                     value={formData.keel_type}
                                     onChange={(e) => handleFieldChange("keel_type", e.target.value)}
@@ -1392,8 +1336,8 @@ const UploadBoat = () => {
                                 </select>
                             </div>
                             <div className="col-md-4 mb-3">
-                                <label className="form-label">CE Design Category *</label>
-                                <select
+                                <label className="form-label" htmlFor="uploadboat-field-4">CE Design Category *</label>
+                                <select id="uploadboat-field-4"
                                     className={`form-control ${fieldErrorClass("ce_design_category")}`}
                                     value={formData.ce_design_category}
                                     onChange={(e) => handleFieldChange("ce_design_category", e.target.value)}
@@ -1405,8 +1349,8 @@ const UploadBoat = () => {
                                 </select>
                             </div>
                             <div className="col-md-4 mb-3">
-                                <label className="form-label">Material *</label>
-                                <select
+                                <label className="form-label" htmlFor="uploadboat-field-5">Material *</label>
+                                <select id="uploadboat-field-5"
                                     className={`form-control ${fieldErrorClass("material")}`}
                                     value={formData.material}
                                     onChange={(e) => handleFieldChange("material", e.target.value)}
@@ -1419,10 +1363,9 @@ const UploadBoat = () => {
                             </div>
                         </div>
 
-                        {/* Basic Information */}
                         <div className="mb-3">
-                            <label className="form-label">Title *</label>
-                            <CommonInput
+                            <label className="form-label" htmlFor="uploadboat-field-6">Title *</label>
+                            <CommonInput id="uploadboat-field-6"
                                 inputType="text"
                                 value={formData.title}
                                 inputClass={fieldErrorClass("title")}
@@ -1433,8 +1376,8 @@ const UploadBoat = () => {
 
                         <div className="row">
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Manufacturer *</label>
-                                <CommonInput
+                                <label className="form-label" htmlFor="uploadboat-field-7">Manufacturer *</label>
+                                <CommonInput id="uploadboat-field-7"
                                     inputType="text"
                                     value={formData.manufacturer}
                                     inputClass={fieldErrorClass("manufacturer")}
@@ -1443,8 +1386,8 @@ const UploadBoat = () => {
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Build Number</label>
-                                <CommonInput
+                                <label className="form-label" htmlFor="uploadboat-field-8">Build Number</label>
+                                <CommonInput id="uploadboat-field-8"
                                     inputType="text"
                                     value={formData.build_number}
                                     onChange={(e) => handleFieldChange("build_number", e.target.value)}
@@ -1454,8 +1397,8 @@ const UploadBoat = () => {
 
                         <div className="row">
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Build Year *</label>
-                                <CommonInput
+                                <label className="form-label" htmlFor="uploadboat-field-9">Build Year *</label>
+                                <CommonInput id="uploadboat-field-9"
                                     inputType="text"
                                     value={formData.build_year}
                                     inputClass={fieldErrorClass("build_year")}
@@ -1464,8 +1407,8 @@ const UploadBoat = () => {
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Location *</label>
-                                <CommonInput
+                                <label className="form-label" htmlFor="uploadboat-field-10">Location *</label>
+                                <CommonInput id="uploadboat-field-10"
                                     inputType="text"
                                     value={formData.location}
                                     inputClass={fieldErrorClass("location")}
@@ -1477,8 +1420,8 @@ const UploadBoat = () => {
 
                         <div className="row">
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Price</label>
-                                <CommonInput
+                                <label className="form-label" htmlFor="uploadboat-field-11">Price</label>
+                                <CommonInput id="uploadboat-field-11"
                                     inputType="number"
                                     value={formData.price}
                                     leftText="€"
@@ -1626,7 +1569,7 @@ const UploadBoat = () => {
                         </div>
 
                         {/* Engine & Tanks */}
-                        <h5 className="mt-4 mb-3">Engine & Tanks</h5>
+                        <h5 className="mt-4 mb-3">Engine &amp; Tanks</h5>
                         <div className="row">
                             <div className="col-md-6 mb-3">
                                 <DualUnitInput
@@ -1724,22 +1667,34 @@ const UploadBoat = () => {
 
                             <div className="row g-2 align-items-end mb-3">
                                 <div className="col-md-9">
-                                    <label className="form-label">Add video link</label>
-                                    <CommonInput
-                                        inputType="url"
+                                    <label className="form-label" htmlFor="boat-video-link">Add video link</label>
+                                    <input
+                                        id="boat-video-link"
+                                        className="form-control"
+                                        type="url"
                                         value={videoLink}
-                                        placeholder="https://example.com/video.mp4"
-                                        onChange={(e) => setVideoLink(e.target.value)}
+                                        placeholder="YouTube or direct video file URL"
+                                        autoComplete="url"
+                                        aria-invalid={Boolean(videoLinkError)}
+                                        aria-describedby="boat-video-link-help"
+                                        onChange={(e) => {
+                                            setVideoLink(e.target.value);
+                                            setVideoLinkError("");
+                                        }}
                                     />
+                                    <div id="boat-video-link-help" className="text-muted small mt-1">YouTube and direct MP4, WebM, MOV, or M4V links are supported.</div>
                                 </div>
                                 <div className="col-md-3">
                                     <Button
                                         type="button"
                                         className="btn-solid w-100"
                                         onClick={handleAddVideoLink}
-                                        disabled={!videoLink.trim() || uploadedImages.length >= 15}
+                                        disabled={!videoLink.trim() || uploadedImages.length >= 15 || addingVideoLink}
+                                        aria-busy={addingVideoLink}
+                                        style={{ minHeight: 44 }}
                                     >
-                                        Add Video
+                                        {addingVideoLink && <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />}
+                                        {addingVideoLink ? "Adding..." : "Add Video"}
                                     </Button>
                                 </div>
                             </div>
@@ -1866,11 +1821,11 @@ const UploadBoat = () => {
                             </small>
                         </div>
 
-                        <div className="d-flex gap-2 mt-4">
+                        <div className="d-flex flex-wrap gap-2 mt-4">
                             <Button type="submit" className="btn-solid" disabled={submitting || savingDraft}>
-                                {submitting ? "Uploading..." : "Upload Boat"}
+                                {submitting ? "Publishing…" : "Publish boat"}
                             </Button>
-                            <Button type="button" style={{ background: "#f9c72c", borderColor: "#f9c72c", color: "#000", fontWeight: 600 }} onClick={handleSaveDraft} disabled={submitting || savingDraft}>
+                            <Button type="button" className="btn-border" onClick={handleSaveDraft} disabled={submitting || savingDraft}>
                                 {savingDraft ? "Saving..." : "Save as Draft"}
                             </Button>
                         </div>

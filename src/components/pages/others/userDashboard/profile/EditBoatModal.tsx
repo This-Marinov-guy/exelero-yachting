@@ -1,4 +1,7 @@
 "use client";
+import { useUnsavedChanges } from "../useUnsavedChanges";
+import styles from "../AdminShell.module.scss";
+import AccountSkeleton from "../AccountSkeleton";
 
 import { useState, useEffect } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
@@ -14,6 +17,8 @@ import {
   Input,
 } from "reactstrap";
 import CommonInput from "@/components/commonComponents/CommonInput";
+import { VideoPoster } from "@/components/commonComponents/VideoMedia";
+import { prepareVideoLink } from "@/lib/videoLinks";
 import DualUnitInput from "@/components/commonComponents/DualUnitInput";
 import { BoatCeDesignCategoryData, BoatKeelTypeData, BoatMaterialData } from "@/data/boat";
 import dynamic from "next/dynamic";
@@ -117,14 +122,20 @@ const emptyForm = {
 export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: EditBoatModalProps) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [unsaved, setUnsaved] = useState(false);
+  useUnsavedChanges(unsaved || saving);
+  const closeEditor = () => { if (!saving && (!unsaved || confirm("Discard unsaved boat changes?"))) onClose(); };
   const [form, setForm] = useState(emptyForm);
   const [images, setImages] = useState<ImageItem[]>([]);
   const [brochures, setBrochures] = useState<UploadedBrochure[]>([]);
   const [uploadingImages, setUploadingImages] = useState<Set<number>>(new Set());
   const [uploadingBrochures, setUploadingBrochures] = useState<Set<number>>(new Set());
   const [videoLink, setVideoLink] = useState("");
+  const [videoLinkError, setVideoLinkError] = useState("");
+  const [addingVideoLink, setAddingVideoLink] = useState(false);
 
   const setField = (field: string, value: string | number | boolean | null) => {
+    setUnsaved(true);
     setForm((prev) => ({ ...prev, [field]: value === null ? "" : value }));
   };
 
@@ -210,6 +221,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
   }, [boatId, isOpen, onClose]);
 
   const moveImage = (fromIndex: number, toIndex: number) => {
+    setUnsaved(true);
     if (toIndex < 0 || toIndex >= images.length) return;
     const next = [...images];
     const [removed] = next.splice(fromIndex, 1);
@@ -218,10 +230,12 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
   };
 
   const removeImage = (index: number) => {
+    setUnsaved(true);
     setImages((prev) => prev.filter((_, i) => i !== index).map((img, i) => ({ ...img, display_order: i })));
   };
 
   const setMainImage = (index: number) => {
+    setUnsaved(true);
     if (index === 0) return;
     const next = [...images];
     const [item] = next.splice(index, 1);
@@ -230,6 +244,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
   };
 
   const onDrop = async (acceptedFiles: File[]) => {
+    setUnsaved(true);
     if (images.length + acceptedFiles.length > 15) {
       toast.error("Maximum 15 media items allowed");
       return;
@@ -275,49 +290,22 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
     setImages((prev) => [...prev, ...toAdd].map((img, i) => ({ ...img, display_order: i })));
   };
 
-  const validateVideoUrl = (url: string) => {
-    return new Promise<void>((resolve, reject) => {
-      const video = document.createElement("video");
-      const timeout = window.setTimeout(() => {
-        cleanup();
-        reject(new Error("Could not load that video URL. Please use a direct MP4, WebM, MOV, or M4V link."));
-      }, 8000);
-      const cleanup = () => {
-        window.clearTimeout(timeout);
-        video.removeAttribute("src");
-        video.load();
-      };
-      video.preload = "metadata";
-      video.onloadedmetadata = () => {
-        cleanup();
-        resolve();
-      };
-      video.onerror = () => {
-        cleanup();
-        reject(new Error("Could not load that video URL. Please use a direct MP4, WebM, MOV, or M4V link."));
-      };
-      video.src = url;
-    });
-  };
-
   const addVideoLink = async () => {
     const url = videoLink.trim();
-    if (!url) return;
+    if (!url || addingVideoLink) return;
 
+    setAddingVideoLink(true);
+    setVideoLinkError("");
     try {
-      const parsed = new URL(url);
-      if (!["http:", "https:"].includes(parsed.protocol)) {
-        throw new Error("Please enter a valid video URL");
-      }
       if (images.length >= 15) {
         throw new Error("Maximum 15 media items allowed");
       }
 
-      await validateVideoUrl(url);
+      const video = await prepareVideoLink(url);
       setImages((prev) => [
         ...prev,
         {
-          link: url,
+          link: video.url,
           media_type: "video",
           display_order: prev.length,
           isNew: true,
@@ -325,12 +313,16 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
       ]);
       setVideoLink("");
       toast.success("Video link added");
-    } catch (error: any) {
-      toast.error(error?.message || "Could not add video link");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Could not add this video link. Try again.";
+      setVideoLinkError(message); toast.error(message);
+    } finally {
+      setAddingVideoLink(false);
     }
   };
 
   const onBrochureDrop = async (acceptedFiles: File[]) => {
+    setUnsaved(true);
     if (!boatId || acceptedFiles.length === 0) return;
 
     const allowedTypes = [
@@ -484,6 +476,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
       }
 
       toast.success("Boat updated successfully");
+      setUnsaved(false);
       onSaved();
       onClose();
     } catch (err: unknown) {
@@ -494,22 +487,18 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
   };
 
   return (
-    <Modal isOpen={isOpen} toggle={onClose} size="xl" scrollable className="edit-boat-modal">
-      <ModalHeader toggle={onClose}>Edit boat listing</ModalHeader>
+    <Modal fade={false} isOpen={isOpen} toggle={closeEditor} size="xl" scrollable className={`edit-boat-modal ${styles.dialog}`} contentClassName={styles.legacy}>
+      <ModalHeader toggle={closeEditor}>Edit boat listing</ModalHeader>
       <ModalBody>
         {loading ? (
-          <div className="text-center py-5">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
+          <AccountSkeleton kind="edit-boat" />
         ) : (
-          <form id="edit-boat-form" onSubmit={handleSubmit}>
+          <form id="edit-boat-form" onChange={() => setUnsaved(true)} onSubmit={handleSubmit}>
             <div className="row">
               <div className="col-lg-8">
                 <FormGroup>
-                  <Label>Type</Label>
-                  <Input
+                  <Label htmlFor="editboatmodal-field-1">Type</Label>
+                  <Input id="editboatmodal-field-1"
                     type="select"
                     value={form.type}
                     onChange={(e) => setField("type", e.target.value)}
@@ -523,8 +512,8 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                   </Input>
                 </FormGroup>
                 <FormGroup>
-                  <Label>Condition *</Label>
-                  <Input
+                  <Label htmlFor="editboatmodal-field-2">Condition *</Label>
+                  <Input id="editboatmodal-field-2"
                     type="select"
                     value={form.condition}
                     onChange={(e) => setField("condition", e.target.value)}
@@ -539,8 +528,8 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                 <div className="row">
                   <div className="col-md-4">
                     <FormGroup>
-                      <Label>Keel type *</Label>
-                      <Input
+                      <Label htmlFor="editboatmodal-field-3">Keel type *</Label>
+                      <Input id="editboatmodal-field-3"
                         type="select"
                         value={form.keel_type}
                         onChange={(e) => setField("keel_type", e.target.value)}
@@ -555,8 +544,8 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                   </div>
                   <div className="col-md-4">
                     <FormGroup>
-                      <Label>CE Design Category *</Label>
-                      <Input
+                      <Label htmlFor="editboatmodal-field-4">CE Design Category *</Label>
+                      <Input id="editboatmodal-field-4"
                         type="select"
                         value={form.ce_design_category}
                         onChange={(e) => setField("ce_design_category", e.target.value)}
@@ -571,8 +560,8 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                   </div>
                   <div className="col-md-4">
                     <FormGroup>
-                      <Label>Material *</Label>
-                      <Input
+                      <Label htmlFor="editboatmodal-field-5">Material *</Label>
+                      <Input id="editboatmodal-field-5"
                         type="select"
                         value={form.material}
                         onChange={(e) => setField("material", e.target.value)}
@@ -587,42 +576,42 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                   </div>
                 </div>
                 <FormGroup>
-                  <Label>Title *</Label>
-                  <CommonInput inputType="text" value={form.title} onChange={(e) => setField("title", e.target.value)} required />
+                  <Label htmlFor="editboatmodal-field-6">Title *</Label>
+                  <CommonInput id="editboatmodal-field-6" inputType="text" value={form.title} onChange={(e) => setField("title", e.target.value)} required />
                 </FormGroup>
                 <div className="row">
                   <div className="col-md-6">
                     <FormGroup>
-                      <Label>Manufacturer *</Label>
-                      <CommonInput inputType="text" value={form.manufacturer} onChange={(e) => setField("manufacturer", e.target.value)} required />
+                      <Label htmlFor="editboatmodal-field-7">Manufacturer *</Label>
+                      <CommonInput id="editboatmodal-field-7" inputType="text" value={form.manufacturer} onChange={(e) => setField("manufacturer", e.target.value)} required />
                     </FormGroup>
                   </div>
                   <div className="col-md-6">
                     <FormGroup>
-                      <Label>Build number</Label>
-                      <CommonInput inputType="text" value={form.build_number} onChange={(e) => setField("build_number", e.target.value)} />
-                    </FormGroup>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-md-6">
-                    <FormGroup>
-                      <Label>Build year *</Label>
-                      <CommonInput inputType="text" value={form.build_year} onChange={(e) => setField("build_year", e.target.value)} required />
-                    </FormGroup>
-                  </div>
-                  <div className="col-md-6">
-                    <FormGroup>
-                      <Label>Location *</Label>
-                      <CommonInput inputType="text" value={form.location} onChange={(e) => setField("location", e.target.value)} required />
+                      <Label htmlFor="editboatmodal-field-8">Build number</Label>
+                      <CommonInput id="editboatmodal-field-8" inputType="text" value={form.build_number} onChange={(e) => setField("build_number", e.target.value)} />
                     </FormGroup>
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-md-6">
                     <FormGroup>
-                      <Label>Price (€)</Label>
-                      <CommonInput inputType="number" value={form.price} onChange={(e) => setField("price", e.target.value)} />
+                      <Label htmlFor="editboatmodal-field-9">Build year *</Label>
+                      <CommonInput id="editboatmodal-field-9" inputType="text" value={form.build_year} onChange={(e) => setField("build_year", e.target.value)} required />
+                    </FormGroup>
+                  </div>
+                  <div className="col-md-6">
+                    <FormGroup>
+                      <Label htmlFor="editboatmodal-field-10">Location *</Label>
+                      <CommonInput id="editboatmodal-field-10" inputType="text" value={form.location} onChange={(e) => setField("location", e.target.value)} required />
+                    </FormGroup>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <FormGroup>
+                      <Label htmlFor="editboatmodal-field-11">Price (€)</Label>
+                      <CommonInput id="editboatmodal-field-11" inputType="number" value={form.price} onChange={(e) => setField("price", e.target.value)} />
                     </FormGroup>
                   </div>
                   <div className="col-md-6">
@@ -855,17 +844,29 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                     </div>
                   )}
                 </Dropzone>
-                <div className="d-flex gap-2 mb-3">
-                  <CommonInput
-                    inputType="url"
-                    value={videoLink}
-                    onChange={(e) => setVideoLink(e.target.value)}
-                    placeholder="https://example.com/video.mp4"
-                  />
-                  <Button type="button" color="primary" onClick={addVideoLink} disabled={!videoLink.trim() || images.length >= 15}>
-                    Add
+                <div className="d-flex gap-2 mb-1">
+                  <div className="flex-grow-1">
+                    <Label for="edit-boat-video-link">Add video link</Label>
+                    <Input
+                      id="edit-boat-video-link"
+                      type="url"
+                      value={videoLink}
+                      onChange={(e) => {
+                        setVideoLink(e.target.value);
+                        setVideoLinkError("");
+                      }}
+                      placeholder="YouTube or direct video file URL"
+                      autoComplete="url"
+                      invalid={Boolean(videoLinkError)}
+                      aria-describedby="edit-boat-video-link-help"
+                    />
+                  </div>
+                  <Button type="button" color="primary" onClick={addVideoLink} disabled={!videoLink.trim() || images.length >= 15 || addingVideoLink} aria-busy={addingVideoLink} className="align-self-end" style={{ minHeight: 44 }}>
+                    {addingVideoLink && <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />}
+                    {addingVideoLink ? "Adding..." : "Add Video"}
                   </Button>
                 </div>
+                <div id="edit-boat-video-link-help" className="text-muted small mb-3">YouTube and direct MP4, WebM, MOV, or M4V links are supported.</div>
                 <div className="d-flex flex-wrap gap-2">
                   {images.map((img, index) => (
                     <div
@@ -875,13 +876,9 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                     >
                       {img.media_type === "video" ? (
                         <>
-                          <video
-                            src={img.link}
-                            muted
-                            loop
-                            autoPlay
-                            playsInline
-                            preload="metadata"
+                          <VideoPoster
+                            url={img.link}
+                            title={`Video preview ${index + 1}`}
                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                           />
                           <span className="position-absolute top-0 start-0 badge bg-dark m-1">Video</span>
@@ -923,7 +920,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
       </ModalBody>
       {!loading && (
         <ModalFooter>
-          <Button color="secondary" onClick={onClose}>
+          <Button color="secondary" onClick={closeEditor}>
             Cancel
           </Button>
           <Button color="primary" type="submit" form="edit-boat-form" disabled={saving}>

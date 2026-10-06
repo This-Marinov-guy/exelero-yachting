@@ -1,5 +1,5 @@
 import { InputBoxType } from "@/types/CommonComponents";
-import React, { FC } from "react";
+import React, { FC, useId } from "react";
 
 const CommonInput: FC<InputBoxType> = ({
   inputType,
@@ -19,14 +19,16 @@ const CommonInput: FC<InputBoxType> = ({
   rightText,
   leftText,
 }) => {
+  const generatedId = useId();
+  const inputId = id || generatedId;
   return (
     <div className={ColClass}>
       <div className={`${mainClass ? mainClass : ""}form-input`}>
-        {label && <label>{label}</label>}
+        {label && <label htmlFor={inputId}>{label}</label>}
         <div className={`select-button arrow-none ${rightText || leftText ? "input-group" : ""}`}>
           {leftText && <span className="input-group-text">{leftText}</span>}
           <input
-            id={id}
+            id={inputId}
             name={name}
             type={inputType}
             className={`form-control ${inputClass ?? ""}`}

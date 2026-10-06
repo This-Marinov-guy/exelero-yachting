@@ -5,10 +5,10 @@ import { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Yachts & Boats for Sale",
+  title: "Yachts for Sale",
   description: "Explore our exclusive collection of high-performance yachts and boats for sale. Find your perfect vessel from top manufacturers with expert dealer support.",
   openGraph: {
-    title: "Yachts & Boats for Sale | Exelero Yachting",
+    title: "Yachts for Sale | Exelero Yachting",
     description: "Explore our exclusive collection of high-performance yachts and boats for sale. Find your perfect vessel from top manufacturers with expert dealer support.",
     url: "/services/brokerage",
     siteName: "Exelero Yachting",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Yachts & Boats for Sale | Exelero Yachting",
+    title: "Yachts for Sale | Exelero Yachting",
     description: "Explore our exclusive collection of high-performance yachts and boats for sale.",
     images: [DEFAULT_BREADCRUMB_IMAGE],
   },

@@ -2,7 +2,6 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const LEGACY_REDIRECTS: Record<string, string> = {
-  "/pages/gallery": "/gallery",
   "/pages/other/about-1": "/about",
   "/pages/other/about-2": "/about",
   "/pages/other/about-3": "/about",
@@ -36,10 +35,22 @@ export async function middleware(request: NextRequest) {
     });
   }
 
+  if (path === "/sign-in") {
+    const response = NextResponse.next();
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
+  }
+
   if (path.startsWith("/pages/")) {
     const destination = LEGACY_REDIRECTS[path];
     if (destination) {
-      return NextResponse.redirect(new URL(destination, request.url), 308);
+      const response = NextResponse.redirect(new URL(destination, request.url), 308);
+      if (["/sign-in", "/sign-up", "/account"].includes(destination)) {
+        response.headers.set("X-Robots-Tag", "noindex, nofollow");
+        response.headers.set("Cache-Control", "private, no-store");
+      }
+      return response;
     }
 
     return new NextResponse("Gone", {
@@ -77,7 +88,7 @@ export async function middleware(request: NextRequest) {
   const { data, error } = await supabase.auth.getClaims();
   if (error || !data?.claims?.sub) {
     const destination = new URL("/sign-in", request.url);
-    destination.searchParams.set("next", path);
+    destination.searchParams.set("next", path + request.nextUrl.search);
     const redirectResponse = NextResponse.redirect(destination);
     response.cookies.getAll().forEach((cookie) =>
       redirectResponse.cookies.set(cookie)
@@ -93,5 +104,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/account/:path*", "/pages/:path*", "/gallery", "/sign-up"],
+  matcher: ["/account/:path*", "/pages/:path*", "/gallery", "/sign-up", "/sign-in"],
 };

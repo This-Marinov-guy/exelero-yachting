@@ -9,7 +9,7 @@ import RatioImage from "@/utils/RatioImage";
 import CookieSettingsButton from "@/components/commonComponents/CookieSettingsButton";
 
 const FooterDemo2: React.FC<PathTypes> = ({ part }) => {
-  const slicedData = FooterDetailData.slice(2, 5).reverse();
+  const slicedData = FooterDetailData.filter((item) => item.contactList || item.title === "Resources").reverse();
   let footerClass = "job3-footer";
 
   if (part?.includes("job-2")) {

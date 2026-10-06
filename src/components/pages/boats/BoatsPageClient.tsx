@@ -10,8 +10,8 @@ const BoatsPageClient = ({ boats }: BoatsPageClientProps) => {
   return (
     <>
       <TopFilter
-        title="Yachts & Boats for Sale"
-        description="Explore yacht and boat listings with Exelero Yachting in Southeast Europe."
+        title="Yachts for Sale"
+        description="Preowned Yachts for Sale"
       />
       <GridView type={"boat"} gridSize={4} cardShow={12} initialProducts={boats} />
     </>

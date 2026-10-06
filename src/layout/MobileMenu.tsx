@@ -1,7 +1,7 @@
 import { useAppDispatch } from "@/redux/hooks";
 import { setCartData, setSearchModal } from "@/redux/reducers/LayoutSlice";
 import { RouteList } from "@/utils/RouteList";
-import { Heart, Home, Menu, User, Search } from "lucide-react";
+import { Home, Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
@@ -34,18 +34,6 @@ const MobileMenu: FC<{ part?: string }> = ({ part }) => {
           <span>Search</span>
         </Link>
       </li>
-      {/* <li>
-        <Link href={RouteList.Car.CarWishlist}>
-          <Heart className='iconsax' />
-          <span>Shortlist</span>
-        </Link>
-      </li>
-      <li>
-        <Link href={RouteList.Pages.Other.UserDashboard}>
-          <User className='iconsax' />
-          <span>Profile</span>
-        </Link>
-      </li> */}
       <li>
         <Link scroll={false} href={Href} onClick={() => dispatch(setCartData())}>
           <Menu className='iconsax' />

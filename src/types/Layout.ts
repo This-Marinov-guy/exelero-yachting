@@ -29,6 +29,7 @@ export interface MainMenu {
 export interface FooterListType {
   title: string;
   url?: string;
+  download?: string;
   icon?: string | ReactNode;
 }
 

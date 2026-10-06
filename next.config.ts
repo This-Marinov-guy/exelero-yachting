@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
+const supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin
+  : "";
+
 const nextConfig: NextConfig = {
+  // Separate build output for an isolated local verification server.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   /* config options here */
   poweredByHeader: false,
   async headers() {
@@ -33,18 +39,18 @@ const nextConfig: NextConfig = {
         key: "Content-Security-Policy",
         value: [
           "default-src 'self'",
-          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://*.clarity.ms",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.clarity.ms https://*.clarity.ms https://www.googletagmanager.com",
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-          "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://zzdtbblgbgfzzsntfbur.supabase.co https://*.supabase.co https://*.cloudinary.com",
+          `img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://i.ytimg.com https://zzdtbblgbgfzzsntfbur.supabase.co https://*.supabase.co https://*.cloudinary.com https://www.google-analytics.com https://*.google-analytics.com ${supabaseOrigin}`,
           "font-src 'self' data: https://fonts.gstatic.com",
-          "connect-src 'self' https: wss: https://*.supabase.co https://*.clarity.ms",
+          `connect-src 'self' https: wss: https://*.supabase.co https://*.clarity.ms ${supabaseOrigin}`,
           "media-src 'self' https:",
-          "frame-src 'self' https://www.google.com",
+          "frame-src 'self' https://www.google.com https://www.youtube.com",
           "object-src 'none'",
           "base-uri 'self'",
           "form-action 'self'",
           "frame-ancestors 'none'",
-          "upgrade-insecure-requests",
+          ...(process.env.NODE_ENV === "production" ? ["upgrade-insecure-requests"] : []),
         ].join("; "),
       },
     ];
@@ -66,6 +72,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    qualities: [70, 72, 74, 75, 82],
     remotePatterns: [
       {
         protocol: "https",

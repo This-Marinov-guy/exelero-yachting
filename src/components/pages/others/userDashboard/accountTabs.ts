@@ -7,11 +7,13 @@ export const ACCOUNT_TAB_IDS = [
   "boats-listing",
   "charter-requests",
   "transportation-requests",
+  "partners",
+  "tracking",
 ] as const;
 
 export type AccountTabId = (typeof ACCOUNT_TAB_IDS)[number];
 
-export const DEFAULT_ACCOUNT_TAB: AccountTabId = "dealer-info";
+export const DEFAULT_ACCOUNT_TAB: AccountTabId = "tracking";
 
 export const isAccountTabId = (tab: string | null): tab is AccountTabId =>
   !!tab && ACCOUNT_TAB_IDS.includes(tab as AccountTabId);

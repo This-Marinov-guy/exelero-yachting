@@ -1,6 +1,28 @@
 import nodemailer from "nodemailer";
+import { getSiteUrl } from "./siteUrl";
+import type { InquiryDetails } from "./inquiryValidation";
 
-const NOTIFICATION_TO = process.env.NOTIFICATION_TO_EMAIL || "exelerodev@gmail.com";
+export function getNotificationRecipients(): string[] {
+  const configured = process.env.NOTIFICATION_TO_EMAIL?.trim();
+  if (!configured) {
+    throw new Error("NOTIFICATION_TO_EMAIL must contain at least one email address.");
+  }
+
+  let recipients: unknown;
+  try {
+    recipients = JSON.parse(configured);
+  } catch {
+    // Keep existing single-address values working during configuration changes.
+    recipients = configured.split(",");
+  }
+
+  if (!Array.isArray(recipients) || recipients.length === 0 ||
+      recipients.some((email) => typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))) {
+    throw new Error("NOTIFICATION_TO_EMAIL must be a JSON array of valid email addresses.");
+  }
+
+  return [...new Set(recipients.map((email: string) => email.trim()))];
+}
 
 function getTransporter() {
   const host = process.env.GMAIL_HOST;
@@ -20,6 +42,9 @@ function getTransporter() {
     port: Number(port),
     secure: port === "465" || secure,
     auth: { user, pass },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 20000,
     ...(process.env.GMAIL_ENCRYPTION?.toLowerCase() === "tls" && { requireTLS: true }),
   });
 }
@@ -126,18 +151,38 @@ export async function sendContactNotification(data: ContactPayload): Promise<voi
   const name = `${data.first_name} ${data.last_name}`.trim();
   await transporter.sendMail({
     from: getFrom(),
-    to: NOTIFICATION_TO,
+    to: getNotificationRecipients(),
     subject: `[Exelero] New Contact from ${name}`,
     html: formatContactHtml(data),
     text: `New Contact Form\n\nName: ${name}\nEmail: ${data.email}\nPhone: ${data.phone}\n\nMessage:\n${data.message}`,
   });
 }
 
+export async function sendInquiryNotification(data: InquiryDetails & {
+  id: string;
+  type: "boat" | "partner";
+  subject: string;
+  path: string;
+}, recipient: string): Promise<void> {
+  const sourceUrl = `${getSiteUrl()}${data.path}`;
+  const fields = [["Name", data.name], ["Email", data.email], ["Phone", data.phone || "Not provided"], ["Message", data.message], ...Object.entries(data.answers)];
+  const result = await getTransporter().sendMail({
+    from: getFrom(),
+    to: recipient,
+    replyTo: { name: data.name, address: data.email },
+    messageId: `<${data.id}.${Buffer.from(recipient).toString("base64url")}@exeleroyachting.com>`,
+    subject: `[Exelero] ${data.subject} inquiry from ${data.name}`,
+    html: `<h2>New ${data.type} inquiry: ${escapeHtml(data.subject)}</h2><p><a href="${escapeHtml(sourceUrl)}">View ${data.type}</a></p>${fields.map(([label, value]) => `<p><strong>${escapeHtml(label)}:</strong><br/>${escapeHtml(value).replace(/\n/g, "<br/>")}</p>`).join("")}`,
+    text: `${data.subject} inquiry\n${sourceUrl}\n\n${fields.map(([label, value]) => `${label}: ${value}`).join("\n")}`,
+  });
+  if (result.rejected?.length || !result.accepted?.length) throw new Error("Notification recipient was not accepted.");
+}
+
 export async function sendCharterNotification(data: CharterPayload): Promise<void> {
   const transporter = getTransporter();
   await transporter.sendMail({
     from: getFrom(),
-    to: NOTIFICATION_TO,
+    to: getNotificationRecipients(),
     subject: `[Exelero] New Charter Request from ${data.name}`,
     html: formatCharterHtml(data),
     text: `New Charter Request\n\nName: ${data.name}\nEmail: ${data.email}\nCharter type: ${data.charter_type}\nDate from: ${data.date_from}\nDate to: ${data.date_to}\nGroup size: ${data.group_size}${data.note ? `\nNote: ${data.note}` : ""}`,
@@ -148,7 +193,7 @@ export async function sendTransportationNotification(data: TransportationPayload
   const transporter = getTransporter();
   await transporter.sendMail({
     from: getFrom(),
-    to: NOTIFICATION_TO,
+    to: getNotificationRecipients(),
     subject: `[Exelero] New Transportation Request from ${data.name}`,
     html: formatTransportationHtml(data),
     text: `New Transportation Request\n\nName: ${data.name}\nEmail: ${data.email}\nDate start: ${data.date_start}\nDeadline: ${data.deadline_date}\nFrom: ${data.start_point}\nTo: ${data.end_point}${data.note ? `\nNote: ${data.note}` : ""}`,

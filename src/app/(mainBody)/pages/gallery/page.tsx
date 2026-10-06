@@ -3,6 +3,7 @@ import GalleryPage from "@/components/pages/gallery/GalleryPage";
 import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 
 export const metadata: Metadata = {
+  robots: { index: false, follow: false },
   title: "Gallery | Exelero Yachting",
   description: "Exelero Yachting - Gallery - luxury yachts, brokerage, charters and marine services.",
   openGraph: {

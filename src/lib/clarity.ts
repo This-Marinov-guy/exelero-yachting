@@ -40,7 +40,7 @@ export function isClarityPublicPath(path: string): boolean {
 }
 
 export function isClarityProductionHost(): boolean {
-  return clarityWindow()?.location.hostname === "www.exeleroyachting.com";
+  return ["www.exeleroyachting.com", "exeleroyachting.com"].includes(clarityWindow()?.location.hostname || "");
 }
 
 export function getClarityPageType(path: string): string {

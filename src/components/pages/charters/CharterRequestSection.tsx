@@ -221,8 +221,9 @@ export default function CharterRequestSection() {
               </Col>
               <Col xs={12} md={6}>
                 <div className="form-input">
-                  <label className="form-label">Date from</label>
+                  <label htmlFor="charter-date-from" className="form-label">Date from</label>
                   <DatePicker
+                    id="charter-date-from"
                     selected={form.dateFrom ? new Date(form.dateFrom) : null}
                     onChange={(date) => handleDateChange("dateFrom", date as Date | null)}
                     className="form-control"
@@ -232,8 +233,9 @@ export default function CharterRequestSection() {
               </Col>
               <Col xs={12} md={6}>
                 <div className="form-input">
-                  <label className="form-label">Date to</label>
+                  <label htmlFor="charter-date-to" className="form-label">Date to</label>
                   <DatePicker
+                    id="charter-date-to"
                     selected={form.dateTo ? new Date(form.dateTo) : null}
                     onChange={(date) => handleDateChange("dateTo", date as Date | null)}
                     className="form-control"

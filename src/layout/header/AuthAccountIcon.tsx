@@ -15,22 +15,36 @@ export default function AuthAccountIcon() {
     if (!supabase) return;
 
     let mounted = true;
+    let revision = 0;
+    let validationTimer: ReturnType<typeof setTimeout> | undefined;
 
-    const init = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!mounted) return;
-      setIsAuthed(!!data.session);
+    const verifyUser = async () => {
+      const currentRevision = ++revision;
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (mounted && currentRevision === revision) setIsAuthed(!error && !!data.user);
+      } catch {
+        if (mounted && currentRevision === revision) setIsAuthed(false);
+      }
     };
 
-    init();
+    void verifyUser();
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
-      setIsAuthed(!!session);
+      revision += 1;
+      clearTimeout(validationTimer);
+      if (!session?.user) {
+        setIsAuthed(false);
+        return;
+      }
+      // Auth callbacks run while the session lock is held. Verify outside it.
+      validationTimer = setTimeout(() => void verifyUser(), 0);
     });
 
     return () => {
       mounted = false;
+      clearTimeout(validationTimer);
       sub.subscription.unsubscribe();
     };
   }, [supabase]);
@@ -40,7 +54,7 @@ export default function AuthAccountIcon() {
 
   return (
     <div className="header-account-icon">
-      <a href={RouteList.Auth.Account} className="header-account-link" aria-label="Account">
+      <a href={RouteList.Auth.Account} className="header-account-link" aria-label="Admin account" title="Admin account" rel="nofollow">
         <UserCircle className="iconsax" style={{ width: '24px', height: '24px' }} />
       </a>
     </div>

@@ -13,18 +13,22 @@ const FooterDetailSection: React.FC<FooterSectionProps> = ({ data, footerDemo })
       {data.map((item, index) => {
         const ColClassName = item.contactList ? "col-lg-3 col-sm-5" : footerDemo ? "col-md-3 col-sm-6" : "col-md-2 col-sm-3";
         const isOpen = openSections[item.title];
+        const linksId = `footer-links-${item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
         return (
           <div key={index} className={`${ColClassName} ${isOpen ? "open-footer-content" : ""}`}>
             <div>
               <div className="footer-title">
-                <h4 onClick={() => toggleSection(item.title)}>
-                  {item.title}
-                  <span className="footer-title__toggle" aria-hidden>
-                    {isOpen ? <Minus size={18} /> : <Plus size={18} />}
-                  </span>
+                <h4>
+                  <span className="footer-title__heading">{item.title}</span>
+                  <button type="button" className="footer-title__button" onClick={() => toggleSection(item.title)} aria-expanded={Boolean(isOpen)} aria-controls={linksId}>
+                    {item.title}
+                    <span className="footer-title__toggle" aria-hidden>
+                      {isOpen ? <Minus size={18} /> : <Plus size={18} />}
+                    </span>
+                  </button>
                 </h4>
               </div>
-              <ul className={`footer-link ${item.contactList ? "footer-contact" : ""}`}>
+              <ul id={linksId} className={`footer-link ${item.contactList ? "footer-contact" : ""}`}>
                 {item.links.map((link, idx) => (
                   <li key={idx}>
                     {item.contactList ? (
@@ -36,6 +40,10 @@ const FooterDetailSection: React.FC<FooterSectionProps> = ({ data, footerDemo })
                         )}
                         <span>{link.title}</span>
                       </Fragment>
+                    ) : link.download ? (
+                      <a className="footer-download-link" href={link.url} download={link.download}>
+                        {link.title}
+                      </a>
                     ) : (
                       <Link href={link.url ? link.url : ""}>{link.title}</Link>
                     )}

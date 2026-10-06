@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import AccountSkeleton from "../AccountSkeleton";
 
 // Helper function to resize image to max 400x400
 const resizeImage = (file: File, maxWidth: number = 400, maxHeight: number = 400): Promise<Blob> => {
@@ -91,7 +92,7 @@ const UserProfile = () => {
         .from("profile_image")
         .select("image_url")
         .eq("user_id", session.user.id)
-        .single();
+        .maybeSingle();
 
       if (!profileError && profileImageData) {
         setAvatarUrl(profileImageData.image_url);
@@ -176,7 +177,7 @@ const UserProfile = () => {
         .from("profile_image")
         .select("image_url")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
       if (oldImageData?.image_url) {
         // Extract file path from URL and delete from storage
@@ -248,35 +249,16 @@ const UserProfile = () => {
     fileInputRef.current?.click();
   };
 
-  if (loading) {
-    return (
-      <div className='main-sidebar-content'>
-        <div className='profile-img'>
-          <div style={{ width: 138, height: 138, borderRadius: "50%", background: "rgba(var(--border-color), 0.3)" }} />
-        </div>
-        <div className='profile-content'>
-          <h4>Loading...</h4>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <AccountSkeleton kind="profile" />;
 
   const displayName = userName || "User";
   const displayEmail = userEmail || "No email";
-  const profileImage = avatarUrl || `${ImagePath}/car/person/2.jpg`;
+
 
   return (
     <div className='main-sidebar-content'>
       <div className='profile-img'>
-        <Image 
-          height={138} 
-          width={138} 
-          src={profileImage} 
-          alt={displayName} 
-          className='img-fluid' 
-          style={{ width: '100px', height: '100px', objectFit: 'cover', border: '3px solid #1dbae7', borderRadius: '50%' }}
-          unoptimized 
-        />
+        {avatarUrl ? <Image height={100} width={100} src={avatarUrl} alt={displayName} style={{ width: 100, height: 100, objectFit: "cover", borderRadius: "50%" }} unoptimized /> : <div aria-label={`${displayName} profile`} style={{ width: 100, height: 100, borderRadius: "50%", background: "#e9f3f6", color: "#146a88", display: "grid", placeItems: "center", fontSize: 28, fontWeight: 600 }}>{displayName.slice(0, 2).toUpperCase()}</div>}
         <button
           type="button"
           className="profile-edit-btn"

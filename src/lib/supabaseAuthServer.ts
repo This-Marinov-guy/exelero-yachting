@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function requireAuthenticatedUser() {
+export async function getAuthenticatedClaims() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -27,9 +27,11 @@ export async function requireAuthenticatedUser() {
   });
 
   const { data, error } = await supabase.auth.getClaims();
-  if (error || !data?.claims?.sub) {
-    redirect("/sign-in");
-  }
+  return error || !data?.claims?.sub ? null : data.claims;
+}
 
-  return data.claims;
+export async function requireAuthenticatedUser() {
+  const claims = await getAuthenticatedClaims();
+  if (!claims) redirect("/sign-in");
+  return claims;
 }

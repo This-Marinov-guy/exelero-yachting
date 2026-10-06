@@ -1,110 +1,37 @@
-"use client";
-import { Partners, Partner } from "@/data/partners";
+import type { Partner } from "@/types/Partner";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { Button, Col, Container, Row } from "reactstrap";
-import { ArrowRight } from "iconsax-react";
+import { Col, Container, Row } from "reactstrap";
+import { ArrowRight } from "lucide-react";
+import PartnerInquiryForm from "./PartnerInquiryForm";
 
-const PartnerPage: React.FC = () => {
-  const params = useParams();
-  const partnerId = params?.["partnerId"];
-  const partner: Partner | undefined = partnerId && typeof partnerId === "string" ? Partners[partnerId] : undefined;
-
-  if (!partner) {
-    return (
-      <div className="partner-page">
-        <Container>
-          <div className="text-center py-5">
-            <h1>Partner Not Found</h1>
-            <p>The requested partner page could not be found.</p>
-            <Link href="/">
-              <Button>Return to Home</Button>
-            </Link>
-          </div>
-        </Container>
-      </div>
-    );
-  }
-
+export default function PartnerPage({ partner }: { partner: Partner }) {
   return (
-    <div className="partner-page" style={{ "--partner-primary": partner.primaryColor, "--partner-secondary": partner.secondaryColor } as React.CSSProperties}>
+    <div className="partner-page" style={{ "--partner-primary": partner.primary_color, "--partner-secondary": partner.secondary_color } as React.CSSProperties}>
       <div className="partner-hero-section">
         <div className="partner-hero-background">
-          <Image
-            src={partner.breadcrumbImage}
-            alt={partner.name}
-            fill
-            className="partner-hero-image"
-            priority
-            style={{ objectFit: "cover" }}
-          />
-          <div className="partner-hero-overlay"></div>
+          <Image src={partner.breadcrumb_image_url} alt="" fill className="partner-hero-image" priority style={{ objectFit: "cover" }} unoptimized={partner.breadcrumb_image_url.startsWith("http")} />
+          <div className="partner-hero-overlay" />
         </div>
-        <Container>
-          <div className="partner-hero-content">
-            <div className="partner-logo-wrapper">
-              <Image
-                src={partner.logoImage}
-                alt={`${partner.name} logo`}
-                width={200}
-                height={100}
-                className="partner-logo"
-                style={{ objectFit: "contain" }}
-              />
-            </div>
-            <h1 className="partner-title">{partner.name}</h1>
-          </div>
-        </Container>
+        <Container><div className="partner-hero-content">
+          <div className="partner-logo-wrapper"><Image src={partner.logo_url} alt={`${partner.name} logo`} width={200} height={100} className="partner-logo" style={{ objectFit: "contain" }} unoptimized={partner.logo_url.startsWith("http")} /></div>
+          <h1 className="partner-title">{partner.name}</h1>
+        </div></Container>
       </div>
-
-      <Container>
-        <div className="partner-content-section">
-          <Row className="g-4">
-            <Col lg={8}>
-              <div className="partner-image-panel">
-                <div className="partner-panel-image-wrapper">
-                  <Image
-                    src={partner.heroImage}
-                    alt={partner.name}
-                    fill
-                    className="partner-panel-image"
-                    style={{ objectFit: "cover" }}
-                  />
-                </div>
-              </div>
-              <div className="partner-description">
-                <h2>About {partner.name}</h2>
-                <p>{partner.description}</p>
-              </div>
-            </Col>
-            <Col lg={4}>
-              <div className="partner-info-card">
-                <h3>Partner Information</h3>
-                <div className="partner-info-item">
-                  <strong>Website:</strong>
-                  {partner.website ? (
-                    <Link href={partner.website} target="_blank" rel="noopener noreferrer">
-                      Visit Website
-                    </Link>
-                  ) : (
-                    <span>N/A</span>
-                  )}
-                </div>
-                <div className="partner-cta">
-                  <Link href={partner.affiliateLink} target="_blank" rel="noopener noreferrer">
-                    <Button className="partner-button" style={{ backgroundColor: partner.primaryColor, borderColor: partner.primaryColor }}>
-                      Explore {partner.name} <ArrowRight className="ms-2" size={20} />
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </div>
-      </Container>
+      <Container><div className="partner-content-section"><Row className="g-4">
+        <Col lg={8}>
+          {partner.hero_image_url && <div className="partner-image-panel"><div className="partner-panel-image-wrapper"><Image src={partner.hero_image_url} alt={partner.name} fill className="partner-panel-image" style={{ objectFit: "cover" }} unoptimized={partner.hero_image_url.startsWith("http")} /></div></div>}
+          <div className="partner-description"><h2>About {partner.name}</h2>{partner.content.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>
+        </Col>
+        <Col lg={4}>
+          <div className="partner-info-card">
+            <h3>Get in touch</h3>
+            <p>Ask our team about {partner.name}.</p>
+            <PartnerInquiryForm partner={partner} />
+            {partner.website_url && <div className="partner-cta"><Link href={partner.website_url} target="_blank" rel="noopener noreferrer" className="partner-button btn d-inline-flex align-items-center justify-content-center" style={{ backgroundColor: partner.primary_color, borderColor: partner.primary_color }}>Visit {partner.name} <ArrowRight className="ms-2" size={18} /></Link></div>}
+          </div>
+        </Col>
+      </Row></div></Container>
     </div>
   );
-};
-
-export default PartnerPage;
+}

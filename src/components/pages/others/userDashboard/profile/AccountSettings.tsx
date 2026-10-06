@@ -1,11 +1,14 @@
 "use client";
+import { useUnsavedChanges } from "../useUnsavedChanges";
 
+import UserProfile from "../userSidebar/UserProfile";
 import CommonInput from "@/components/commonComponents/CommonInput";
-import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
+import { getSupabaseBrowserClient, isLocalSupabase } from "@/lib/supabaseClient";
 import { KeyRound, Mail, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button, Card, CardBody, CardTitle } from "reactstrap";
+import AccountSkeleton from "../AccountSkeleton";
 
 type PasskeyFactor = {
   id: string;
@@ -17,31 +20,37 @@ type PasskeyFactor = {
 
 const AccountSettings = () => {
   const supabase = getSupabaseBrowserClient();
+  const localAuth = isLocalSupabase();
   const [currentEmail, setCurrentEmail] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passkeys, setPasskeys] = useState<PasskeyFactor[]>([]);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [pendingAction, setPendingAction] = useState<"email" | "password" | "passkey" | null>(null);
+
+  useUnsavedChanges(newEmail !== currentEmail || !!newPassword || !!confirmPassword || pendingAction !== null);
 
   const accountRedirectUrl = () =>
     typeof window !== "undefined" ? `${window.location.origin}/account` : "/account";
 
   const loadAccountSettings = async () => {
     setLoading(true);
+    setLoadFailed(false);
     try {
       const { data: userData, error: userError } = await supabase.auth.getUser();
-      if (userError) throw userError;
+      if (userError) { setLoadFailed(true); throw userError; }
 
       const email = userData.user?.email ?? "";
       setCurrentEmail(email);
       setNewEmail(email);
 
-      const { data: passkeyData, error: passkeyError } = await supabase.auth.passkey.list();
-      if (passkeyError) throw passkeyError;
-
-      setPasskeys(passkeyData ?? []);
+      if (!localAuth) {
+        const { data: passkeyData, error: passkeyError } = await supabase.auth.passkey.list();
+        if (passkeyError) throw passkeyError;
+        setPasskeys(passkeyData ?? []);
+      }
     } catch (err: any) {
       toast.error(err?.message || "Unable to load account settings.");
     } finally {
@@ -148,27 +157,27 @@ const AccountSettings = () => {
     }
   };
 
-  if (loading) {
-    return <div className="dealer-info-loading">Loading account settings...</div>;
-  }
+  if (loading) return <AccountSkeleton kind="settings" />;
 
+  if (loadFailed) return <div className="admin-empty"><h1 className="dashboard-title">Account settings</h1><p>Your settings are unavailable.</p><button type="button" className="btn-border" onClick={() => void loadAccountSettings()}>Try again</button></div>;
   return (
     <div className="account-settings-container">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h4 className="dashboard-title mb-0">Account Settings</h4>
+        <h1 className="dashboard-title mb-0">Account settings</h1>
       </div>
 
-      <Card className="dealer-form-card mb-4">
+      <div className="admin-profile"><h2>Profile</h2><UserProfile /></div>
+      <details className="admin-form-section" open><summary>Email address</summary><Card className="dealer-form-card mb-4">
         <CardBody>
           <CardTitle tag="h5" className="d-flex align-items-center gap-2">
             <Mail className="iconsax" style={{ width: "18px", height: "18px" }} />
             Email
           </CardTitle>
-          <form onSubmit={handleEmailUpdate} className="dealer-form">
+          <form noValidate onSubmit={handleEmailUpdate} className="dealer-form">
             <div className="mb-3">
               <CommonInput
                 inputType="email"
-                placeholder="Email"
+                label="Email address"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
                 autoComplete="email"
@@ -181,19 +190,19 @@ const AccountSettings = () => {
             </Button>
           </form>
         </CardBody>
-      </Card>
+      </Card></details>
 
-      <Card className="dealer-form-card mb-4">
+      <details className="admin-form-section"><summary>Password</summary><Card className="dealer-form-card mb-4">
         <CardBody>
           <CardTitle tag="h5" className="d-flex align-items-center gap-2">
             <ShieldCheck className="iconsax" style={{ width: "18px", height: "18px" }} />
             Password
           </CardTitle>
-          <form onSubmit={handlePasswordUpdate} className="dealer-form">
+          <form noValidate onSubmit={handlePasswordUpdate} className="dealer-form">
             <div className="mb-3">
               <CommonInput
                 inputType="password"
-                placeholder="New password"
+                label="New password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 autoComplete="new-password"
@@ -204,7 +213,7 @@ const AccountSettings = () => {
             <div className="mb-3">
               <CommonInput
                 inputType="password"
-                placeholder="Repeat new password"
+                label="Confirm new password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 autoComplete="new-password"
@@ -217,9 +226,9 @@ const AccountSettings = () => {
             </Button>
           </form>
         </CardBody>
-      </Card>
+      </Card></details>
 
-      <Card className="dealer-form-card">
+      {!localAuth && <details className="admin-form-section"><summary>Passkeys</summary><Card className="dealer-form-card">
         <CardBody>
           <CardTitle tag="h5" className="d-flex align-items-center gap-2 mb-3">
             <KeyRound className="iconsax" style={{ width: "18px", height: "18px" }} />
@@ -239,7 +248,7 @@ const AccountSettings = () => {
             </div>
           )}
         </CardBody>
-      </Card>
+      </Card></details>}
     </div>
   );
 };
