@@ -14,7 +14,7 @@ export type InquirySource = {
 };
 
 export async function submitInquiry(raw: unknown, source: InquirySource) {
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return NextResponse.json({ error: "Enter your contact details and message." }, { status: 400 });
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return NextResponse.json({ error: "Enter your contact details." }, { status: 400 });
   const body = raw as Record<string, unknown>;
   if (body.website_check) return NextResponse.json({ ok: true });
   if (typeof body.request_id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(body.request_id)) {

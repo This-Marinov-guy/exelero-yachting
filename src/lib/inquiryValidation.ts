@@ -21,7 +21,7 @@ export function validateInquiry(body: Record<string, unknown>, fields: PartnerFo
   if (!name || name.length > 120 || /[\r\n]/.test(name)) return { error: "Enter your name, using up to 120 characters.", field: "name" };
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) return { error: "Enter an email address such as name@example.com.", field: "email" };
   if (phone.length > 50 || (phone && !/^[+\d\s().\-x#]+$/i.test(phone))) return { error: "Enter a phone number with its country code, or leave it blank.", field: "phone" };
-  if (!message || message.length > 3000) return { error: "Enter a message, using up to 3,000 characters.", field: "message" };
+  if (message.length > 3000) return { error: "Keep your message within 3,000 characters.", field: "message" };
   const answers: Record<string, string> = {};
   for (const field of inquiryExtraFields(fields)) {
     const answer = text(field.id);

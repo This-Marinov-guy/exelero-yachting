@@ -83,7 +83,7 @@ try {
   }
   const boatPath=`/api/boats/${boatId}/inquiries`, partnerPath=`/api/partners/${tag}/inquiries`;
   const before=messages.length;
-  assert.equal((await request(boatPath,payload({message:''}))).status,400);
+  assert.equal((await request(boatPath,payload({message:'x'.repeat(3001)}))).status,400);
   assert.equal((await request(boatPath,payload({email:'bad-email'}))).status,400);
   assert.equal((await request(partnerPath,payload({interest:'Invalid'}))).status,400);
   assert.equal((await request(boatPath,payload({website_check:'spam'}))).status,200);
@@ -121,6 +121,19 @@ try {
   assert(concurrent.every(result=>[200,202].includes(result.status)));
   assert(concurrent.some(result=>result.status===200));
   assert.equal(messages.length,6,'Concurrent requests must send only one message per recipient.');
+  const blankBoat=payload({message:''});
+  { const result=await request(boatPath,blankBoat); assert.equal(result.status,200,JSON.stringify(result.body)); }
+  row=ensure(await db.from('boat_inquiries').select('*').eq('id',blankBoat.request_id).single());
+  assert.equal(row.message,'');
+  const blankPartner=payload({interest:'Sailing',message:undefined});
+  { const result=await request(partnerPath,blankPartner); assert.equal(result.status,200,JSON.stringify(result.body)); }
+  row=ensure(await db.from('partner_inquiries').select('*').eq('id',blankPartner.request_id).single());
+  assert.equal(row.message,'');
+  assert(messages.slice(-4).every(mail=>!mail.raw.includes('Message:')),'Blank messages should be omitted from notifications.');
+  const contactEmail=`${tag}-contact@example.invalid`;
+  { const result=await request('/api/contact',{firstName:'Local',lastName:'Contact',email:contactEmail,number:'1234567890',message:''}); assert.equal(result.status,200,JSON.stringify(result.body)); }
+  row=ensure(await db.from('contact').select('message').eq('email',contactEmail).single());
+  assert.equal(row.message,'');
   for(const table of ['boat_inquiries','partner_inquiries']){
     const result=await anon.from(table).select('*');assert(result.error || result.data.length===0,'Public inquiry reads must fail.');
     const rows=ensure(await account.from(table).select('id'));assert(rows.length>0,'An invited account can read inquiries.');
@@ -136,7 +149,7 @@ try {
   assert.equal((await request(partnerPath,payload({interest:'Sailing'}))).status,404);
   ensure(await db.from('partners').update({status:'published',form_type:'standard'}).eq('id',partnerId));
   assert.equal((await request(partnerPath,payload())).status,200);
-  console.log(`PASS (${directDatabase?'direct database':'Supabase API'}): boat/partner fields saved, all notification recipients emailed, custom answers retained, validation, unpublished targets, honeypot, public data privacy, duplicate/concurrent submits, and partial SMTP failure retry.`);
+  console.log(`PASS (${directDatabase?'direct database':'Supabase API'}): boat, partner, and contact forms accept blank messages; inquiry fields, notifications, validation, privacy, retries, and concurrent submits verified.`);
   if(process.argv.includes('--serve')){
     const pending=ensure(await db.from('boat_inquiries').insert({boat_id:boatId,name:'Pending inquiry check',email:'pending@example.invalid',message:'Please send the yacht details.',context_name:'Inquiry verification yacht',context_path:`/services/brokerage/${tag}`}).select('id').single());
     console.log(`Browser fixtures: ${site}/services/brokerage/${tag} and ${site}/partners/${tag}`);
@@ -151,6 +164,7 @@ try {
   if(boatId){await db.from('boat_inquiries').delete().eq('boat_id',boatId);await db.from('boats').delete().eq('id',boatId);}
   if(partnerId){await db.from('partner_inquiries').delete().eq('partner_id',partnerId);await db.from('partners').delete().eq('id',partnerId);}
   if(uid)await db.auth.admin.deleteUser(uid);
+  await db.from('contact').delete().eq('email',`${tag}-contact@example.invalid`);
   for(const [name,content] of backups)writeFileSync(name,content);
   rmSync('.next-inquiry-check',{recursive:true,force:true});
   rmSync('/private/tmp/exelero-inquiry-fixtures.json',{force:true});

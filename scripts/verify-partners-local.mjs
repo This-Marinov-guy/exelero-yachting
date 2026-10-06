@@ -79,8 +79,8 @@ try {
   assert.equal(invalidInquiry.status, 400);
   if (!process.env.GMAIL_PASSWORD) {
     const submitted = await request(`/api/partners/${tag}/inquiries`, { method: "POST", body: JSON.stringify({ request_id: randomUUID(), name: "Local verification", email: "verify@example.invalid", phone: "+31 20 123 4567", message: "Local inquiry verification.", interest: "Sailing" }) });
-    assert.equal(submitted.status, 502, submitted.body);
-    assert.equal(submitted.json().saved, true, "Missing SMTP configuration must report a saved inquiry with incomplete delivery.");
+    assert.equal(submitted.status, 202, submitted.body);
+    assert.equal(submitted.json().notification, "pending", "Missing SMTP configuration must keep the saved inquiry visible while email is pending.");
     const rows = await admin.from("partner_inquiries").select("answers").eq("partner_id", partnerId);
     assert.equal(rows.data?.[0]?.answers.interest, "Sailing");
   }

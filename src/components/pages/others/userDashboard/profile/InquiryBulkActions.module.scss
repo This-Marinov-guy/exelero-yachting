@@ -1,0 +1,64 @@
+.bulkBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 12px 16px;
+  margin: 0 0 16px;
+  border: 1px solid var(--admin-border, #d8e0e3);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--admin-text, #19313c);
+}
+
+.bulkControls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.bulkControls select {
+  min-height: 44px;
+  min-width: 150px;
+  padding: 8px 12px;
+  border: 1px solid #a9bbc2;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--admin-text, #19313c);
+}
+
+.bulkControls button, .confirmDialog button {
+  min-height: 44px;
+  padding: 9px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  &:active:not(:disabled) { transform: translateY(1px); }
+  &:disabled { opacity: .55; cursor: not-allowed; }
+}
+
+.applyButton { border: 1px solid var(--admin-accent, #146a88); background: var(--admin-accent, #146a88); color: #fff; &:hover:not(:disabled) { background: #105870; } }
+.clearButton, .cancelButton { border: 1px solid var(--admin-border, #d8e0e3); background: #fff; color: var(--admin-text, #19313c); &:hover:not(:disabled) { background: var(--admin-soft, #f5f8f8); } }
+.deleteButton { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #d9a7a7; background: #fff; color: #a13737; &:hover:not(:disabled) { background: #fff1f1; border-color: #a13737; } }
+.confirmButton { border: 1px solid #a13737; background: #a13737; color: #fff; &:hover:not(:disabled) { background: #842727; } }
+.confirmDialog :global(.modal-footer) { display: flex; gap: 8px; }
+
+.selectionLabel {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 !important;
+  cursor: pointer;
+  input { cursor: pointer; margin: 0; }
+  &:has(input:disabled) { cursor: not-allowed; }
+}
+
+.selectCell { width: 60px; min-width: 60px !important; padding: 4px 8px !important; }
+.mobileSelectAll { display: none; }
+
+@media (max-width: 650px) {
+  .bulkControls { width: 100%; }
+  .bulkControls select { flex: 1 1 150px; }
+  .bulkControls button { flex: 1 1 auto; }
+  .confirmDialog :global(.modal-footer) button { flex: 1; }
+  .bulkTable th:nth-child(2), .bulkTable td:nth-child(2) { position: sticky; left: 60px; z-index: 1; background: #fff; box-shadow: 1px 0 #d8e0e3; }
+  .bulkTable th:nth-child(2) { background: #f5f8f8; }
+  .mobileSelectAll { display: block; min-height: 44px; margin: 12px 16px 0; padding: 8px 12px; border: 1px solid var(--admin-border, #d8e0e3); border-radius: 6px; background: #fff; color: var(--admin-accent, #146a88); font-weight: 600; &:hover:not(:disabled) { background: #e9f3f6; } }
+}

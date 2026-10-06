@@ -6,7 +6,7 @@ import { ArrowLeft, ArrowUpRight, ChevronLeft, ChevronRight, RefreshCw } from "l
 import { toast } from "sonner";
 import type { AnalyticsReport, Breakdown, ProviderReport } from "@/types/Analytics";
 import type { TrackingReport } from "@/types/Tracking";
-import { dateInZone, pieSegments } from "@/lib/analytics/report";
+import { DEFAULT_ANALYTICS_TIME_ZONE, dateInZone, pieSegments } from "@/lib/analytics/report";
 import styles from "./TrackingDashboard.module.scss";
 
 const number = new Intl.NumberFormat("en-GB");
@@ -84,7 +84,7 @@ export default function TrackingDashboard() {
     })();
     return () => { clearTimeout(timeout); controller.abort(); };
   }, [query, retry]);
-  const today = report?.period.today || dateInZone("Europe/Amsterdam");
+  const today = report?.period.today || dateInZone(DEFAULT_ANALYTICS_TIME_ZONE);
   const date = requestedDate || (kind === "month" ? today.slice(0, 7) : today);
   const changePeriod = (period: "month" | "day", selected: string) => {
     if (!selected) return;

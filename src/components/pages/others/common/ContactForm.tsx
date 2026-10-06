@@ -31,7 +31,7 @@ const ContactForm = () => {
         toast.error(json.error || "Failed to send message. Please try again.");
         return;
       }
-      toast.success("Message sent successfully. We'll get back to you soon.");
+      toast.success("Thank you. We'll get back to you soon.");
       trackClarityEvent("contact_inquiry_submitted");
       reset();
     } catch {
@@ -90,13 +90,14 @@ const ContactForm = () => {
           </Col>
           <Col xs={12}>
             <div className='form-input'>
-              <textarea {...register("message", { required: "Message is required", minLength: { value: 10, message: "Message must be at least 10 characters" } })} placeholder='Message' className={`form-control mb-0 ${errors.message ? "is-invalid" : ""}`} defaultValue={""} />
+              <label htmlFor='contact-message'>Message <span>(optional)</span></label>
+              <textarea id='contact-message' {...register("message", { maxLength: { value: 3000, message: "Keep your message within 3,000 characters" } })} placeholder='Tell us more, if you like' className={`form-control mb-0 ${errors.message ? "is-invalid" : ""}`} defaultValue={""} />
               {errors.message && <div className='invalid-feedback'>{errors.message.message}</div>}
             </div>
           </Col>
           <Col xl={4} lg={5} xs={8}>
             <Button type='submit' className='btn-solid' disabled={submitting}>
-              {submitting ? "Sending…" : "Send Message"}
+              {submitting ? "Sending…" : "Send inquiry"}
             </Button>
           </Col>
         </Row>

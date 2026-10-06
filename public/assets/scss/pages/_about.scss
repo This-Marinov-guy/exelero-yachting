@@ -36,43 +36,32 @@
     line-height: 1.58;
   }
 
-  .about-masthead {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 164px;
-    padding-bottom: 36px;
-    border-bottom: 8px solid rgba(var(--title-color), 1);
+  .about-overview {
+    &__body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+      align-items: center;
+      gap: clamp(28px, 4vw, 64px);
 
-    h1 {
-      margin: 0;
-      color: rgba(var(--theme-color), 1);
-      font-size: clamp(26px, 3.8vw, 46px);
-      font-weight: 500;
-      line-height: 1.35;
-      letter-spacing: .03em;
-      text-align: center;
-    }
-
-    @media (max-width: 767px) {
-      min-height: 132px;
-      padding-bottom: 24px;
-
-      h1 {
-        font-size: clamp(18px, 4.5vw, 27px);
+      @media (max-width: 991px) {
+        grid-template-columns: 1fr;
       }
     }
-  }
-
-  .about-overview {
-    margin-top: clamp(42px, 5vw, 72px);
 
     &__copy {
-      max-width: 880px;
+      max-width: 680px;
     }
 
     &__copy p + p {
       margin-top: 18px;
+    }
+
+    &__image img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
     }
   }
 
@@ -122,9 +111,7 @@
 
   .about-services,
   .about-partners,
-  .about-experience,
-  .about-guarantee,
-  .about-brochure {
+  .about-guarantee {
     margin-top: clamp(56px, 6vw, 88px);
   }
 
@@ -241,7 +228,7 @@
       align-items: start;
       gap: clamp(28px, 4vw, 60px);
 
-      @media (max-width: 767px) {
+      @media (max-width: 991px) {
         grid-template-columns: 1fr;
       }
     }
@@ -271,6 +258,26 @@
       color: rgba(var(--theme-color), 1) !important;
       font-family: "Michroma", sans-serif;
       font-size: clamp(14px, 1.5vw, 18px) !important;
+    }
+  }
+
+  .about-experience {
+    margin-top: clamp(32px, 4vw, 48px);
+
+    h3 {
+      width: fit-content;
+      margin: 0 0 20px;
+      font-size: clamp(17px, 1.7vw, 21px);
+      line-height: 1.45;
+
+      &::after {
+        display: block;
+        width: 48px;
+        height: 3px;
+        margin-top: 12px;
+        background: rgba(var(--theme-color), 1);
+        content: "";
+      }
     }
   }
 
@@ -304,14 +311,9 @@
     }
   }
 
-  .about-guarantee p {
-    margin-bottom: 0;
-    font-size: clamp(18px, 2vw, 24px);
-  }
-
-  .about-brochure {
+  .about-guarantee {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
     gap: 32px;
     padding-top: 32px;
@@ -322,12 +324,13 @@
       flex-direction: column;
     }
 
-    h2 {
+    &__copy h2 {
       margin-bottom: 10px;
     }
 
-    p:last-child {
+    &__copy p {
       margin-bottom: 0;
+      font-size: clamp(18px, 2vw, 24px);
     }
 
     &__controls {

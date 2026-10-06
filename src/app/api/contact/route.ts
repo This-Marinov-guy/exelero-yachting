@@ -13,11 +13,15 @@ export async function POST(request: NextRequest) {
     const phone = typeof number !== "undefined" ? String(number).trim() : "";
     const messageVal = typeof message === "string" ? message.trim() : "";
 
-    if (!first_name || !last_name || !emailVal || !phone || !messageVal) {
+    if (!first_name || !last_name || !emailVal || !phone) {
       return NextResponse.json(
-        { error: "All fields are required: firstName, lastName, email, number, message." },
+        { error: "First name, last name, email, and phone number are required." },
         { status: 400 }
       );
+    }
+
+    if (messageVal.length > 3000) {
+      return NextResponse.json({ error: "Keep your message within 3,000 characters." }, { status: 400 });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -55,5 +59,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, message: "Message sent successfully." });
+  return NextResponse.json({ ok: true, message: "Contact inquiry received." });
 }

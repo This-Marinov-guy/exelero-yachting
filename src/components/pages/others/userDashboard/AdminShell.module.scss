@@ -69,7 +69,7 @@
   .content { padding: 24px 16px; } .legacy :global(.admin-profile) :global(.main-sidebar-content) { flex-wrap: wrap; }
 }
 .tableRegion { overflow-x: auto; border: 1px solid #d8e0e3; border-radius: 8px; width: 100%; td { min-width: 130px; } }
-.status { border: 1px solid #d8e0e3; border-radius: 20px; padding: 4px 10px; font-size: 13px; white-space: nowrap; background: #f5f8f8; &[data-status="new"] { background: #e9f3f6; color: #146a88; border-color: #bad8e3; } &[data-status="confirmed"] { background: #eef6ef; color: #356442; } }
+.status { border: 1px solid #d8e0e3; border-radius: 20px; padding: 4px 10px; font-size: 13px; white-space: nowrap; background: #f5f8f8; &[data-status="new"], &[data-status="pending"] { background: #e9f3f6; color: #146a88; border-color: #bad8e3; } &[data-status="confirmed"], &[data-status="completed"] { background: #eef6ef; color: #356442; } &[data-status="rejected"] { background: #fff1f0; color: #a13737; border-color: #e8c5c2; } }
 .listFooter { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; color: #60747b; padding: 20px 0; font-size: 14px; }
 .dialog { --admin-text: #19313c; --admin-muted: #60747b; --admin-accent: #146a88; --admin-border: #d8e0e3; font: 16px/1.5 SourceSans3, sans-serif; color: #19313c;
   button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid #268cae; outline-offset: 3px; }

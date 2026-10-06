@@ -19,6 +19,19 @@
   }
 }
 
+.workflowFields {
+  border: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.privateHint {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #60747b;
+  font-size: 14px;
+}
+
 .mobileCards { display: none; }
 
 @media (max-width: 650px) {
@@ -34,5 +47,5 @@
   }
   .mobileHeading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; strong { min-width: 0; overflow-wrap: anywhere; } }
   .mobileMessage { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
-  .mobileFooter { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; time { color: #60747b; font-size: 14px; } }
+  .mobileFooter { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 16px; time { color: #60747b; font-size: 14px; } .actions { flex-wrap: wrap; } }
 }

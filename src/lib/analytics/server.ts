@@ -3,7 +3,7 @@ import { createHash, createSign } from "node:crypto";
 import type { AnalyticsReport, ProviderReport, SearchData, ReportPeriod } from "@/types/Analytics";
 import type { TrackingReport } from "@/types/Tracking";
 import { getTrackingReport } from "@/lib/clarityServer";
-import { parseAnalytics, resolvePeriod, searchPageExpression, validatePage, type GoogleReport } from "./report";
+import { DEFAULT_ANALYTICS_TIME_ZONE, parseAnalytics, resolvePeriod, searchPageExpression, validatePage, type GoogleReport } from "./report";
 
 type Credentials = { client_email: string; private_key: string };
 class GoogleError extends Error { constructor(public status: number) { super("Google reporting request failed."); } }
@@ -109,7 +109,7 @@ async function searchConsole(period: ReportPeriod, page: string | null, creds: C
   } catch (error) { return providerError(error, "Search Console"); }
 }
 export async function getAnalyticsReport(params: URLSearchParams): Promise<AnalyticsReport> {
-  const period = resolvePeriod(params.get("period"), params.get("date"), process.env.ANALYTICS_TIME_ZONE || "Europe/Amsterdam");
+  const period = resolvePeriod(params.get("period"), params.get("date"), process.env.ANALYTICS_TIME_ZONE || DEFAULT_ANALYTICS_TIME_ZONE);
   const page = validatePage(params.get("page"));
   const creds = credentials();
   const fingerprint = createHash("sha256").update(JSON.stringify([creds, process.env.GA4_PROPERTY_ID, process.env.SEARCH_CONSOLE_SITE_URL, process.env.CLARITY_API_TOKEN, process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID, analyticsHosts()])).digest("hex");

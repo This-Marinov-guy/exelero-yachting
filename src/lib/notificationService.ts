@@ -133,7 +133,7 @@ function formatContactHtml(data: ContactPayload): string {
     <p><strong>Name:</strong> ${name}</p>
     <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
     <p><strong>Phone:</strong> ${escapeHtml(data.phone)}</p>
-    <p><strong>Message:</strong><br/>${escapeHtml(data.message).replace(/\n/g, "<br/>")}</p>
+    ${data.message ? `<p><strong>Message:</strong><br/>${escapeHtml(data.message).replace(/\n/g, "<br/>")}</p>` : ""}
   `.trim();
 }
 
@@ -154,7 +154,7 @@ export async function sendContactNotification(data: ContactPayload): Promise<voi
     to: getNotificationRecipients(),
     subject: `[Exelero] New Contact from ${name}`,
     html: formatContactHtml(data),
-    text: `New Contact Form\n\nName: ${name}\nEmail: ${data.email}\nPhone: ${data.phone}\n\nMessage:\n${data.message}`,
+    text: `New Contact Form\n\nName: ${name}\nEmail: ${data.email}\nPhone: ${data.phone}${data.message ? `\n\nMessage:\n${data.message}` : ""}`,
   });
 }
 
@@ -165,7 +165,7 @@ export async function sendInquiryNotification(data: InquiryDetails & {
   path: string;
 }, recipient: string): Promise<void> {
   const sourceUrl = `${getSiteUrl()}${data.path}`;
-  const fields = [["Name", data.name], ["Email", data.email], ["Phone", data.phone || "Not provided"], ["Message", data.message], ...Object.entries(data.answers)];
+  const fields = [["Name", data.name], ["Email", data.email], ["Phone", data.phone || "Not provided"], ...(data.message ? [["Message", data.message]] : []), ...Object.entries(data.answers)];
   const result = await getTransporter().sendMail({
     from: getFrom(),
     to: recipient,

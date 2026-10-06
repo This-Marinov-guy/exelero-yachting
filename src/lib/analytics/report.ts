@@ -1,9 +1,11 @@
 import type { AnalyticsData, Breakdown, ReportPeriod, TrafficPoint } from "../../types/Analytics";
 
+export const DEFAULT_ANALYTICS_TIME_ZONE = "Europe/Sofia";
+
 export function dateInZone(timeZone: string, now = new Date()) {
   return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
 }
-export function resolvePeriod(kind: string | null, date: string | null, timeZone = "Europe/Amsterdam", now = new Date()): ReportPeriod {
+export function resolvePeriod(kind: string | null, date: string | null, timeZone = DEFAULT_ANALYTICS_TIME_ZONE, now = new Date()): ReportPeriod {
   if (kind !== null && kind !== "month" && kind !== "day") throw new Error("Choose a month or a day.");
   const mode = kind || "month";
   const today = dateInZone(timeZone, now);

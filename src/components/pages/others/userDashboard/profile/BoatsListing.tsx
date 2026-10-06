@@ -61,7 +61,6 @@ const BoatsListing = () => {
             bought,
             boat_data(title)
           `)
-                    .eq("user_id", session.user.id)
                     .order("created_at", { ascending: false });
 
                 if (boatsError) {
@@ -136,7 +135,7 @@ const BoatsListing = () => {
             const { error } = await supabase
                 .from("boats")
                 .update({ active: !currentActive })
-                .eq("id", boatId);
+                .eq("id", boatId).select("id").single();
 
             if (error) {
                 console.error("Error updating boat active status:", error);
@@ -174,7 +173,7 @@ const BoatsListing = () => {
             const { error } = await supabase
                 .from("boats")
                 .update(payload)
-                .eq("id", boatId);
+                .eq("id", boatId).select("id").single();
 
             if (error) {
                 console.error("Error updating boat bought status:", error);
@@ -216,10 +215,11 @@ const BoatsListing = () => {
 
         try {
             // Unlink dealer (broker_data) from this boat so the dealer is not deleted
-            await supabase.from("broker_data").update({ boat_id: null }).eq("boat_id", boatId);
+            const { error: unlinkError } = await supabase.from("broker_data").update({ boat_id: null }).eq("boat_id", boatId);
+            if (unlinkError) throw unlinkError;
 
             // Delete boat (cascade will handle boat_data, boat_images, inqueries, etc.)
-            const { error } = await supabase.from("boats").delete().eq("id", boatId);
+            const { error } = await supabase.from("boats").delete().eq("id", boatId).select("id").single();
 
             if (error) {
                 console.error("Error deleting boat:", error);
@@ -256,7 +256,6 @@ const BoatsListing = () => {
         const { data: boatsData, error: boatsError } = await supabase
             .from("boats")
             .select(`id, slug, active, bought, boat_data(title)`)
-            .eq("user_id", session.user.id)
             .order("created_at", { ascending: false });
         if (!boatsError && boatsData) {
             const boatsWithDetails = await Promise.all(
@@ -278,14 +277,14 @@ const BoatsListing = () => {
     const visible = boats.filter(boat => (filter === "all" || (filter === "published" ? boat.active : filter === "sold" ? boat.bought : !boat.active && !boat.bought)) && [boat.boat_data?.title, boat.broker_data?.dealer, boat.broker_data?.name].some(value => value?.toLowerCase().includes(query.toLowerCase())));
     return <>
       <div className="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4"><h1 className="dashboard-title mb-0">Boat listings</h1><Link className="btn-solid" href="/account?tab=upload-boat">Add a boat</Link></div>
-      <p className="admin-section-description">Manage your brokerage listings, visibility and availability.</p>
+      <p className="admin-section-description">Manage all brokerage listings, visibility and availability.</p>
       {loading ? <AccountSkeleton kind="boats" heading={false} /> : loadFailed ? <div className="admin-empty"><p>The boat list is unavailable.</p><button type="button" className="btn-border" onClick={() => setRefreshTrigger(value => value + 1)}>Try again</button></div> : <>
         <div className="admin-toolbar"><label>Search boats<input type="search" value={query} placeholder="Boat title or dealer" onChange={event => { setQuery(event.target.value); setLimit(25); }} /></label><label>Status<select value={filter} onChange={event => { setFilter(event.target.value); setLimit(25); }}><option value="all">All boats ({boats.length})</option><option value="published">Published</option><option value="hidden">Hidden</option><option value="sold">Sold</option></select></label></div>
         {visible.length ? <><div className={styles.tableRegion} role="region" aria-label="Boat listings" tabIndex={0}><table><thead><tr><th scope="col">Boat</th><th scope="col">Dealer</th><th scope="col">Visibility</th><th scope="col">Availability</th><th scope="col">Actions</th></tr></thead><tbody>{visible.slice(0, limit).map(boat => {
           const busy = updatingActive.has(boat.id) || updatingBought.has(boat.id) || deleting.has(boat.id);
           const title = boat.boat_data?.title || "Untitled boat";
           return <tr key={boat.id}><td><div className="d-flex align-items-center gap-3">{boat.main_image && <Image src={boat.main_image} alt="" width={88} height={60} style={{ objectFit: "cover", borderRadius: 4 }} />}<strong>{title}</strong></div></td><td>{boat.broker_data?.dealer || "—"}<small>{boat.broker_data?.name}</small></td><td><button type="button" className="btn-border" aria-label={`${boat.active ? "Hide" : "Publish"} ${title}`} aria-pressed={boat.active} disabled={busy || boat.bought} onClick={() => void handleToggleActive(boat.id, boat.active)}>{updatingActive.has(boat.id) ? "Updating…" : boat.active ? "Published" : "Hidden"}</button></td><td><button type="button" className="btn-border" aria-label={`Mark ${title} as ${boat.bought ? "available" : "sold"}`} aria-pressed={boat.bought} disabled={busy} onClick={() => { if (boat.bought || confirm(`Mark ${title} as sold? It will also be hidden from brokerage.`)) void handleToggleBought(boat.id, boat.bought); }}>{updatingBought.has(boat.id) ? "Updating…" : boat.bought ? "Sold" : "Available"}</button></td><td><div className="d-flex gap-2"><button type="button" className="profile-table-action-btn" aria-label={`View ${title}`} onClick={() => handlePreview(boat)}><Eye /></button><button type="button" className="profile-table-action-btn" aria-label={`Edit ${title}`} disabled={busy} onClick={() => handleEdit(boat.id)}><Edit /></button><button type="button" className="profile-table-action-btn profile-table-action-btn-danger" aria-label={`Delete ${title}`} disabled={busy} onClick={() => void handleDelete(boat.id)}>{deleting.has(boat.id) ? "…" : <Trash2 />}</button></div></td></tr>;
-        })}</tbody></table></div><div className={styles.listFooter}><span>Showing {Math.min(limit, visible.length)} of {visible.length} boats</span>{limit < visible.length && <button type="button" className="btn-border" onClick={() => setLimit(limit + 25)}>Show more</button>}</div></> : <div className="admin-empty"><h2>{boats.length ? "No matching boats" : "Add your first boat"}</h2><p>{boats.length ? "Try another title or status." : "Create a listing or save a draft to finish later."}</p>{boats.length ? <button className="btn-border" onClick={() => { setQuery(""); setFilter("all"); }}>Clear filters</button> : <Link href="/account?tab=upload-boat" className="btn-solid">Add a boat</Link>}</div>}
+        })}</tbody></table></div><div className={styles.listFooter}><span>Showing {Math.min(limit, visible.length)} of {visible.length} boats</span>{limit < visible.length && <button type="button" className="btn-border" onClick={() => setLimit(limit + 25)}>Show more</button>}</div></> : <div className="admin-empty"><h2>{boats.length ? "No matching boats" : "No boat listings yet"}</h2><p>{boats.length ? "Try another title or status." : "Create a listing or save a draft to finish later."}</p>{boats.length ? <button className="btn-border" onClick={() => { setQuery(""); setFilter("all"); }}>Clear filters</button> : <Link href="/account?tab=upload-boat" className="btn-solid">Add a boat</Link>}</div>}
       </>}
       {editBoatId && <EditBoatModal boatId={editBoatId} isOpen={!!editBoatId} onClose={closeBoatEditor} onSaved={handleEditSaved} />}
     </>;

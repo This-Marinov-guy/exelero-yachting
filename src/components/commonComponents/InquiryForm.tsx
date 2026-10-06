@@ -16,7 +16,6 @@ export default function InquiryForm({ endpoint, subject, fields = [] }: Props) {
   const [sending, setSending] = useState(false);
   const [invalidField, setInvalidField] = useState<string>();
   const [messageLength, setMessageLength] = useState(0);
-  const [confirmation, setConfirmation] = useState<string>();
   const extras = inquiryExtraFields(fields);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -36,7 +35,6 @@ export default function InquiryForm({ endpoint, subject, fields = [] }: Props) {
     busy.current = true;
     setSending(true);
     setInvalidField(undefined);
-    setConfirmation(undefined);
     try {
       const response = await fetch(endpoint, {
         method: "POST",
@@ -48,10 +46,7 @@ export default function InquiryForm({ endpoint, subject, fields = [] }: Props) {
       form.reset();
       attempt.current = null;
       setMessageLength(0);
-      const message = result.notification === "pending"
-        ? "Your inquiry has been received. Our team can see it, though the email notification is delayed."
-        : "Thank you. Your inquiry has been sent to our team.";
-      setConfirmation(message);
+      const message = "Thank you. Your inquiry has been received.";
       toast.success(message);
     } catch (error) {
       toast.error(error instanceof Error && !(error instanceof TypeError) ? error.message : "We couldn't send your inquiry. Check your connection and try again.");
@@ -62,13 +57,13 @@ export default function InquiryForm({ endpoint, subject, fields = [] }: Props) {
   }
 
   const control = (name: string) => ({ id: `${prefix}-${name}`, name, "aria-invalid": invalidField === name || undefined });
-  return <form className={styles.form} aria-label={`Contact about ${subject}`} aria-busy={sending} noValidate onSubmit={submit} onInput={() => { setInvalidField(undefined); setConfirmation(undefined); }}>
+  return <form className={styles.form} aria-label={`Contact about ${subject}`} aria-busy={sending} noValidate onSubmit={submit} onInput={() => setInvalidField(undefined)}>
     <fieldset disabled={sending}>
-      <legend className="visually-hidden">Your contact details and message</legend>
+      <legend className="visually-hidden">Your contact details</legend>
       <div className={styles.field}><label htmlFor={`${prefix}-name`}>Name</label><input {...control("name")} type="text" autoComplete="name" required maxLength={120} /></div>
       <div className={styles.field}><label htmlFor={`${prefix}-email`}>Email</label><input {...control("email")} type="email" inputMode="email" autoComplete="email" required maxLength={254} /></div>
       <div className={styles.field}><label htmlFor={`${prefix}-phone`}>Phone <span>(optional)</span></label><input {...control("phone")} type="tel" inputMode="tel" autoComplete="tel" maxLength={50} /></div>
-      <div className={styles.field}><label htmlFor={`${prefix}-message`}>Message</label><textarea {...control("message")} required rows={3} maxLength={3000} onChange={event => setMessageLength(event.target.value.length)} aria-describedby={messageLength >= 2700 ? `${prefix}-count` : undefined} />{messageLength >= 2700 && <small id={`${prefix}-count`}>{messageLength.toLocaleString()} / 3,000 characters</small>}</div>
+      <div className={styles.field}><label htmlFor={`${prefix}-message`}>Message <span>(optional)</span></label><textarea {...control("message")} rows={3} maxLength={3000} onChange={event => setMessageLength(event.target.value.length)} aria-describedby={messageLength >= 2700 ? `${prefix}-count` : undefined} />{messageLength >= 2700 && <small id={`${prefix}-count`}>{messageLength.toLocaleString()} / 3,000 characters</small>}</div>
       <div className={styles.honeypot} aria-hidden="true"><label htmlFor={`${prefix}-website`}>Website</label><input id={`${prefix}-website`} name="website_check" tabIndex={-1} autoComplete="off" /></div>
       {extras.length > 0 && <div className={styles.extras}>{extras.map(field => <div className={styles.field} key={field.id}>
         <label htmlFor={`${prefix}-${field.id}`}>{field.label}{!field.required && <span> (optional)</span>}</label>
@@ -76,6 +71,5 @@ export default function InquiryForm({ endpoint, subject, fields = [] }: Props) {
       </div>)}</div>}
     </fieldset>
     <button type="submit" className={styles.submit} disabled={sending}>{sending && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}{sending ? "Sending…" : "Send inquiry"}</button>
-    {confirmation && <p className={styles.confirmation} role="status">{confirmation}</p>}
   </form>;
 }

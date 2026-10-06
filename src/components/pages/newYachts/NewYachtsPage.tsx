@@ -3,60 +3,80 @@ import { getPublishedPartners } from "@/lib/partners";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 const NewYachtsPage = async () => {
-  const yachtBrands = (await getPublishedPartners()).filter((partner) => partner.show_on_new_yachts);
+  const yachtPartners = (await getPublishedPartners()).filter((partner) => partner.show_on_new_yachts);
+
   return (
-    <>
+    <main className="new-yachts-page">
       <TopFilter
         title="New Yachts"
-        description="Select a brand to discover its yachts and speak with our team."
+        description="Explore our partners and find your next yacht."
       />
-      <main className="new-yachts-page">
-        <section className="new-yachts-panels" aria-label="New yacht brands">
-          {yachtBrands.length === 0 && <div className="new-yachts-empty"><h2>Find your next yacht</h2><p>Speak with our team about the latest yachts and available brands.</p><Link href="/contact" className="btn-solid">Contact our team</Link></div>}
-          {yachtBrands.map((brand, index) => (
-            <Link
-              key={brand.id}
-              href={`/partners/${brand.slug}`}
-              className="new-yachts-panel"
-              aria-label={`Explore ${brand.name}`}
-            >
-              <Image
-                src={brand.hero_image_url || brand.breadcrumb_image_url}
-                alt={`${brand.name} yacht`}
-                fill
-                priority={index === 0}
-                sizes="(max-width: 991px) 100vw, 50vw"
-                quality={82}
-                className="new-yachts-panel__image"
-                unoptimized={(brand.hero_image_url || brand.breadcrumb_image_url).startsWith("http")}
-              />
-              <div className="new-yachts-panel__overlay" />
+      <section className="new-yachts-directory container" aria-label="New yacht partners">
+        {yachtPartners.length > 0 ? (
+          <div
+            className="new-yachts-cards"
+            style={{
+              "--new-yachts-columns": Math.min(yachtPartners.length, 4),
+              "--new-yachts-columns-tablet": Math.min(yachtPartners.length, 2),
+            } as CSSProperties}
+          >
+            {yachtPartners.map((partner, index) => {
+              const image = partner.hero_image_url || partner.breadcrumb_image_url;
+              const description = partner.content.split(/\n\s*\n/)[0]?.trim() || `Discover ${partner.name} with Exelero Yachting.`;
+              const isL30 = /\bL30\b/i.test(partner.name);
 
-              <div className="new-yachts-panel__content">
-                <div className="new-yachts-panel__logo-wrap">
-                  <Image
-                    src={brand.logo_url}
-                    alt={`${brand.name} logo`}
-                    width={220}
-                    height={90}
-                    className="new-yachts-panel__logo"
-                    unoptimized={brand.logo_url.startsWith("http")}
-                  />
-                </div>
-                <div className="new-yachts-panel__text">
-                  <h2>{brand.name}</h2>
-                  <span>
-                    Details &amp; inquiry <ArrowUpRight aria-hidden size={22} />
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </section>
-      </main>
-    </>
+              return (
+                <Link
+                  key={partner.id}
+                  href={`/partners/${partner.slug}`}
+                  className="new-yachts-card"
+                  aria-label={`Explore ${partner.name}`}
+                >
+                  <div className="new-yachts-card__media">
+                    <Image
+                      src={image}
+                      alt=""
+                      fill
+                      priority={index < 3}
+                      sizes="(max-width: 600px) 100vw, (max-width: 1199px) 50vw, 33vw"
+                      className="new-yachts-card__image"
+                      unoptimized={image.startsWith("http")}
+                    />
+                    {isL30 && <span className="new-yachts-card__type">Class &amp; racing partner</span>}
+                  </div>
+                  <div className="new-yachts-card__body">
+                    <div className="new-yachts-card__logo-wrap">
+                      <Image
+                        src={partner.logo_url}
+                        alt=""
+                        width={190}
+                        height={68}
+                        className="new-yachts-card__logo"
+                        unoptimized={partner.logo_url.startsWith("http")}
+                      />
+                    </div>
+                    <h2>{partner.name}</h2>
+                    <p>{description}</p>
+                    <span className="new-yachts-card__action">
+                      Explore {partner.name} <ArrowUpRight aria-hidden="true" size={19} />
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="new-yachts-empty">
+            <h2>Find your next yacht</h2>
+            <p>Our partner selection is being updated. Speak with our team about available yachts.</p>
+            <Link href="/contact" className="btn-solid">Contact our team</Link>
+          </div>
+        )}
+      </section>
+    </main>
   );
 };
 

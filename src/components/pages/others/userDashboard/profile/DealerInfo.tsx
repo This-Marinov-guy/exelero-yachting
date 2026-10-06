@@ -331,7 +331,7 @@ const DealerInfo = ({ onDataChange }: DealerInfoProps) => {
               <div className="mb-3">
                 <CommonInput
                   inputType="text"
-                  label="Company / dealer (optional)"
+                  label="Company (optional)"
                   value={formData.dealer}
                   onChange={(e) => setFormData({ ...formData, dealer: e.target.value })}
                 />

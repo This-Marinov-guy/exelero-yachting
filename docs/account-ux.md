@@ -76,7 +76,7 @@ User confirmed GA4 and Search Console and is adding server credentials. Use Euro
 
 ## Expanded account scope
 
-The user requested the same treatment for every account section. Dealers get labelled fields, search, save feedback and recoverable loading. Listings get search/status filters and explicit visibility/availability controls. Charter and transportation inquiries share a compact six-column inbox with search and status filters; preview and edit retain all original fields, grouped into Contact, Request and Boat details. Add/edit boat forms use disclosure groups for the existing fields and uploads, preserving draft/media functionality. Account settings retain avatar, email, password and passkeys, with clear labels and separated security actions. All tables have scroll containers on smaller screens. Errors use toasts.
+The user requested the same treatment for every account section. Dealers get labelled fields, search, save feedback and recoverable loading. Listings get search/status filters and explicit visibility/availability controls. Charter and transportation inquiries share a compact six-column inbox with search and status filters; preview and edit retain all original fields, grouped into Contact, Request, Boat and Internal details. All four inquiry inboxes use Pending, Completed and Rejected, with a private internal note distinct from the visitor message. Add/edit boat forms use disclosure groups for the existing fields and uploads, preserving draft/media functionality. Account settings retain avatar, email, password and passkeys, with clear labels and separated security actions. All tables have scroll containers on smaller screens. Errors use toasts.
 
 ## Inquiry access migration
 
@@ -120,3 +120,7 @@ Charter inquiries reuse the Partners panel proportions: full-width workspace, 24
 The existing view/edit dialog keeps its actions and validation, with Contact/Request panels and optional field labels. Its body expands with the content, removing the nested height limit and scroll container; the modal itself retains normal page scrolling and its keyboard focus trap. Transportation retains its existing presentation.
 
 Charter verification: TypeScript, focused ESLint and Sass compilation passed. Browser checks covered skeleton loading, 48px inputs with 8px corners, search recovery, toast validation, a saved status update, 1658px-long details with visible overflow, and 390px mobile layout with stacked fields and no page overflow. Desktop and mobile captures were inspected; no blocking UX issues found. Verification used temporary local inquiries and an isolated server; hosted records were not changed.
+
+## All boat listings in the account
+
+The Boat listings tab loads listings from every invited account, including hidden and sold boats. The list no longer filters by the current user's ID, including after an edit refresh. Apply `supabase/migrations/20261006142650_account_all_boat_listings.sql` so account users can see and manage these listings through the existing controls. Public visitors remain limited to active, available listings; account users cannot change a boat's owner ID.

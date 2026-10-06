@@ -36,8 +36,8 @@ It should show role `{authenticated}`, command `INSERT`, and a check restricting
 - New Yachts visitors choose a brand and open its information page, which includes the configured contact form.
 - Images accept JPEG, PNG or WebP up to 10 MB. Breadcrumb recommendation: 2560 × 1280 pixels (2:1), minimum 1600 × 800. Existing SVG logo assets remain supported.
 - Page content uses plain text, with blank lines separating paragraphs.
-- Standard forms ask for name, email, optional phone and a message. Custom forms keep name/email and allow up to eight additional text, phone, long text or dropdown fields.
-- Inquiries are stored in `partner_inquiries`. Existing `GMAIL_*` and `NOTIFICATION_TO_EMAIL` configuration sends email notifications. A notification failure does not discard the saved inquiry.
+- Standard forms ask for name, email, optional phone and optional message. Custom forms keep name/email and allow up to eight additional text, phone, long text or dropdown fields.
+- Inquiries are stored in `partner_inquiries` and listed under Partner inquiries in the account. Existing `GMAIL_*` and `NOTIFICATION_TO_EMAIL` configuration sends email notifications. A notification failure leaves the inquiry visible in the account with an email retry action.
 
 ## Sitemap GitHub Action
 

@@ -15,7 +15,7 @@ GA4_PROPERTY_ID=123456789
 NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 SEARCH_CONSOLE_SITE_URL=sc-domain:exeleroyachting.com
 GOOGLE_SERVICE_ACCOUNT_JSON='{"type":"service_account","client_email":"…","private_key":"-----BEGIN PRIVATE KEY-----\n…\n-----END PRIVATE KEY-----\n"}'
-ANALYTICS_TIME_ZONE=Europe/Amsterdam
+ANALYTICS_TIME_ZONE=Europe/Sofia
 ANALYTICS_HOSTNAMES=exeleroyachting.com,www.exeleroyachting.com
 ```
 

@@ -46,20 +46,20 @@ export default function AboutBrochureActions() {
   }
 
   return (
-    <div className="about-brochure__controls">
-      <div className="about-brochure__actions">
-        <a href={BROCHURE_URL} download={BROCHURE_DOWNLOAD_NAME} className="about-brochure__download">
+    <div className="about-guarantee__controls">
+      <div className="about-guarantee__actions">
+        <a href={BROCHURE_URL} download={BROCHURE_DOWNLOAD_NAME} className="about-guarantee__download">
           <Download size={18} aria-hidden="true" />
           Download brochure
         </a>
-        <button type="button" className="about-brochure__share" onClick={shareBrochure} disabled={sharing}>
+        <button type="button" className="about-guarantee__share" onClick={shareBrochure} disabled={sharing}>
           <Share2 size={18} aria-hidden="true" />
           {sharing ? "Sharing…" : "Share brochure"}
         </button>
       </div>
-      <p className="about-brochure__status" role="status" aria-live="polite">{status}</p>
+      <p className="about-guarantee__status" role="status" aria-live="polite">{status}</p>
       {manualUrl && (
-        <label className="about-brochure__manual-link">
+        <label className="about-guarantee__manual-link">
           Brochure link
           <input type="text" readOnly value={manualUrl} onFocus={(event) => event.currentTarget.select()} />
         </label>

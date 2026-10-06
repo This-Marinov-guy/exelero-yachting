@@ -446,7 +446,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
         (payload as Record<string, unknown>).type = form.type.trim();
       }
 
-      const { error: updateError } = await supabase.from("boat_data").update(payload).eq("boat_id", boatId);
+      const { error: updateError } = await supabase.from("boat_data").update(payload).eq("boat_id", boatId).select("id").single();
 
       if (updateError) {
         toast.error(updateError.message || "Failed to update boat data");

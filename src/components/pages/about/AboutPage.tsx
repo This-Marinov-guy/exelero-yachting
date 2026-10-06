@@ -1,3 +1,4 @@
+import Breadcrumbs from "@/components/commonComponents/breadcrumb";
 import { RouteList } from "@/utils/RouteList";
 import { getPublishedPartners } from "@/lib/partners";
 import { Handshake, Sailboat, ShieldCheck } from "lucide-react";
@@ -54,17 +55,20 @@ const experience = [
 const AboutPage = async () => {
   const partners = await getPublishedPartners();
 
-  return <main className="exelero-about-section">
+  return <>
+    <Breadcrumbs title="Premium Yachting Experience" headingLevel={1} subTitle="About Us" url={RouteList.Home.CarDemo1} mainClass="page-breadcrumbs-section" image />
+    <main className="exelero-about-section">
       <Container>
-        <div className="about-masthead">
-          <h1>Premium Yachting<br />Experience</h1>
-        </div>
-
         <section className="about-overview" aria-labelledby="about-intro-title">
-          <div className="about-overview__copy">
-            <h2 id="about-intro-title">About Us</h2>
-            <p>At Exelero Yachting we specialise in a personalised customer approach. We carefully gather information about our clients' requirements and make recommendations. We are adamant that every customer must make an informed choice.</p>
-            <p>For this purpose we only work with prestigious brands that have proven themselves in both quality and customer service. We would not recommend a product that we would not purchase ourselves. We believe that, in the long run, quality is what brings high value to customers. We make no compromises.</p>
+          <div className="about-overview__body">
+            <div className="about-overview__copy">
+              <h2 id="about-intro-title">About Us</h2>
+              <p>At Exelero Yachting we specialise in a personalised customer approach. We carefully gather information about our clients' requirements and make recommendations. We are adamant that every customer must make an informed choice.</p>
+              <p>For this purpose we only work with prestigious brands that have proven themselves in both quality and customer service. We would not recommend a product that we would not purchase ourselves. We believe that, in the long run, quality is what brings high value to customers. We make no compromises.</p>
+            </div>
+            <div className="about-overview__image">
+              <Image src="/assets/images/other/about/general.jpg" alt="Exelero sailing yacht moored at the marina" width={900} height={600} sizes="(max-width: 767px) 100vw, 42vw" />
+            </div>
           </div>
           <div className="about-commitments" aria-label="Our commitments">
             {commitments.map(({ icon: Icon, title, description }) => (
@@ -113,36 +117,31 @@ const AboutPage = async () => {
               <p className="about-director__role">Founder &amp; Director</p>
               <p>After a long corporate career as a financial executive, I decided to turn to yachting and turn my love for it into my business. I want to help other people experience the great way of life that yachting offers.</p>
               <p>I have been sailing since I was six years old. For 32 years I have been connected with the industry as a sailor, and now it is the joy of my life to provide products that help others enjoy their lives more or build a business.</p>
+              <section className="about-experience" aria-labelledby="about-experience-title">
+                <h3 id="about-experience-title">Experience &amp; Qualifications</h3>
+                <div className="about-experience__list">
+                  {experience.map(({ years, description }) => (
+                    <div className="about-experience__item" key={years}>
+                      <strong>{years}</strong>
+                      <p>{description}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
             </div>
           </div>
         </section>
 
-        <section className="about-experience" aria-labelledby="about-experience-title">
-          <h2 id="about-experience-title">Experience &amp; Qualifications</h2>
-          <div className="about-experience__list">
-            {experience.map(({ years, description }) => (
-              <div className="about-experience__item" key={years}>
-                <strong>{years}</strong>
-                <p>{description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         <section className="about-guarantee" aria-labelledby="about-guarantee-title">
-          <h2 id="about-guarantee-title">Our Guarantee</h2>
-          <p>Outstanding quality and unwavering support.</p>
-        </section>
-
-        <section className="about-brochure" aria-labelledby="about-brochure-title">
-          <div>
-            <h2 id="about-brochure-title">Company profile</h2>
-            <p>Download the brochure or share it with someone planning their next voyage.</p>
+          <div className="about-guarantee__copy">
+            <h2 id="about-guarantee-title">Our Guarantee</h2>
+            <p>Outstanding quality and unwavering support.</p>
           </div>
           <AboutBrochureActions />
         </section>
       </Container>
-  </main>;
+    </main>
+  </>;
 };
 
 export default AboutPage;

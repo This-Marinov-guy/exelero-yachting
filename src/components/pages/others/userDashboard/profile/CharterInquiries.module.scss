@@ -6,6 +6,7 @@
     display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 16px; margin-bottom: 24px;
     label { min-width: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; font-size: 14px; font-weight: 600; }
   }
+  .contactFilters:global(.admin-toolbar) { grid-template-columns: minmax(0, 1fr) 190px 190px; }
   .tableRegion { border: 0; border-radius: 8px 8px 0 0; scrollbar-width: none; &::-webkit-scrollbar { display: none; width: 0; height: 0; } }
   table { margin: 0; }
   th { padding: 16px; }
@@ -61,14 +62,20 @@
 .skeletonBlock { background: #e7edef; border-radius: 8px; animation: pulse 1.5s ease-in-out infinite; }
 .skeletonHeading { margin-bottom: 24px; div:first-child { width: 220px; height: 34px; margin-bottom: 8px; } div:last-child { width: min(440px, 100%); height: 24px; } }
 .skeletonFilters { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 16px; margin-bottom: 24px; }
+.skeletonContactFilters { grid-template-columns: minmax(0, 1fr) 190px 190px; }
+.privateHint { grid-column: 1 / -1; margin: 0; color: #60747b; font-size: 14px; }
 .skeletonLabel { height: 21px; width: 110px; margin-bottom: 8px; }
 .skeletonInput { height: 48px; }
-.skeletonTableHeader, .skeletonRow { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.5fr) minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: center; padding: 16px; border-bottom: 1px solid #d8e0e3; .skeletonBlock { height: 16px; max-width: 160px; } }
+.skeletonTableHeader, .skeletonRow { display: grid; grid-template-columns: 28px minmax(0, 1.5fr) minmax(0, 1.5fr) minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: center; padding: 16px; border-bottom: 1px solid #d8e0e3; .skeletonBlock { height: 16px; max-width: 160px; } }
+.skeletonContactTable { grid-template-columns: 28px minmax(0, 1.5fr) minmax(0, 1.4fr) minmax(0, 1.2fr) repeat(4, minmax(0, .8fr)); }
 .skeletonTableHeader { background: #f5f8f8; border-radius: 8px 8px 0 0; min-height: 53px; }
 .skeletonRow { min-height: 85px; > div:first-child > div + div { margin-top: 8px; max-width: 210px; } }
 .skeletonFooter { padding: 24px; .skeletonBlock { width: 160px; height: 16px; } }
 @keyframes pulse { 50% { opacity: .45; } }
 @media(prefers-reduced-motion: reduce) { .skeletonBlock { animation: none; } }
+@media(max-width: 900px) and (min-width: 651px) {
+  .manager .contactFilters:global(.admin-toolbar), .skeletonContactFilters { grid-template-columns: repeat(2, minmax(0, 1fr)); > :first-child { grid-column: 1 / -1; } }
+}
 @media(max-width: 650px) {
   .manager .filters:global(.admin-toolbar), .skeletonFilters { grid-template-columns: minmax(0, 1fr); }
   .manager .listFooter { padding: 16px; }
