@@ -1212,6 +1212,10 @@ input[type="radio"] {
   background: rgba(var(--bg-color), 1);
 
   &.property-sidebar-section {
+    .detail-images.boat-detail-preview {
+      padding-top: 0;
+    }
+
     .detail-images {
       border-radius: 5px;
     }
