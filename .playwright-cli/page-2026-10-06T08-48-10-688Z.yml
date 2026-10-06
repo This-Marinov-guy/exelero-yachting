@@ -1,0 +1,139 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "Exelero Yachting home" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "Exelero Yachting" [ref=e8]
+        - navigation [ref=e9]:
+          - list [ref=e10]:
+            - listitem [ref=e11] [cursor=pointer]:
+              - button "Partners" [ref=e12]
+            - listitem [ref=e16]:
+              - link "About" [ref=e17] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e18]:
+              - link "New Yachts" [ref=e19] [cursor=pointer]:
+                - /url: /new-yachts
+            - listitem [ref=e20]:
+              - link "Pre-owned Yachts" [ref=e21] [cursor=pointer]:
+                - /url: /services/brokerage?condition=pre-owned
+            - listitem [ref=e22]:
+              - link "Yacht Transportation" [ref=e23] [cursor=pointer]:
+                - /url: /services/transportation
+            - listitem [ref=e24]:
+              - link "Charters" [ref=e25] [cursor=pointer]:
+                - /url: /services/charters
+            - listitem [ref=e26]:
+              - link "Contact" [ref=e27] [cursor=pointer]:
+                - /url: /contact
+      - button "Close menu"
+    - generic [ref=e28]:
+      - generic [ref=e33]:
+        - img "Inquiry verification partner logo" [ref=e35]
+        - heading "Inquiry verification partner" [level=1] [ref=e36]
+      - generic [ref=e39]:
+        - generic [ref=e41]:
+          - heading "About Inquiry verification partner" [level=2] [ref=e42]
+          - paragraph [ref=e43]: Local inquiry verification.
+        - generic [ref=e45]:
+          - heading "Get in touch" [level=3] [ref=e46]
+          - paragraph [ref=e47]: Ask our team about Inquiry verification partner.
+          - form "Contact about Inquiry verification partner" [ref=e48]:
+            - group "Your contact details and message" [ref=e49]:
+              - generic [ref=e51]:
+                - generic [ref=e52]: Name
+                - textbox "Name" [ref=e53]
+              - generic [ref=e54]:
+                - generic [ref=e55]: Email
+                - textbox "Email" [ref=e56]
+              - generic [ref=e57]:
+                - generic [ref=e58]: Phone (optional)
+                - textbox "Phone (optional)" [ref=e59]
+              - generic [ref=e60]:
+                - generic [ref=e61]: Message
+                - textbox "Message" [ref=e62]
+              - generic [aria-hidden] [ref=e63]:
+                - generic [ref=e64]: Website
+                - textbox [ref=e65]
+            - button "Send inquiry" [ref=e66] [cursor=pointer]
+    - contentinfo [ref=e67]:
+      - generic [ref=e68]:
+        - list [ref=e69]:
+          - listitem [ref=e70]:
+            - generic [ref=e74]:
+              - heading "Call" [level=4] [ref=e75]
+              - heading [level=6] [ref=e76]:
+                - link "+359 884967244" [ref=e77] [cursor=pointer]:
+                  - /url: tel:+359884967244
+          - listitem [ref=e78]:
+            - generic [ref=e83]:
+              - heading "Email" [level=4] [ref=e84]
+              - heading [level=6] [ref=e85]:
+                - link "info@exelero.eu" [ref=e86] [cursor=pointer]:
+                  - /url: mailto:info@exelero.eu
+          - listitem [ref=e87]:
+            - generic [ref=e92]:
+              - heading "Location" [level=4] [ref=e93]
+              - heading [level=6] [ref=e94]:
+                - link "1 Alexander Battenberg blvd, 8000 Burgas Bulgaria" [ref=e95] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/search/?api=1&query=1%20Alexander%20Battenberg%20blvd%2C%208000%20Burgas%20Bulgaria
+        - generic [ref=e97]:
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - link [ref=e100] [cursor=pointer]:
+                - /url: /
+                - img "footer-logo" [ref=e101]
+              - list "Social media" [ref=e102]:
+                - listitem [ref=e103]:
+                  - link "Instagram" [ref=e104] [cursor=pointer]:
+                    - /url: https://www.instagram.com/exeleroyachting
+                - listitem [ref=e108]:
+                  - link "Facebook" [ref=e109] [cursor=pointer]:
+                    - /url: https://www.facebook.com/exceleroyachting
+                - listitem [ref=e112]:
+                  - link "LinkedIn" [ref=e113] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/company/exelero-yachting
+            - paragraph [ref=e118]: Exelero Yachting
+          - generic [ref=e120]:
+            - generic [ref=e122]:
+              - heading "Navigation" [level=4] [ref=e124]
+              - list [ref=e125]:
+                - listitem [ref=e126]:
+                  - link "About us" [ref=e127] [cursor=pointer]:
+                    - /url: /about
+                - listitem [ref=e128]:
+                  - link "Contact" [ref=e129] [cursor=pointer]:
+                    - /url: /contact
+            - generic [ref=e131]:
+              - heading "Yachts" [level=4] [ref=e133]
+              - list [ref=e134]:
+                - listitem [ref=e135]:
+                  - link "New yachts" [ref=e136] [cursor=pointer]:
+                    - /url: /new-yachts
+                - listitem [ref=e137]:
+                  - link "Pre-owned yachts" [ref=e138] [cursor=pointer]:
+                    - /url: /services/brokerage?condition=pre-owned
+                - listitem [ref=e139]:
+                  - link "Boat brokerage" [ref=e140] [cursor=pointer]:
+                    - /url: /services/brokerage
+            - generic [ref=e142]:
+              - heading "Services" [level=4] [ref=e144]
+              - list [ref=e145]:
+                - listitem [ref=e146]:
+                  - link "Yacht Transportation" [ref=e147] [cursor=pointer]:
+                    - /url: /services/transportation
+                - listitem [ref=e148]:
+                  - link "Charters" [ref=e149] [cursor=pointer]:
+                    - /url: /services/charters
+            - generic [ref=e151]:
+              - heading "Resources" [level=4] [ref=e153]
+              - list [ref=e154]:
+                - listitem [ref=e155]:
+                  - link "Download brochure" [ref=e156] [cursor=pointer]:
+                    - /url: /assets/documents/Exelero%20Yachting%20%E2%80%93%20Company%20Profile.pdf
+        - generic [ref=e157]:
+          - paragraph [ref=e158]: "@ 2026 Exelero Yachting. All Rights Reserved"
+          - button "Cookie settings" [ref=e159] [cursor=pointer]
+    - region "Notifications alt+T"
+  - alert [ref=e160]

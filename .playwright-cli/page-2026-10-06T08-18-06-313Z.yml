@@ -1,0 +1,421 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "Exelero Yachting home" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "Exelero Yachting" [ref=e8]
+        - navigation [ref=e9]:
+          - list [ref=e10]:
+            - listitem [ref=e11] [cursor=pointer]:
+              - button "Partners" [ref=e12]
+            - listitem [ref=e16]:
+              - link "About" [ref=e17] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e18]:
+              - link "New Yachts" [ref=e19] [cursor=pointer]:
+                - /url: /new-yachts
+            - listitem [ref=e20]:
+              - link "Pre-owned Yachts" [ref=e21] [cursor=pointer]:
+                - /url: /services/brokerage?condition=pre-owned
+            - listitem [ref=e22]:
+              - link "Yacht Transportation" [ref=e23] [cursor=pointer]:
+                - /url: /services/transportation
+            - listitem [ref=e24]:
+              - link "Charters" [ref=e25] [cursor=pointer]:
+                - /url: /services/charters
+            - listitem [ref=e26]:
+              - link "Contact" [ref=e27] [cursor=pointer]:
+                - /url: /contact
+      - button "Close menu"
+    - generic [ref=e28]:
+      - img "Exelero Yachting" [ref=e30]
+      - generic [ref=e33]:
+        - heading "Yachts for Sale" [level=1] [ref=e34]
+        - paragraph [ref=e35]: Preowned Yachts for Sale
+    - generic [ref=e38]:
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - heading [level=2] [ref=e43]:
+            - button "Boat Type +" [ref=e44] [cursor=pointer]
+          - text: ✓ ✓ ✓ ✓
+        - generic [ref=e45]:
+          - heading [level=2] [ref=e46]:
+            - button "Condition +" [ref=e47] [cursor=pointer]
+          - text: ✓ ✓
+        - generic [ref=e48]:
+          - heading [level=2] [ref=e49]:
+            - button "Price Range −" [ref=e50] [cursor=pointer]
+          - generic [ref=e55]:
+            - slider "Accessibility label" [ref=e56]:
+              - generic [ref=e57]: "0"
+            - slider "Accessibility label" [ref=e58]:
+              - generic [ref=e59]: 1.0M
+        - generic [ref=e60]:
+          - heading [level=2] [ref=e61]:
+            - button "Year Built −" [ref=e62] [cursor=pointer]
+          - generic [ref=e65]:
+            - spinbutton "Min" [ref=e67]: "1900"
+            - text: "-"
+            - spinbutton "Max" [ref=e69]: "2030"
+        - generic [ref=e70]:
+          - heading [level=2] [ref=e71]:
+            - button "Hull Length (m) −" [ref=e72] [cursor=pointer]
+          - generic [ref=e75]:
+            - spinbutton "Min" [ref=e77]: "0"
+            - text: "-"
+            - spinbutton "Max" [ref=e79]: "100000"
+        - generic [ref=e80]:
+          - heading [level=2] [ref=e81]:
+            - button "Manufacturer +" [ref=e82] [cursor=pointer]
+          - text: ✓ ✓ ✓ ✓ ✓ ✓ ✓
+        - generic [ref=e83]:
+          - heading [level=2] [ref=e84]:
+            - button "Location +" [ref=e85] [cursor=pointer]
+          - text: ✓ ✓ ✓ ✓ ✓ ✓ ✓
+        - heading [level=2] [ref=e87]:
+          - button "Beam (m) +" [ref=e88] [cursor=pointer]
+        - heading [level=2] [ref=e90]:
+          - button "Draft (m) +" [ref=e91] [cursor=pointer]
+        - heading [level=2] [ref=e93]:
+          - button "Displacement (kg) +" [ref=e94] [cursor=pointer]
+        - heading [level=2] [ref=e96]:
+          - button "Engine Power (hp) +" [ref=e97] [cursor=pointer]
+      - generic [ref=e98]:
+        - heading "0 results" [level=4] [ref=e100]
+        - generic [ref=e101]:
+          - generic [ref=e102]:
+            - article [ref=e104]:
+              - link "X41 One Design Spec - 1 X41 One Design Spec - 2 X41 One Design Spec - 3 X41 One Design Spec - 4 X41 One Design Spec - 5 X41 One Design Spec - 6 X41 One Design Spec - 7 X41 One Design Spec - 8 X41 One Design Spec - 9 X41 One Design Spec - 10 Pre-owned 2008" [ref=e105] [cursor=pointer]:
+                - /url: /services/brokerage/x41-one-design-spec
+                - generic [ref=e107]:
+                  - img "X41 One Design Spec - 1" [ref=e110]
+                  - img "X41 One Design Spec - 2" [ref=e113]
+                  - img "X41 One Design Spec - 3" [ref=e116]
+                  - img "X41 One Design Spec - 4" [ref=e119]
+                  - img "X41 One Design Spec - 5" [ref=e122]
+                  - img "X41 One Design Spec - 6" [ref=e125]
+                  - img "X41 One Design Spec - 7" [ref=e128]
+                  - img "X41 One Design Spec - 8" [ref=e131]
+                  - img "X41 One Design Spec - 9" [ref=e134]
+                  - img "X41 One Design Spec - 10" [ref=e137]
+                - generic [ref=e140]:
+                  - generic [ref=e141]: Pre-owned
+                  - generic [ref=e142]: "2008"
+              - generic [ref=e143]:
+                - generic [ref=e144]:
+                  - link [ref=e145] [cursor=pointer]:
+                    - /url: /services/brokerage/x41-one-design-spec
+                    - heading "X41 One Design Spec" [level=4] [ref=e146]
+                  - heading "Saltsjöbaden, Sweden" [level=6] [ref=e150]
+                  - list [ref=e151]:
+                    - listitem [ref=e152]:
+                      - generic "Length" [ref=e153]
+                      - generic [ref=e160]: 12.35 m
+                    - listitem [ref=e161]:
+                      - generic "Engine power" [ref=e162]
+                      - generic [ref=e165]: 21.3 kW
+                    - listitem [ref=e166]:
+                      - generic "Beam" [ref=e167]
+                      - generic [ref=e171]: 3.646 m
+                    - listitem [ref=e172]:
+                      - generic "Draft" [ref=e173]
+                      - generic [ref=e176]: 2.492 m
+                - generic [ref=e177]:
+                  - heading "175,000 €" [level=4] [ref=e178]
+                  - link "View" [ref=e179] [cursor=pointer]:
+                    - /url: /services/brokerage/x41-one-design-spec
+            - article [ref=e181]:
+              - link "Beneteau Oceanis 46 - 1 Beneteau Oceanis 46 - 2 Beneteau Oceanis 46 - 3 Beneteau Oceanis 46 - 4 Beneteau Oceanis 46 - 5 Beneteau Oceanis 46 - 6 Beneteau Oceanis 46 - 7 Beneteau Oceanis 46 - 8 Beneteau Oceanis 46 - 9 Beneteau Oceanis 46 - 10 Beneteau Oceanis 46 - 11 Beneteau Oceanis 46 - 12 Beneteau Oceanis 46 - 13 Beneteau Oceanis 46 - 14 Beneteau Oceanis 46 - 15 Pre-owned 2008" [ref=e182] [cursor=pointer]:
+                - /url: /services/brokerage/beneteau-oceanis-46
+                - generic [ref=e184]:
+                  - img "Beneteau Oceanis 46 - 1" [ref=e187]
+                  - img "Beneteau Oceanis 46 - 2" [ref=e190]
+                  - img "Beneteau Oceanis 46 - 3" [ref=e193]
+                  - img "Beneteau Oceanis 46 - 4" [ref=e196]
+                  - img "Beneteau Oceanis 46 - 5" [ref=e199]
+                  - img "Beneteau Oceanis 46 - 6" [ref=e202]
+                  - img "Beneteau Oceanis 46 - 7" [ref=e205]
+                  - img "Beneteau Oceanis 46 - 8" [ref=e208]
+                  - img "Beneteau Oceanis 46 - 9" [ref=e211]
+                  - img "Beneteau Oceanis 46 - 10" [ref=e214]
+                  - img "Beneteau Oceanis 46 - 11" [ref=e217]
+                  - img "Beneteau Oceanis 46 - 12" [ref=e220]
+                  - img "Beneteau Oceanis 46 - 13" [ref=e223]
+                  - img "Beneteau Oceanis 46 - 14" [ref=e226]
+                  - img "Beneteau Oceanis 46 - 15" [ref=e229]
+                - generic [ref=e232]:
+                  - generic [ref=e233]: Pre-owned
+                  - generic [ref=e234]: "2008"
+              - generic [ref=e235]:
+                - generic [ref=e236]:
+                  - link [ref=e237] [cursor=pointer]:
+                    - /url: /services/brokerage/beneteau-oceanis-46
+                    - heading "Beneteau Oceanis 46" [level=4] [ref=e238]
+                  - heading "Balchik, Bulgaria" [level=6] [ref=e242]
+                  - list [ref=e243]:
+                    - listitem [ref=e244]:
+                      - generic "Length" [ref=e245]
+                      - generic [ref=e252]: 14.4 m
+                    - listitem [ref=e253]:
+                      - generic "Engine power" [ref=e254]
+                      - generic [ref=e257]: 55 kW
+                    - listitem [ref=e258]:
+                      - generic "Beam" [ref=e259]
+                      - generic [ref=e263]: 4.25 m
+                    - listitem [ref=e264]:
+                      - generic "Draft" [ref=e265]
+                      - generic [ref=e268]: 2.05 m
+                - generic [ref=e269]:
+                  - heading "160,000 €" [level=4] [ref=e270]
+                  - link "View" [ref=e271] [cursor=pointer]:
+                    - /url: /services/brokerage/beneteau-oceanis-46
+            - article [ref=e273]:
+              - link "Nelson Marek 1D35 (35 One Design) - 1 Nelson Marek 1D35 (35 One Design) - 2 Nelson Marek 1D35 (35 One Design) - 3 Nelson Marek 1D35 (35 One Design) - 4 Nelson Marek 1D35 (35 One Design) - 5 Nelson Marek 1D35 (35 One Design) - 6 Nelson Marek 1D35 (35 One Design) - 7 Nelson Marek 1D35 (35 One Design) - 8 Nelson Marek 1D35 (35 One Design) - 9 Nelson Marek 1D35 (35 One Design) - 10 Nelson Marek 1D35 (35 One Design) - 11 Nelson Marek 1D35 (35 One Design) - 12 Nelson Marek 1D35 (35 One Design) - 13 Nelson Marek 1D35 (35 One Design) - 14 Nelson Marek 1D35 (35 One Design) - 15 Pre-owned 1999" [ref=e274] [cursor=pointer]:
+                - /url: /services/brokerage/nelson-marek-1d35-35-one-design
+                - generic [ref=e276]:
+                  - img "Nelson Marek 1D35 (35 One Design) - 1" [ref=e279]
+                  - img "Nelson Marek 1D35 (35 One Design) - 2" [ref=e282]
+                  - img "Nelson Marek 1D35 (35 One Design) - 3" [ref=e285]
+                  - img "Nelson Marek 1D35 (35 One Design) - 4" [ref=e288]
+                  - img "Nelson Marek 1D35 (35 One Design) - 5" [ref=e291]
+                  - img "Nelson Marek 1D35 (35 One Design) - 6" [ref=e294]
+                  - img "Nelson Marek 1D35 (35 One Design) - 7" [ref=e297]
+                  - img "Nelson Marek 1D35 (35 One Design) - 8" [ref=e300]
+                  - img "Nelson Marek 1D35 (35 One Design) - 9" [ref=e303]
+                  - img "Nelson Marek 1D35 (35 One Design) - 10" [ref=e306]
+                  - img "Nelson Marek 1D35 (35 One Design) - 11" [ref=e309]
+                  - img "Nelson Marek 1D35 (35 One Design) - 12" [ref=e312]
+                  - img "Nelson Marek 1D35 (35 One Design) - 13" [ref=e315]
+                  - img "Nelson Marek 1D35 (35 One Design) - 14" [ref=e318]
+                  - img "Nelson Marek 1D35 (35 One Design) - 15" [ref=e321]
+                - generic [ref=e324]:
+                  - generic [ref=e325]: Pre-owned
+                  - generic [ref=e326]: "1999"
+              - generic [ref=e327]:
+                - generic [ref=e328]:
+                  - link [ref=e329] [cursor=pointer]:
+                    - /url: /services/brokerage/nelson-marek-1d35-35-one-design
+                    - heading "Nelson Marek 1D35 (35 One Design)" [level=4] [ref=e330]
+                  - heading "Varna, Bulgaria" [level=6] [ref=e334]
+                  - list [ref=e335]:
+                    - listitem [ref=e336]:
+                      - generic "Length" [ref=e337]
+                      - generic [ref=e344]: 10.67 m
+                    - listitem [ref=e345]:
+                      - generic "Engine power" [ref=e346]
+                      - generic [ref=e349]: 13.5 kW
+                    - listitem [ref=e350]:
+                      - generic "Beam" [ref=e351]
+                      - generic [ref=e355]: 3.28 m
+                    - listitem [ref=e356]:
+                      - generic "Draft" [ref=e357]
+                      - generic [ref=e360]: 2.31 m
+                - generic [ref=e361]:
+                  - heading "39,000 €" [level=4] [ref=e362]
+                  - link "View" [ref=e363] [cursor=pointer]:
+                    - /url: /services/brokerage/nelson-marek-1d35-35-one-design
+            - article [ref=e365]:
+              - link "Hanse 540e - 1 Hanse 540e - 2 Hanse 540e - 3 Hanse 540e - 4 Hanse 540e - 5 Hanse 540e - 6 Hanse 540e - 7 Hanse 540e - 8 Hanse 540e - 9 Hanse 540e - 10 Hanse 540e - 11 Hanse 540e - 12 Hanse 540e - 13 Hanse 540e - 14 Pre-owned 2008" [ref=e366] [cursor=pointer]:
+                - /url: /services/brokerage/hanse-540e
+                - generic [ref=e368]:
+                  - img "Hanse 540e - 1" [ref=e371]
+                  - img "Hanse 540e - 2" [ref=e374]
+                  - img "Hanse 540e - 3" [ref=e377]
+                  - img "Hanse 540e - 4" [ref=e380]
+                  - img "Hanse 540e - 5" [ref=e383]
+                  - img "Hanse 540e - 6" [ref=e386]
+                  - img "Hanse 540e - 7" [ref=e389]
+                  - img "Hanse 540e - 8" [ref=e392]
+                  - img "Hanse 540e - 9" [ref=e395]
+                  - img "Hanse 540e - 10" [ref=e398]
+                  - img "Hanse 540e - 11" [ref=e401]
+                  - img "Hanse 540e - 12" [ref=e404]
+                  - img "Hanse 540e - 13" [ref=e407]
+                  - img "Hanse 540e - 14" [ref=e410]
+                - generic [ref=e413]:
+                  - generic [ref=e414]: Pre-owned
+                  - generic [ref=e415]: "2008"
+              - generic [ref=e416]:
+                - generic [ref=e417]:
+                  - link [ref=e418] [cursor=pointer]:
+                    - /url: /services/brokerage/hanse-540e
+                    - heading "Hanse 540e" [level=4] [ref=e419]
+                  - heading "Porto Lagos, Greece" [level=6] [ref=e423]
+                  - list [ref=e424]:
+                    - listitem [ref=e425]:
+                      - generic "Length" [ref=e426]
+                      - generic [ref=e433]: 16.08 m
+                    - listitem [ref=e434]:
+                      - generic "Engine power" [ref=e435]
+                      - generic [ref=e438]: 81 kW
+                    - listitem [ref=e439]:
+                      - generic "Beam" [ref=e440]
+                      - generic [ref=e444]: 4.86 m
+                    - listitem [ref=e445]:
+                      - generic "Draft" [ref=e446]
+                      - generic [ref=e449]: 2.753 m
+                - generic [ref=e450]:
+                  - heading "300,000 €" [level=4] [ref=e451]
+                  - link "View" [ref=e452] [cursor=pointer]:
+                    - /url: /services/brokerage/hanse-540e
+            - article [ref=e454]:
+              - link "X-Yachts XP33 MAXI - X - 1 Pre-owned 2015" [ref=e455] [cursor=pointer]:
+                - /url: /services/brokerage/x-yachts-xp33-maxi-x
+                - img "X-Yachts XP33 MAXI - X - 1" [ref=e460]
+                - generic [ref=e463]:
+                  - generic [ref=e464]: Pre-owned
+                  - generic [ref=e465]: "2015"
+              - generic [ref=e466]:
+                - generic [ref=e467]:
+                  - link [ref=e468] [cursor=pointer]:
+                    - /url: /services/brokerage/x-yachts-xp33-maxi-x
+                    - heading "X-Yachts XP33 MAXI - X" [level=4] [ref=e469]
+                  - heading "Varna, Bulgaria" [level=6] [ref=e473]
+                  - list [ref=e474]:
+                    - listitem [ref=e475]:
+                      - generic "Length" [ref=e476]
+                      - generic [ref=e483]: 9.99 m
+                    - listitem [ref=e484]:
+                      - generic "Engine power" [ref=e485]
+                      - generic [ref=e488]: 15.3 kW
+                    - listitem [ref=e489]:
+                      - generic "Beam" [ref=e490]
+                      - generic [ref=e494]: 3.21 m
+                    - listitem [ref=e495]:
+                      - generic "Draft" [ref=e496]
+                      - generic [ref=e499]: 1.9 m
+                - generic [ref=e500]:
+                  - heading "150,000 €" [level=4] [ref=e501]
+                  - link "View" [ref=e502] [cursor=pointer]:
+                    - /url: /services/brokerage/x-yachts-xp33-maxi-x
+            - article [ref=e504]:
+              - link "TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 1 TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 2 TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 3 TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 4 TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 5 TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 6 Pre-owned 2015" [ref=e505] [cursor=pointer]:
+                - /url: /services/brokerage/tp52-summerstorm-judel-vrolijk-co
+                - generic [ref=e507]:
+                  - img "TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 1" [ref=e510]
+                  - img "TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 2" [ref=e513]
+                  - img "TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 3" [ref=e516]
+                  - img "TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 4" [ref=e519]
+                  - img "TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 5" [ref=e522]
+                  - img "TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co - 6" [ref=e525]
+                - generic [ref=e528]:
+                  - generic [ref=e529]: Pre-owned
+                  - generic [ref=e530]: "2015"
+              - generic [ref=e531]:
+                - generic [ref=e532]:
+                  - link [ref=e533] [cursor=pointer]:
+                    - /url: /services/brokerage/tp52-summerstorm-judel-vrolijk-co
+                    - heading "TP52 \"SummerStorm\" 2015 Judel/Vrolijk & Co" [level=4] [ref=e534]
+                  - heading "Cogolin, France" [level=6] [ref=e538]
+                  - list [ref=e539]:
+                    - listitem [ref=e540]:
+                      - generic "Length" [ref=e541]
+                      - generic [ref=e548]: 15.85 m
+                    - listitem [ref=e549]:
+                      - generic "Engine power" [ref=e550]
+                      - generic [ref=e553]: 37.3 kW
+                    - listitem [ref=e554]:
+                      - generic "Beam" [ref=e555]
+                      - generic [ref=e559]: 4.42 m
+                    - listitem [ref=e560]:
+                      - generic "Draft" [ref=e561]
+                      - generic [ref=e564]: 3.5 m
+                - generic [ref=e565]:
+                  - heading "995,000 €" [level=4] [ref=e566]
+                  - link "View" [ref=e567] [cursor=pointer]:
+                    - /url: /services/brokerage/tp52-summerstorm-judel-vrolijk-co
+          - list [ref=e569]:
+            - listitem [ref=e570]:
+              - link "Previous":
+                - /url: "#"
+            - listitem [ref=e571]:
+              - link "1" [ref=e572] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e573]:
+              - link "2" [ref=e574] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e575]:
+              - link "Next" [ref=e576] [cursor=pointer]:
+                - /url: "#"
+    - contentinfo [ref=e580]:
+      - generic [ref=e581]:
+        - list [ref=e582]:
+          - listitem [ref=e583]:
+            - generic [ref=e587]:
+              - heading "Call" [level=4] [ref=e588]
+              - heading [level=6] [ref=e589]:
+                - link "+359 884967244" [ref=e590] [cursor=pointer]:
+                  - /url: tel:+359884967244
+          - listitem [ref=e591]:
+            - generic [ref=e596]:
+              - heading "Email" [level=4] [ref=e597]
+              - heading [level=6] [ref=e598]:
+                - link "info@exelero.eu" [ref=e599] [cursor=pointer]:
+                  - /url: mailto:info@exelero.eu
+          - listitem [ref=e600]:
+            - generic [ref=e605]:
+              - heading "Location" [level=4] [ref=e606]
+              - heading [level=6] [ref=e607]:
+                - link "1 Alexander Battenberg blvd, 8000 Burgas Bulgaria" [ref=e608] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/search/?api=1&query=1%20Alexander%20Battenberg%20blvd%2C%208000%20Burgas%20Bulgaria
+        - generic [ref=e610]:
+          - generic [ref=e611]:
+            - generic [ref=e612]:
+              - link [ref=e613] [cursor=pointer]:
+                - /url: /
+                - img "footer-logo" [ref=e614]
+              - list "Social media" [ref=e615]:
+                - listitem [ref=e616]:
+                  - link "Instagram" [ref=e617] [cursor=pointer]:
+                    - /url: https://www.instagram.com/exeleroyachting
+                - listitem [ref=e621]:
+                  - link "Facebook" [ref=e622] [cursor=pointer]:
+                    - /url: https://www.facebook.com/exceleroyachting
+                - listitem [ref=e625]:
+                  - link "LinkedIn" [ref=e626] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/company/exelero-yachting
+            - paragraph [ref=e631]: Exelero Yachting
+          - generic [ref=e633]:
+            - generic [ref=e635]:
+              - heading "Navigation" [level=4] [ref=e637]
+              - list [ref=e638]:
+                - listitem [ref=e639]:
+                  - link "About us" [ref=e640] [cursor=pointer]:
+                    - /url: /about
+                - listitem [ref=e641]:
+                  - link "Contact" [ref=e642] [cursor=pointer]:
+                    - /url: /contact
+            - generic [ref=e644]:
+              - heading "Yachts" [level=4] [ref=e646]
+              - list [ref=e647]:
+                - listitem [ref=e648]:
+                  - link "New yachts" [ref=e649] [cursor=pointer]:
+                    - /url: /new-yachts
+                - listitem [ref=e650]:
+                  - link "Pre-owned yachts" [ref=e651] [cursor=pointer]:
+                    - /url: /services/brokerage?condition=pre-owned
+                - listitem [ref=e652]:
+                  - link "Boat brokerage" [ref=e653] [cursor=pointer]:
+                    - /url: /services/brokerage
+            - generic [ref=e655]:
+              - heading "Services" [level=4] [ref=e657]
+              - list [ref=e658]:
+                - listitem [ref=e659]:
+                  - link "Yacht Transportation" [ref=e660] [cursor=pointer]:
+                    - /url: /services/transportation
+                - listitem [ref=e661]:
+                  - link "Charters" [ref=e662] [cursor=pointer]:
+                    - /url: /services/charters
+            - generic [ref=e664]:
+              - heading "Resources" [level=4] [ref=e666]
+              - list [ref=e667]:
+                - listitem [ref=e668]:
+                  - link "Download brochure" [ref=e669] [cursor=pointer]:
+                    - /url: /assets/documents/Exelero%20Yachting%20%E2%80%93%20Company%20Profile.pdf
+        - generic [ref=e670]:
+          - paragraph [ref=e671]: "@ 2026 Exelero Yachting. All Rights Reserved"
+          - button "Cookie settings" [ref=e672] [cursor=pointer]
+    - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e678] [cursor=pointer]
+  - alert [ref=e682]

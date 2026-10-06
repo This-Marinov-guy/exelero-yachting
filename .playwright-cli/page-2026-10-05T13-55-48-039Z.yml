@@ -1,0 +1,185 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "Exelero Yachting home" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "Exelero Yachting" [ref=e8]
+        - navigation [ref=e9]:
+          - list [ref=e10]:
+            - listitem [ref=e11] [cursor=pointer]:
+              - button "Partners" [ref=e12]
+            - listitem [ref=e16]:
+              - link "About" [ref=e17] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e18]:
+              - link "New Yachts" [ref=e19] [cursor=pointer]:
+                - /url: /new-yachts
+            - listitem [ref=e20]:
+              - link "Pre-owned Yachts" [ref=e21] [cursor=pointer]:
+                - /url: /services/brokerage?condition=pre-owned
+            - listitem [ref=e22]:
+              - link "Yacht Transportation" [ref=e23] [cursor=pointer]:
+                - /url: /services/transportation
+            - listitem [ref=e24]:
+              - link "Charters" [ref=e25] [cursor=pointer]:
+                - /url: /services/charters
+            - listitem [ref=e26]:
+              - link "Contact" [ref=e27] [cursor=pointer]:
+                - /url: /contact
+      - button "Close menu"
+    - heading "Yacht Transportation" [level=1] [ref=e31]
+    - generic [ref=e34]:
+      - article [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - heading "Yacht Transport by Road" [level=2] [ref=e39]
+            - paragraph [ref=e40]: Moving a yacht over land takes more than a truck. It takes planning, the right equipment, and people who understand boats. We handle the entire process, so your yacht arrives safely and ready to launch.
+            - paragraph [ref=e41]:
+              - strong [ref=e42]: Door-to-door service.
+              - text: We collect your boat from the yard, marina or factory and deliver it to your chosen destination anywhere in Europe, including Turkey, Serbia, Montenegro and Albania.
+            - paragraph [ref=e43]:
+              - strong [ref=e44]: Everything included.
+              - text: Route planning, oversize-load permits, escort vehicles where required, lashing, shrink-wrapping, and transit insurance with full coverage.
+            - paragraph [ref=e45]:
+              - strong [ref=e46]: 12 Hour update basis.
+              - text: Route planning, oversize-load permits, escort vehicles where required, mast unstepping and packing, cradles, lashing, shrink-wrapping, and transit insurance.
+            - paragraph [ref=e47]:
+              - strong [ref=e48]: Full price transparency.
+              - text: No hidden fees or surprises. What we quote for is what you pay.
+          - generic [ref=e49]:
+            - heading "Yacht Transport by Sea" [level=2] [ref=e50]
+            - paragraph [ref=e51]: Our staff are certified RYA sailors with multiple ocean crossings who will deliver your yacht anywhere in the world with minimal risk to the boat's condition. We specialise in sailing yachts up to 65 FT and powerboats up to 100 FT.
+            - paragraph [ref=e52]: We provide safe, reliable, and fully managed boat and yacht transportation services worldwide. From coastal deliveries to transoceanic shipments, our experienced team ensures your vessel is handled with precision, care, and complete attention to detail.
+        - generic "Service highlights" [ref=e53]:
+          - generic [ref=e54]: End to end
+          - generic [ref=e59]: Transparent pricing
+          - generic [ref=e64]: Fast service
+      - generic [ref=e68]:
+        - figure [ref=e69]:
+          - img "Sailing yacht secured on a road transport trailer at sunset" [ref=e70]
+        - generic [ref=e72]:
+          - heading "Request Yacht Transportation" [level=2] [ref=e73]
+          - paragraph [ref=e74]: Fill in the form below and we'll get back to you with options and a quote.
+          - generic [ref=e76]:
+            - generic [ref=e78]:
+              - generic [ref=e79]: Your name
+              - textbox "Your name" [ref=e80]
+            - generic [ref=e82]:
+              - generic [ref=e83]: Email
+              - textbox "Email" [ref=e84]
+            - generic [ref=e86]:
+              - generic [ref=e87]: Phone (optional)
+              - textbox "Phone (optional)" [ref=e88]
+            - generic [ref=e90]:
+              - generic [ref=e91]: Start date
+              - textbox [ref=e94]
+            - generic [ref=e96]:
+              - generic [ref=e97]: Deadline date
+              - textbox [ref=e100]
+            - generic [ref=e102]:
+              - generic [ref=e103]: Start point
+              - textbox "Start point" [ref=e104]
+            - generic [ref=e106]:
+              - generic [ref=e107]: End point
+              - textbox "End point" [ref=e108]
+            - generic [ref=e110]:
+              - generic [ref=e111]: Boat weight (kg)
+              - spinbutton "Boat weight (kg)" [ref=e112]
+            - generic [ref=e114]:
+              - generic [ref=e115]: Length overall (m)
+              - spinbutton "Length overall (m)" [ref=e116]
+            - generic [ref=e118]:
+              - generic [ref=e119]: Beam (m)
+              - spinbutton "Beam (m)" [ref=e120]
+            - generic [ref=e122]:
+              - generic [ref=e123]: Draft (m)
+              - spinbutton "Draft (m)" [ref=e124]
+            - generic [ref=e126]:
+              - generic [ref=e127]: Overall height keel to top (m)
+              - spinbutton "Overall height keel to top (m)" [ref=e128]
+            - generic [ref=e130]:
+              - generic [ref=e131]: Note to agent
+              - textbox "Note to agent" [ref=e132]
+            - button "Send request" [ref=e134] [cursor=pointer]
+    - contentinfo [ref=e135]:
+      - generic [ref=e136]:
+        - list [ref=e137]:
+          - listitem [ref=e138]:
+            - generic [ref=e142]:
+              - heading "Call" [level=4] [ref=e143]
+              - heading [level=6] [ref=e144]:
+                - link "+359 884967244" [ref=e145] [cursor=pointer]:
+                  - /url: tel:+359884967244
+          - listitem [ref=e146]:
+            - generic [ref=e151]:
+              - heading "Email" [level=4] [ref=e152]
+              - heading [level=6] [ref=e153]:
+                - link "info@exelero.eu" [ref=e154] [cursor=pointer]:
+                  - /url: mailto:info@exelero.eu
+          - listitem [ref=e155]:
+            - generic [ref=e160]:
+              - heading "Location" [level=4] [ref=e161]
+              - heading [level=6] [ref=e162]:
+                - link "1 Alexander Battenberg blvd, 8000 Burgas Bulgaria" [ref=e163] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/search/?api=1&query=1%20Alexander%20Battenberg%20blvd%2C%208000%20Burgas%20Bulgaria
+        - generic [ref=e165]:
+          - generic [ref=e166]:
+            - generic [ref=e167]:
+              - link [ref=e168] [cursor=pointer]:
+                - /url: /
+                - img "footer-logo" [ref=e169]
+              - list "Social media" [ref=e170]:
+                - listitem [ref=e171]:
+                  - link "Instagram" [ref=e172] [cursor=pointer]:
+                    - /url: https://www.instagram.com/exeleroyachting
+                - listitem [ref=e176]:
+                  - link "Facebook" [ref=e177] [cursor=pointer]:
+                    - /url: https://www.facebook.com/exceleroyachting
+                - listitem [ref=e180]:
+                  - link "LinkedIn" [ref=e181] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/company/exelero-yachting
+            - paragraph [ref=e186]: Exelero Yachting
+          - generic [ref=e188]:
+            - generic [ref=e190]:
+              - heading "Navigation" [level=4] [ref=e192]
+              - list [ref=e193]:
+                - listitem [ref=e194]:
+                  - link "About us" [ref=e195] [cursor=pointer]:
+                    - /url: /about
+                - listitem [ref=e196]:
+                  - link "Contact" [ref=e197] [cursor=pointer]:
+                    - /url: /contact
+            - generic [ref=e199]:
+              - heading "Yachts" [level=4] [ref=e201]
+              - list [ref=e202]:
+                - listitem [ref=e203]:
+                  - link "New yachts" [ref=e204] [cursor=pointer]:
+                    - /url: /new-yachts
+                - listitem [ref=e205]:
+                  - link "Pre-owned yachts" [ref=e206] [cursor=pointer]:
+                    - /url: /services/brokerage?condition=pre-owned
+                - listitem [ref=e207]:
+                  - link "Boat brokerage" [ref=e208] [cursor=pointer]:
+                    - /url: /services/brokerage
+            - generic [ref=e210]:
+              - heading "Services" [level=4] [ref=e212]
+              - list [ref=e213]:
+                - listitem [ref=e214]:
+                  - link "Yacht Transportation" [ref=e215] [cursor=pointer]:
+                    - /url: /services/transportation
+                - listitem [ref=e216]:
+                  - link "Charters" [ref=e217] [cursor=pointer]:
+                    - /url: /services/charters
+            - generic [ref=e219]:
+              - heading "Resources" [level=4] [ref=e221]
+              - list [ref=e222]:
+                - listitem [ref=e223]:
+                  - link "Download brochure" [ref=e224] [cursor=pointer]:
+                    - /url: /assets/documents/Exelero%20Yachting%20%E2%80%93%20Company%20Profile.pdf
+        - generic [ref=e225]:
+          - paragraph [ref=e226]: "@ 2026 Exelero Yachting. All Rights Reserved"
+          - button "Cookie settings" [ref=e227] [cursor=pointer]
+    - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e233] [cursor=pointer]
+  - alert [ref=e237]

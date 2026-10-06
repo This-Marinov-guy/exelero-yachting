@@ -1,0 +1,26 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - heading "Welcome To Exelero" [level=3] [ref=e10]
+          - heading "Log In Your Account" [level=5] [ref=e11]
+        - generic [ref=e12]:
+          - textbox "Enter Your Email" [ref=e16]
+          - textbox "Enter Your password" [ref=e20]
+          - button "Log In" [ref=e21] [cursor=pointer]
+          - generic [ref=e22]:
+            - button "Email sign-in link" [ref=e23] [cursor=pointer]
+            - button "Passkey" [ref=e24] [cursor=pointer]
+          - generic [ref=e25]:
+            - heading "Accounts are available by invitation." [level=6] [ref=e26]
+            - link "Contact us for access" [ref=e27] [cursor=pointer]:
+              - /url: /contact
+      - generic [ref=e30]:
+        - link [ref=e31] [cursor=pointer]:
+          - /url: /
+          - img "logo" [ref=e32]
+        - heading "Find a Place you will Love." [level=2] [ref=e33]
+    - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e39] [cursor=pointer]
+  - alert [ref=e43]

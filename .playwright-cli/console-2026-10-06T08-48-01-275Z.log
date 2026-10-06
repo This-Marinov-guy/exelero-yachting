@@ -1,0 +1,363 @@
+[    9249ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[    9388ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 0, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/src/index.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../public/assets/scss/app.scss";
+
+src/index.scss 1:9  root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[    9388ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 5, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:5:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+5 | @import "swiper/css";
+
+public/assets/scss/app.scss 6:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[    9388ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 6, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:6:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+6 | @import "swiper/css/pagination";
+
+public/assets/scss/app.scss 7:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[    9388ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 7, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:7:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+7 | @import "swiper/css/navigation";
+
+public/assets/scss/app.scss 8:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[    9388ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 8, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:8:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+8 | @import "swiper/css/grid";
+
+public/assets/scss/app.scss 9:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[    9388ms] [WARNING] There were more warnings in other files.
+You can find a complete log in the terminal. @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:238
+[   53854ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[   53934ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 0, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/src/index.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../public/assets/scss/app.scss";
+
+src/index.scss 1:9  root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   53934ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 5, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:5:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+5 | @import "swiper/css";
+
+public/assets/scss/app.scss 6:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   53934ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 6, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:6:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+6 | @import "swiper/css/pagination";
+
+public/assets/scss/app.scss 7:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   53934ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 7, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:7:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+7 | @import "swiper/css/navigation";
+
+public/assets/scss/app.scss 8:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   53934ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 8, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:8:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+8 | @import "swiper/css/grid";
+
+public/assets/scss/app.scss 9:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   53934ms] [WARNING] There were more warnings in other files.
+You can find a complete log in the terminal. @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:238
+[   54292ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://localhost:3002/api/partners/inquiry-test-1791276437773/inquiries:0
+[   55068ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[   60198ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 0, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/src/index.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../public/assets/scss/app.scss";
+
+src/index.scss 1:9  root stylesheet
+
+Import trace for requested module:
+./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+./src/index.scss @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   60198ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 5, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:5:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+5 | @import "swiper/css";
+
+public/assets/scss/app.scss 6:9  @import
+src/index.scss 1:9               root stylesheet
+
+Import trace for requested module:
+./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+./src/index.scss @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   60198ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 6, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:6:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+6 | @import "swiper/css/pagination";
+
+public/assets/scss/app.scss 7:9  @import
+src/index.scss 1:9               root stylesheet
+
+Import trace for requested module:
+./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+./src/index.scss @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   60198ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 7, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:7:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+7 | @import "swiper/css/navigation";
+
+public/assets/scss/app.scss 8:9  @import
+src/index.scss 1:9               root stylesheet
+
+Import trace for requested module:
+./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+./src/index.scss @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   60198ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 8, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:8:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+8 | @import "swiper/css/grid";
+
+public/assets/scss/app.scss 9:9  @import
+src/index.scss 1:9               root stylesheet
+
+Import trace for requested module:
+./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+./src/index.scss @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   60198ms] [WARNING] There were more warnings in other files.
+You can find a complete log in the terminal. @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:238
+[   60507ms] [LOG] [Fast Refresh] done in 5439ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[   63344ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[   63431ms] Error: Switched to client rendering because the server rendering errored:
+
+dompurify__WEBPACK_IMPORTED_MODULE_2__.default.sanitize is not a function
+    at sanitizeHTML (webpack-internal:///(ssr)/./src/components/pages/boats/BoatDetailBody.tsx:72:66)
+    at BoatDetailBody (webpack-internal:///(ssr)/./src/components/pages/boats/BoatDetailBody.tsx:424:37)
+    at Object.react_stack_bottom_frame (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:292649)
+    at renderWithHooks (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:114080)
+    at renderElement (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:128752)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:194584)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at renderNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:203204)
+    at renderChildrenArray (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:200308)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:195061)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at renderNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:203204)
+    at renderElement (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:176646)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:194584)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at finishFunctionComponent (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:115090)
+    at renderElement (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:130261)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:194584)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at renderNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:203204)
+    at renderChildrenArray (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:200308)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:195061)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at renderNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:203204)
+    at renderElement (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:176646)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:194584)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at finishFunctionComponent (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:115090)
+    at renderElement (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:130261)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:194584)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at renderNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:203204)
+    at renderElement (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:176646)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:194584)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at finishFunctionComponent (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:115090)
+    at renderElement (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:130261)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:194584)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at renderNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:203204)
+    at renderChildrenArray (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:200308)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:195061)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at renderNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:203204)
+    at renderElement (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:176646)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:194584)
+    at renderNodeDestructive (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:193847)
+    at finishFunctionComponent (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:115090)
+    at renderElement (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:130261)
+    at retryNode (/Users/vlady/Projects/excelero/exelero-yachting/node_modules/next/dist/compiled/next-server/app-page.runtime.dev.js:2:194584)
+[   63448ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 0, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/src/index.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../public/assets/scss/app.scss";
+
+src/index.scss 1:9  root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   63448ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 5, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:5:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+5 | @import "swiper/css";
+
+public/assets/scss/app.scss 6:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   63448ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 6, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:6:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+6 | @import "swiper/css/pagination";
+
+public/assets/scss/app.scss 7:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   63448ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 7, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:7:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+7 | @import "swiper/css/navigation";
+
+public/assets/scss/app.scss 8:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   63448ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 8, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:8:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+8 | @import "swiper/css/grid";
+
+public/assets/scss/app.scss 9:9  @import
+src/index.scss 1:9               root stylesheet @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[   63448ms] [WARNING] There were more warnings in other files.
+You can find a complete log in the terminal. @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:238
+[   64093ms] [ERROR] Failed to load resource: the server responded with a status of 503 (Service Unavailable) @ http://localhost:3002/api/boats/44c7eeb2-143d-4b25-82a8-720e081c787c/inquiries:0
+[   64574ms] [WARNING] Image with src "/assets/images/hero/boats.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/shared/lib/utils/warn-once.js:15
+[   68719ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[   69321ms] [LOG] [Fast Refresh] done in 601ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  140686ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  141538ms] [LOG] [Fast Refresh] done in 852ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  162875ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  166760ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 0, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/src/index.scss:0:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+0 | @import "../public/assets/scss/app.scss";
+
+src/index.scss 1:9  root stylesheet
+
+Import trace for requested module:
+./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+./src/index.scss @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[  166761ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 5, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:5:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+5 | @import "swiper/css";
+
+public/assets/scss/app.scss 6:9  @import
+src/index.scss 1:9               root stylesheet
+
+Import trace for requested module:
+./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+./src/index.scss @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[  166761ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 6, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:6:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+6 | @import "swiper/css/pagination";
+
+public/assets/scss/app.scss 7:9  @import
+src/index.scss 1:9               root stylesheet
+
+Import trace for requested module:
+./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+./src/index.scss @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[  166761ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 7, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:7:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+7 | @import "swiper/css/navigation";
+
+public/assets/scss/app.scss 8:9  @import
+src/index.scss 1:9               root stylesheet
+
+Import trace for requested module:
+./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+./src/index.scss @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[  166761ms] [WARNING] ./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+Deprecation Warning on line 8, column 8 of file:///Users/vlady/Projects/excelero/exelero-yachting/public/assets/scss/app.scss:8:8:
+Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+8 | @import "swiper/css/grid";
+
+public/assets/scss/app.scss 9:9  @import
+src/index.scss 1:9               root stylesheet
+
+Import trace for requested module:
+./src/index.scss.webpack[javascript/auto]!=!./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[11].use[3]!./node_modules/next/dist/build/webpack/loaders/resolve-url-loader/index.js??ruleSet[1].rules[14].oneOf[11].use[4]!./node_modules/next/dist/compiled/sass-loader/cjs.js??ruleSet[1].rules[14].oneOf[11].use[5]!./src/index.scss
+./src/index.scss @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:241
+[  166761ms] [WARNING] There were more warnings in other files.
+You can find a complete log in the terminal. @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:238
+[  166823ms] [LOG] [Fast Refresh] done in 3947ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  213114ms] [ERROR] Failed to load resource: net::ERR_FAILED @ http://localhost:3002/api/boats/44c7eeb2-143d-4b25-82a8-720e081c787c/inquiries:0

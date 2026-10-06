@@ -1,0 +1,206 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "Exelero Yachting home" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "Exelero Yachting" [ref=e8]
+        - navigation [ref=e9]:
+          - list [ref=e10]:
+            - listitem [ref=e11] [cursor=pointer]:
+              - button "Partners" [ref=e12]
+            - listitem [ref=e16]:
+              - link "About" [ref=e17] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e18]:
+              - link "New Yachts" [ref=e19] [cursor=pointer]:
+                - /url: /new-yachts
+            - listitem [ref=e20]:
+              - link "Pre-owned Yachts" [ref=e21] [cursor=pointer]:
+                - /url: /services/brokerage?condition=pre-owned
+            - listitem [ref=e22]:
+              - link "Yacht Transportation" [ref=e23] [cursor=pointer]:
+                - /url: /services/transportation
+            - listitem [ref=e24]:
+              - link "Charters" [ref=e25] [cursor=pointer]:
+                - /url: /services/charters
+            - listitem [ref=e26]:
+              - link "Contact" [ref=e27] [cursor=pointer]:
+                - /url: /contact
+      - button "Close menu"
+    - generic [ref=e30]:
+      - heading "About Us" [level=2] [ref=e31]
+      - list [ref=e32]:
+        - listitem [ref=e33]:
+          - link "Home" [ref=e34] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e35]: "> About Us"
+    - main [ref=e36]:
+      - generic [ref=e37]:
+        - region [ref=e38]:
+          - generic [ref=e39]:
+            - paragraph [ref=e40]: Exelero Yachting
+            - heading "Premium Yachting Experience" [level=1] [ref=e41]
+            - heading "About Us" [level=2] [ref=e42]
+            - paragraph [ref=e43]: At Exelero Yachting we specialise in a personalised customer approach. We carefully gather information about our clients' requirements and make recommendations. We are adamant that every customer must make an informed choice.
+            - paragraph [ref=e44]: For this purpose we only work with prestigious brands that have proven themselves in both quality and customer service. We would not recommend a product that we would not purchase ourselves. We believe that, in the long run, quality is what brings high value to customers. We make no compromises.
+          - img "Sailing yacht at the marina" [ref=e46]
+        - region "Our commitments" [ref=e47]:
+          - generic [ref=e48]:
+            - heading "Quality above quantity" [level=3] [ref=e52]
+            - paragraph [ref=e53]: We do not make empty promises or hide behind terms and conditions. We guarantee our products and stand behind them.
+          - generic [ref=e54]:
+            - heading "Trusted Partners" [level=3] [ref=e60]
+            - paragraph [ref=e61]: The brands and specialists we work with are selected because they are proven world-class enterprises.
+          - generic [ref=e62]:
+            - heading "Full Support" [level=3] [ref=e66]
+            - paragraph [ref=e67]: From inquiry to first voyage and service, we provide a complete 360° customer experience.
+        - region [ref=e68]:
+          - heading "Our Services" [level=2] [ref=e69]
+          - generic [ref=e70]:
+            - link "New Yachts Dealership" [ref=e71] [cursor=pointer]:
+              - /url: /new-yachts
+            - link "Pre-owned Yachts" [ref=e72] [cursor=pointer]:
+              - /url: /services/brokerage?condition=pre-owned
+            - link "Yacht Transportation" [ref=e73] [cursor=pointer]:
+              - /url: /services/transportation
+            - link "Yacht Charters" [ref=e74] [cursor=pointer]:
+              - /url: /services/charters
+        - region [ref=e75]:
+          - heading "Our Partners" [level=2] [ref=e76]
+          - paragraph [ref=e77]: We collaborate with leading brands to deliver exceptional results.
+          - generic [ref=e78]:
+            - link "Explore X-Yachts" [ref=e79] [cursor=pointer]:
+              - /url: /partners/x-yachts
+              - img "X-Yachts logo" [ref=e80]
+            - link "Explore Omaya Yachts" [ref=e81] [cursor=pointer]:
+              - /url: /partners/omaya-yachts
+              - img "Omaya Yachts logo" [ref=e82]
+            - link "Explore Elvstrom" [ref=e83] [cursor=pointer]:
+              - /url: /partners/elvstrom
+              - img "Elvstrom logo" [ref=e84]
+            - link "Explore Zhik" [ref=e85] [cursor=pointer]:
+              - /url: /partners/zhik
+              - img "Zhik logo" [ref=e86]
+            - link "Explore Spinlock" [ref=e87] [cursor=pointer]:
+              - /url: /partners/spinlock
+              - img "Spinlock logo" [ref=e88]
+        - region [ref=e89]:
+          - img "Krasimir Naumov, Founder and Director" [ref=e91]
+          - generic [ref=e92]:
+            - paragraph [ref=e93]: Management
+            - heading "Our Director" [level=2] [ref=e94]
+            - heading "Krasimir Naumov" [level=3] [ref=e95]
+            - paragraph [ref=e96]: Founder & Director
+            - paragraph [ref=e97]: After a long corporate career as a financial executive, I decided to turn to yachting and turn my love for it into my business. I want to help other people experience the great way of life that yachting offers.
+            - paragraph [ref=e98]: I have been sailing since I was six years old. For 32 years I have been connected with the industry as a sailor, and now it is the joy of my life to provide products that help others enjoy their lives more or build a business.
+        - region [ref=e99]:
+          - heading "Experience & Qualifications" [level=2] [ref=e100]
+          - generic [ref=e101]:
+            - generic [ref=e102]:
+              - strong [ref=e103]: 32 years
+              - paragraph [ref=e104]: Sailing experience in dinghies, Olympic classes, and inshore and offshore racing. Rolex Middle Sea Race ORC winner in 2023 and IRC European champion in 2025.
+            - generic [ref=e105]:
+              - strong [ref=e106]: 10 years
+              - paragraph [ref=e107]: Team principal of Yacht Club Port Bourgas, one of Bulgaria's most recognised yacht clubs.
+            - generic [ref=e108]:
+              - strong [ref=e109]: 5 years
+              - paragraph [ref=e110]: Racing team manager, including the 2023 Rolex Middle Sea Race ORC win, the 2025 IRC European championship, second place at Giraglia 2025, and multinational championships.
+        - region [ref=e111]:
+          - heading "Our Guarantee" [level=2] [ref=e112]
+          - paragraph [ref=e113]: Outstanding quality and unwavering support.
+        - region [ref=e114]:
+          - heading "Contact Exelero Yachting" [level=2] [ref=e115]
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - heading "Call" [level=3] [ref=e118]
+              - link "+359 884967244" [ref=e119] [cursor=pointer]:
+                - /url: tel:+359884967244
+            - generic [ref=e120]:
+              - heading "Email" [level=3] [ref=e121]
+              - link "info@exelero.eu" [ref=e122] [cursor=pointer]:
+                - /url: mailto:info@exelero.eu
+            - generic [ref=e123]:
+              - heading "Location" [level=3] [ref=e124]
+              - paragraph [ref=e125]: 1 Alexander Battenberg blvd.8000 Burgas, Bulgaria
+          - link "exeleroyachting.com" [ref=e126] [cursor=pointer]:
+            - /url: https://exeleroyachting.com
+        - region [ref=e127]:
+          - generic [ref=e128]:
+            - paragraph [ref=e129]: Company profile
+            - heading "Keep the full story close" [level=2] [ref=e130]
+            - paragraph [ref=e131]: Download the brochure or share it with someone planning their next voyage.
+          - generic [ref=e132]:
+            - generic [ref=e133]:
+              - link "Download brochure" [ref=e134] [cursor=pointer]:
+                - /url: /assets/documents/Exelero%20Yachting%20%E2%80%93%20Company%20Profile.pdf
+              - button "Share brochure" [ref=e138] [cursor=pointer]
+            - status [ref=e145]
+    - contentinfo [ref=e146]:
+      - generic [ref=e147]:
+        - list [ref=e148]:
+          - listitem [ref=e149]:
+            - generic [ref=e153]:
+              - heading "Call" [level=4] [ref=e154]
+              - heading [level=6] [ref=e155]:
+                - link "+359 884967244" [ref=e156] [cursor=pointer]:
+                  - /url: tel:+359884967244
+          - listitem [ref=e157]:
+            - generic [ref=e162]:
+              - heading "Email" [level=4] [ref=e163]
+              - heading [level=6] [ref=e164]:
+                - link "info@exelero.eu" [ref=e165] [cursor=pointer]:
+                  - /url: mailto:info@exelero.eu
+          - listitem [ref=e166]:
+            - generic [ref=e171]:
+              - heading "Location" [level=4] [ref=e172]
+              - heading [level=6] [ref=e173]:
+                - link "1 Alexander Battenberg blvd, 8000 Burgas Bulgaria" [ref=e174] [cursor=pointer]:
+                  - /url: https://www.google.com/maps/search/?api=1&query=1%20Alexander%20Battenberg%20blvd%2C%208000%20Burgas%20Bulgaria
+        - generic [ref=e176]:
+          - generic [ref=e177]:
+            - generic [ref=e178]:
+              - link [ref=e179] [cursor=pointer]:
+                - /url: /
+                - img "footer-logo" [ref=e180]
+              - list "Social media" [ref=e181]:
+                - listitem [ref=e182]:
+                  - link "Instagram" [ref=e183] [cursor=pointer]:
+                    - /url: https://www.instagram.com/exeleroyachting
+                - listitem [ref=e187]:
+                  - link "Facebook" [ref=e188] [cursor=pointer]:
+                    - /url: https://www.facebook.com/exceleroyachting
+                - listitem [ref=e191]:
+                  - link "LinkedIn" [ref=e192] [cursor=pointer]:
+                    - /url: https://www.linkedin.com/company/exelero-yachting
+            - paragraph [ref=e197]: Exelero Yachting
+            - link "Download brochure" [ref=e198] [cursor=pointer]:
+              - /url: /assets/documents/Exelero%20Yachting%20%E2%80%93%20Company%20Profile.pdf
+          - generic [ref=e203]:
+            - generic [ref=e205]:
+              - heading "Navigation" [level=4] [ref=e207] [cursor=pointer]
+              - list [ref=e208]:
+                - listitem [ref=e209]:
+                  - link "About" [ref=e210] [cursor=pointer]:
+                    - /url: /about
+                - listitem [ref=e211]:
+                  - link "Contact" [ref=e212] [cursor=pointer]:
+                    - /url: /contact
+            - generic [ref=e214]:
+              - heading "Services" [level=4] [ref=e216] [cursor=pointer]
+              - list [ref=e217]:
+                - listitem [ref=e218]:
+                  - link "Boats" [ref=e219] [cursor=pointer]:
+                    - /url: /services/brokerage
+                - listitem [ref=e220]:
+                  - link "Yacht Transportation" [ref=e221] [cursor=pointer]:
+                    - /url: /services/transportation
+                - listitem [ref=e222]:
+                  - link "Charters" [ref=e223] [cursor=pointer]:
+                    - /url: /services/charters
+        - generic [ref=e224]:
+          - paragraph [ref=e225]: "@ 2026 Exelero Yachting. All Rights Reserved"
+          - button "Cookie settings" [ref=e226] [cursor=pointer]
+    - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e232] [cursor=pointer]
+  - alert [ref=e236]

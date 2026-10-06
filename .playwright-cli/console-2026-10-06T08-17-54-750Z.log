@@ -1,0 +1,8 @@
+[    4727ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[   11657ms] [ERROR] A props object containing a "key" prop is being spread into JSX:
+  let props = %s;
+  <%s {...props} />
+React keys must be passed directly to JSX without using spread:
+  let props = %s;
+  <%s key={someKey} {...props} /> {key: someKey, style: ..., tabIndex: ..., aria-valuemax: ..., aria-valuemin: ..., aria-valuenow: ..., draggable: ..., ref: ..., aria-label: ..., aria-labelledby: ..., role: ..., onKeyDown: ..., onKeyUp: ..., children: ...} div {style: ..., tabIndex: ..., aria-valuemax: ..., aria-valuemin: ..., aria-valuenow: ..., draggable: ..., ref: ..., aria-label: ..., aria-labelledby: ..., role: ..., onKeyDown: ..., onKeyUp: ..., children: ...} div @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[   13628ms] [WARNING] Detected `scroll-behavior: smooth` on the `<html>` element. In a future version, Next.js will no longer automatically disable smooth scrolling during route transitions. To prepare for this change, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/shared/lib/utils/warn-once.js:15

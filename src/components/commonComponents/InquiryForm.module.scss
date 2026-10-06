@@ -1,0 +1,34 @@
+.form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+  color: #19313c;
+
+  fieldset { display: grid; gap: 16px; border: 0; padding: 0; margin: 0; min-width: 0; }
+  input, textarea, select {
+    width: 100%; min-width: 0; min-height: 44px;
+    border: 1px solid #d8e0e3; border-radius: 8px; padding: 10px 12px;
+    font: inherit; font-size: 16px; line-height: 1.5;
+    background: #fff; color: #19313c;
+  }
+  textarea { resize: vertical; }
+  input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid #146a88; outline-offset: 2px; }
+  [aria-invalid="true"] { border-color: #b42318; }
+  :disabled { cursor: wait; }
+}
+.field { display: grid; gap: 8px; }
+.field label { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.5; }
+.field span, .field small { color: #60747b; font-weight: 400; }
+.field small { font-size: 13px; }
+.extras { display: grid; gap: 16px; padding-top: 16px; border-top: 1px solid #d8e0e3; }
+.honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.submit {
+  display: flex; justify-content: center; align-items: center; gap: 8px;
+  width: 100%; min-height: 44px; border: 1px solid #146a88; border-radius: 8px;
+  padding: 10px 16px; background: #146a88; color: #fff; font: inherit; font-weight: 600; cursor: pointer;
+  &:hover:not(:disabled) { background: #105870; }
+  &:disabled { opacity: .7; }
+}
+.spinner { animation: inquiry-spin 1s linear infinite; }
+@keyframes inquiry-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
