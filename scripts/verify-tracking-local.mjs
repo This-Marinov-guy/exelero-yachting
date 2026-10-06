@@ -40,7 +40,7 @@ try {
   assert.equal(denied.status, 401, "Anonymous visitors must not read analytics reports.");
   assert.match(denied.headers.get("cache-control"), /private.*no-store/);
   const deniedBody = await denied.text();
-  assert(!deniedBody.includes("clarityUrl"), "Anonymous responses must not reveal reporting configuration.");
+  assert(!deniedBody.includes("dashboardUrl"), "Anonymous responses must not reveal reporting configuration.");
   const email = `tracking-test-${Date.now()}@example.invalid`, password = randomUUID();
   const { data, error } = await admin.auth.admin.createUser({ email, password, email_confirm: true });
   assert.ifError(error); userId = data.user.id;
@@ -56,6 +56,7 @@ try {
   const report = JSON.parse(body);
   assert(["ready", "not-connected", "error"].includes(report.analytics.status));
   assert(["ready", "not-connected", "error"].includes(report.search.status));
+  assert(["ready", "unavailable", "not_configured"].includes(report.clarity.status));
   assert.equal(report.period.kind, "month");
   assert(!body.includes("private_key"));
   assert(!process.env.GOOGLE_SERVICE_ACCOUNT_JSON || !body.includes(process.env.GOOGLE_SERVICE_ACCOUNT_JSON));
@@ -63,11 +64,11 @@ try {
   if (report.analytics.status !== "error" && report.search.status !== "error") assert.deepEqual(repeated, report, "Reloads must share cached reports.");
   const invalid = await fetch(`${site}/api/admin/tracking?period=day&date=2099-12-31`, { headers });
   assert.equal(invalid.status, 400);
-  console.log("Provider states:", report.analytics.status, report.search.status);
+  console.log("Provider states:", report.analytics.status, report.search.status, report.clarity.status);
   const page = await fetch(`${site}/account?tab=tracking`, { headers });
   assert.equal(page.status, 200);
   assert.equal(new URL(page.url).pathname, "/account", "Authenticated direct links must not redirect to sign-in.");
-  console.log("PASS: legacy Clarity parser, authenticated report access, input validation, private responses, credential privacy, caching and account direct URL.");
+  console.log("PASS: Clarity reporting, authenticated report access, input validation, private responses, credential privacy, caching and account direct URL.");
 } finally {
   if (userId) assert.ifError((await admin.auth.admin.deleteUser(userId)).error);
 }

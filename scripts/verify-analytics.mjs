@@ -71,11 +71,12 @@ globalThis.fetch=async(url,options)=>{
   return Response.json({rows:[{keys:['yachts for sale'],clicks:12,impressions:150,ctr:0.08,position:4.2}],metadata:{first_incomplete_date:'2026-09-30'}});
 };
 try {
-  const {getAnalyticsReport}=loadTs('../src/lib/analytics/server.ts',{'server-only':{},'./report':helpers});
+  const clarity={status:'not_configured',dashboardUrl:'https://clarity.microsoft.com/projects/view/test/dashboard'};
+  const {getAnalyticsReport}=loadTs('../src/lib/analytics/server.ts',{'server-only':{},'./report':helpers,'@/lib/clarityServer':{getTrackingReport:async()=>clarity}});
   const params=new URLSearchParams({period:'month',date:'2026-09'});
   const results=await Promise.all(Array.from({length:3},()=>getAnalyticsReport(params)));
   assert.equal(calls.length,4,'Concurrent requests must share token and provider work.');
-  assert.deepEqual(results[1],results[0]);assert.equal(results[0].analytics.status,'ready');assert.equal(results[0].search.data.queries[0].clicks,12);
+  assert.deepEqual(results[1],results[0]);assert.equal(results[0].analytics.status,'ready');assert.equal(results[0].search.data.queries[0].clicks,12);assert.deepEqual(results[0].clarity,clarity);
   await getAnalyticsReport(params);assert.equal(calls.length,4,'Successful reports are cached.');
   assert(!JSON.stringify(results).includes('fixture-secret-token'));
   failSearch=true;params.set('page','/partners/udeck');

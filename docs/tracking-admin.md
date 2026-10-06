@@ -25,6 +25,12 @@ In the GA4 web stream's Enhanced measurement settings, keep **Page loads** and *
 
 No Google credential uses a `NEXT_PUBLIC_` prefix. The OAuth scopes are read-only. Requests go from this server directly to Google's fixed API URLs. Tokens and keys never enter a browser response or logs.
 
+## Connect Microsoft Clarity reporting
+
+Generate a Data Export token under Clarity → Settings → Data Export and store it as the server-only `CLARITY_API_TOKEN`. The project ID remains in `NEXT_PUBLIC_CLARITY_PROJECT_ID` because the public consented tag and dashboard link use it.
+
+Clarity's export covers a rolling one-to-three-day window and permits ten requests per project each day. The Tracking screen requests the last 72 hours and shares a six-hour server cache across users, periods and page drill-downs. It displays sessions, visitors, pages per session, average scroll depth, dead clicks, rage clicks, script errors and detected bot sessions. Missing metrics remain an em dash rather than being inferred.
+
 ## Reports
 
 - Defaults to the current calendar month, ending today. Select earlier months, individual days, or Today. Month reports show daily traffic; daily reports show hourly traffic, without future hours for today.
@@ -35,7 +41,7 @@ No Google credential uses a `NEXT_PUBLIC_` prefix. The OAuth scopes are read-onl
 - Production hostnames are explicitly filtered, and account/auth/API pages excluded from GA4 reports. Configure hostnames if the website changes domains.
 - Current periods cache for five minutes, closed periods for one hour, in a bounded server-process cache. Concurrent requests share a pending request. Errors are not cached; Retry attempts the provider again. Reloading successful cached data preserves its fetch timestamp. Google can revise recent data after collection.
 - The two providers fail independently. A missing Search Console connection does not hide traffic reports, and vice versa.
-- Clarity remains a link to recordings/heatmaps. The old visitor-friction metrics and rolling 72-hour summary have been removed from this screen. On the public production site, the GA4 tag loads only after a visitor chooses **Allow analytics** in the existing cookie banner. Admin and sign-in paths are excluded from the GA4 reports.
+- Clarity provides the rolling 72-hour visitor-experience panel and a direct link to recordings and heatmaps. On the public production site, both analytics tags load only after a visitor chooses **Allow analytics** in the existing cookie banner. Admin and sign-in paths are excluded from GA4 and Clarity collection.
 
 ## Verification
 
@@ -49,3 +55,4 @@ No Google credential uses a `NEXT_PUBLIC_` prefix. The OAuth scopes are read-onl
 - [GA4 dimensions and metrics](https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema)
 - [Search Console query API](https://developers.google.com/webmaster-tools/v1/searchanalytics/query)
 - [Service-account OAuth](https://developers.google.com/identity/protocols/oauth2/service-account)
+- [Clarity Data Export API](https://learn.microsoft.com/en-us/clarity/setup-and-installation/clarity-data-export-api)

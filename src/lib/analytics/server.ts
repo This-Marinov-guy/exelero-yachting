@@ -1,6 +1,8 @@
 import "server-only";
 import { createHash, createSign } from "node:crypto";
 import type { AnalyticsReport, ProviderReport, SearchData, ReportPeriod } from "@/types/Analytics";
+import type { TrackingReport } from "@/types/Tracking";
+import { getTrackingReport } from "@/lib/clarityServer";
 import { parseAnalytics, resolvePeriod, searchPageExpression, validatePage, type GoogleReport } from "./report";
 
 type Credentials = { client_email: string; private_key: string };
@@ -50,6 +52,15 @@ function providerError<T>(error: unknown, name: string): ProviderReport<T> {
 }
 function analyticsHosts() {
   return (process.env.ANALYTICS_HOSTNAMES || "exeleroyachting.com,www.exeleroyachting.com").split(",").map(host => host.trim().toLowerCase()).filter(host => /^[a-z0-9.-]+$/.test(host));
+}
+function clarityFallback(): TrackingReport {
+  const projectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID?.trim() || "vekv1ut2zw";
+  return {
+    status: "unavailable",
+    reason: "connection",
+    refreshAfter: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
+    dashboardUrl: `https://clarity.microsoft.com/projects/view/${encodeURIComponent(projectId)}/dashboard`,
+  };
 }
 async function ga4(period: ReportPeriod, page: string | null, creds: Credentials | null): Promise<AnalyticsReport["analytics"]> {
   const property = process.env.GA4_PROPERTY_ID;
@@ -101,17 +112,18 @@ export async function getAnalyticsReport(params: URLSearchParams): Promise<Analy
   const period = resolvePeriod(params.get("period"), params.get("date"), process.env.ANALYTICS_TIME_ZONE || "Europe/Amsterdam");
   const page = validatePage(params.get("page"));
   const creds = credentials();
-  const fingerprint = createHash("sha256").update(JSON.stringify([creds, process.env.GA4_PROPERTY_ID, process.env.SEARCH_CONSOLE_SITE_URL, analyticsHosts()])).digest("hex");
+  const fingerprint = createHash("sha256").update(JSON.stringify([creds, process.env.GA4_PROPERTY_ID, process.env.SEARCH_CONSOLE_SITE_URL, process.env.CLARITY_API_TOKEN, process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID, analyticsHosts()])).digest("hex");
   const key = JSON.stringify([fingerprint, period, page]);
   const cached = reports.get(key);
   if (cached && cached.expires > Date.now()) return cached.report;
   if (pending.has(key)) return pending.get(key)!;
   const promise = (async () => {
-    const results = await Promise.allSettled([ga4(period, page, creds), searchConsole(period, page, creds)]);
+    const results = await Promise.allSettled([ga4(period, page, creds), searchConsole(period, page, creds), getTrackingReport()]);
     const report: AnalyticsReport = {
-      period, page, fetchedAt: new Date().toISOString(), clarityUrl: `https://clarity.microsoft.com/projects/view/${encodeURIComponent(process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "vekv1ut2zw")}/dashboard`,
+      period, page, fetchedAt: new Date().toISOString(),
       analytics: results[0].status === "fulfilled" ? results[0].value : providerError(results[0].reason, "Google Analytics"),
       search: results[1].status === "fulfilled" ? results[1].value : providerError(results[1].reason, "Search Console"),
+      clarity: results[2].status === "fulfilled" ? results[2].value : clarityFallback(),
     };
     if (report.analytics.status !== "error" && report.search.status !== "error") {
       if (reports.size >= 100) reports.delete(reports.keys().next().value!);
