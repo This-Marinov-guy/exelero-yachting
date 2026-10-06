@@ -1,4 +1,0 @@
-{
-  "/(mainBody)/partners/[partnerId]/page": "app/(mainBody)/partners/[partnerId]/page.js",
-  "/(mainBody)/new-yachts/page": "app/(mainBody)/new-yachts/page.js"
-}
