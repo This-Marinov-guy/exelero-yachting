@@ -29,6 +29,15 @@
   &:hover:not(:disabled) { background: #105870; }
   &:disabled { opacity: .7; }
 }
+.confirmation {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #b5d9c1;
+  border-radius: 8px;
+  background: #eff8f1;
+  color: #245b37;
+  line-height: 1.5;
+}
 .spinner { animation: inquiry-spin 1s linear infinite; }
 @keyframes inquiry-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }

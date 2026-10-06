@@ -16,6 +16,7 @@ export default function InquiryForm({ endpoint, subject, fields = [] }: Props) {
   const [sending, setSending] = useState(false);
   const [invalidField, setInvalidField] = useState<string>();
   const [messageLength, setMessageLength] = useState(0);
+  const [confirmation, setConfirmation] = useState<string>();
   const extras = inquiryExtraFields(fields);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -35,6 +36,7 @@ export default function InquiryForm({ endpoint, subject, fields = [] }: Props) {
     busy.current = true;
     setSending(true);
     setInvalidField(undefined);
+    setConfirmation(undefined);
     try {
       const response = await fetch(endpoint, {
         method: "POST",
@@ -46,7 +48,11 @@ export default function InquiryForm({ endpoint, subject, fields = [] }: Props) {
       form.reset();
       attempt.current = null;
       setMessageLength(0);
-      toast.success("Thank you. Your inquiry has been sent to our team.");
+      const message = result.notification === "pending"
+        ? "Your inquiry has been received. Our team can see it, though the email notification is delayed."
+        : "Thank you. Your inquiry has been sent to our team.";
+      setConfirmation(message);
+      toast.success(message);
     } catch (error) {
       toast.error(error instanceof Error && !(error instanceof TypeError) ? error.message : "We couldn't send your inquiry. Check your connection and try again.");
     } finally {
@@ -56,7 +62,7 @@ export default function InquiryForm({ endpoint, subject, fields = [] }: Props) {
   }
 
   const control = (name: string) => ({ id: `${prefix}-${name}`, name, "aria-invalid": invalidField === name || undefined });
-  return <form className={styles.form} aria-label={`Contact about ${subject}`} aria-busy={sending} noValidate onSubmit={submit} onInput={() => setInvalidField(undefined)}>
+  return <form className={styles.form} aria-label={`Contact about ${subject}`} aria-busy={sending} noValidate onSubmit={submit} onInput={() => { setInvalidField(undefined); setConfirmation(undefined); }}>
     <fieldset disabled={sending}>
       <legend className="visually-hidden">Your contact details and message</legend>
       <div className={styles.field}><label htmlFor={`${prefix}-name`}>Name</label><input {...control("name")} type="text" autoComplete="name" required maxLength={120} /></div>
@@ -70,5 +76,6 @@ export default function InquiryForm({ endpoint, subject, fields = [] }: Props) {
       </div>)}</div>}
     </fieldset>
     <button type="submit" className={styles.submit} disabled={sending}>{sending && <LoaderCircle size={18} className={styles.spinner} aria-hidden="true" />}{sending ? "Sending…" : "Send inquiry"}</button>
+    {confirmation && <p className={styles.confirmation} role="status">{confirmation}</p>}
   </form>;
 }

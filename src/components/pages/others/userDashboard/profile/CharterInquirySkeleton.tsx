@@ -1,6 +1,6 @@
 import styles from "./CharterInquiries.module.scss";
 
-export default function CharterInquirySkeleton({ showHeading = true, kind = "charter" }: { showHeading?: boolean; kind?: "charter" | "transportation" }) {
+export default function CharterInquirySkeleton({ showHeading = true, kind = "charter" }: { showHeading?: boolean; kind?: "boat" | "partner" | "charter" | "transportation" }) {
   return <div className={styles.skeleton} role="status" aria-label={`Loading ${kind} inquiries`} aria-busy="true">
     <span className="visually-hidden">Loading {kind} inquiries…</span>
     <div aria-hidden="true">

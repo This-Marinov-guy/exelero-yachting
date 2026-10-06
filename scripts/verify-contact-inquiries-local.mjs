@@ -6,6 +6,7 @@ import { createServer } from 'node:net';
 import { once } from 'node:events';
 import { setTimeout as delay } from 'node:timers/promises';
 import { createClient } from '@supabase/supabase-js';
+import { createServerClient } from '@supabase/ssr';
 
 // Never loads .env.local into the test process. All database/mail credentials
 // passed to the isolated Next server explicitly target local services.
@@ -58,6 +59,13 @@ try {
   const user=ensure(await db.auth.admin.createUser({email:`${tag}@example.invalid`,password,email_confirm:true}));uid=user.user.id;
   const account=createClient(local.API_URL,local.ANON_KEY,{auth:{persistSession:false}});
   ensure(await account.auth.signInWithPassword({email:`${tag}@example.invalid`,password}));
+  const cookies=new Map();
+  const accountWithCookies=createServerClient(local.API_URL,local.ANON_KEY,{cookies:{
+    getAll:()=>[...cookies].map(([name,value])=>({name,value})),
+    setAll:items=>items.forEach(({name,value})=>cookies.set(name,value)),
+  }});
+  ensure(await accountWithCookies.auth.signInWithPassword({email:`${tag}@example.invalid`,password}));
+  const cookieHeader=()=>[...cookies].map(([name,value])=>`${name}=${value}`).join('; ');
   const partner=ensure(await db.from('partners').insert({slug:tag,name:'Inquiry verification partner',logo_url:'/assets/images/logo/udeck.png',breadcrumb_image_url:'/assets/images/breadcrumbs/udeck.jpg',content:'Local inquiry verification.',status:'published',form_type:'custom',custom_fields:[{id:'interest',label:'Interest',type:'select',required:true,options:['Sailing','Motor']}]}).select('id').single());partnerId=partner.id;
   const boat=ensure(await db.from('boats').insert({user_id:uid,slug:tag,active:true,bought:false}).select('id').single());boatId=boat.id;
   ensure(await db.from('boat_data').insert({boat_id:boatId,title:'Inquiry verification yacht',manufacturer:'Local test',build_year:'2025',location:'Amsterdam',description:'Local contact form verification.',hull_length:12,beam:4,draft:2,displacement:8000,engine_power:40}));
@@ -96,18 +104,21 @@ try {
   rejectRecipient=recipients[1];
   const custom=payload({interest:'Sailing'});
   const failed=await request(partnerPath,custom);
-  assert.equal(failed.status,502);assert.equal(failed.body.saved,true);
+  assert.equal(failed.status,202);assert.equal(failed.body.ok,true);assert.equal(failed.body.notification,'pending');
   row=ensure(await db.from('partner_inquiries').select('*').eq('id',custom.request_id).single());
   assert.equal(row.phone,custom.phone);assert.equal(row.message,custom.message);assert.equal(row.answers.interest,'Sailing');
   assert.equal(row.notification_sent_at,null);assert.deepEqual(row.notification_delivered_to,[recipients[0]]);
   rejectRecipient=undefined;
-  assert.equal((await request(partnerPath,custom)).status,200);
+  const retryPath=`/api/admin/inquiries/partner/${custom.request_id}/retry`;
+  assert.equal((await fetch(site+retryPath,{method:'POST',headers:{origin:site}})).status,403,'Anonymous visitors cannot retry email.');
+  const retry=await fetch(site+retryPath,{method:'POST',headers:{origin:site,cookie:cookieHeader()}});
+  assert.equal(retry.status,200,JSON.stringify(await retry.json()));
   assert.equal(messages.length,4,'Partial failure retry must send only to the outstanding recipient.');
   row=ensure(await db.from('partner_inquiries').select('*').eq('id',custom.request_id).single());
   assert(row.notification_sent_at);assert.deepEqual(row.notification_delivered_to,recipients);
   const race=payload();
   const concurrent=await Promise.all([request(boatPath,race),request(boatPath,race)]);
-  assert(concurrent.every(result=>[200,409].includes(result.status)));
+  assert(concurrent.every(result=>[200,202].includes(result.status)));
   assert(concurrent.some(result=>result.status===200));
   assert.equal(messages.length,6,'Concurrent requests must send only one message per recipient.');
   for(const table of ['boat_inquiries','partner_inquiries']){
@@ -127,8 +138,9 @@ try {
   assert.equal((await request(partnerPath,payload())).status,200);
   console.log(`PASS (${directDatabase?'direct database':'Supabase API'}): boat/partner fields saved, all notification recipients emailed, custom answers retained, validation, unpublished targets, honeypot, public data privacy, duplicate/concurrent submits, and partial SMTP failure retry.`);
   if(process.argv.includes('--serve')){
+    const pending=ensure(await db.from('boat_inquiries').insert({boat_id:boatId,name:'Pending inquiry check',email:'pending@example.invalid',message:'Please send the yacht details.',context_name:'Inquiry verification yacht',context_path:`/services/brokerage/${tag}`}).select('id').single());
     console.log(`Browser fixtures: ${site}/services/brokerage/${tag} and ${site}/partners/${tag}`);
-    writeFileSync('/private/tmp/exelero-inquiry-fixtures.json',JSON.stringify({site,tag,boatId,partnerId}));
+    writeFileSync('/private/tmp/exelero-inquiry-fixtures.json',JSON.stringify({site,tag,boatId,partnerId,pendingId:pending.id,email:`${tag}@example.invalid`,password}),{mode:0o600});
     await Promise.race([once(process,'SIGINT'),once(process,'SIGTERM')]);
   }
 } finally {

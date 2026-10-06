@@ -10,6 +10,7 @@ const UploadBoat = dynamic(() => import("../profile/UploadBoat"), { loading: () 
 const BoatsListing = dynamic(() => import("../profile/BoatsListing"), { loading: () => <AccountSkeleton kind="boats" /> });
 const CharterRequests = dynamic(() => import("../profile/CharterRequests"), { loading: () => <CharterInquirySkeleton /> });
 const TransportationRequests = dynamic(() => import("../profile/TransportationRequests"), { loading: () => <CharterInquirySkeleton kind="transportation" /> });
+const ContactInquiries = dynamic(() => import("../profile/ContactInquiries"), { loading: () => <CharterInquirySkeleton kind="boat" /> });
 const AccountSettings = dynamic(() => import("../profile/AccountSettings"), { loading: () => <AccountSkeleton kind="settings" /> });
 const PartnerManager = dynamic(() => import("../partners/PartnerManager"), { loading: PartnerManagerSkeleton });
 const TrackingDashboard = dynamic(() => import("../tracking/TrackingDashboard"), { loading: () => <AccountSkeleton kind="tracking" /> });
@@ -21,6 +22,8 @@ export default function DashboardTabs({ activeTab, onDirtyChange }: { activeTab:
     {activeTab === "account-settings" && <AccountSettings />}
     {activeTab === "upload-boat" && <><UploadBoat /><BoatDraftsList /></>}
     {activeTab === "boats-listing" && <BoatsListing />}
+    {activeTab === "boat-inquiries" && <ContactInquiries kind="boat" />}
+    {activeTab === "partner-inquiries" && <ContactInquiries kind="partner" />}
     {activeTab === "charter-requests" && <CharterRequests />}
     {activeTab === "transportation-requests" && <TransportationRequests />}
   </div>;

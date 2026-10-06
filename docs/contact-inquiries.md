@@ -2,7 +2,7 @@
 
 Public boat and partner pages share Name, Email, Phone (optional), and Message.
 Partner custom fields appear after these contact fields; their answers are retained.
-Validation, success, and delivery errors use toasts. Failed submissions retain the entered values.
+Validation errors retain the entered values. Once an inquiry is saved, the form confirms receipt even if email delivery is delayed.
 
 ## Setup
 
@@ -21,14 +21,15 @@ Use the same settings in the hosting environment. Restart the development server
 - The server validates that the boat is available or the partner is published before accepting an inquiry.
 - Only server routes insert inquiries. Invited account users can read them; anonymous clients cannot read contact data or edit delivery state.
 - Email includes all supplied fields, the boat/partner name, and a link to its page. Reply goes to the visitor's email address.
-- The database is saved **before** email is attempted. Email failure returns an explicit error with `saved: true`; the form keeps its values. Pressing Send inquiry again retries the same submission ID without creating another record.
+- The database is saved **before** email is attempted. Once saved, the visitor sees a receipt confirmation. An SMTP failure returns HTTP 202 with `notification: "pending"` instead of asking the visitor to send the inquiry again.
 - A database lease prevents concurrent requests delivering the same inquiry. `notification_delivered_to` records each successful recipient so a retry only sends to outstanding recipients. `notification_sent_at` records completion. Expired leases can be retried after five minutes.
-- There is no background retry scheduler. A failed delivery is retried when the visitor resubmits. As with SMTP generally, a process failure between mail acceptance and recording delivery can cause one duplicate email; a stable Message-ID is used for each inquiry/recipient.
+- Invited account users can review Boat brokerage and Partner inquiries at `/account?tab=boat-inquiries` and `/account?tab=partner-inquiries`. Pending notifications can be retried there after mail configuration is restored. The retry route requires an authenticated account and a same-origin request.
+- There is no background retry scheduler. As with SMTP generally, a process failure between mail acceptance and recording delivery can cause one duplicate email; a stable Message-ID is used for each inquiry/recipient.
 
 Historical partner inquiries are preserved and are not resent.
 
 ## Verification
 
-`node scripts/verify-contact-inquiries-local.mjs` runs against the local Supabase stack and an isolated SMTP sink. Add `--direct-db` to exercise `SUPABASE_DB_URL` instead of the Supabase API. It starts its own Next server on port 3002, overrides all email settings, and cleans up its fixtures and build output. It checks both forms' database payloads and recipients, custom answers, validation, inactive/sold boats, drafts, anonymous access, repeated/concurrent submissions, and partial SMTP failure with retry. Add `--serve` to keep the fixtures available for browser checks, then stop with Ctrl+C.
+`node scripts/verify-contact-inquiries-local.mjs` runs against the local Supabase stack and an isolated SMTP sink. Add `--direct-db` to exercise `SUPABASE_DB_URL` instead of the Supabase API. It starts its own Next server on port 3002, overrides all email settings, and cleans up its fixtures and build output. It checks both forms' database payloads and recipients, custom answers, validation, inactive/sold boats, drafts, anonymous access, repeated/concurrent submissions, and authenticated retry after partial SMTP failure. Add `--serve` to keep the fixtures available for browser checks, then stop with Ctrl+C.
 
 Verified on 6 October 2026: the integration checks passed, as did TypeScript and scoped ESLint. Browser checks passed at 1440px and 390px for both forms: labelled controls, toast-only validation, focus on the invalid field, retained values after failure, reuse of the retry ID, and successful submission/clearing.

@@ -5,6 +5,8 @@ export const ACCOUNT_TAB_IDS = [
   "account-settings",
   "upload-boat",
   "boats-listing",
+  "boat-inquiries",
+  "partner-inquiries",
   "charter-requests",
   "transportation-requests",
   "partners",

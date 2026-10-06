@@ -1,0 +1,38 @@
+.preview {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+}
+
+.mobileCards { display: none; }
+
+@media (max-width: 650px) {
+  .desktopTable { display: none; }
+  .mobileCards { display: block; }
+  .mobileCard {
+    padding: 18px;
+    border-bottom: 1px solid #d8e0e3;
+    &:last-child { border-bottom: 0; }
+    > a { display: inline-block; margin-top: 4px; color: #146a88; overflow-wrap: anywhere; }
+    p { margin: 14px 0 0; color: #40545d; overflow-wrap: anywhere; }
+    p strong { display: block; color: #60747b; font-size: 13px; font-weight: 600; }
+  }
+  .mobileHeading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; strong { min-width: 0; overflow-wrap: anywhere; } }
+  .mobileMessage { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+  .mobileFooter { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; time { color: #60747b; font-size: 14px; } }
+}

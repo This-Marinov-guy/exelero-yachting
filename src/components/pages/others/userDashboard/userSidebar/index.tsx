@@ -10,7 +10,7 @@ import styles from "../AdminShell.module.scss";
 const groups = [
   { title: "Overview", items: [{ id: "tracking", label: "Tracking", icon: Activity }] },
   { title: "Website", items: [{ id: "partners", label: "Partners", icon: Handshake }, { id: "boats-listing", label: "Boat listings", icon: Ship }, { id: "upload-boat", label: "Add a boat", icon: FilePlus2 }] },
-  { title: "Inquiries", items: [{ id: "charter-requests", label: "Charter", icon: Mail }, { id: "transportation-requests", label: "Transportation", icon: Truck }] },
+  { title: "Inquiries", items: [{ id: "boat-inquiries", label: "Boat brokerage", icon: Ship }, { id: "partner-inquiries", label: "Partner inquiries", icon: Handshake }, { id: "charter-requests", label: "Charter", icon: Mail }, { id: "transportation-requests", label: "Transportation", icon: Truck }] },
   { title: "Settings", items: [{ id: "dealer-info", label: "Dealers", icon: Building2 }, { id: "account-settings", label: "Account settings", icon: Settings }] },
 ] as const;
 export default function UserSidebar({ activeTab, onTabChange, canLeave }: { activeTab: AccountTabId; onTabChange: (tab: AccountTabId) => void; canLeave: () => boolean }) {
