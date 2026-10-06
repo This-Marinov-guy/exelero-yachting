@@ -7,7 +7,7 @@ Validation, success, and delivery errors use toasts. Failed submissions retain t
 ## Setup
 
 1. Apply `supabase/migrations/20261006083709_boat_partner_contact_inquiries.sql` to the website's Supabase project, after the existing Partners migrations.
-2. Set `SUPABASE_SERVICE_ROLE_KEY` on the server, using the **same project** as `NEXT_PUBLIC_SUPABASE_URL`. Never prefix this secret with `NEXT_PUBLIC_`.
+2. Set `SUPABASE_SECRET_KEY` on the server, using a current `sb_secret_…` key from the **same project** as `NEXT_PUBLIC_SUPABASE_URL`. The legacy `SUPABASE_SERVICE_ROLE_KEY` remains supported during migration. If API keys are managed separately from the host, `SUPABASE_DB_URL` can use Supabase's transaction pooler instead. Never prefix these secrets with `NEXT_PUBLIC_`.
 3. Configure the existing mail settings in `.env.example`: `GMAIL_HOST`, `GMAIL_PORT`, `GMAIL_USERNAME`, `GMAIL_PASSWORD`, and encryption/from settings as required by the SMTP provider.
 4. `NOTIFICATION_TO_EMAIL` accepts a JSON array or comma-separated email addresses. Every configured recipient receives each inquiry. No email is sent to the visitor or the dealer unless that address is in the notification list.
 
@@ -29,6 +29,6 @@ Historical partner inquiries are preserved and are not resent.
 
 ## Verification
 
-`node scripts/verify-contact-inquiries-local.mjs` runs against the local Supabase stack and an isolated SMTP sink. It starts its own Next server on port 3002, overrides all email settings, and cleans up its fixtures and build output. It checks both forms' database payloads and recipients, custom answers, validation, inactive/sold boats, drafts, anonymous access, repeated/concurrent submissions, and partial SMTP failure with retry. Add `--serve` to keep the fixtures available for browser checks, then stop with Ctrl+C.
+`node scripts/verify-contact-inquiries-local.mjs` runs against the local Supabase stack and an isolated SMTP sink. Add `--direct-db` to exercise `SUPABASE_DB_URL` instead of the Supabase API. It starts its own Next server on port 3002, overrides all email settings, and cleans up its fixtures and build output. It checks both forms' database payloads and recipients, custom answers, validation, inactive/sold boats, drafts, anonymous access, repeated/concurrent submissions, and partial SMTP failure with retry. Add `--serve` to keep the fixtures available for browser checks, then stop with Ctrl+C.
 
 Verified on 6 October 2026: the integration checks passed, as did TypeScript and scoped ESLint. Browser checks passed at 1440px and 390px for both forms: labelled controls, toast-only validation, focus on the invalid field, retained values after failure, reuse of the retry ID, and successful submission/clearing.

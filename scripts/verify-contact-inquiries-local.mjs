@@ -11,6 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 // passed to the isolated Next server explicitly target local services.
 const local = Object.fromEntries(execFileSync('supabase', ['status', '-o', 'env'], {encoding:'utf8',stdio:['ignore','pipe','pipe']}).split(/\r?\n/).filter(line=>line.includes('=')).map(line=>{const i=line.indexOf('=');return [line.slice(0,i),line.slice(i+1).replace(/^"|"$/g,'')]}));
 assert.match(local.API_URL, /^http:\/\/(localhost|127\.0\.0\.1):\d+$/);
+const directDatabase = process.argv.includes('--direct-db');
 const db = createClient(local.API_URL, local.SERVICE_ROLE_KEY, {auth:{persistSession:false}});
 const anon = createClient(local.API_URL, local.ANON_KEY, {auth:{persistSession:false}});
 const tag = `inquiry-test-${Date.now()}`;
@@ -61,7 +62,13 @@ try {
   const boat=ensure(await db.from('boats').insert({user_id:uid,slug:tag,active:true,bought:false}).select('id').single());boatId=boat.id;
   ensure(await db.from('boat_data').insert({boat_id:boatId,title:'Inquiry verification yacht',manufacturer:'Local test',build_year:'2025',location:'Amsterdam',description:'Local contact form verification.',hull_length:12,beam:4,draft:2,displacement:8000,engine_power:40}));
   log=openSync('/private/tmp/exelero-inquiry-server.log','w');
-  server=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--port','3002'],{stdio:['ignore',log,log],env:{...process.env,NEXT_DIST_DIR:'.next-inquiry-check',NEXT_PUBLIC_SUPABASE_URL:local.API_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY:local.ANON_KEY,SUPABASE_SERVICE_ROLE_KEY:local.SERVICE_ROLE_KEY,NEXT_PUBLIC_SITE_URL:site,GMAIL_HOST:'127.0.0.1',GMAIL_PORT:String(smtp.address().port),GMAIL_USERNAME:'test@example.invalid',GMAIL_PASSWORD:'local-test-only',GMAIL_ENCRYPTION:'none',GMAIL_FROM_ADDRESS:'test@example.invalid',NOTIFICATION_TO_EMAIL:JSON.stringify(recipients)}});
+  const serverEnv={...process.env,NEXT_DIST_DIR:'.next-inquiry-check',NEXT_PUBLIC_SUPABASE_URL:local.API_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY:local.ANON_KEY,NEXT_PUBLIC_SITE_URL:site,GMAIL_HOST:'127.0.0.1',GMAIL_PORT:String(smtp.address().port),GMAIL_USERNAME:'test@example.invalid',GMAIL_PASSWORD:'local-test-only',GMAIL_ENCRYPTION:'none',GMAIL_FROM_ADDRESS:'test@example.invalid',NOTIFICATION_TO_EMAIL:JSON.stringify(recipients)};
+  delete serverEnv.SUPABASE_SECRET_KEY;
+  delete serverEnv.SUPABASE_SERVICE_ROLE_KEY;
+  delete serverEnv.SUPABASE_DB_URL;
+  if(directDatabase) serverEnv.SUPABASE_DB_URL=local.DB_URL;
+  else serverEnv.SUPABASE_SERVICE_ROLE_KEY=local.SERVICE_ROLE_KEY;
+  server=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--port','3002'],{stdio:['ignore',log,log],env:serverEnv});
   for(let i=0;i<90;i++){
     if(server.exitCode!==null) throw new Error('Verification server failed to start. See /private/tmp/exelero-inquiry-server.log');
     try{await fetch(site+'/api/boats/invalid/inquiries',{method:'POST'});break;}catch{await delay(1000);}
@@ -118,7 +125,7 @@ try {
   assert.equal((await request(partnerPath,payload({interest:'Sailing'}))).status,404);
   ensure(await db.from('partners').update({status:'published',form_type:'standard'}).eq('id',partnerId));
   assert.equal((await request(partnerPath,payload())).status,200);
-  console.log('PASS: boat/partner fields saved, all notification recipients emailed, custom answers retained, validation, unpublished targets, honeypot, public data privacy, duplicate/concurrent submits, and partial SMTP failure retry.');
+  console.log(`PASS (${directDatabase?'direct database':'Supabase API'}): boat/partner fields saved, all notification recipients emailed, custom answers retained, validation, unpublished targets, honeypot, public data privacy, duplicate/concurrent submits, and partial SMTP failure retry.`);
   if(process.argv.includes('--serve')){
     console.log(`Browser fixtures: ${site}/services/brokerage/${tag} and ${site}/partners/${tag}`);
     writeFileSync('/private/tmp/exelero-inquiry-fixtures.json',JSON.stringify({site,tag,boatId,partnerId}));

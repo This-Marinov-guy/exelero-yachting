@@ -16,31 +16,32 @@ const status = execFileSync("supabase", ["status", "-o", "env"], {
   stdio: ["ignore", "pipe", "pipe"],
 });
 
-const publicValues = {};
+const localValues = {};
 for (const line of status.split(/\r?\n/)) {
   const separator = line.indexOf("=");
   if (separator < 0) continue;
   const name = line.slice(0, separator);
-  if (name !== "API_URL" && name !== "ANON_KEY") continue;
+  if (name !== "API_URL" && name !== "ANON_KEY" && name !== "SERVICE_ROLE_KEY") continue;
   const rawValue = line.slice(separator + 1);
-  publicValues[name] = rawValue.startsWith('"') && rawValue.endsWith('"')
+  localValues[name] = rawValue.startsWith('"') && rawValue.endsWith('"')
     ? rawValue.slice(1, -1)
     : rawValue;
 }
 
-if (!/^https?:\/\/(?:localhost|127\.0\.0\.1):\d+\/?$/.test(publicValues.API_URL ?? "") || !publicValues.ANON_KEY) {
-  throw new Error("Local Supabase is not running or did not return its public settings.");
+if (!/^https?:\/\/(?:localhost|127\.0\.0\.1):\d+\/?$/.test(localValues.API_URL ?? "") || !localValues.ANON_KEY || !localValues.SERVICE_ROLE_KEY) {
+  throw new Error("Local Supabase is not running or did not return its API settings.");
 }
 
 if (!existsSync(localEnvPath)) copyFileSync(".env.example", localEnvPath);
 let content = readFileSync(localEnvPath, "utf8");
 for (const [name, value] of [
-  ["NEXT_PUBLIC_SUPABASE_URL", publicValues.API_URL],
-  ["NEXT_PUBLIC_SUPABASE_ANON_KEY", publicValues.ANON_KEY],
+  ["NEXT_PUBLIC_SUPABASE_URL", localValues.API_URL],
+  ["NEXT_PUBLIC_SUPABASE_ANON_KEY", localValues.ANON_KEY],
+  ["SUPABASE_SERVICE_ROLE_KEY", localValues.SERVICE_ROLE_KEY],
 ]) {
   const setting = `${name}=${value}`;
   const pattern = new RegExp(`^${name}=.*$`, "m");
   content = pattern.test(content) ? content.replace(pattern, setting) : `${content.trimEnd()}\n${setting}\n`;
 }
 writeFileSync(localEnvPath, content, { mode: 0o600 });
-console.log("Saved local Supabase public settings to .env.local");
+console.log("Saved local Supabase API settings to .env.local");

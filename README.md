@@ -27,7 +27,7 @@ npm run dev -- --port 3001
 
 Open <http://localhost:3001>. `supabase db reset` applies the checked-in local schema and **erases existing local database data**, so run it only for a fresh setup or when you intend to reset.
 
-`npm run env:local` writes only the generated local Supabase API URL and public anon key to Git-ignored `.env.local`. It does not copy the service-role key. The local database starts empty, so the listing page initially shows zero boats. The email notification variables in `.env.example` are optional; without them, email notifications cannot be sent.
+`npm run env:local` writes the generated local Supabase API URL, public anon key, and server-only service-role key to Git-ignored `.env.local`. This allows the local inquiry routes to save records while keeping the elevated key out of source control and browser code. The local database starts empty, so the listing page initially shows zero boats. The email notification variables in `.env.example` are optional; without them, email notifications cannot be sent.
 
 The command refuses to overwrite an existing hosted connection. Use `npm run env:local -- --force` only when intentionally switching to the separate local database.
 
