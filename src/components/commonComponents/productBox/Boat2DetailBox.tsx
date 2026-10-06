@@ -40,7 +40,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
   const detailHref = `/services/brokerage/${data.slug || data.id}`;
 
   return (
-    <article className='car2-featured-box property2-featured-box'>
+    <article className='car2-featured-box property2-featured-box boat-featured-box'>
       <Link href={detailHref} className='car2-featured-img'>
         <Swiper {...Property2SwiperSetting}>
           <div className='swiper-wrapper'>

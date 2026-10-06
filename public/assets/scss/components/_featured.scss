@@ -1466,6 +1466,41 @@
       }
     }
   }
+  &.boat-featured-box .car2-featured-img {
+    .property2-featured-slider {
+      .swiper-button-next,
+      .swiper-button-prev {
+        --swiper-navigation-color: #fff;
+        color: #fff;
+        opacity: 0;
+        visibility: hidden;
+
+        &::after {
+          color: #fff;
+        }
+      }
+    }
+
+    &:hover,
+    &:focus-within {
+      .property2-featured-slider {
+        .swiper-button-next,
+        .swiper-button-prev {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .swiper-button-next {
+          right: 10px;
+          left: unset;
+        }
+
+        .swiper-button-prev {
+          left: 10px;
+        }
+      }
+    }
+  }
   .swiper-slide {
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
