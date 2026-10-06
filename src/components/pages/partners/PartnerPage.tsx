@@ -23,7 +23,7 @@ export default function PartnerPage({ partner }: { partner: Partner }) {
           {partner.hero_image_url && <div className="partner-image-panel"><div className="partner-panel-image-wrapper"><Image src={partner.hero_image_url} alt={partner.name} fill className="partner-panel-image" style={{ objectFit: "cover" }} unoptimized={partner.hero_image_url.startsWith("http")} /></div></div>}
           <div className="partner-description"><h2>About {partner.name}</h2>{partner.content.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>
         </Col>
-        <Col lg={4}>
+        <Col lg={4} className="partner-contact-column">
           <div className="partner-info-card">
             <h3>Get in touch</h3>
             <PartnerInquiryForm partner={partner} />
