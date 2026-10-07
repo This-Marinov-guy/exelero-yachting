@@ -13,6 +13,9 @@ Extracted from the existing website and Partners admin; this records the current
 
 The global palette lives in `public/assets/scss/abstracts/_variables.scss`; font loading lives in `base/_typography.scss`. Public pages retain their current scoped theme variants and typography.
 
+- `--content-color: 77, 89, 99` on the default and `car-color` themes keeps body copy readable on light backgrounds. This affects the public homepage and other pages using those themes; dark-theme overrides remain separate.
+- `--bs-link-color-rgb: var(--theme-color)` uses the same blue as footer links for Bootstrap-styled links across the public site.
+
 ## Admin summary tokens
 
 The Tracking stylesheet scopes these extracted admin tokens. They provide a reference for future admin components without changing existing public pages.
