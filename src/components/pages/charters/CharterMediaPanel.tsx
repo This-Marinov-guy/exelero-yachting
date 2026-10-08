@@ -25,13 +25,6 @@ const MEDIA = [
   },
   {
     type: "image" as const,
-    src: "/assets/images/charter/xc47-at-anchor.webp",
-    alt: "Xc 47 yacht at anchor beside the Greek coast",
-    label: "Xc 47 at anchor",
-    fit: "contain" as const,
-  },
-  {
-    type: "image" as const,
     src: "/assets/images/charter/fleet-at-marina.webp",
     alt: "X-Yachts charter fleet moored at the marina",
     label: "The charter fleet",
@@ -39,31 +32,10 @@ const MEDIA = [
   },
   {
     type: "image" as const,
-    src: "/assets/images/charter/fleet-at-sunset.webp",
-    alt: "Sailing yachts reflected in the marina at sunset",
-    label: "Evening at the marina",
-    fit: "contain" as const,
-  },
-  {
-    type: "image" as const,
-    src: "/assets/images/charter/x-yachts-sails-at-marina.webp",
-    alt: "X-Yachts under sail in the marina",
-    label: "Ready to sail",
-    fit: "contain" as const,
-  },
-  {
-    type: "image" as const,
     src: "/assets/images/charter/xp44-saloon.webp",
     alt: "Warm wood interior of the Xp 44 saloon",
     label: "Xp 44 saloon",
     fit: "cover" as const,
-  },
-  {
-    type: "image" as const,
-    src: "/assets/images/charter/charter-hospitality.webp",
-    alt: "Wine and refreshments served aboard a yacht",
-    label: "Life on board",
-    fit: "contain" as const,
   },
 ];
 
