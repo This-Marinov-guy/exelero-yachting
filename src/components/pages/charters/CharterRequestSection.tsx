@@ -3,10 +3,12 @@
 import { Col, Row } from "reactstrap";
 import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
+import { format, parseISO, startOfDay } from "date-fns";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { trackClarityEvent } from "@/lib/clarity";
 import { CHARTER_MODELS } from "@/lib/charterModels";
+import BookingCalendarHeader, { bookingCalendarDayClassName } from "@/components/commonComponents/BookingCalendarHeader";
 
 const FORM_ID = "charter-form";
 
@@ -26,6 +28,8 @@ export default function CharterRequestSection() {
   const [formInView, setFormInView] = useState(false);
   const [form, setForm] = useState(initialFormState);
   const [submitting, setSubmitting] = useState(false);
+  const today = startOfDay(new Date());
+  const minToDate = form.dateFrom ? parseISO(form.dateFrom) : undefined;
 
   useEffect(() => {
     const el = formRef.current;
@@ -47,10 +51,10 @@ export default function CharterRequestSection() {
   };
 
   const handleDateChange = (field: "dateFrom" | "dateTo", date: Date | null) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: date ? date.toISOString().slice(0, 10) : "",
-    }));
+    const value = date ? format(date, "yyyy-MM-dd") : "";
+    setForm((prev) => field === "dateFrom"
+      ? { ...prev, dateFrom: value, dateTo: value && prev.dateTo < value ? "" : prev.dateTo }
+      : { ...prev, dateTo: value });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,6 +65,16 @@ export default function CharterRequestSection() {
 
     if (!name.trim() || !email.trim() || !type || !dateFrom || !dateTo || !groupSize) {
       toast.error("Please fill in all required fields (name, email, type, dates, group size).");
+      return;
+    }
+
+    if (dateFrom < format(new Date(), "yyyy-MM-dd")) {
+      toast.error("Choose today or a later date from.");
+      return;
+    }
+
+    if (dateTo < dateFrom) {
+      toast.error("Date to must be on or after date from.");
       return;
     }
 
@@ -224,10 +238,16 @@ export default function CharterRequestSection() {
                   <label htmlFor="charter-date-from" className="form-label">Date from</label>
                   <DatePicker
                     id="charter-date-from"
-                    selected={form.dateFrom ? new Date(form.dateFrom) : null}
+                    selected={form.dateFrom ? parseISO(form.dateFrom) : null}
                     onChange={(date) => handleDateChange("dateFrom", date as Date | null)}
                     className="form-control"
-                    dateFormat="yyyy-MM-dd"
+                    dateFormat="dd-MM-yyyy"
+                    placeholderText="dd-mm-yyyy"
+                    minDate={today}
+                    calendarStartDay={1}
+                    calendarClassName="booking-calendar"
+                    dayClassName={bookingCalendarDayClassName}
+                    renderCustomHeader={(props) => <BookingCalendarHeader {...props} minDate={today} />}
                   />
                 </div>
               </Col>
@@ -236,11 +256,16 @@ export default function CharterRequestSection() {
                   <label htmlFor="charter-date-to" className="form-label">Date to</label>
                   <DatePicker
                     id="charter-date-to"
-                    selected={form.dateTo ? new Date(form.dateTo) : null}
+                    selected={form.dateTo ? parseISO(form.dateTo) : null}
                     onChange={(date) => handleDateChange("dateTo", date as Date | null)}
                     className="form-control"
-                    dateFormat="yyyy-MM-dd"
-                    minDate={form.dateFrom ? new Date(form.dateFrom) : undefined}
+                    dateFormat="dd-MM-yyyy"
+                    placeholderText="dd-mm-yyyy"
+                    minDate={minToDate}
+                    calendarStartDay={1}
+                    calendarClassName="booking-calendar"
+                    dayClassName={bookingCalendarDayClassName}
+                    renderCustomHeader={(props) => <BookingCalendarHeader {...props} minDate={minToDate} />}
                   />
                 </div>
               </Col>

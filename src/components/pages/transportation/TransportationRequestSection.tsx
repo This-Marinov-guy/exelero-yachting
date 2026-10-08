@@ -3,9 +3,11 @@
 import { Col, Row } from "reactstrap";
 import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
+import { format, parseISO, startOfDay } from "date-fns";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { trackClarityEvent } from "@/lib/clarity";
+import BookingCalendarHeader, { bookingCalendarDayClassName } from "@/components/commonComponents/BookingCalendarHeader";
 
 const FORM_ID = "transportation-form";
 
@@ -30,6 +32,8 @@ export default function TransportationRequestSection() {
   const [formInView, setFormInView] = useState(false);
   const [form, setForm] = useState(initialFormState);
   const [submitting, setSubmitting] = useState(false);
+  const today = startOfDay(new Date());
+  const minDeadlineDate = form.dateStart ? parseISO(form.dateStart) : undefined;
 
   useEffect(() => {
     const el = formRef.current;
@@ -51,10 +55,10 @@ export default function TransportationRequestSection() {
   };
 
   const handleDateChange = (field: "dateStart" | "deadlineDate", date: Date | null) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: date ? date.toISOString().slice(0, 10) : "",
-    }));
+    const value = date ? format(date, "yyyy-MM-dd") : "";
+    setForm((prev) => field === "dateStart"
+      ? { ...prev, dateStart: value, deadlineDate: value && prev.deadlineDate < value ? "" : prev.deadlineDate }
+      : { ...prev, deadlineDate: value });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -65,6 +69,16 @@ export default function TransportationRequestSection() {
 
     if (!name.trim() || !email.trim() || !dateStart || !deadlineDate || !startPoint.trim() || !endPoint.trim()) {
       toast.error("Please fill in all required fields (name, email, dates, start and end points).");
+      return;
+    }
+
+    if (dateStart < format(new Date(), "yyyy-MM-dd")) {
+      toast.error("Choose today or a later start date.");
+      return;
+    }
+
+    if (deadlineDate < dateStart) {
+      toast.error("Deadline date must be on or after the start date.");
       return;
     }
 
@@ -214,24 +228,37 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label className="form-label">Start date</label>
+                  <label htmlFor="transport-date-start" className="form-label">Start date</label>
                   <DatePicker
-                    selected={form.dateStart ? new Date(form.dateStart) : null}
+                    id="transport-date-start"
+                    selected={form.dateStart ? parseISO(form.dateStart) : null}
                     onChange={(date) => handleDateChange("dateStart", date as Date | null)}
                     className="form-control"
-                    dateFormat="yyyy-MM-dd"
+                    dateFormat="dd-MM-yyyy"
+                    placeholderText="dd-mm-yyyy"
+                    minDate={today}
+                    calendarStartDay={1}
+                    calendarClassName="booking-calendar"
+                    dayClassName={bookingCalendarDayClassName}
+                    renderCustomHeader={(props) => <BookingCalendarHeader {...props} minDate={today} />}
                   />
                 </div>
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label className="form-label">Deadline date</label>
+                  <label htmlFor="transport-deadline-date" className="form-label">Deadline date</label>
                   <DatePicker
-                    selected={form.deadlineDate ? new Date(form.deadlineDate) : null}
+                    id="transport-deadline-date"
+                    selected={form.deadlineDate ? parseISO(form.deadlineDate) : null}
                     onChange={(date) => handleDateChange("deadlineDate", date as Date | null)}
                     className="form-control"
-                    dateFormat="yyyy-MM-dd"
-                    minDate={form.dateStart ? new Date(form.dateStart) : undefined}
+                    dateFormat="dd-MM-yyyy"
+                    placeholderText="dd-mm-yyyy"
+                    minDate={minDeadlineDate}
+                    calendarStartDay={1}
+                    calendarClassName="booking-calendar"
+                    dayClassName={bookingCalendarDayClassName}
+                    renderCustomHeader={(props) => <BookingCalendarHeader {...props} minDate={minDeadlineDate} />}
                   />
                 </div>
               </Col>

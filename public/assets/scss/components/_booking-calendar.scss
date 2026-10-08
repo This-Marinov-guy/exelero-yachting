@@ -1,0 +1,111 @@
+.booking-calendar {
+  min-width: 306px;
+
+  .react-datepicker__month-container {
+    width: 100%;
+  }
+
+  .react-datepicker__header--custom {
+    padding-top: 4px;
+  }
+
+  .react-datepicker__header .react-datepicker__day-names {
+    .react-datepicker__day-name:nth-child(6),
+    .react-datepicker__day-name:last-child {
+      color: rgba(var(--theme-color), 1);
+    }
+  }
+
+  .react-datepicker__month .react-datepicker__week .react-datepicker__day.booking-calendar__weekend:not(.react-datepicker__day--selected):not(.react-datepicker__day--disabled):not(.react-datepicker__day--outside-month):not(.react-datepicker__day--keyboard-selected) {
+    color: rgba(var(--theme-color), 1);
+  }
+
+  .react-datepicker__month .react-datepicker__week .react-datepicker__day.react-datepicker__day--outside-month:not(.react-datepicker__day--selected):not(.react-datepicker__day--keyboard-selected) {
+    background-color: rgba(var(--content-color), 0.18);
+
+    &:hover:not(.react-datepicker__day--disabled) {
+      background-color: rgba(var(--content-color), 0.25);
+    }
+  }
+
+  .react-datepicker__month .react-datepicker__week .react-datepicker__day--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &__header {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    align-items: center;
+    padding: 0 6px 4px;
+  }
+
+  &__selectors {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  &__selector {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 36px;
+    padding: 3px 5px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: rgba(var(--title-color), 1);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      border-color: rgba(var(--border-color), 1);
+    }
+
+    &:focus-within {
+      outline: 2px solid rgba(var(--theme-color), 1);
+      outline-offset: 2px;
+    }
+  }
+
+  &__select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    appearance: none;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  &__arrow {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: rgba(var(--title-color), 1);
+    cursor: pointer;
+
+    &:hover:not(:disabled),
+    &:active:not(:disabled) {
+      background: rgba(var(--theme-color), 0.08);
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba(var(--theme-color), 1);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      color: rgba(var(--content-color), 0.4);
+      cursor: not-allowed;
+    }
+  }
+}
