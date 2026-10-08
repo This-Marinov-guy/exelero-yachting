@@ -48,11 +48,7 @@ const GetInTouch: FC<GetInTouchProps> = ({ type }) => {
       {!iconAtBottom && <div className="contact-icon m-auto">{item.icon}</div>}
       <div className="contact-info">
         <h3>{item.title}</h3>
-        <p>
-          <p>
-            {item.description}
-          </p>
-        </p>
+        <p>{item.description}</p>
       </div>
       {iconAtBottom && <div className="contact-icon">{item.icon}</div>}
     </a>
@@ -76,7 +72,7 @@ const GetInTouch: FC<GetInTouchProps> = ({ type }) => {
     return (
       <Row className='gy-4 justify-content-center'>
         {AboutGetInTouchData.map((item, i) => (
-          <Col xl={3} lg={4} sm={6} key={i}>
+          <Col xl={3} lg={4} sm={6} key={i} className='d-flex'>
             <div className='contact-box'>
               {renderContactBox(item)}
             </div>

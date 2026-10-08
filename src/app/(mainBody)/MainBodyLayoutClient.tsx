@@ -1,5 +1,6 @@
 "use client";
 import CookieBanner from "@/components/commonComponents/CookieBanner";
+import LoadingOverlay from "@/components/commonComponents/LoadingOverlay";
 import { SearchModalData } from "@/data/layout/Header";
 import Footer from "@/layout/footer";
 import FooterDemo2 from "@/layout/footer/FooterDemo2";
@@ -76,6 +77,7 @@ export default function MainBodyLayoutClient({ children, partners }: Readonly<{ 
       {searchModal && <SearchModal type={SearchModalData[firstPart] || SearchModalData.car} carSpaceClass={carSpaceClass} />}
       <CookieBanner />
       <CustomToaster/>
+      <LoadingOverlay />
     </div>
   );
 }

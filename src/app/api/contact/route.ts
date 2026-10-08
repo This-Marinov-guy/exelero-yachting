@@ -20,6 +20,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!messageVal) {
+      return NextResponse.json({ error: "Message is required." }, { status: 400 });
+    }
+
     if (messageVal.length > 3000) {
       return NextResponse.json({ error: "Keep your message within 3,000 characters." }, { status: 400 });
     }

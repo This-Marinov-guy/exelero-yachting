@@ -78,14 +78,15 @@ async function ga4(period: ReportPeriod, page: string | null, creds: Credentials
       dimensionFilter: { andGroup: { expressions } }, limit: String(limit),
       orderBys: [{ ...(dimensionOrder ? { dimension: { dimensionName: order }, desc: false } : { metric: { metricName: order }, desc: true }) }],
     });
-    const timeDimension = period.kind === "month" ? "date" : "dateHour";
+    const timeDimension = period.kind === "day" ? "dateHour" : "date";
     const requests = [
       request([], ["sessions", "totalUsers", "screenPageViews", "engagementRate"], 1, "sessions"),
       request([timeDimension], ["sessions", "totalUsers", "screenPageViews"], 1000, timeDimension, true),
       request(["pagePath"], ["screenPageViews", "totalUsers", "sessions"], 100, "screenPageViews"),
+      request(["country"], ["sessions"], 300, "sessions"),
+      request(["deviceCategory"], ["sessions"], 20, "sessions"),
+      request(["sessionDefaultChannelGroup"], ["sessions"], 100, "sessions"),
       request(["sessionSource", "sessionMedium"], ["sessions"], 10000, "sessions"),
-      request(["sessionDefaultChannelGroup"], ["sessions"], 10000, "sessions"),
-      request(["region", "country"], ["sessions"], 10000, "sessions"),
     ];
     const batches = await Promise.all([requests.slice(0, 5), requests.slice(5)].map(batch => googlePost(`https://analyticsdata.googleapis.com/v1beta/properties/${property}:batchRunReports`, { requests: batch }, creds)));
     const data = parseAnalytics(batches.flatMap(batch => batch.reports || []) as GoogleReport[], period);
@@ -109,7 +110,7 @@ async function searchConsole(period: ReportPeriod, page: string | null, creds: C
   } catch (error) { return providerError(error, "Search Console"); }
 }
 export async function getAnalyticsReport(params: URLSearchParams): Promise<AnalyticsReport> {
-  const period = resolvePeriod(params.get("period"), params.get("date"), process.env.ANALYTICS_TIME_ZONE || DEFAULT_ANALYTICS_TIME_ZONE);
+  const period = resolvePeriod(params.get("period"), params.get("date"), process.env.ANALYTICS_TIME_ZONE || DEFAULT_ANALYTICS_TIME_ZONE, new Date(), params.get("from"), params.get("to"));
   const page = validatePage(params.get("page"));
   const creds = credentials();
   const fingerprint = createHash("sha256").update(JSON.stringify([creds, process.env.GA4_PROPERTY_ID, process.env.SEARCH_CONSOLE_SITE_URL, process.env.CLARITY_API_TOKEN, process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID, analyticsHosts()])).digest("hex");

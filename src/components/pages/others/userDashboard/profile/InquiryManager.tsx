@@ -13,6 +13,7 @@ import CharterInquirySkeleton from "./CharterInquirySkeleton";
 import { InquiryBulkActions, SelectPageCheckbox } from "./InquiryBulkActions";
 import { useInquiryBulkActions } from "./useInquiryBulkActions";
 import bulkStyle from "./InquiryBulkActions.module.scss";
+import { CHARTER_MODELS, LEGACY_CHARTER_TYPES } from "@/lib/charterModels";
 
 type Inquiry = { id: string; created_at: string; name: string; email: string; status: InquiryStatus; internal_note: string | null; [key: string]: string | number | null };
 type Field = { key: string; label: string; type?: "number" | "date" | "email" | "tel" | "textarea" | "select"; required?: boolean; options?: string[] };
@@ -22,7 +23,7 @@ const internal: Field[] = [status, { key: "internal_note", label: "Internal note
 const groups = {
   charter: [
     { label: "Contact", fields: contact },
-    { label: "Request", fields: [{ key: "charter_type", label: "Charter type", type: "select", options: ["cruiser", "power_boat", "racer", "yacht"] }, { key: "date_from", label: "From", type: "date", required: true }, { key: "date_to", label: "To", type: "date", required: true }, { key: "group_size", label: "Guests", type: "number", required: true }, { key: "note", label: "Customer message", type: "textarea" }] as Field[] },
+    { label: "Request", fields: [{ key: "charter_type", label: "Yacht model", type: "select", options: [...CHARTER_MODELS, ...LEGACY_CHARTER_TYPES] }, { key: "date_from", label: "From", type: "date", required: true }, { key: "date_to", label: "To", type: "date", required: true }, { key: "group_size", label: "Guests", type: "number", required: true }, { key: "note", label: "Customer message", type: "textarea" }] as Field[] },
     { label: "Internal", fields: internal },
   ],
   transportation: [

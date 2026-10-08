@@ -33,10 +33,10 @@ Clarity's export covers a rolling one-to-three-day window and permits ten reques
 
 ## Reports
 
-- Defaults to the current calendar month, ending today. Select earlier months, individual days, or Today. Month reports show daily traffic; daily reports show hourly traffic, without future hours for today.
+- Defaults to the current calendar month, ending today. Select earlier months, individual days, Today, or a custom range of up to 366 days. Month and range reports show daily traffic; daily reports show hourly traffic, without future hours for today.
 - Visits = sessions; visitors = total users; page views = screen/page views. Unique visitors for the selected period come from a separate aggregate query; daily visitors are not summed.
 - Popular pages returns the top 100 by views, with local search and progressive display. Open a page to apply an exact page-path filter to all GA4 panels and an escaped page-URL filter to search queries. Query-string variants are combined.
-- Recharts renders traffic and distributions for source/medium, channels and regions. Each pie shows six leading categories plus the remaining returned categories as Other. Percentages use that distribution's returned visits. Google thresholding, sampling or truncated dimensions are indicated.
+- Recharts renders traffic and distributions for countries, device categories, traffic channels and detailed sources/mediums. Each pie shows six leading categories plus the remaining returned categories as Other. Percentages use that distribution's returned visits. Google thresholding, sampling or truncated dimensions are indicated.
 - Search Console shows up to 100 queries sorted by clicks, with impressions, CTR and average position. It uses Pacific calendar dates. Recent data can be delayed; private queries may be withheld; historical retention is controlled by Google. Empty or unavailable data is never replaced by example numbers.
 - Production hostnames are explicitly filtered, and account/auth/API pages excluded from GA4 reports. Configure hostnames if the website changes domains.
 - Current periods cache for five minutes, closed periods for one hour, in a bounded server-process cache. Concurrent requests share a pending request. Errors are not cached; Retry attempts the provider again. Reloading successful cached data preserves its fetch timestamp. Google can revise recent data after collection.

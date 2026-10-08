@@ -43,7 +43,7 @@ const ContactForm = () => {
 
   return (
     <div className='form-box bg-transparent p-0'>
-      <Form className='login-form contact-form' onSubmit={handleSubmit(onSubmitData)}>
+      <Form className='login-form contact-form' onSubmit={handleSubmit(onSubmitData)} noValidate>
         <Row>
           <Col lg={6}>
             <div className='form-input'>
@@ -90,9 +90,21 @@ const ContactForm = () => {
           </Col>
           <Col xs={12}>
             <div className='form-input'>
-              <label htmlFor='contact-message'>Message <span>(optional)</span></label>
-              <textarea id='contact-message' {...register("message", { maxLength: { value: 3000, message: "Keep your message within 3,000 characters" } })} placeholder='Tell us more, if you like' className={`form-control mb-0 ${errors.message ? "is-invalid" : ""}`} defaultValue={""} />
-              {errors.message && <div className='invalid-feedback'>{errors.message.message}</div>}
+              <label htmlFor='contact-message'>Message</label>
+              <textarea
+                id='contact-message'
+                {...register("message", {
+                  required: "Message is required.",
+                  validate: (value) => value.trim().length > 0 || "Message is required.",
+                  maxLength: { value: 3000, message: "Keep your message within 3,000 characters" },
+                })}
+                required
+                aria-invalid={Boolean(errors.message)}
+                aria-describedby={errors.message ? "contact-message-error" : undefined}
+                placeholder='Tell us how we can help'
+                className={`form-control mb-0 ${errors.message ? "is-invalid" : ""}`}
+              />
+              {errors.message && <div id='contact-message-error' className='invalid-feedback' role='alert'>{errors.message.message}</div>}
             </div>
           </Col>
           <Col xl={4} lg={5} xs={8}>

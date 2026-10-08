@@ -24,7 +24,6 @@ const MainMenu = ({ partners }: { partners: { slug: string; name: string }[] }) 
   const toggle = () => {
     setIsComponentVisible(!sidebarOpen);
     dispatch(setSidebarOpen(!isComponentVisible));
-    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -65,7 +64,7 @@ const MainMenu = ({ partners }: { partners: { slug: string; name: string }[] }) 
             return (
             <li className={`${hasSubmenu ? "expand-btn" : ""} ${!hasMegaMenuImage && !hasMegaMenu && hasSubmenu ? "dropdown-menus" : ""}`} key={index}>
               <Link 
-                scroll={false} 
+                scroll={!hasSubmenu}
                 href={hasSubmenu ? Href : (mainMenu.path || Href)} 
                 className={`menu-item ${openSections[mainMenu.title ?? ""] ? "open" : ""}`} 
                 onClick={() => hasSubmenu && mainMenu.title ? toggleSection(mainMenu.title) : toggle}

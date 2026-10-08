@@ -22,7 +22,7 @@ const MobileMenu: FC<{ part?: string }> = ({ part }) => {
       </li>
       <li>
         <Link
-          scroll={false}
+          scroll={!isBoatsPage}
           href={isBoatsPage ? Href : RouteList.Pages.Boats}
           onClick={(e) => {
             if (!isBoatsPage) return;

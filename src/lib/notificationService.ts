@@ -96,7 +96,7 @@ function formatCharterHtml(data: CharterPayload): string {
     <p><strong>Name:</strong> ${escapeHtml(data.name)}</p>
     <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
     ${data.phone ? `<p><strong>Phone:</strong> ${escapeHtml(data.phone)}</p>` : ""}
-    <p><strong>Charter type:</strong> ${escapeHtml(data.charter_type)}</p>
+    <p><strong>Yacht model:</strong> ${escapeHtml(data.charter_type)}</p>
     <p><strong>Date from:</strong> ${escapeHtml(data.date_from)}</p>
     <p><strong>Date to:</strong> ${escapeHtml(data.date_to)}</p>
     <p><strong>Group size:</strong> ${data.group_size}</p>
@@ -185,7 +185,7 @@ export async function sendCharterNotification(data: CharterPayload): Promise<voi
     to: getNotificationRecipients(),
     subject: `[Exelero] New Charter Request from ${data.name}`,
     html: formatCharterHtml(data),
-    text: `New Charter Request\n\nName: ${data.name}\nEmail: ${data.email}\nCharter type: ${data.charter_type}\nDate from: ${data.date_from}\nDate to: ${data.date_to}\nGroup size: ${data.group_size}${data.note ? `\nNote: ${data.note}` : ""}`,
+    text: `New Charter Request\n\nName: ${data.name}\nEmail: ${data.email}\nYacht model: ${data.charter_type}\nDate from: ${data.date_from}\nDate to: ${data.date_to}\nGroup size: ${data.group_size}${data.note ? `\nNote: ${data.note}` : ""}`,
   });
 }
 

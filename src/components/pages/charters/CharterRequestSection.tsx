@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { trackClarityEvent } from "@/lib/clarity";
+import { CHARTER_MODELS } from "@/lib/charterModels";
 
 const FORM_ID = "charter-form";
 
@@ -211,11 +212,10 @@ export default function CharterRequestSection() {
                     onChange={handleChange}
                     required
                   >
-                    <option value="">Select type</option>
-                    <option value="cruiser">Cruiser</option>
-                    <option value="power_boat">Power boat</option>
-                    <option value="racer">Racer</option>
-                    <option value="yacht">Yacht</option>
+                    <option value="">Select a model</option>
+                    {CHARTER_MODELS.map((model) => (
+                      <option key={model} value={model}>{model}</option>
+                    ))}
                   </select>
                 </div>
               </Col>

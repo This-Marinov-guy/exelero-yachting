@@ -12,10 +12,10 @@ export async function GET(request: Request) {
     }
     const params = new URL(request.url).searchParams;
     try {
-      resolvePeriod(params.get("period"), params.get("date"), process.env.ANALYTICS_TIME_ZONE || DEFAULT_ANALYTICS_TIME_ZONE);
+      resolvePeriod(params.get("period"), params.get("date"), process.env.ANALYTICS_TIME_ZONE || DEFAULT_ANALYTICS_TIME_ZONE, new Date(), params.get("from"), params.get("to"));
       validatePage(params.get("page"));
     } catch {
-      return NextResponse.json({ error: "Choose a valid month, day and page path. Future dates are unavailable." }, { status: 400, headers });
+      return NextResponse.json({ error: "Choose a valid month, day or date range (up to 366 days) and page path. Future dates are unavailable." }, { status: 400, headers });
     }
     return NextResponse.json(await getAnalyticsReport(params), { headers });
   } catch {
