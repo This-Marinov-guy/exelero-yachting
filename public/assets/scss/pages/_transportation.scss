@@ -469,16 +469,9 @@
 .transportation-layout {
   --transport-frame-accent: #087da8;
 
-  &__photo {
+  &__media {
     margin: 30px 0;
-    overflow: hidden;
-    border-radius: 18px;
-
-    img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
+    min-width: 0;
   }
 
   &__grid {

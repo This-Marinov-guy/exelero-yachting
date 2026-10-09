@@ -1,9 +1,15 @@
 import CharterPage from "@/components/pages/charters/CharterPage";
-import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/siteUrl";
+import { getPublicServicePageContent } from "@/lib/servicePagePublic";
 
-export const metadata: Metadata = {
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { banner, gallery } = (await getPublicServicePageContent("charters")).media;
+  const firstAsset = gallery[0];
+  const preview = banner ?? (firstAsset ? { src: firstAsset.type === "video" ? firstAsset.poster : firstAsset.src, alt: firstAsset.alt } : null);
+  return {
   title: "Yacht Charters | Luxury Boat Rental & Experiences",
   description:
     "Book luxury yacht charters with Exelero Yachting. We offer cruiser, power boat, racer and luxury yacht charters for tailor-made marine experiences.",
@@ -12,20 +18,22 @@ export const metadata: Metadata = {
     description: "Book luxury yacht charters with Exelero Yachting. Explore our fleet of cruiser, power boat, and racer yachts.",
     url: "/services/charters",
     type: "website",
-    images: [breadcrumbOpenGraphImage("Luxury Yacht Charters")],
+    images: preview ? [{ url: preview.src, alt: preview.alt }] : undefined,
   },
   twitter: {
     card: "summary_large_image",
     title: "Yacht Charters | Luxury Boat Rental & Experiences",
     description: "Book luxury yacht charters with Exelero Yachting. Explore our fleet of cruiser, power boat, and racer yachts.",
-    images: [DEFAULT_BREADCRUMB_IMAGE],
+    images: preview ? [preview.src] : undefined,
   },
   alternates: { canonical: "/services/charters" },
   robots: { index: true, follow: true },
-};
+  };
+}
 
-const Charters = () => {
+const Charters = async () => {
   const siteUrl = getSiteUrl();
+  const content = await getPublicServicePageContent("charters");
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -68,7 +76,7 @@ const Charters = () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
       />
-      <CharterPage />
+      <CharterPage content={content} />
     </>
   );
 };

@@ -10,6 +10,8 @@ export const ACCOUNT_TAB_IDS = [
   "charter-requests",
   "transportation-requests",
   "partners",
+  "charter-content",
+  "transportation-content",
   "tracking",
 ] as const;
 
@@ -21,4 +23,4 @@ export const isAccountTabId = (tab: string | null): tab is AccountTabId =>
   !!tab && ACCOUNT_TAB_IDS.includes(tab as AccountTabId);
 
 export const normalizeAccountTab = (tab: string | null): AccountTabId =>
-  isAccountTabId(tab) ? tab : DEFAULT_ACCOUNT_TAB;
+  tab === "page-content" ? "charter-content" : isAccountTabId(tab) ? tab : DEFAULT_ACCOUNT_TAB;

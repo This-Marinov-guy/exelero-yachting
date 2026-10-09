@@ -1,43 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { SkipperOption } from "@/lib/servicePageContent";
 
 const AUTO_ADVANCE_MS = 7000;
 
-const SKIPPER_TABS = [
-  {
-    id: "full-time",
-    label: "Full-Time Skipper",
-    description:
-      "A professional skipper remains on board throughout your trip, providing safe handling, local knowledge, and an effortless, stress-free vacation.",
-  },
-  {
-    id: "day-one",
-    label: "Day-One Skipper",
-    description:
-      "A skipper joins you for the first day to familiarize you with the yacht’s systems, rig, and handling before handing over full command for your self-guided voyage.",
-  },
-  {
-    id: "ghost",
-    label: "Ghost Skipper",
-    description:
-      "A skipper stays on board in a discreet, supportive role—giving you hands-on control with expert guidance and skill refinement whenever you need it.",
-  },
-  {
-    id: "bareboat",
-    label: "Bareboat",
-    description:
-      "For experienced sailors with valid certifications who wish to take full command of the yacht, charting their own course and sailing at their own pace alongside family and friends.",
-  },
-];
-
-const CharterSkipperTabs = () => {
-  const [activeSkipperTab, setActiveSkipperTab] = useState<string>("full-time");
+const CharterSkipperTabs = ({ tabs }: { tabs: SkipperOption[] }) => {
+  const [activeSkipperTab, setActiveSkipperTab] = useState<string>(tabs[0].id);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const active = SKIPPER_TABS.find((tab) => tab.id === activeSkipperTab) ?? SKIPPER_TABS[0];
+  const active = tabs.find((tab) => tab.id === activeSkipperTab) ?? tabs[0];
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -69,13 +43,13 @@ const CharterSkipperTabs = () => {
 
     const interval = window.setInterval(() => {
       setActiveSkipperTab((current) => {
-        const nextIndex = (SKIPPER_TABS.findIndex((tab) => tab.id === current) + 1) % SKIPPER_TABS.length;
-        return SKIPPER_TABS[nextIndex].id;
+        const nextIndex = (tabs.findIndex((tab) => tab.id === current) + 1) % tabs.length;
+        return tabs[nextIndex].id;
       });
     }, AUTO_ADVANCE_MS);
 
     return () => window.clearInterval(interval);
-  }, [hasInteracted, isVisible, prefersReducedMotion]);
+  }, [hasInteracted, isVisible, prefersReducedMotion, tabs]);
 
   return (
     <div ref={containerRef} className="charter-skipper-tabs">
@@ -87,7 +61,7 @@ const CharterSkipperTabs = () => {
         onFocusCapture={() => setHasInteracted(true)}
         onPointerEnter={() => setHasInteracted(true)}
         onPointerDownCapture={() => setHasInteracted(true)}>
-        {SKIPPER_TABS.map((tab) => (
+        {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"

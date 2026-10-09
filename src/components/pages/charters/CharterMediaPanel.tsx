@@ -3,43 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import type { CharterGalleryItem } from "@/lib/servicePageContent";
 
 const PHOTO_DURATION_MS = 5000;
 const TRANSITION_MS = 360;
 type MediaStatus = "ready" | "error";
 
-const MEDIA = [
-  {
-    type: "image" as const,
-    src: "/assets/images/charter/xc47-aegean-bay.webp",
-    alt: "Xc 47 yacht anchored in a Greek bay",
-    label: "Xc 47 in the Aegean",
-    fit: "cover" as const,
-  },
-  {
-    type: "video" as const,
-    src: "/assets/images/charter/x46-greece.mp4",
-    poster: "/assets/images/charter/x46-greece-poster.webp",
-    alt: "X4.6 sailing in Greece",
-    label: "X4.6 in Greece",
-  },
-  {
-    type: "image" as const,
-    src: "/assets/images/charter/fleet-at-marina.webp",
-    alt: "X-Yachts charter fleet moored at the marina",
-    label: "The charter fleet",
-    fit: "cover" as const,
-  },
-  {
-    type: "image" as const,
-    src: "/assets/images/charter/xp44-saloon.webp",
-    alt: "Warm wood interior of the Xp 44 saloon",
-    label: "Xp 44 saloon",
-    fit: "cover" as const,
-  },
-];
-
-export default function CharterMediaPanel() {
+export default function CharterMediaPanel({ media, contextLabel = "Charter" }: { media: CharterGalleryItem[]; contextLabel?: string }) {
   const [displayed, setDisplayed] = useState(0);
   const [pending, setPending] = useState<number | null>(null);
   const [showPending, setShowPending] = useState(false);
@@ -53,9 +23,9 @@ export default function CharterMediaPanel() {
   const thumbnailStripRef = useRef<HTMLDivElement>(null);
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const current = MEDIA[displayed];
+  const current = media[displayed];
   const selectedIndex = pending ?? displayed;
-  const pendingMedia = pending === null ? null : MEDIA[pending];
+  const pendingMedia = pending === null ? null : media[pending];
   const pendingReady = pendingMedia ? mediaStatus[pendingMedia.src] !== undefined : false;
   const currentStatus = mediaStatus[current.src];
 
@@ -64,7 +34,7 @@ export default function CharterMediaPanel() {
   }, []);
 
   const goTo = useCallback((index: number) => {
-    const next = (index + MEDIA.length) % MEDIA.length;
+    const next = (index + media.length) % media.length;
     setRestartKey((key) => key + 1);
     setPlayBlocked(false);
     setShowPending(false);
@@ -74,7 +44,7 @@ export default function CharterMediaPanel() {
       return;
     }
 
-    const nextMedia = MEDIA[next];
+    const nextMedia = media[next];
     if (nextMedia.type === "video") {
       setMediaStatus((previous) => {
         const updated = { ...previous };
@@ -87,7 +57,7 @@ export default function CharterMediaPanel() {
       }));
     }
     setPending(next);
-  }, [displayed]);
+  }, [displayed, media]);
 
   const retryMedia = (src: string) => {
     setShowPending(false);
@@ -137,11 +107,11 @@ export default function CharterMediaPanel() {
   }, [pending, showPending]);
 
   useEffect(() => {
-    if (paused || pending !== null || current.type !== "image" || currentStatus !== "ready") return;
+    if (media.length < 2 || paused || pending !== null || current.type !== "image" || currentStatus !== "ready") return;
 
     const timer = window.setTimeout(() => goTo(displayed + 1), PHOTO_DURATION_MS);
     return () => window.clearTimeout(timer);
-  }, [displayed, pending, paused, current.type, currentStatus, restartKey, goTo]);
+  }, [displayed, pending, paused, current.type, currentStatus, restartKey, goTo, media.length]);
 
   useEffect(() => {
     if (current.type !== "video" || currentStatus !== "ready") return;
@@ -223,13 +193,13 @@ export default function CharterMediaPanel() {
     setPaused((value) => !value);
   };
 
-  const renderSlide = (item: (typeof MEDIA)[number], index: number, incoming: boolean) => {
+  const renderSlide = (item: CharterGalleryItem, index: number, incoming: boolean) => {
     const failed = mediaStatus[item.src] === "error";
     const attempt = retryCounts[item.src] ?? 0;
 
     return (
       <div
-        key={item.src}
+        key={item.id}
         className={`charter-media-panel__slide${incoming ? ` charter-media-panel__slide--incoming${showPending ? " charter-media-panel__slide--visible" : ""}` : ""}`}
         aria-hidden={incoming}
       >
@@ -285,7 +255,7 @@ export default function CharterMediaPanel() {
   };
 
   return (
-    <section className="charter-media-panel-wrap" aria-label="Charter photos and video">
+    <section className="charter-media-panel-wrap" aria-label={`${contextLabel} photos and video`}>
       <div className="charter-media-panel" aria-busy={pending !== null}>
         {renderSlide(current, displayed, false)}
         {pending !== null && pendingMedia && renderSlide(pendingMedia, pending, true)}
@@ -295,38 +265,38 @@ export default function CharterMediaPanel() {
             type="button"
             className="charter-media-panel__play"
             onClick={playVideo}
-            aria-label="Play charter video"
+            aria-label={`Play ${contextLabel.toLowerCase()} video`}
           >
             <Play size={24} fill="currentColor" aria-hidden="true" />
           </button>
         )}
-        <button
+        {media.length > 1 && <button
           type="button"
           className="charter-media-panel__arrow charter-media-panel__arrow--previous"
           onClick={() => goTo(selectedIndex - 1)}
-          aria-label="Previous charter media"
+          aria-label={`Previous ${contextLabel.toLowerCase()} media`}
         >
           <ChevronLeft size={26} aria-hidden="true" />
-        </button>
-        <button
+        </button>}
+        {media.length > 1 && <button
           type="button"
           className="charter-media-panel__arrow charter-media-panel__arrow--next"
           onClick={() => goTo(selectedIndex + 1)}
-          aria-label="Next charter media"
+          aria-label={`Next ${contextLabel.toLowerCase()} media`}
         >
           <ChevronRight size={26} aria-hidden="true" />
-        </button>
+        </button>}
       </div>
 
       <span className="visually-hidden" aria-live="polite">
-        {current.label}, {displayed + 1} of {MEDIA.length}
+        {current.label}, {displayed + 1} of {media.length}
       </span>
 
-      <div className="charter-media-panel__controls">
-        <div ref={thumbnailStripRef} className="charter-media-panel__thumbnails" role="group" aria-label="Choose charter media">
-          {MEDIA.map((item, index) => (
+      {media.length > 1 && <div className="charter-media-panel__controls">
+        <div ref={thumbnailStripRef} className="charter-media-panel__thumbnails" role="group" aria-label={`Choose ${contextLabel.toLowerCase()} media`}>
+          {media.map((item, index) => (
             <button
-              key={item.src}
+              key={item.id}
               ref={(node) => { thumbnailRefs.current[index] = node; }}
               type="button"
               className={`charter-media-panel__thumbnail${index === selectedIndex ? " charter-media-panel__thumbnail--active" : ""}`}
@@ -358,7 +328,7 @@ export default function CharterMediaPanel() {
         >
           {paused ? <Play size={17} fill="currentColor" aria-hidden="true" /> : <Pause size={17} fill="currentColor" aria-hidden="true" />}
         </button>
-      </div>
+      </div>}
     </section>
   );
 }

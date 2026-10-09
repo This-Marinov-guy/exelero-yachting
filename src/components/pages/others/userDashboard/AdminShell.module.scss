@@ -15,7 +15,7 @@
 .navigation { position: sticky; top: 24px; }
 .navGroup { margin-bottom: 24px; p { padding: 0 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--admin-muted); margin-bottom: 8px; }
   a { padding: 11px 12px; display: flex; align-items: center; gap: 10px; color: #40545d; text-decoration: none; border-radius: 6px; margin: 3px 0; font-weight: 600; line-height: 22px; &:hover { background: var(--admin-soft); } }
-  a[aria-current="page"] { background: #e9f3f6; color: #0f617d; box-shadow: inset 3px 0 #146a88; }
+  a[aria-current="page"] { background: #e9f3f6; color: #0f617d; }
   svg { flex-shrink: 0; width: 18px; height: 18px; }
 }
 .signout, .menuButton { border: 1px solid var(--admin-border); border-radius: 6px; background: #fff; color: var(--admin-text); min-height: 44px; display: flex; align-items: center; gap: 10px; padding: 8px 12px; }

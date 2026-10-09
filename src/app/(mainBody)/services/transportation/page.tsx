@@ -1,10 +1,14 @@
 import TransportationPage from "@/components/pages/transportation/TransportationPage";
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/siteUrl";
+import { getPublicServicePageContent } from "@/lib/servicePagePublic";
 
-const transportImage = "/assets/images/transportation/transport.jpg";
+export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const firstAsset = (await getPublicServicePageContent("transportation")).media.gallery[0];
+  const preview = firstAsset && { url: firstAsset.type === "video" ? firstAsset.poster : firstAsset.src, alt: firstAsset.alt };
+  return {
   title: "Yacht Transportation",
   description:
     "Ask Exelero Yachting about yacht and boat transportation by land and sea, including planning and delivery options.",
@@ -13,20 +17,22 @@ export const metadata: Metadata = {
     description: "Ask Exelero Yachting about yacht transportation by land and sea, including planning and delivery options.",
     url: "/services/transportation",
     type: "website",
-    images: [{ url: transportImage, alt: "Yacht Transportation" }],
+    images: preview ? [preview] : undefined,
   },
   twitter: {
     card: "summary_large_image",
     title: "Yacht Transportation",
     description: "Ask Exelero Yachting about yacht transportation by land and sea, including planning and delivery options.",
-    images: [transportImage],
+    images: preview ? [preview.url] : undefined,
   },
   alternates: { canonical: "/services/transportation" },
   robots: { index: true, follow: true },
-};
+  };
+}
 
-const Transportation = () => {
+const Transportation = async () => {
   const siteUrl = getSiteUrl();
+  const content = await getPublicServicePageContent("transportation");
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -69,7 +75,7 @@ const Transportation = () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
       />
-      <TransportationPage />
+      <TransportationPage content={content} />
     </>
   );
 };

@@ -7,16 +7,17 @@ type TopFilterProps = {
   title?: string;
   description?: string;
   image?: string | null;
+  imageAlt?: string;
 };
 
-const TopFilter = ({ title, description, image = "/assets/images/hero/main2.png" }: TopFilterProps = {}) => {
+const TopFilter = ({ title, description, image = "/assets/images/hero/main2.png", imageAlt = "Exelero Yachting" }: TopFilterProps = {}) => {
   return (
     <div className={`breadcrumbs-section top-filter-section${image ? "" : " top-filter-section--plain"}`}>
       {image && (
         <div className="top-filter-background">
           <Image
             src={image}
-            alt="Exelero Yachting"
+            alt={imageAlt}
             fill
             className="top-filter-bg-image"
             priority

@@ -13,10 +13,13 @@ const TransportationRequests = dynamic(() => import("../profile/TransportationRe
 const ContactInquiries = dynamic(() => import("../profile/ContactInquiries"), { loading: () => <CharterInquirySkeleton kind="boat" /> });
 const AccountSettings = dynamic(() => import("../profile/AccountSettings"), { loading: () => <AccountSkeleton kind="settings" /> });
 const PartnerManager = dynamic(() => import("../partners/PartnerManager"), { loading: PartnerManagerSkeleton });
+const ServiceContentManager = dynamic(() => import("../serviceContent/ServiceContentManager"), { loading: () => <AccountSkeleton /> });
 const TrackingDashboard = dynamic(() => import("../tracking/TrackingDashboard"), { loading: () => <AccountSkeleton kind="tracking" /> });
 export default function DashboardTabs({ activeTab, onDirtyChange }: { activeTab: AccountTabId; onDirtyChange: (dirty: boolean) => void }) {
   if (activeTab === "tracking") return <TrackingDashboard />;
   if (activeTab === "partners") return <PartnerManager onDirtyChange={onDirtyChange} />;
+  if (activeTab === "charter-content") return <ServiceContentManager key="charters" page="charters" />;
+  if (activeTab === "transportation-content") return <ServiceContentManager key="transportation" page="transportation" />;
   return <div className={styles.legacy}>
     {activeTab === "dealer-info" && <DealerInfo />}
     {activeTab === "account-settings" && <AccountSettings />}
