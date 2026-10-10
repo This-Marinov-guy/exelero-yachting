@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Activity, Anchor, Building2, ChevronDown, FilePlus2, FileText, Handshake, LogOut, Mail, Settings, Ship, Truck } from "lucide-react";
+import { Activity, Anchor, Building2, ChevronDown, FilePlus2, FileText, Handshake, LogOut, Mail, Settings, Ship, Truck, Plus } from "lucide-react";
 import ModalLogout from "@/components/commonComponents/modal/ModalLogout";
 import { useAppDispatch } from "@/redux/hooks";
 import { setLogoutModal } from "@/redux/reducers/LayoutSlice";
@@ -8,10 +8,41 @@ import type { AccountTabId } from "../accountTabs";
 import styles from "../AdminShell.module.scss";
 
 const groups = [
-  { title: "Overview", items: [{ id: "tracking", label: "Tracking", icon: Activity }] },
-  { title: "Website", items: [{ id: "charter-content", label: "Charter content", icon: FileText }, { id: "transportation-content", label: "Transportation content", icon: Truck }, { id: "partners", label: "Partners", icon: Handshake }, { id: "boats-listing", label: "Boat listings", icon: Ship }, { id: "upload-boat", label: "Add a boat", icon: FilePlus2 }] },
-  { title: "Inquiries", items: [{ id: "boat-inquiries", label: "Boat brokerage", icon: Ship }, { id: "partner-inquiries", label: "Partner inquiries", icon: Handshake }, { id: "charter-requests", label: "Charter", icon: Mail }, { id: "transportation-requests", label: "Transportation", icon: Truck }] },
-  { title: "Settings", items: [{ id: "dealer-info", label: "Dealers", icon: Building2 }, { id: "account-settings", label: "Account settings", icon: Settings }] },
+  {
+    title: "Overview",
+    items: [{ id: "tracking", label: "Tracking", icon: Activity }],
+  },
+  {
+    title: "Website",
+    items: [
+      { id: "charter-content", label: "Charter content", icon: FileText },
+      {
+        id: "transportation-content",
+        label: "Transportation content",
+        icon: Truck,
+      },
+      { id: "partners", label: "Partners", icon: Handshake },
+      { id: "boats-listing", label: "Boat listings", icon: Ship },
+      { id: "upload-boat", label: "Add a boat", icon: FilePlus2 },
+      { id: "add-partner", label: "Add a partner", icon: Plus },
+    ],
+  },
+  {
+    title: "Inquiries",
+    items: [
+      { id: "boat-inquiries", label: "Boat brokerage", icon: Ship },
+      { id: "partner-inquiries", label: "Partner inquiries", icon: Handshake },
+      { id: "charter-requests", label: "Charter", icon: Mail },
+      { id: "transportation-requests", label: "Transportation", icon: Truck },
+    ],
+  },
+  {
+    title: "Settings",
+    items: [
+      { id: "dealer-info", label: "Dealers", icon: Building2 },
+      { id: "account-settings", label: "Account settings", icon: Settings },
+    ],
+  },
 ] as const;
 export default function UserSidebar({ activeTab, onTabChange, canLeave }: { activeTab: AccountTabId; onTabChange: (tab: AccountTabId) => void; canLeave: () => boolean }) {
   const dispatch = useAppDispatch();

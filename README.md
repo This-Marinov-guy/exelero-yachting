@@ -44,3 +44,5 @@ The homepage, partner navigation, New Yachts, listings, accounts, and forms requ
 See [Partners and New Yachts administration](docs/partners-admin.md) for admin access, migration, form configuration, sitemap automation, and local verification.
 
 See [Tracking administration](docs/tracking-admin.md) to connect GA4 traffic and Search Console reports at `/account?tab=tracking`.
+
+See [Form tests](docs/form-tests.md) for browser checks with mocked writes and rollback-only database checks.

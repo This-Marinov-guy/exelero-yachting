@@ -45,9 +45,23 @@ export function reportRows(report: GoogleReport) {
     })),
   }));
 }
+export function originName(source: string, medium: string) {
+  const name = source.trim().toLowerCase();
+  if (name === "(direct)" || (name === "(none)" && medium === "(none)")) return "Direct / unattributed";
+  if (!name || ["(not set)", "(data not available)", "unknown"].includes(name)) return "Unknown origin";
+  const host = name.replace(/^https?:\/\//, "").replace(/^www\./, "").split("/")[0];
+  if (host === "google" || host === "google.com" || /^google\.[a-z.]+$/.test(host)) return "Google";
+  if (host === "whatsapp" || host === "whatsapp.com" || host.endsWith(".whatsapp.com")) return "WhatsApp";
+  if (["chatgpt", "chatgpt.com", "chat.openai.com"].includes(host)) return "ChatGPT";
+  if (host === "bing" || host === "bing.com") return "Bing";
+  if (host === "instagram" || host === "instagram.com" || host.endsWith(".instagram.com")) return "Instagram";
+  if (host === "facebook" || host === "facebook.com" || host.endsWith(".facebook.com") || host === "fb") return "Facebook";
+  if (host === "linkedin" || host === "linkedin.com" || host.endsWith(".linkedin.com")) return "LinkedIn";
+  return host || source;
+}
 export function parseAnalytics(reports: GoogleReport[], period: ReportPeriod, now = new Date()): AnalyticsData {
   if (reports.length !== 7) throw new Error("Incomplete analytics response.");
-  const [summary, series, pages, countries, devices, channels, sources] = reports;
+  const [summary, series, pages, countries, devices, entryPages, sources] = reports;
   const total = reportRows(summary)[0]?.metrics || {};
   const timeZone = summary.metadata?.timeZone || period.timeZone;
   const rows = new Map(reportRows(series).map(row => [row.dimensions[period.kind === "day" ? "dateHour" : "date"], row.metrics]));
@@ -71,12 +85,19 @@ export function parseAnalytics(reports: GoogleReport[], period: ReportPeriod, no
     }
   }
   const breakdown = (report: GoogleReport, names: string[]): Breakdown[] => reportRows(report).map(row => ({ name: names.map(name => row.dimensions[name] === "(not set)" ? "Unknown" : row.dimensions[name]).join(" / "), value: row.metrics.sessions || 0 }));
+  const origins = new Map<string, number>();
+  for (const row of reportRows(sources)) {
+    const name = originName(row.dimensions.sessionSource, row.dimensions.sessionMedium);
+    origins.set(name, (origins.get(name) || 0) + (row.metrics.sessions || 0));
+  }
   return {
     totals: { visits: total.sessions || 0, visitors: total.totalUsers || 0, views: total.screenPageViews || 0, engagementRate: total.engagementRate || 0 },
     traffic, pages: reportRows(pages).map(row => ({ path: row.dimensions.pagePath, visits: row.metrics.sessions || 0, views: row.metrics.screenPageViews || 0, visitors: row.metrics.totalUsers || 0 })),
     pageCount: pages.rowCount || 0,
-    countries: breakdown(countries, ["country"]), devices: breakdown(devices, ["deviceCategory"]).map(item => ({ ...item, name: item.name === "Unknown" ? item.name : item.name.charAt(0).toUpperCase() + item.name.slice(1) })), channels: breakdown(channels, ["sessionDefaultChannelGroup"]), sources: breakdown(sources, ["sessionSource", "sessionMedium"]),
-    timeZone, limited: reports.some(report => !!(report.metadata?.subjectToThresholding || report.metadata?.dataLossFromOtherRow || report.metadata?.samplingMetadatas?.length || report.metadata?.dataTruncationReasons?.length || report.metadata?.emptyReason)) || [countries, devices, channels, sources].some(report => (report.rowCount || 0) > (report.rows?.length || 0)),
+    countries: breakdown(countries, ["country"]), devices: breakdown(devices, ["deviceCategory"]).map(item => ({ ...item, name: item.name === "Unknown" ? item.name : item.name.charAt(0).toUpperCase() + item.name.slice(1) })),
+    origins: Array.from(origins, ([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value),
+    entryPages: breakdown(entryPages, ["landingPage"]).map(item => ({ ...item, name: item.name === "Unknown" ? "Unknown entry page" : item.name })),
+    timeZone, limited: reports.some(report => !!(report.metadata?.subjectToThresholding || report.metadata?.dataLossFromOtherRow || report.metadata?.samplingMetadatas?.length || report.metadata?.dataTruncationReasons?.length || report.metadata?.emptyReason)) || [countries, devices, entryPages, sources].some(report => (report.rowCount || 0) > (report.rows?.length || 0)),
   };
 }
 export function pieSegments(rows: Breakdown[], count = 6): Breakdown[] {

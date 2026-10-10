@@ -7,7 +7,7 @@ export type PageTraffic = { path: string; views: number; visitors: number; visit
 export type AnalyticsData = {
   totals: { visits: number; visitors: number; views: number; engagementRate: number };
   traffic: TrafficPoint[]; pages: PageTraffic[]; pageCount: number;
-  countries: Breakdown[]; devices: Breakdown[]; channels: Breakdown[]; sources: Breakdown[];
+  countries: Breakdown[]; devices: Breakdown[]; origins: Breakdown[]; entryPages: Breakdown[];
   timeZone: string; limited: boolean;
 };
 export type SearchData = { queries: { query: string; clicks: number; impressions: number; ctr: number; position: number }[]; incompleteFrom: string | null };

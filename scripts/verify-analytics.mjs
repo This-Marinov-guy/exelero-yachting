@@ -11,7 +11,7 @@ function loadTs(file, overrides = {}) {
   return mod.exports;
 }
 const helpers = loadTs('../src/lib/analytics/report.ts');
-const { resolvePeriod, validatePage, parseAnalytics, pieSegments, searchPageExpression } = helpers;
+const { resolvePeriod, validatePage, parseAnalytics, pieSegments, searchPageExpression, originName } = helpers;
 const now = new Date('2026-10-05T11:00:00Z');
 assert.equal(resolvePeriod('month', '2024-02', 'Europe/Amsterdam', now).end, '2024-02-29');
 assert.equal(resolvePeriod('month', '2026-10', 'Europe/Amsterdam', now).end, '2026-10-05');
@@ -32,14 +32,18 @@ const series=rows(['date'],['sessions','totalUsers','screenPageViews'],[[['20261
 const empty=rows([],[],[]);
 const countries=rows(['country'],['sessions'],[[['Bulgaria'],[8]],[['Netherlands'],[4]]]);
 const devices=rows(['deviceCategory'],['sessions'],[[['desktop'],[9]],[['mobile'],[3]]]);
-const channels=rows(['sessionDefaultChannelGroup'],['sessions'],[[['Direct'],[10]],[['Referral'],[2]]]);
+const entryPages=rows(['landingPage'],['sessions'],[[['/'],[9]],[['/about'],[3]]]);
 const sources=rows(['sessionSource','sessionMedium'],['sessions'],[[['(direct)','(none)'],[10]],[['example.com','referral'],[2]]]);
-const parsed=parseAnalytics([summary,series,empty,countries,devices,channels,sources],resolvePeriod('month','2026-10','Europe/Amsterdam',now),now);
+const parsed=parseAnalytics([summary,series,empty,countries,devices,entryPages,sources],resolvePeriod('month','2026-10','Europe/Amsterdam',now),now);
 assert.equal(parsed.totals.visitors,7,'Period unique visitors must not be summed from daily users.');
 assert.deepEqual(parsed.countries,[{name:'Bulgaria',value:8},{name:'Netherlands',value:4}]);
 assert.deepEqual(parsed.devices,[{name:'Desktop',value:9},{name:'Mobile',value:3}]);
-assert.deepEqual(parsed.channels,[{name:'Direct',value:10},{name:'Referral',value:2}]);
-assert.equal(parsed.sources[1].name,'example.com / referral');
+assert.deepEqual(parsed.entryPages,[{name:'/',value:9},{name:'/about',value:3}]);
+assert.deepEqual(parsed.origins,[{name:'Direct / unattributed',value:10},{name:'example.com',value:2}]);
+assert.equal(originName('google.com','organic'),'Google');
+assert.equal(originName('web.whatsapp.com','referral'),'WhatsApp');
+assert.equal(originName('chatgpt.com','referral'),'ChatGPT');
+assert.equal(originName('(data not available)','(data not available)'),'Unknown origin');
 assert.equal(parsed.traffic.reduce((n,row)=>n+row.visitors,0),10);
 assert.equal(parsed.traffic.length,5);
 assert.equal(parsed.traffic[4].visits,0);
@@ -89,7 +93,7 @@ try {
   const results=await Promise.all(Array.from({length:3},()=>getAnalyticsReport(params)));
   assert.equal(calls.length,4,'Concurrent requests must share token and provider work.');
   const requestedDimensions=calls.filter(call=>call.url.includes('batchRunReports')).flatMap(call=>JSON.parse(call.options.body).requests.map(request=>request.dimensions.map(item=>item.name).join(',')));
-  for(const dimension of ['country','deviceCategory','sessionDefaultChannelGroup','sessionSource,sessionMedium']) assert(requestedDimensions.includes(dimension));
+  for(const dimension of ['country','deviceCategory','landingPage','sessionSource,sessionMedium']) assert(requestedDimensions.includes(dimension));
   assert.deepEqual(results[1],results[0]);assert.equal(results[0].analytics.status,'ready');assert.equal(results[0].search.data.queries[0].clicks,12);assert.deepEqual(results[0].clarity,clarity);
   await getAnalyticsReport(params);assert.equal(calls.length,4,'Successful reports are cached.');
   expectedStart='2026-09-15';expectedEnd='2026-09-17';
@@ -97,7 +101,7 @@ try {
   expectedStart='2026-09-01';expectedEnd='2026-09-30';
   assert(!JSON.stringify(results).includes('fixture-secret-token'));
   failSearch=true;params.set('page','/partners/udeck');
-  const partial=await getAnalyticsReport(params);assert.equal(partial.analytics.status,'ready');assert.equal(partial.search.status,'error');assert(!JSON.stringify(partial).includes('PRIVATE-UPSTREAM-DETAIL'));
+  const partial=await getAnalyticsReport(params);assert.equal(partial.analytics.status,'ready');assert.equal(partial.search.status,'not-connected');assert(!JSON.stringify(partial).includes('PRIVATE-UPSTREAM-DETAIL'));
   const gaRequest=calls.filter(call=>call.url.includes('batchRunReports')).at(-2);
   assert(JSON.parse(gaRequest.options.body).requests[0].dimensionFilter.andGroup.expressions.some(item=>item.filter?.fieldName==='pagePath'&&item.filter.stringFilter.value==='/partners/udeck'));
   const before=calls.length;await getAnalyticsReport(params);assert(calls.length>before,'Retry must not reuse failed reports.');
@@ -105,4 +109,4 @@ try {
   const disconnected=await getAnalyticsReport(params);assert.equal(disconnected.analytics.status,'not-connected');assert.equal(disconnected.search.status,'not-connected');
   assert(!JSON.stringify(disconnected).includes('private_key'));
 } finally {globalThis.fetch=originalFetch;process.env=savedEnv;}
-console.log('PASS: calendar and date-range boundaries, page validation, country/device/channel breakdowns, unique-user totals, hourly bounds, pie totals, signed OAuth, read-only scopes, date/page/host filters, independent providers, token privacy and cache coalescing.');
+console.log('PASS: calendar and date-range boundaries, page validation, origin and entry-page breakdowns, unique-user totals, hourly bounds, pie totals, signed OAuth, read-only scopes, date/page/host filters, independent providers, token privacy and cache coalescing.');

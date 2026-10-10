@@ -34,7 +34,7 @@ const editable = (partner: Partner): PartnerInput => ({
 });
 
 type MediaKey = "logo_url" | "breadcrumb_image_url" | "hero_image_url";
-export default function PartnerManager({ onDirtyChange }: { onDirtyChange: (dirty: boolean) => void }) {
+export default function PartnerManager({ onDirtyChange, mode = "manage", onCreate }: { onDirtyChange: (dirty: boolean) => void; mode?: "manage" | "create"; onCreate?: () => void }) {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<PartnerInput>({ ...blank });
@@ -63,10 +63,16 @@ export default function PartnerManager({ onDirtyChange }: { onDirtyChange: (dirt
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Could not load partners.");
       setPartners(result.partners);
-      if (result.partners[0]) { setSelectedId(result.partners[0].id); setDraft(editable(result.partners[0])); }
+      if (mode === "create") {
+        setSelectedId(null);
+        setDraft({ ...blank, custom_fields: [], sort_order: nextSortOrder(result.partners) });
+      } else if (result.partners[0]) {
+        setSelectedId(result.partners[0].id);
+        setDraft(editable(result.partners[0]));
+      }
     } catch (cause) { setLoadError(true); toast.error(cause instanceof Error ? cause.message : "Could not load partners."); }
     finally { setLoading(false); }
-  }, []);
+  }, [mode]);
   useEffect(() => { void load(); }, [load]);
 
   const change = <K extends keyof PartnerInput>(key: K, value: PartnerInput[K]) => {
@@ -130,24 +136,24 @@ export default function PartnerManager({ onDirtyChange }: { onDirtyChange: (dirt
     finally { setSaving(false); }
   }
 
-  if (loading) return <PartnerManagerSkeleton />;
-  if (loadError) return <div className={`partner-admin ${styles.manager}`}><h1>Partners</h1><p>The partner list is unavailable.</p><button type="button" className="partner-admin__secondary" onClick={() => void load()}>Try again</button></div>;
+  if (loading) return <PartnerManagerSkeleton mode={mode} />;
+  if (loadError) return <div className={`partner-admin ${styles.manager}`}><h1>{mode === "create" ? "Add a partner" : "Partners"}</h1><p>The partner list is unavailable.</p><button type="button" className="partner-admin__secondary" onClick={() => void load()}>Try again</button></div>;
 
   const busy = saving || !!uploading;
   const visible = partners.filter(partner => partner.name.toLowerCase().includes(query.trim().toLowerCase()) && (statusFilter === "all" || partner.status === statusFilter));
   const selected = partners.find(partner => partner.id === selectedId);
   return <div className={`partner-admin ${styles.manager}`}>
     <div className="partner-admin__heading">
-      <div><h1>Partners</h1><p>Manage the brands shown on the website.</p></div>
-      <button type="button" className="partner-admin__secondary" disabled={busy} onClick={() => choose(null)}><Plus size={18} aria-hidden="true" />Add partner</button>
+      <div><h1>{mode === "create" ? "Add a partner" : "Partners"}</h1><p>{mode === "create" ? "Create a partner page and choose where the brand appears." : "Manage the brands shown on the website."}</p></div>
+      {mode === "manage" ? <button type="button" className="partner-admin__secondary" disabled={busy} onClick={onCreate}><Plus size={18} aria-hidden="true" />Add partner</button> : selectedId ? <button type="button" className="partner-admin__secondary" disabled={busy} onClick={() => choose(null)}><Plus size={18} aria-hidden="true" />Add another partner</button> : null}
     </div>
-    <div className={styles.filters}>
+    {mode === "manage" && <><div className={styles.filters}>
       <div className={styles.field}><label htmlFor="partner-search">Search partners</label><input id="partner-search" type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search by name" autoComplete="off" /></div>
       <div className={styles.field}><label htmlFor="partner-status">Status</label><select id="partner-status" value={statusFilter} onChange={event => setStatusFilter(event.target.value)}><option value="all">All partners ({partners.length})</option><option value="published">Published</option><option value="draft">Drafts</option></select></div>
     </div>
     <section className={styles.library} aria-labelledby="partner-library-label">
       <div className={styles.libraryHeading}><h2 id="partner-library-label">Choose a partner</h2><span>{visible.length} of {partners.length}</span></div>
-      {partners.length === 0 ? <div className={styles.empty}>No partners yet. Add your first partner using the form below.</div> : visible.length === 0 ? <div className={styles.empty}><p>No partners match your filters.</p><button type="button" className="partner-admin__secondary" onClick={() => { setQuery(""); setStatusFilter("all"); }}>Clear filters</button></div> :
+      {partners.length === 0 ? <div className={styles.empty}><p>No partners yet.</p><button type="button" className="partner-admin__secondary" onClick={onCreate}><Plus size={16} aria-hidden="true" />Add your first partner</button></div> : visible.length === 0 ? <div className={styles.empty}><p>No partners match your filters.</p><button type="button" className="partner-admin__secondary" onClick={() => { setQuery(""); setStatusFilter("all"); }}>Clear filters</button></div> :
         <div className={styles.partnerRail}>
           {visible.map(partner => <button type="button" key={partner.id} disabled={busy} className={`${styles.partnerCard} ${selectedId === partner.id ? styles.selectedCard : ""}`} aria-pressed={selectedId === partner.id} onClick={() => { if (selectedId !== partner.id) choose(partner); }}>
             <span className={styles.partnerLogo}>{partner.logo_url ? <Image src={partner.logo_url} alt="" width={112} height={48} unoptimized /> : <span className={styles.logoFallback}>{partner.name.slice(0, 2).toUpperCase()}</span>}</span>
@@ -155,8 +161,8 @@ export default function PartnerManager({ onDirtyChange }: { onDirtyChange: (dirt
             <span className={styles.partnerCardStatus}>{partner.status === "published" ? "Published" : "Draft"}{selectedId === partner.id && <Check size={14} aria-hidden="true" />}</span>
           </button>)}
         </div>}
-    </section>
-    <form noValidate className="partner-admin__editor" onSubmit={event => { event.preventDefault(); void save("published"); }}>
+    </section></>}
+    {(mode === "create" || selectedId) && <form noValidate className="partner-admin__editor" onSubmit={event => { event.preventDefault(); void save("published"); }}>
       <div className={styles.editorHeading}><h2>{selectedId ? draft.name : "New partner"}</h2><span className={styles.badge}>{draft.status === "published" ? "Published" : "Draft"}</span>{selected && selected.status === "published" && <Link href={`/partners/${selected.slug}`} target="_blank" rel="noopener noreferrer">View page ↗</Link>}</div>
       <details className={styles.section} open><summary>Basics</summary><fieldset disabled={busy}><legend className="visually-hidden">Basics</legend>
         <div className={styles.fieldGrid}>
@@ -205,6 +211,6 @@ export default function PartnerManager({ onDirtyChange }: { onDirtyChange: (dirt
         </div>}
       </fieldset></details>
       <div className="partner-admin__actions"><span className={styles.saveState} role="status">{uploading ? "Uploading image…" : saving ? "Saving changes…" : dirty ? "Unsaved changes" : selectedId ? "All changes saved" : "Not saved yet"}</span><button type="button" className="partner-admin__secondary" onClick={() => void save("draft")} disabled={busy}>{saving ? "Saving…" : draft.status === "published" ? "Unpublish to draft" : "Save draft"}</button><button type="submit" className="partner-admin__primary" disabled={busy}>{saving ? "Saving…" : draft.status === "published" ? "Save changes" : "Publish partner"}</button></div>
-    </form>
+    </form>}
   </div>;
 }

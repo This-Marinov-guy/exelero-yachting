@@ -11,6 +11,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import UserSidebar from "./userSidebar";
 import { useAppDispatch } from "@/redux/hooks";
 import Link from "next/link";
+import Image from "next/image";
 
 import DashboardTabs from "./dashboardTabs";
 import { setActiveTab } from "@/redux/reducers/LayoutSlice";
@@ -100,10 +101,10 @@ const UserDashboardContainer = () => {
 
   return <div className={styles.shell}>
     <a className={styles.skip} href="#admin-content">Skip to content</a>
-    <header className={styles.topbar}><div className={styles.brand}><strong>EXELERO</strong><span>Site admin</span></div><Link href="/" target="_blank" rel="noopener noreferrer">View website <ExternalLink size={16} /></Link></header>
+    <header className={styles.topbar}><div className={styles.brand}><Image src="/assets/images/logo/1.png" alt="Exelero Yachting" width={60} height={60} className={styles.brandLogo} priority /></div><Link href="/" target="_blank" rel="noopener noreferrer">View website <ExternalLink size={16} /></Link></header>
     <div className={styles.layout}>
       <UserSidebar activeTab={activeTab} onTabChange={handleTabChange} canLeave={canLeave} />
-      <main tabIndex={-1} id="admin-content" className={styles.content}><UnsavedChangesContext.Provider value={setDirty}><DashboardTabs activeTab={activeTab} onDirtyChange={setDirty} /></UnsavedChangesContext.Provider></main>
+      <main tabIndex={-1} id="admin-content" className={styles.content}><UnsavedChangesContext.Provider value={setDirty}><DashboardTabs activeTab={activeTab} onDirtyChange={setDirty} onTabChange={handleTabChange} /></UnsavedChangesContext.Provider></main>
     </div>
   </div>;
 };

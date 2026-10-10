@@ -10,6 +10,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint src",
+    "test:forms:validation": "node --test tests/inquiryForms.test.mjs",
+    "test:forms:browser": "playwright test",
+    "test:forms": "node --env-file=.env.form-test.local --test tests/formsPersistence.test.mjs",
     "env:local": "node scripts/sync-local-env.mjs"
   },
   "dependencies": {
@@ -83,6 +86,7 @@
     "@eslint/compat": "^2.1.1",
     "@eslint/js": "^9",
     "@next/eslint-plugin-next": "14.2.35",
+    "@playwright/test": "1.64.0",
     "@types/aos": "^3.0.7",
     "@types/isotope-layout": "^3.0.14",
     "@types/lodash": "^4.17.14",

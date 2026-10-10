@@ -47,7 +47,8 @@ async function googlePost(url: string, body: object, creds: Credentials) {
 }
 function providerError<T>(error: unknown, name: string): ProviderReport<T> {
   const status = error instanceof GoogleError ? error.status : 0;
-  const message = status === 403 ? `${name} access is unavailable. Check the service account's property access and enable its Google API.` : status === 401 || status === 400 ? `${name} could not connect. Check the reporting credentials and property settings.` : status === 429 ? `${name} has reached its reporting limit. Try again shortly.` : `${name} could not load this report. Try again.`;
+  if (status === 403) return { status: "not-connected", message: name === "Search Console" ? "Search Console denied this property's report. Add the reporting service account as a Restricted user in Search Console, and enable the Search Console API in its Google Cloud project." : "Google Analytics denied this property's report. Check the service account's Viewer access and enable the Google Analytics Data API." };
+  const message = status === 401 || status === 400 ? `${name} could not connect. Check the reporting credentials and property settings.` : status === 429 ? `${name} has reached its reporting limit. Try again shortly.` : `${name} could not load this report. Try again.`;
   return { status: "error", message };
 }
 function analyticsHosts() {
@@ -85,7 +86,7 @@ async function ga4(period: ReportPeriod, page: string | null, creds: Credentials
       request(["pagePath"], ["screenPageViews", "totalUsers", "sessions"], 100, "screenPageViews"),
       request(["country"], ["sessions"], 300, "sessions"),
       request(["deviceCategory"], ["sessions"], 20, "sessions"),
-      request(["sessionDefaultChannelGroup"], ["sessions"], 100, "sessions"),
+      request(["landingPage"], ["sessions"], 20, "sessions"),
       request(["sessionSource", "sessionMedium"], ["sessions"], 10000, "sessions"),
     ];
     const batches = await Promise.all([requests.slice(0, 5), requests.slice(5)].map(batch => googlePost(`https://analyticsdata.googleapis.com/v1beta/properties/${property}:batchRunReports`, { requests: batch }, creds)));
@@ -126,7 +127,7 @@ export async function getAnalyticsReport(params: URLSearchParams): Promise<Analy
       search: results[1].status === "fulfilled" ? results[1].value : providerError(results[1].reason, "Search Console"),
       clarity: results[2].status === "fulfilled" ? results[2].value : clarityFallback(),
     };
-    if (report.analytics.status !== "error" && report.search.status !== "error") {
+    if (report.analytics.status === "ready" && report.search.status === "ready") {
       if (reports.size >= 100) reports.delete(reports.keys().next().value!);
       reports.set(key, { report, expires: Date.now() + (period.end < period.today ? 3600000 : 300000) });
     }

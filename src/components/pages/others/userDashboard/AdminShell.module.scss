@@ -9,10 +9,11 @@
 .topbar { position: static; width: auto; z-index: auto; transition: none; height: 76px; background: #fff; border-bottom: 1px solid var(--admin-border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
   a { display: inline-flex; gap: 8px; align-items: center; color: var(--admin-accent); min-height: 44px; text-decoration: none; font-weight: 600; }
 }
-.brand { display: flex; align-items: center; gap: 16px; strong { font-size: 20px; letter-spacing: 3px; } span { border-left: 1px solid var(--admin-border); padding-left: 16px; color: var(--admin-muted); } }
+.brand { display: flex; align-items: center; flex: none; }
+.brandLogo { display: block; width: 60px; height: 60px; object-fit: contain; }
 .layout { display: grid; grid-template-columns: 224px minmax(0, 1fr); width: 100%; }
 .sidebar { padding: 24px 16px; border-right: 1px solid var(--admin-border); background: #fff; min-height: calc(100vh - 76px); }
-.navigation { position: sticky; top: 24px; }
+.navigation { position: sticky; top: 24px; max-height: calc(100vh - 48px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .navGroup { margin-bottom: 24px; p { padding: 0 12px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--admin-muted); margin-bottom: 8px; }
   a { padding: 11px 12px; display: flex; align-items: center; gap: 10px; color: #40545d; text-decoration: none; border-radius: 6px; margin: 3px 0; font-weight: 600; line-height: 22px; &:hover { background: var(--admin-soft); } }
   a[aria-current="page"] { background: #e9f3f6; color: #0f617d; }
@@ -62,9 +63,9 @@
 }
 @media (max-width: 1050px) { .content { padding: 24px; } .layout { grid-template-columns: 200px minmax(0,1fr); } }
 @media (max-width: 800px) {
-  .topbar { position: static; width: auto; z-index: auto; transition: none; height: 64px; padding: 0 16px; } .brand { gap: 8px; strong { font-size: 16px; } span { display: none; } }
+  .topbar { position: static; width: auto; z-index: auto; transition: none; height: 64px; padding: 0 16px; } .brandLogo { width: 48px; height: 48px; }
   .layout { display: block; } .sidebar { min-height: 0; padding: 12px 16px; border-right: 0; border-bottom: 1px solid var(--admin-border); }
-  .menuButton { display: flex; width: 100%; justify-content: space-between; } .navigation { position: static; padding-top: 20px; }
+  .menuButton { display: flex; width: 100%; justify-content: space-between; } .navigation { position: static; max-height: none; overflow: visible; padding-top: 20px; }
   .navigation[data-open="false"] { display: none; } .navGroup { margin-bottom: 16px; }
   .content { padding: 24px 16px; } .legacy :global(.admin-profile) :global(.main-sidebar-content) { flex-wrap: wrap; }
 }

@@ -10,6 +10,7 @@ export const ACCOUNT_TAB_IDS = [
   "charter-requests",
   "transportation-requests",
   "partners",
+  "add-partner",
   "charter-content",
   "transportation-content",
   "tracking",
