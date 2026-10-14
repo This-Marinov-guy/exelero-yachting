@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Layout from "./(mainBody)/layout";
 import CarDemo1Container from "@/components/themes/carDemo1/Index";
 import { getSiteUrl } from "@/lib/siteUrl";
+import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import {
   LINKEDIN_URL,
   MAIN_CONTACT_EMAIL,
@@ -24,21 +25,14 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "Exelero Yachting",
     type: "website",
-    images: [
-      {
-        url: "/assets/images/hero/x-yachts.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Exelero Yachting — Luxury Yachts",
-      },
-    ],
+    images: [breadcrumbOpenGraphImage("Exelero Yachting — Luxury Yachts")],
   },
   twitter: {
     card: "summary_large_image",
     title: "Exelero Yachting | Luxury Yachts, Brokerage & Charters",
     description:
       "Yachts for sale, brokerage, charters, and marine services across Southeast Europe.",
-    images: ["/assets/images/hero/x-yachts.jpg"],
+    images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   robots: {
     index: true,

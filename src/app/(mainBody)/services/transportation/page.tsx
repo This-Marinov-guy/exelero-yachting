@@ -2,11 +2,13 @@ import TransportationPage from "@/components/pages/transportation/Transportation
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/siteUrl";
 import { getPublicServicePageContent } from "@/lib/servicePagePublic";
+import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const firstAsset = (await getPublicServicePageContent("transportation")).media.gallery[0];
+  const gallery = (await getPublicServicePageContent("transportation")).media.gallery;
+  const firstAsset = gallery.find((asset) => asset.type === "image") ?? gallery[0];
   const preview = firstAsset && { url: firstAsset.type === "video" ? firstAsset.poster : firstAsset.src, alt: firstAsset.alt };
   return {
   title: "Yacht Transportation",
@@ -17,13 +19,13 @@ export async function generateMetadata(): Promise<Metadata> {
     description: "Ask Exelero Yachting about yacht transportation by land and sea, including planning and delivery options.",
     url: "/services/transportation",
     type: "website",
-    images: preview ? [preview] : undefined,
+    images: preview ? [preview] : [breadcrumbOpenGraphImage("Yacht Transportation")],
   },
   twitter: {
     card: "summary_large_image",
     title: "Yacht Transportation",
     description: "Ask Exelero Yachting about yacht transportation by land and sea, including planning and delivery options.",
-    images: preview ? [preview.url] : undefined,
+    images: [preview?.url ?? DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/services/transportation" },
   robots: { index: true, follow: true },

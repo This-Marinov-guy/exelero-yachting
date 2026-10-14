@@ -1,6 +1,7 @@
 import NewYachtsPage from "@/components/pages/newYachts/NewYachtsPage";
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/siteUrl";
+import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 
 export const dynamic = "force-dynamic";
 
@@ -14,14 +15,14 @@ export const metadata: Metadata = {
       "Select a yacht brand to discover more and contact our team.",
     url: "/new-yachts",
     type: "website",
-    images: ["/assets/images/hero/x-yachts.jpg"],
+    images: [breadcrumbOpenGraphImage("New Yachts | Exelero Yachting")],
   },
   twitter: {
     card: "summary_large_image",
     title: "New Yachts | Exelero Yachting",
     description:
       "Select a yacht brand to discover more and contact our team.",
-    images: ["/assets/images/hero/x-yachts.jpg"],
+    images: [DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/new-yachts" },
   robots: { index: true, follow: true },

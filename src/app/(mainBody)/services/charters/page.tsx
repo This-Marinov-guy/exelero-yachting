@@ -2,13 +2,14 @@ import CharterPage from "@/components/pages/charters/CharterPage";
 import type { Metadata } from "next";
 import { getSiteUrl } from "@/lib/siteUrl";
 import { getPublicServicePageContent } from "@/lib/servicePagePublic";
+import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { banner, gallery } = (await getPublicServicePageContent("charters")).media;
-  const firstAsset = gallery[0];
-  const preview = banner ?? (firstAsset ? { src: firstAsset.type === "video" ? firstAsset.poster : firstAsset.src, alt: firstAsset.alt } : null);
+  const { gallery } = (await getPublicServicePageContent("charters")).media;
+  const firstAsset = gallery.find((asset) => asset.type === "image") ?? gallery[0];
+  const preview = firstAsset ? { src: firstAsset.type === "video" ? firstAsset.poster : firstAsset.src, alt: firstAsset.alt } : null;
   return {
   title: "Yacht Charters | Luxury Boat Rental & Experiences",
   description:
@@ -18,13 +19,13 @@ export async function generateMetadata(): Promise<Metadata> {
     description: "Book luxury yacht charters with Exelero Yachting. Explore our fleet of cruiser, power boat, and racer yachts.",
     url: "/services/charters",
     type: "website",
-    images: preview ? [{ url: preview.src, alt: preview.alt }] : undefined,
+    images: preview ? [{ url: preview.src, alt: preview.alt }] : [breadcrumbOpenGraphImage("Yacht Charters")],
   },
   twitter: {
     card: "summary_large_image",
     title: "Yacht Charters | Luxury Boat Rental & Experiences",
     description: "Book luxury yacht charters with Exelero Yachting. Explore our fleet of cruiser, power boat, and racer yachts.",
-    images: preview ? [preview.src] : undefined,
+    images: [preview?.src ?? DEFAULT_BREADCRUMB_IMAGE],
   },
   alternates: { canonical: "/services/charters" },
   robots: { index: true, follow: true },

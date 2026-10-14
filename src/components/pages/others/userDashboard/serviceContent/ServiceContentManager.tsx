@@ -8,6 +8,7 @@ import { CharterMediaEditor, TransportationMediaEditor, type PendingServiceFiles
 import { uploadServiceMedia } from "@/lib/serviceMediaUpload";
 import {
   type CharterInfoTab,
+  type CharterGalleryItem,
   type CharterPageContent,
   type LabeledText,
   type ServicePageContentMap,
@@ -75,6 +76,10 @@ function mediaKindForSlot<K extends ServicePageKey>(content: ServicePageContentM
   return item.type;
 }
 
+function withGalleryOrder<K extends ServicePageKey>(content: ServicePageContentMap[K], gallery: CharterGalleryItem[]): ServicePageContentMap[K] {
+  return { ...content, media: { ...content.media, gallery } } as ServicePageContentMap[K];
+}
+
 export default function ServiceContentManager({ page }: { page: ServicePageKey }) {
   const [pages, setPages] = useState<SavedPages | null>(null);
   const [drafts, setDrafts] = useState<Drafts | null>(null);
@@ -84,13 +89,17 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
   const [saveError, setSaveError] = useState("");
   const [saveConflict, setSaveConflict] = useState(false);
   const [savedMessage, setSavedMessage] = useState("");
+  const [orderNotice, setOrderNotice] = useState("");
   const [saving, setSaving] = useState(false);
+  const [reordering, setReordering] = useState(false);
+  const [orderSaveFailed, setOrderSaveFailed] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<PendingServiceFiles>({});
   const previewUrls = useRef<Record<string, string>>({});
   const [uploadProgress, setUploadProgress] = useState<{ label: string; percent: number } | null>(null);
 
   const pageDirty = !!pages && !!drafts && (JSON.stringify(pages[page].content) !== JSON.stringify(drafts[page]) || Object.keys(pendingFiles).length > 0);
-  useUnsavedChanges(pageDirty || saving);
+  const busy = saving || reordering;
+  useUnsavedChanges(pageDirty || busy);
 
   const clearPendingFile = useCallback((slot: string) => {
     if (previewUrls.current[slot]) URL.revokeObjectURL(previewUrls.current[slot]);
@@ -114,7 +123,8 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
     const preview = URL.createObjectURL(file);
     previewUrls.current[slot] = preview;
     setPendingFiles((current) => ({ ...current, [slot]: { file, preview } }));
-    setSaveError(""); setSaveConflict(false); setSavedMessage("");
+    if (!orderSaveFailed) { setSaveError(""); setSaveConflict(false); }
+    setSavedMessage(""); setOrderNotice("");
   };
 
   const load = useCallback(async () => {
@@ -131,6 +141,8 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
       setSaveError("");
       setSaveConflict(false);
       setSavedMessage("");
+      setOrderNotice("");
+      setOrderSaveFailed(false);
     } catch (error) {
       setLoadError(error instanceof Error ? error.message : "Could not load page content. Try again.");
     } finally {
@@ -141,11 +153,13 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
 
   const editCharters = (change: (current: CharterPageContent) => CharterPageContent) => {
     setDrafts((current) => current ? { ...current, charters: change(current.charters) } : current);
-    setSaveError(""); setSaveConflict(false); setSavedMessage("");
+    if (!orderSaveFailed) { setSaveError(""); setSaveConflict(false); }
+    setSavedMessage(""); setOrderNotice("");
   };
   const editTransportation = (change: (current: TransportationPageContent) => TransportationPageContent) => {
     setDrafts((current) => current ? { ...current, transportation: change(current.transportation) } : current);
-    setSaveError(""); setSaveConflict(false); setSavedMessage("");
+    if (!orderSaveFailed) { setSaveError(""); setSaveConflict(false); }
+    setSavedMessage(""); setOrderNotice("");
   };
   const editTab = (id: string, change: (tab: CharterInfoTab) => CharterInfoTab) =>
     editCharters((current) => ({ ...current, infoTabs: current.infoTabs.map((tab) => tab.id === id ? change(tab) : tab) }));
@@ -156,11 +170,50 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
     if (!pages || !drafts || !window.confirm(`Discard unsaved ${page === "charters" ? "charter" : "transportation"} content changes?`)) return;
     setDrafts({ ...drafts, [page]: structuredClone(pages[page].content) });
     clearPendingFiles();
-    setSaveError(""); setSaveConflict(false); setSavedMessage("");
+    setSaveError(""); setSaveConflict(false); setSavedMessage(""); setOrderNotice(""); setOrderSaveFailed(false);
+  };
+
+  const saveOrder = async (gallery: CharterGalleryItem[], updateDraft = true) => {
+    if (!pages || !drafts || busy) return;
+    if (updateDraft) setDrafts((current) => current ? { ...current, [page]: withGalleryOrder(current[page], gallery) } : current);
+    setSaveError(""); setSaveConflict(false); setSavedMessage(""); setOrderNotice(""); setOrderSaveFailed(false);
+
+    const savedGallery = pages[page].content.media.gallery;
+    const savedById = new Map(savedGallery.map((item) => [item.id, item]));
+    if (gallery.length !== savedGallery.length || gallery.some((item) => !savedById.has(item.id))) {
+      setOrderNotice("Order changed in your draft. Save and publish to apply it with added or removed media.");
+      return;
+    }
+    if (gallery.every((item, index) => item.id === savedGallery[index].id)) {
+      setOrderNotice("Media order matches the saved order.");
+      return;
+    }
+
+    setReordering(true);
+    try {
+      const hasOtherDraftChanges = JSON.stringify(pages[page].content) !== JSON.stringify(withGalleryOrder(drafts[page], savedGallery)) || Object.keys(pendingFiles).length > 0;
+      const content = withGalleryOrder(pages[page].content, gallery.map((item) => savedById.get(item.id)!));
+      const response = await fetch("/api/admin/service-content", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ page, content, updated_at: pages[page].updated_at }),
+      });
+      const result = await response.json();
+      if (response.status === 409) setSaveConflict(true);
+      if (!response.ok) throw new Error(result.error || "Could not save media order. Check your connection and try again.");
+      setPages((current) => current ? { ...current, [page]: result.page } : current);
+      if (!hasOtherDraftChanges) setDrafts((current) => current ? { ...current, [page]: structuredClone(result.page.content) } : current);
+      setSavedMessage("Media order saved. The public page is updated.");
+    } catch (error) {
+      setOrderSaveFailed(true);
+      setSaveError(error instanceof Error ? `Media order was not saved. ${error.message}` : "Media order was not saved. Check your connection and try again.");
+    } finally {
+      setReordering(false);
+    }
   };
 
   const save = async () => {
-    if (!pages || !drafts || saving || !pageDirty) return;
+    if (!pages || !drafts || busy || !pageDirty) return;
     let validationDraft = structuredClone(drafts[page]);
     for (const slot of Object.keys(pendingFiles)) {
       const kind = mediaKindForSlot(validationDraft, slot);
@@ -169,7 +222,7 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
     }
     const parsed = validateServicePageContent(page, validationDraft);
     if (!parsed.content) { setSaveError(parsed.error); return; }
-    setSaving(true); setSaveError(""); setSaveConflict(false); setSavedMessage("");
+    setSaving(true); setSaveError(""); setSaveConflict(false); setSavedMessage(""); setOrderNotice(""); setOrderSaveFailed(false);
     try {
       let content = structuredClone(drafts[page]);
       for (const [slot, pending] of Object.entries(pendingFiles)) {
@@ -214,6 +267,16 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
   const charterTab = page === "charters" ? drafts.charters.infoTabs.find((tab) => tab.id === section) : undefined;
   const transportSection = page === "transportation" ? drafts.transportation.sections.find((item) => item.id === section) : undefined;
   const updatedAt = pages[page].updated_at;
+  const reloadLatest = () => { if (window.confirm("Reload the latest content? Unsaved changes on this page will be discarded.")) void load(); };
+  const orderFeedback = reordering
+    ? { message: "Saving media order…", tone: "info" as const }
+    : orderSaveFailed
+      ? { message: saveConflict ? "Order not saved because this page changed elsewhere." : "Order not saved. Try again.", tone: "error" as const, action: saveConflict ? { label: "Reload latest content", onClick: reloadLatest } : { label: "Retry order save", onClick: () => void saveOrder(drafts[page].media.gallery, false) } }
+      : orderNotice
+        ? { message: orderNotice, tone: "info" as const }
+        : savedMessage.startsWith("Media order saved.")
+          ? { message: pageDirty ? "Media order saved. Other changes are unsaved." : "Media order saved.", tone: "success" as const }
+          : null;
 
   return <div className={styles.manager}>
     <div className={styles.heading}>
@@ -228,10 +291,10 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
       </nav>
 
       <form className={styles.editor} onSubmit={(event) => { event.preventDefault(); void save(); }}>
-        <fieldset disabled={saving}>
+        <fieldset disabled={busy}>
           <legend className="visually-hidden">{page === "charters" ? "Charter" : "Transportation"} content</legend>
-          {section === "media" && page === "charters" && <CharterMediaEditor content={drafts.charters} onChange={(content) => editCharters(() => content)} pending={pendingFiles} onChoose={chooseMediaFile} onClear={clearPendingFile} />}
-          {section === "media" && page === "transportation" && <TransportationMediaEditor content={drafts.transportation} onChange={(content) => editTransportation(() => content)} pending={pendingFiles} onChoose={chooseMediaFile} onClear={clearPendingFile} />}
+          {section === "media" && page === "charters" && <CharterMediaEditor content={drafts.charters} onChange={(content) => editCharters(() => content)} onReorder={(gallery) => void saveOrder(gallery)} pending={pendingFiles} onChoose={chooseMediaFile} onClear={clearPendingFile} disabled={busy} orderFeedback={orderFeedback} />}
+          {section === "media" && page === "transportation" && <TransportationMediaEditor content={drafts.transportation} onChange={(content) => editTransportation(() => content)} onReorder={(gallery) => void saveOrder(gallery)} pending={pendingFiles} onChoose={chooseMediaFile} onClear={clearPendingFile} disabled={busy} orderFeedback={orderFeedback} />}
           {charterTab && <>
             <div className={styles.editorHeading}><h2>{charterTab.label}</h2><p>Edit the tab label, paragraphs and list shown in the charter panel.</p></div>
             <div className={styles.field}><label htmlFor={`tab-label-${charterTab.id}`}>Tab heading</label><input id={`tab-label-${charterTab.id}`} value={charterTab.label} maxLength={120} onChange={(event) => editTab(charterTab.id, (tab) => ({ ...tab, label: event.target.value }))} /></div>
@@ -268,11 +331,11 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
         </fieldset>
         <div className={styles.actions}>
           <div className={styles.status} role="status" aria-live="polite">
-            {saveError ? <span className={styles.saveError}>{saveError}{saveConflict && <button type="button" className={styles.reload} onClick={() => { if (window.confirm("Reload the latest content? Unsaved changes on this page will be discarded.")) void load(); }}>Reload latest content</button>}</span> : savedMessage ? <span className={styles.saved}>{savedMessage}</span> : pageDirty ? "Unsaved changes" : updatedAt ? `Last saved ${new Date(updatedAt).toLocaleString()}` : "Using the current website copy"}
+            {reordering ? "Saving media order…" : saveError ? <span className={styles.saveError}>{saveError}{saveConflict ? <button type="button" className={styles.reload} onClick={reloadLatest}>Reload latest content</button> : orderSaveFailed && <button type="button" className={styles.reload} onClick={() => void saveOrder(drafts[page].media.gallery, false)}>Retry order save</button>}</span> : orderNotice ? orderNotice : savedMessage ? <><span className={styles.saved}>{savedMessage}</span>{pageDirty && " Other changes are unsaved."}</> : pageDirty ? "Unsaved changes" : updatedAt ? `Last saved ${new Date(updatedAt).toLocaleString()}` : "Using the current website copy"}
           </div>
           {uploadProgress && <div className={styles.uploadProgress} role="status">Uploading {uploadProgress.label}: {uploadProgress.percent}%<progress value={uploadProgress.percent} max={100} /></div>}
-          {pageDirty && <button type="button" className={styles.discard} disabled={saving} onClick={discard}>Discard changes</button>}
-          <button type="submit" className={styles.save} disabled={!pageDirty || saving} aria-busy={saving}>{saving ? uploadProgress ? "Uploading…" : "Saving…" : "Save and publish"}</button>
+          {pageDirty && <button type="button" className={styles.discard} disabled={busy} onClick={discard}>Discard changes</button>}
+          <button type="submit" className={styles.save} disabled={!pageDirty || busy} aria-busy={busy}>{reordering ? "Saving order…" : saving ? uploadProgress ? "Uploading…" : "Saving…" : "Save and publish"}</button>
         </div>
       </form>
     </div>

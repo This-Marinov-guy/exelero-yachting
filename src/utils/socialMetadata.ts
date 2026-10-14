@@ -1,9 +1,9 @@
-export const DEFAULT_BREADCRUMB_IMAGE = "/assets/images/hero/main2.png";
+export const DEFAULT_BREADCRUMB_IMAGE = "/assets/images/other/about/general.jpg";
 
 export const breadcrumbOpenGraphImage = (alt = "Exelero Yachting") => ({
   url: DEFAULT_BREADCRUMB_IMAGE,
-  width: 1200,
-  height: 630,
+  width: 2048,
+  height: 1371,
   alt,
 });
 
