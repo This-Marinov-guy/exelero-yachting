@@ -16,6 +16,7 @@ const admin = createClient(local.API_URL, local.SERVICE_ROLE_KEY, { auth: { pers
 const anon = createClient(local.API_URL, local.ANON_KEY, { auth: { persistSession: false } });
 const createdUsers = [];
 let partnerId;
+let originalPartnerOrder;
 let uploadedPath;
 let signedAdmin;
 const tag = `partner-test-${Date.now()}`;
@@ -70,6 +71,23 @@ try {
   assert.equal(standard.status, 200, "Unused custom fields must not block publishing a standard form.");
   const published = await request(`/api/admin/partners/${partnerId}`, { method: "PUT", body: JSON.stringify(payload) }, signedAdmin.cookie);
   assert.equal(published.status, 200, published.body);
+  const currentPartners = await request("/api/admin/partners", {}, signedAdmin.cookie);
+  assert.equal(currentPartners.status, 200, currentPartners.body);
+  originalPartnerOrder = currentPartners.json().partners.map(({ id }) => id);
+  const reorderedIds = [partnerId, ...originalPartnerOrder.filter((id) => id !== partnerId)];
+  assert.equal((await request("/api/admin/partners/reorder", { method: "PUT", body: JSON.stringify({ ids: reorderedIds }) })).status, 403);
+  assert.equal((await request("/api/admin/partners/reorder", { method: "PUT", body: JSON.stringify({ ids: [partnerId, partnerId] }) }, signedAdmin.cookie)).status, 400);
+  if (originalPartnerOrder.length > 1) assert.equal((await request("/api/admin/partners/reorder", { method: "PUT", body: JSON.stringify({ ids: [partnerId] }) }, signedAdmin.cookie)).status, 409);
+  const reordered = await request("/api/admin/partners/reorder", { method: "PUT", body: JSON.stringify({ ids: reorderedIds }) }, signedAdmin.cookie);
+  assert.equal(reordered.status, 200, reordered.body);
+  const afterReorder = await request("/api/admin/partners", {}, signedAdmin.cookie);
+  assert.deepEqual(afterReorder.json().partners.map(({ id }) => id), reorderedIds);
+  const publicOrder = await anon.from("partners").select("id").eq("status", "published").order("sort_order").order("name");
+  assert.ifError(publicOrder.error);
+  assert.equal(publicOrder.data[0].id, partnerId, "Public listings must read the saved order.");
+  const restored = await request("/api/admin/partners/reorder", { method: "PUT", body: JSON.stringify({ ids: originalPartnerOrder }) }, signedAdmin.cookie);
+  assert.equal(restored.status, 200, restored.body);
+  originalPartnerOrder = null;
   assert.equal((await anon.from("partners").select("id").eq("id", partnerId)).data.length, 1);
   assert((await request("/")).body.includes(`/partners/${tag}`));
   assert((await request("/new-yachts")).body.includes(`/partners/${tag}`));
@@ -90,9 +108,10 @@ try {
   assert(!(await request("/sitemap.xml")).body.includes(tag));
   assert.equal((await request(`/api/partners/${tag}/inquiries`, { method: "POST", body: "{}" })).status, 404);
   assert.equal((await request("/api/refresh-sitemap", { method: "POST" })).status, 401);
-  console.log("PASS: invitation-only account access, RLS, image upload, draft/publish, slug uniqueness, server-rendered listings, custom form validation, sitemap inclusion and unpublish.");
+  console.log("PASS: invitation-only account access, RLS, image upload, draft/publish, slug uniqueness, partner order, server-rendered listings, custom form validation, sitemap inclusion and unpublish.");
 } finally {
   if (partnerId) {
+    if (originalPartnerOrder && signedAdmin) await request("/api/admin/partners/reorder", { method: "PUT", body: JSON.stringify({ ids: originalPartnerOrder }) }, signedAdmin.cookie);
     if (signedAdmin) await request(`/api/admin/partners/${partnerId}`, { method: "PUT", body: JSON.stringify({ ...payload, status: "draft" }) }, signedAdmin.cookie);
     await admin.from("partner_inquiries").delete().eq("partner_id", partnerId);
     await admin.from("partners").delete().eq("id", partnerId);

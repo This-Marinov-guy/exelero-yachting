@@ -234,7 +234,7 @@ test("boat upload saves listing details and media records and leaves no entries"
         title, manufacturer, build_year, location, description, hull_length,
         beam, draft, displacement, engine_power
       ) values (
-        ${id}, 'cruiser', 'pre-owned', 'Fin Keel', 'A - Ocean', 'GRP',
+        ${id}, 'cruiser', 'pre-owned', 'Other', 'A - Ocean', 'GRP',
         'Form test yacht', 'Test yard', '2026', 'Athens',
         'Temporary boat upload', 12, 4, 2, 8000, 45
       )
@@ -246,25 +246,33 @@ test("boat upload saves listing details and media records and leaves no entries"
       insert into public.boat_images (boat_id, link, media_type, is_cover, display_order)
       values (${id}, '/assets/images/charter/xc47-aegean-bay.webp', 'image', true, 0)
     `;
+    await tx`
+      insert into public.boat_drafts (id, user_id, keel_type)
+      values (${id}, ${userId}, 'Other')
+    `;
     const [row] = await tx`
-      select b.slug, d.title, count(i.id)::int as images
+      select b.slug, d.title, d.keel_type, count(i.id)::int as images
       from public.boats b
       join public.boat_data d on d.boat_id = b.id
       join public.boat_images i on i.boat_id = b.id
       where b.id = ${id}
-      group by b.slug, d.title
+      group by b.slug, d.title, d.keel_type
     `;
     assert.equal(row.slug, slugFor(id));
     assert.equal(row.title, "Form test yacht");
+    assert.equal(row.keel_type, "Other");
     assert.equal(row.images, 1);
+    const [draft] = await tx`select keel_type from public.boat_drafts where id = ${id}`;
+    assert.equal(draft.keel_type, "Other");
   }, async (db, id) => {
     await assertMissing(db, "public.boats", id);
     const rows = await db`
       select (select count(*)::int from public.boat_data where boat_id = ${id}) as details,
              (select count(*)::int from public.boat_images where boat_id = ${id}) as images,
-             (select count(*)::int from public.broker_data where email = ${emailFor(id)}) as brokers
+             (select count(*)::int from public.broker_data where email = ${emailFor(id)}) as brokers,
+             (select count(*)::int from public.boat_drafts where id = ${id}) as drafts
     `;
-    assert.deepEqual([rows[0].details, rows[0].images, rows[0].brokers], [0, 0, 0]);
+    assert.deepEqual([rows[0].details, rows[0].images, rows[0].brokers, rows[0].drafts], [0, 0, 0, 0]);
   });
 });
 

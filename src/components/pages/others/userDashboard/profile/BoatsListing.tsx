@@ -33,6 +33,7 @@ const BoatsListing = () => {
     const [boats, setBoats] = useState<Boat[]>([]);
     const [updatingActive, setUpdatingActive] = useState<Set<string>>(new Set());
     const [updatingBought, setUpdatingBought] = useState<Set<string>>(new Set());
+    const [availabilityErrors, setAvailabilityErrors] = useState<Record<string, string>>({});
     const [deleting, setDeleting] = useState<Set<string>>(new Set());
     const [editBoatId, setEditBoatId] = useState<string | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -123,7 +124,7 @@ const BoatsListing = () => {
     const handleToggleActive = async (boatId: string, currentActive: boolean) => {
         const boat = boats.find((item) => item.id === boatId);
         if (boat?.bought) {
-            toast.error("Bought boats cannot be active on brokerage");
+            toast.error("Mark this yacht available before publishing it.");
             return;
         }
 
@@ -139,18 +140,18 @@ const BoatsListing = () => {
 
             if (error) {
                 console.error("Error updating boat active status:", error);
-                toast.error("Failed to update boat status");
+                toast.error("Could not update yacht visibility. Try again.");
             } else {
                 setBoats((prev) =>
                     prev.map((boat) =>
                         boat.id === boatId ? { ...boat, active: !currentActive } : boat
                     )
                 );
-                toast.success(`Boat ${!currentActive ? "activated" : "hidden"}`);
+                toast.success(`Yacht ${!currentActive ? "published" : "hidden"}.`);
             }
         } catch (error) {
             console.error("Error toggling boat active status:", error);
-            toast.error("Failed to update boat status");
+            toast.error("Could not update yacht visibility. Try again.");
         } finally {
             setUpdatingActive((prev) => {
                 const next = new Set(prev);
@@ -161,40 +162,24 @@ const BoatsListing = () => {
     };
 
     const handleToggleBought = async (boatId: string, currentBought: boolean) => {
+        const nextBought = !currentBought;
+        setAvailabilityErrors((prev) => { const next = { ...prev }; delete next[boatId]; return next; });
         setUpdatingBought((prev) => new Set(prev).add(boatId));
 
         const supabase = getSupabaseBrowserClient();
-        const nextBought = !currentBought;
-        const payload = nextBought
-            ? { bought: true, active: false }
-            : { bought: false };
 
         try {
             const { error } = await supabase
                 .from("boats")
-                .update(payload)
+                .update({ bought: nextBought, active: false })
                 .eq("id", boatId).select("id").single();
 
-            if (error) {
-                console.error("Error updating boat bought status:", error);
-                toast.error("Failed to update bought status");
-            } else {
-                setBoats((prev) =>
-                    prev.map((boat) =>
-                        boat.id === boatId
-                            ? {
-                                ...boat,
-                                bought: nextBought,
-                                active: nextBought ? false : boat.active,
-                            }
-                            : boat
-                    )
-                );
-                toast.success(nextBought ? "Boat marked as bought" : "Boat marked as available");
-            }
+            if (error) throw error;
+            setBoats((prev) => prev.map((boat) => boat.id === boatId ? { ...boat, bought: nextBought, active: false } : boat));
+            toast.success(nextBought ? "Yacht marked as sold and removed from brokerage." : "Yacht marked available. Publish it separately to show it in brokerage.");
         } catch (error) {
-            console.error("Error toggling boat bought status:", error);
-            toast.error("Failed to update bought status");
+            console.error("Error updating yacht availability:", error);
+            setAvailabilityErrors((prev) => ({ ...prev, [boatId]: `Could not mark this yacht as ${nextBought ? "sold" : "available"}. Try again.` }));
         } finally {
             setUpdatingBought((prev) => {
                 const next = new Set(prev);
@@ -274,7 +259,7 @@ const BoatsListing = () => {
         refreshBoats();
     };
 
-    const visible = boats.filter(boat => (filter === "all" || (filter === "published" ? boat.active : filter === "sold" ? boat.bought : !boat.active && !boat.bought)) && [boat.boat_data?.title, boat.broker_data?.dealer, boat.broker_data?.name].some(value => value?.toLowerCase().includes(query.toLowerCase())));
+    const visible = boats.filter(boat => (filter === "all" || (filter === "published" ? boat.active && !boat.bought : filter === "sold" ? boat.bought : !boat.active && !boat.bought)) && [boat.boat_data?.title, boat.broker_data?.dealer, boat.broker_data?.name].some(value => value?.toLowerCase().includes(query.toLowerCase())));
     return <>
       <div className="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-4"><h1 className="dashboard-title mb-0">Boat listings</h1><Link className="btn-solid" href="/account?tab=upload-boat">Add a boat</Link></div>
       <p className="admin-section-description">Manage all brokerage listings, visibility and availability.</p>
@@ -283,7 +268,24 @@ const BoatsListing = () => {
         {visible.length ? <><div className={styles.tableRegion} role="region" aria-label="Boat listings" tabIndex={0}><table><thead><tr><th scope="col">Boat</th><th scope="col">Dealer</th><th scope="col">Visibility</th><th scope="col">Availability</th><th scope="col">Actions</th></tr></thead><tbody>{visible.slice(0, limit).map(boat => {
           const busy = updatingActive.has(boat.id) || updatingBought.has(boat.id) || deleting.has(boat.id);
           const title = boat.boat_data?.title || "Untitled boat";
-          return <tr key={boat.id}><td><div className="d-flex align-items-center gap-3">{boat.main_image && <Image src={boat.main_image} alt="" width={88} height={60} style={{ objectFit: "cover", borderRadius: 4 }} />}<strong>{title}</strong></div></td><td>{boat.broker_data?.dealer || "—"}<small>{boat.broker_data?.name}</small></td><td><button type="button" className="btn-border" aria-label={`${boat.active ? "Hide" : "Publish"} ${title}`} aria-pressed={boat.active} disabled={busy || boat.bought} onClick={() => void handleToggleActive(boat.id, boat.active)}>{updatingActive.has(boat.id) ? "Updating…" : boat.active ? "Published" : "Hidden"}</button></td><td><button type="button" className="btn-border" aria-label={`Mark ${title} as ${boat.bought ? "available" : "sold"}`} aria-pressed={boat.bought} disabled={busy} onClick={() => { if (boat.bought || confirm(`Mark ${title} as sold? It will also be hidden from brokerage.`)) void handleToggleBought(boat.id, boat.bought); }}>{updatingBought.has(boat.id) ? "Updating…" : boat.bought ? "Sold" : "Available"}</button></td><td><div className="d-flex gap-2"><button type="button" className="profile-table-action-btn" aria-label={`View ${title}`} onClick={() => handlePreview(boat)}><Eye /></button><button type="button" className="profile-table-action-btn" aria-label={`Edit ${title}`} disabled={busy} onClick={() => handleEdit(boat.id)}><Edit /></button><button type="button" className="profile-table-action-btn profile-table-action-btn-danger" aria-label={`Delete ${title}`} disabled={busy} onClick={() => void handleDelete(boat.id)}>{deleting.has(boat.id) ? "…" : <Trash2 />}</button></div></td></tr>;
+          return <tr key={boat.id}>
+            <td><div className="d-flex align-items-center gap-3">{boat.main_image && <Image src={boat.main_image} alt="" width={88} height={60} style={{ objectFit: "cover", borderRadius: 4 }} />}<strong>{title}</strong></div></td>
+            <td>{boat.broker_data?.dealer || "—"}<small>{boat.broker_data?.name}</small></td>
+            <td><div className={styles.availabilityCell}>
+              <span className={styles.visibilityBadge} data-published={boat.active && !boat.bought}>{boat.active && !boat.bought ? "Published" : "Hidden"}</span>
+              {boat.bought ? <span className={styles.visibilityNote}>Mark available to publish</span> : <button type="button" className={`btn-border ${styles.availabilityAction}`} aria-label={`${boat.active ? "Hide" : "Publish"} ${title}`} disabled={busy} onClick={() => void handleToggleActive(boat.id, boat.active)}>{updatingActive.has(boat.id) ? "Saving…" : boat.active ? "Hide" : "Publish"}</button>}
+            </div></td>
+            <td><div className={styles.availabilityCell}>
+              <span className={styles.availabilityBadge} data-sold={boat.bought}>{boat.bought ? "Sold" : "Available"}</span>
+              <button type="button" className={`btn-border ${styles.availabilityAction}`} aria-label={`Mark ${title} as ${boat.bought ? "available" : "sold"}`} disabled={busy} onClick={() => { if (boat.bought || window.confirm(`Mark ${title} as sold? This will remove it from brokerage and stop new inquiries.`)) void handleToggleBought(boat.id, boat.bought); }}>{updatingBought.has(boat.id) ? "Saving…" : boat.bought ? "Mark available" : "Mark as sold"}</button>
+              {availabilityErrors[boat.id] && <span className={styles.availabilityError} role="alert">{availabilityErrors[boat.id]}</span>}
+            </div></td>
+            <td><div className="d-flex gap-2">
+              {boat.active && !boat.bought && <button type="button" className="profile-table-action-btn" aria-label={`View ${title}`} onClick={() => handlePreview(boat)}><Eye /></button>}
+              <button type="button" className="profile-table-action-btn" aria-label={`Edit ${title}`} disabled={busy} onClick={() => handleEdit(boat.id)}><Edit /></button>
+              <button type="button" className="profile-table-action-btn profile-table-action-btn-danger" aria-label={`Delete ${title}`} disabled={busy} onClick={() => void handleDelete(boat.id)}>{deleting.has(boat.id) ? "…" : <Trash2 />}</button>
+            </div></td>
+          </tr>;
         })}</tbody></table></div><div className={styles.listFooter}><span>Showing {Math.min(limit, visible.length)} of {visible.length} boats</span>{limit < visible.length && <button type="button" className="btn-border" onClick={() => setLimit(limit + 25)}>Show more</button>}</div></> : <div className="admin-empty"><h2>{boats.length ? "No matching boats" : "No boat listings yet"}</h2><p>{boats.length ? "Try another title or status." : "Create a listing or save a draft to finish later."}</p>{boats.length ? <button className="btn-border" onClick={() => { setQuery(""); setFilter("all"); }}>Clear filters</button> : <Link href="/account?tab=upload-boat" className="btn-solid">Add a boat</Link>}</div>}
       </>}
       {editBoatId && <EditBoatModal boatId={editBoatId} isOpen={!!editBoatId} onClose={closeBoatEditor} onSaved={handleEditSaved} />}

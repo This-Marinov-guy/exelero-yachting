@@ -70,6 +70,13 @@
   .content { padding: 24px 16px; } .legacy :global(.admin-profile) :global(.main-sidebar-content) { flex-wrap: wrap; }
 }
 .tableRegion { overflow-x: auto; border: 1px solid #d8e0e3; border-radius: 8px; width: 100%; td { min-width: 130px; } }
+.availabilityCell { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 150px; }
+.availabilityBadge, .visibilityBadge { border: 1px solid #d8e0e3; border-radius: 20px; padding: 4px 10px; font-size: 13px; line-height: 1.4; background: #f5f8f8; color: #60747b; }
+.availabilityBadge:not([data-sold="true"]) { background: #eef6ef; color: #356442; border-color: #c9decf; }
+.visibilityBadge[data-published="true"] { background: #e9f3f6; color: #146a88; border-color: #bad8e3; }
+.availabilityAction { white-space: nowrap; &:hover:not(:disabled) { background: #e9f3f6; border-color: #146a88; } &:active:not(:disabled) { transform: translateY(1px); } }
+.availabilityError { color: #a13737; font-size: 13px; line-height: 1.4; max-width: 220px; }
+.visibilityNote { color: #60747b; font-size: 13px; line-height: 1.4; max-width: 150px; }
 .status { border: 1px solid #d8e0e3; border-radius: 20px; padding: 4px 10px; font-size: 13px; white-space: nowrap; background: #f5f8f8; &[data-status="new"], &[data-status="pending"] { background: #e9f3f6; color: #146a88; border-color: #bad8e3; } &[data-status="confirmed"], &[data-status="completed"] { background: #eef6ef; color: #356442; } &[data-status="rejected"] { background: #fff1f0; color: #a13737; border-color: #e8c5c2; } }
 .listFooter { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; color: #60747b; padding: 20px 0; font-size: 14px; }
 .dialog { --admin-text: #19313c; --admin-muted: #60747b; --admin-accent: #146a88; --admin-border: #d8e0e3; font: 16px/1.5 SourceSans3, sans-serif; color: #19313c;

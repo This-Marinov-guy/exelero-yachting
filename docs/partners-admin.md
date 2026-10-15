@@ -30,7 +30,8 @@ It should show role `{authenticated}`, command `INSERT`, and a check restricting
 
 ## Editing and publishing
 
-- A name is required to save a draft. New partners receive a unique page slug derived from the name and are placed after the current partners. Existing page slugs and display order remain fixed when editing. Logo, breadcrumb image and page content are additionally required to publish.
+- A name is required to save a draft. New partners receive a unique page slug derived from the name and are placed after the current partners. Existing page slugs remain fixed when editing. Logo, breadcrumb image and page content are additionally required to publish.
+- Drag the handle on a partner card to reorder the full list. Clear filters first if the list is filtered. Keyboard users can focus a handle, press Space, move with arrow keys, and press Space to drop. The order saves immediately and controls the partner navigation, homepage grid, About grid and New Yachts grid (each retains its visibility settings).
 - Drafts are excluded from public queries, navigation, homepage, New Yachts and sitemap. “Unpublish to draft” hides an existing public page.
 - “Show on homepage” and “Show in New Yachts” control those listings independently. Existing display order controls listing order.
 - New Yachts visitors choose a brand and open its information page, which includes the configured contact form.

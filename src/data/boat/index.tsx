@@ -15,6 +15,7 @@ export const BoatKeelTypeData = [
   { id: "keel-canting", label: "Canting Keel", type: "Canting Keel" },
   { id: "keel-swiveling", label: "Swiveling Keel", type: "Swiveling Keel" },
   { id: "keel-lifting", label: "Lifting Keel", type: "Lifting Keel" },
+  { id: "keel-other", label: "Other", type: "Other" },
 ];
 
 export const BoatCeDesignCategoryData = [

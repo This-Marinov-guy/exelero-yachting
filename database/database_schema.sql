@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS boat_data (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     boat_id UUID UNIQUE NOT NULL REFERENCES boats(id) ON DELETE CASCADE,
     condition VARCHAR(20) NOT NULL DEFAULT 'pre-owned' CHECK (condition IN ('new', 'pre-owned')),
-    keel_type VARCHAR(50) NOT NULL DEFAULT 'Fin Keel' CHECK (keel_type IN ('Fin Keel', 'Bulb Keel', 'Winged keel', 'Long keel', 'Bilge Keel', 'Keel Sword', 'Canting Keel', 'Swiveling Keel', 'Lifting Keel')),
+    keel_type VARCHAR(50) NOT NULL DEFAULT 'Fin Keel' CHECK (keel_type IN ('Fin Keel', 'Bulb Keel', 'Winged keel', 'Long keel', 'Bilge Keel', 'Keel Sword', 'Canting Keel', 'Swiveling Keel', 'Lifting Keel', 'Other')),
     ce_design_category VARCHAR(50) NOT NULL DEFAULT 'A - Ocean' CHECK (ce_design_category IN ('A - Ocean', 'B - Offshore', 'C - Inshore', 'D - Sheltered Waters')),
     material VARCHAR(50) NOT NULL DEFAULT 'GRP' CHECK (material IN ('GRP', 'Wood', 'Aluminium', 'Steel', 'Polyethylene', 'Ferro Cement', 'Carbon Fiber')),
     title VARCHAR(512) NOT NULL,

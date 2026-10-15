@@ -1,11 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { DndContext, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, arrayMove, horizontalListSortingStrategy, sortableKeyboardCoordinates, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { toast } from "sonner";
 import styles from "./PartnerManager.module.scss";
 import PartnerImageUpload from "./PartnerImageUpload";
 import PartnerManagerSkeleton from "./PartnerManagerSkeleton";
-import { Check, Plus } from "lucide-react";
+import { Check, GripVertical, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
@@ -34,6 +37,20 @@ const editable = (partner: Partner): PartnerInput => ({
 });
 
 type MediaKey = "logo_url" | "breadcrumb_image_url" | "hero_image_url";
+function SortablePartnerCard({ partner, position, selected, disabled, reorderDisabled, onChoose }: {
+  partner: Partner; position: number; selected: boolean; disabled: boolean; reorderDisabled: boolean; onChoose: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: partner.id, disabled: reorderDisabled });
+  return <div ref={setNodeRef} className={`${styles.partnerCard} ${selected ? styles.selectedCard : ""} ${isDragging ? styles.draggingCard : ""}`} style={{ transform: CSS.Transform.toString(transform), transition }}>
+    <div className={styles.cardTop}><span>{position}</span><button type="button" ref={setActivatorNodeRef} className={styles.dragHandle} disabled={reorderDisabled} {...attributes} {...listeners} aria-label={`Reorder ${partner.name}`}><GripVertical size={18} aria-hidden="true" /></button></div>
+    <button type="button" className={styles.partnerSelect} disabled={disabled} aria-pressed={selected} onClick={onChoose}>
+      <span className={styles.partnerLogo}>{partner.logo_url ? <Image src={partner.logo_url} alt="" width={112} height={48} unoptimized /> : <span className={styles.logoFallback}>{partner.name.slice(0, 2).toUpperCase()}</span>}</span>
+      <span className={styles.partnerCardName}>{partner.name}</span>
+      <span className={styles.partnerCardStatus}>{partner.status === "published" ? "Published" : "Draft"}{selected && <Check size={14} aria-hidden="true" />}</span>
+    </button>
+  </div>;
+}
+
 export default function PartnerManager({ onDirtyChange, mode = "manage", onCreate }: { onDirtyChange: (dirty: boolean) => void; mode?: "manage" | "create"; onCreate?: () => void }) {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -41,23 +58,28 @@ export default function PartnerManager({ onDirtyChange, mode = "manage", onCreat
   const [dirty, setDirty] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
+  const [orderMessage, setOrderMessage] = useState("");
+  const [orderError, setOrderError] = useState(false);
+  const orderInFlight = useRef(false);
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
   const [uploading, setUploading] = useState<MediaKey | null>(null);
   const [loadError, setLoadError] = useState(false);
   const uploadInFlight = useRef(false);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [imageWarning, setImageWarning] = useState("");
-  useEffect(() => { onDirtyChange(dirty || !!uploading || saving); }, [dirty, uploading, saving, onDirtyChange]);
+  useEffect(() => { onDirtyChange(dirty || !!uploading || saving || savingOrder); }, [dirty, uploading, saving, savingOrder, onDirtyChange]);
   useEffect(() => {
-    if (!dirty && !uploading && !saving) return;
+    if (!dirty && !uploading && !saving && !savingOrder) return;
     const prevent = (event: BeforeUnloadEvent) => { event.preventDefault(); };
     window.addEventListener("beforeunload", prevent);
     return () => window.removeEventListener("beforeunload", prevent);
-  }, [dirty, uploading, saving]);
+  }, [dirty, uploading, saving, savingOrder]);
   useEffect(() => () => onDirtyChange(false), [onDirtyChange]);
 
   const load = useCallback(async () => {
-    setLoading(true); setLoadError(false);
+    setLoading(true); setLoadError(false); setOrderMessage(""); setOrderError(false);
     try {
       const response = await fetch("/api/admin/partners", { cache: "no-store" });
       const result = await response.json();
@@ -117,7 +139,7 @@ export default function PartnerManager({ onDirtyChange, mode = "manage", onCreat
   }
 
   async function save(status: PartnerStatus) {
-    if (saving || uploading) return;
+    if (saving || uploading || savingOrder) return;
     if (status === "draft" && partners.find((partner) => partner.id === selectedId)?.status === "published" && !window.confirm("Move this partner to draft? Its page, homepage card and New Yachts listing will be hidden.")) return;
     if (!draft.name.trim()) { toast.error("Enter a partner name."); return; }
     setSaving(true);
@@ -136,10 +158,47 @@ export default function PartnerManager({ onDirtyChange, mode = "manage", onCreat
     finally { setSaving(false); }
   }
 
+  async function reorder(activeId: string, overId: string) {
+    if (orderInFlight.current || saving || uploading || query.trim() || statusFilter !== "all") return;
+    const from = partners.findIndex((partner) => partner.id === activeId);
+    const to = partners.findIndex((partner) => partner.id === overId);
+    if (from < 0 || to < 0 || from === to) return;
+    const previous = partners;
+    const ordered = arrayMove(partners, from, to).map((partner, index) => ({ ...partner, sort_order: index + 1 }));
+    orderInFlight.current = true;
+    setPartners(ordered);
+    setSavingOrder(true);
+    setOrderError(false);
+    setOrderMessage("Saving partner order…");
+    try {
+      const response = await fetch("/api/admin/partners/reorder", {
+        method: "PUT", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: ordered.map((partner) => partner.id) }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Could not save partner order. Try again.");
+      setDraft((current) => selectedId ? { ...current, sort_order: ordered.find((partner) => partner.id === selectedId)?.sort_order ?? current.sort_order } : current);
+      setOrderMessage("Order saved. Navigation and partner grids now follow this order.");
+      toast.success("Partner order saved.");
+    } catch (cause) {
+      setPartners(previous);
+      setOrderError(true);
+      setOrderMessage(cause instanceof Error ? cause.message : "Could not save partner order. Try again.");
+    } finally {
+      orderInFlight.current = false;
+      setSavingOrder(false);
+    }
+  }
+
+  const onDragEnd = ({ active, over }: DragEndEvent) => {
+    if (over && active.id !== over.id) void reorder(String(active.id), String(over.id));
+  };
+
   if (loading) return <PartnerManagerSkeleton mode={mode} />;
   if (loadError) return <div className={`partner-admin ${styles.manager}`}><h1>{mode === "create" ? "Add a partner" : "Partners"}</h1><p>The partner list is unavailable.</p><button type="button" className="partner-admin__secondary" onClick={() => void load()}>Try again</button></div>;
 
-  const busy = saving || !!uploading;
+  const busy = saving || !!uploading || savingOrder;
+  const canReorder = !query.trim() && statusFilter === "all";
   const visible = partners.filter(partner => partner.name.toLowerCase().includes(query.trim().toLowerCase()) && (statusFilter === "all" || partner.status === statusFilter));
   const selected = partners.find(partner => partner.id === selectedId);
   return <div className={`partner-admin ${styles.manager}`}>
@@ -153,14 +212,16 @@ export default function PartnerManager({ onDirtyChange, mode = "manage", onCreat
     </div>
     <section className={styles.library} aria-labelledby="partner-library-label">
       <div className={styles.libraryHeading}><h2 id="partner-library-label">Choose a partner</h2><span>{visible.length} of {partners.length}</span></div>
+      {partners.length > 1 && <p className={styles.orderHint}>{canReorder ? "Drag a handle to set the order in navigation and partner grids. For keyboard use, press Space, move with arrow keys, then press Space again." : "Clear search and status filters to reorder partners."}</p>}
+      {orderMessage && <div className={`${styles.orderStatus} ${orderError ? styles.orderStatusError : ""}`} role={orderError ? "alert" : "status"}><span>{orderMessage}</span>{orderError && <button type="button" className="partner-admin__secondary" onClick={() => { if (!dirty || window.confirm("Discard unsaved partner changes and reload the list?")) void load(); }}>Reload partners</button>}</div>}
       {partners.length === 0 ? <div className={styles.empty}><p>No partners yet.</p><button type="button" className="partner-admin__secondary" onClick={onCreate}><Plus size={16} aria-hidden="true" />Add your first partner</button></div> : visible.length === 0 ? <div className={styles.empty}><p>No partners match your filters.</p><button type="button" className="partner-admin__secondary" onClick={() => { setQuery(""); setStatusFilter("all"); }}>Clear filters</button></div> :
-        <div className={styles.partnerRail}>
-          {visible.map(partner => <button type="button" key={partner.id} disabled={busy} className={`${styles.partnerCard} ${selectedId === partner.id ? styles.selectedCard : ""}`} aria-pressed={selectedId === partner.id} onClick={() => { if (selectedId !== partner.id) choose(partner); }}>
-            <span className={styles.partnerLogo}>{partner.logo_url ? <Image src={partner.logo_url} alt="" width={112} height={48} unoptimized /> : <span className={styles.logoFallback}>{partner.name.slice(0, 2).toUpperCase()}</span>}</span>
-            <span className={styles.partnerCardName}>{partner.name}</span>
-            <span className={styles.partnerCardStatus}>{partner.status === "published" ? "Published" : "Draft"}{selectedId === partner.id && <Check size={14} aria-hidden="true" />}</span>
-          </button>)}
-        </div>}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <SortableContext items={visible.map((partner) => partner.id)} strategy={horizontalListSortingStrategy}>
+            <div className={styles.partnerRail}>
+              {visible.map((partner) => <SortablePartnerCard key={partner.id} partner={partner} position={partners.findIndex((item) => item.id === partner.id) + 1} selected={selectedId === partner.id} disabled={busy} reorderDisabled={busy || !canReorder} onChoose={() => { if (selectedId !== partner.id) choose(partner); }} />)}
+            </div>
+          </SortableContext>
+        </DndContext>}
     </section></>}
     {(mode === "create" || selectedId) && <form noValidate className="partner-admin__editor" onSubmit={event => { event.preventDefault(); void save("published"); }}>
       <div className={styles.editorHeading}><h2>{selectedId ? draft.name : "New partner"}</h2><span className={styles.badge}>{draft.status === "published" ? "Published" : "Draft"}</span>{selected && selected.status === "published" && <Link href={`/partners/${selected.slug}`} target="_blank" rel="noopener noreferrer">View page ↗</Link>}</div>

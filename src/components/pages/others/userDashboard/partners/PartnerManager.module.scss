@@ -53,19 +53,37 @@
 .library { margin-bottom: 32px; min-width: 0; }
 .libraryHeading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; color: #60747b; font-size: 13px; }
 .manager .libraryHeading h2 { font-size: 15px; font-weight: 600; }
+.orderHint { color: #60747b; font-size: 13px; line-height: 1.5; margin: 0 0 12px; }
+.orderStatus { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; color: #146a88; font-size: 13px; margin: 0 0 12px; }
+.orderStatusError { color: #a62d24; }
 .partnerRail {
   display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity;
   padding: 3px; margin: -3px; scrollbar-width: none;
   &::-webkit-scrollbar { display: none; width: 0; height: 0; }
 }
 .partnerCard {
-  flex: 0 0 156px; min-width: 0; border: 1px solid #d8e0e3; border-radius: 8px; padding: 16px;
-  display: flex; flex-direction: column; align-items: center; gap: 8px; scroll-snap-align: start;
-  background: #fff; color: #19313c; text-align: center; cursor: pointer;
-  &:hover:not(:disabled) { border-color: #146a88; background: #f5f8f8; }
-  &:active:not(:disabled) { transform: translateY(1px); }
+  flex: 0 0 156px; min-width: 0; border: 1px solid #d8e0e3; border-radius: 8px; padding: 4px 8px 12px;
+  display: flex; flex-direction: column; scroll-snap-align: start;
+  background: #fff; color: #19313c; text-align: center;
+  &:hover { border-color: #146a88; }
 }
 .selectedCard { border-color: #146a88; box-shadow: inset 0 0 0 1px #146a88; background: #e9f3f6; }
+.draggingCard { opacity: .6; z-index: 1; }
+.cardTop { display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding-left: 8px; color: #60747b; font-size: 13px; }
+.dragHandle {
+  display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid transparent; border-radius: 8px;
+  background: transparent; color: #146a88; cursor: grab; touch-action: none;
+  &:hover:not(:disabled) { border-color: #bac9cd; background: #f5f8f8; }
+  &:active:not(:disabled) { cursor: grabbing; background: #e9f3f6; }
+  &:disabled { color: #60747b; opacity: .5; cursor: not-allowed; }
+}
+.partnerSelect {
+  display: flex; flex: 1; flex-direction: column; align-items: center; gap: 8px; width: 100%; min-height: 116px;
+  border: 0; border-radius: 8px; padding: 4px 0; background: transparent; color: inherit; text-align: center; cursor: pointer;
+  &:hover:not(:disabled) { background: #f5f8f8; }
+  &:active:not(:disabled) { background: #e9f3f6; }
+  &:disabled { opacity: .6; cursor: not-allowed; }
+}
 .partnerLogo { display: flex; align-items: center; justify-content: center; width: 100%; height: 56px; margin-bottom: 4px; img { width: 112px; height: 48px; max-width: 100%; object-fit: contain; } }
 .logoFallback { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 8px; background: #f5f8f8; font-size: 20px; color: #60747b; }
 .partnerCardName { font-weight: 650; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; }
@@ -120,7 +138,7 @@
 .skeletonDescription { width: min(260px, 45vw); height: 16px; }
 .skeletonButton { width: 130px; height: 44px; }
 .skeletonFilters { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 16px; margin-bottom: 56px; > div { height: 48px; } }
-.skeletonPartner { flex: 0 0 156px; height: 154px; padding: 16px; border: 1px solid #d8e0e3; border-radius: 8px; background: #fff; .skeletonBlock { height: 14px; margin: 8px auto; width: 90px; } .skeletonLogo { height: 56px; width: 104px; margin: 0 auto 16px; } }
+.skeletonPartner { flex: 0 0 156px; height: 178px; padding: 16px; border: 1px solid #d8e0e3; border-radius: 8px; background: #fff; .skeletonBlock { height: 14px; margin: 8px auto; width: 90px; } .skeletonLogo { height: 56px; width: 104px; margin: 0 auto 16px; } }
 .skeleton .partnerRail { margin-bottom: 32px; }
 .skeletonSection, .skeletonDisclosure { border: 1px solid #d8e0e3; border-radius: 8px; background: #fff; margin: 16px 0; padding: 24px; }
 .skeletonLabel { width: 100px; height: 18px; }
