@@ -22,8 +22,10 @@ import Job6DetailBox from "@/components/commonComponents/productBox/Job6DetailBo
 import Job7DetailBox from "@/components/commonComponents/productBox/Job7DetailBox";
 import JobAdsBox from "./JobAdsBox";
 import Job8DetailBox from "@/components/commonComponents/productBox/Job8DetailBox";
+import { usePublicText } from "@/lib/usePublicText";
 
 const GridLayout: FC<GridLayoutType> = ({ value, type, gridType, gridSize, view, scrollType, map, detailBoxStyle }) => {
+  const tr = usePublicText();
   const swiperRef = useRef<SwiperType | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const { cardToShow } = useAppSelector((state) => state.layout);
@@ -61,7 +63,7 @@ const GridLayout: FC<GridLayoutType> = ({ value, type, gridType, gridSize, view,
     next: fetchMoreData,
     hasMore: currentPage < totalPages,
     className: "row gy-4",
-    loader: <h4 className="spinner">Loading...</h4>,
+    loader: <h4 className="spinner">{tr("Loading...")}</h4>,
   };
 
   useEffect(() => {
@@ -117,7 +119,7 @@ const GridLayout: FC<GridLayoutType> = ({ value, type, gridType, gridSize, view,
       case "car":
         return <CarProductBox1 data={data} view={view} gridType={gridType} />;
       case "boat":
-        return <Boat2DetailBox data={data} label="For Sale" index={index} />;
+        return <Boat2DetailBox data={data} label={tr("For Sale")} index={index} />;
       case "job":
         return (
           <>
@@ -157,17 +159,17 @@ const GridLayout: FC<GridLayoutType> = ({ value, type, gridType, gridSize, view,
     <div className={`${map ? "col-xl-6" : ""} ${scrollType === "load-more" ? "featured-wrapper" : ""}`}>
       <Row className={RowData}>
         {renderContent()}
-        {showProduct.length === 0 && <NotFound word="No Boats found" />}
+        {showProduct.length === 0 && <NotFound word={tr("No Boats found")} />}
       </Row>
 
       {scrollType === "load-more" ? (
         showProduct.length >= cardToShow ? (
           <Button className="btn-solid load-more" onClick={() => dispatch(setCardToShow(cardToShow + 3))}>
-            LOAD MORE
+            {tr("LOAD MORE")}
           </Button>
         ) : (
           <p id="no-more-products" style={{ display: "block" }}>
-            No more products available.
+            {tr("No more products available.")}
           </p>
         )
       ) : (scrollType !== "infinite" && showProduct.length > 0) ? (

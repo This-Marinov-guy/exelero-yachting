@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { getPartnerAdminClient, validatePartnerInput } from "@/lib/partnerAdmin";
 import { revalidatePartnerPages } from "@/lib/partnerRevalidate";
+import { translateSavedPartner } from "@/lib/translateSavedContent";
+
+export const maxDuration = 120;
 
 export async function GET() {
   const client = await getPartnerAdminClient();
@@ -15,8 +18,9 @@ export async function POST(request: NextRequest) {
   if (!client) return NextResponse.json({ error: "Admin access required." }, { status: 403 });
   const parsed = validatePartnerInput(await request.json().catch(() => null));
   if (!parsed.data) return NextResponse.json({ error: parsed.error }, { status: 400 });
-  const { data, error } = await client.from("partners").insert(parsed.data).select("*").single();
+  const { data, error } = await client.from("partners").insert({ ...parsed.data, translations: {} }).select("*").single();
   if (error) return NextResponse.json({ error: error.code === "23505" ? "That slug is already in use." : error.message }, { status: error.code === "23505" ? 409 : 500 });
   revalidatePartnerPages(data.slug);
+  after(() => translateSavedPartner(client, data));
   return NextResponse.json({ partner: data }, { status: 201 });
 }

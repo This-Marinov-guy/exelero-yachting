@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
+import { usePublicText } from "@/lib/usePublicText";
 import { Container } from "reactstrap";
 import { ArrowRight } from "lucide-react";
 import { RouteList } from "@/utils/RouteList";
@@ -8,6 +9,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const HomeHeroSection = () => {
+  const t = usePublicText();
   const [loadVideo, setLoadVideo] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
 
@@ -59,23 +61,23 @@ const HomeHeroSection = () => {
         <Container>
           <div className="home-hero-text" data-aos="fade-up" data-aos-duration={600}>
             {/* <p className="home-hero-eyebrow">Exelero Group</p> */}
-            <h1 className="home-hero-title">Performance &amp; Luxury Yachts</h1>
+            <h1 className="home-hero-title">{t("Performance & Luxury Yachts")}</h1>
             <p className="home-hero-subtitle">
-              Yachts, brokerage, charters, and marine services for clients across Southeast Europe.
+              {t("Yachts, brokerage, charters, and marine services for clients across Southeast Europe.")}
             </p>
           </div>
         </Container>
 
         <div className="home-hero-bottom">
           <Link href={RouteList.Pages.Boats} className="home-hero-btn">
-            Browse Boats <ArrowRight size={18} />
+            {t("Browse Boats")} <ArrowRight size={18} />
           </Link>
 
           <div className="home-hero-scroll" aria-hidden="true">
             <div className="hero-scroll-mouse">
               <div className="hero-scroll-wheel" />
             </div>
-            <span className="hero-scroll-label">Scroll</span>
+            <span className="hero-scroll-label">{t("Scroll")}</span>
           </div>
 
           <Link href={RouteList.Pages.Other.ContactUs1} className="home-hero-btn">

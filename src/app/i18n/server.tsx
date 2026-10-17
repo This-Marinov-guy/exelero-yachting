@@ -1,47 +1,22 @@
-import acceptLanguage from "accept-language";
 import { createInstance } from "i18next";
 import resourcesToBackend from "i18next-resources-to-backend";
-import { cookies as getCookies, headers as getHeaders } from "next/headers";
 import { initReactI18next } from "react-i18next/initReactI18next";
-import "server-only";
-import { fallbackLng, getOptions, languages } from "./settings";
 import { cache } from "react";
+import "server-only";
+import { getOptions } from "./settings";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
 
-const initServerI18next = async (ns: string | undefined) => {
-  const i18nInstance = createInstance();
-  await i18nInstance
+const initServerI18next = async (language: string, ns: string) => {
+  const instance = createInstance();
+  await instance
     .use(initReactI18next)
-    .use(resourcesToBackend((language: string, ns: string) => import(`./locales/${language}/${ns}.json`)))
-    .init(getOptions(ns));
-  return i18nInstance;
+    .use(resourcesToBackend((locale: string, namespace: string) => import(`./locales/${locale}/${namespace}.json`)))
+    .init(getOptions(language, ns));
+  return instance;
 };
 
-acceptLanguage.languages(languages);
-
-const cookieName = "i18next";
-
-export async function detectLanguage() {
-  const cookies = await getCookies();
-  const headers = await getHeaders();
-
-  let language;
-  if (!language && cookies.has(cookieName)) {
-    language = acceptLanguage.get(cookies.get(cookieName)?.value);
-  }
-  if (!language) {
-    language = acceptLanguage.get(headers.get("Accept-Language"));
-  }
-  if (!language) {
-    language = fallbackLng;
-  }
-  return language;
-}
-
 export const getServerTranslations = cache(async (ns: string, options: { keyPrefix?: string } = {}) => {
-  const language = await detectLanguage();
-  const i18nextInstance = await initServerI18next(ns);
-  return {
-    t: i18nextInstance.getFixedT(language, Array.isArray(ns) ? ns[0] : ns, options.keyPrefix),
-    i18n: i18nextInstance,
-  };
+  const language = await getServerPublicLocale();
+  const i18n = await initServerI18next(language, ns);
+  return { t: i18n.getFixedT(language, ns, options.keyPrefix), i18n };
 });

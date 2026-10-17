@@ -12,6 +12,8 @@ import {
   OPEN_COOKIE_SETTINGS_EVENT,
   saveAnalyticsConsent,
 } from "@/lib/clarity";
+import { stripLocale } from "@/lib/publicLocale";
+import { usePublicText } from "@/lib/usePublicText";
 
 const CLARITY_PROJECT_ID = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID || "vekv1ut2zw";
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
@@ -20,13 +22,15 @@ const googleConfigured = Boolean(GA_MEASUREMENT_ID && /^G-[A-Z0-9]+$/.test(GA_ME
 type AnalyticsWindow = Window & { clarity?: (...args: unknown[]) => void };
 
 export default function CookieBanner() {
+  const tr = usePublicText();
   const pathname = usePathname() || "/";
+  const publicPathname = stripLocale(pathname);
   const [consent, setConsent] = useState<boolean | null>(null);
   const [showBanner, setShowBanner] = useState(false);
   const [isProductionHost, setIsProductionHost] = useState(false);
   const essentialButtonRef = useRef<HTMLButtonElement>(null);
-  const trackPage = isProductionHost && isClarityPublicPath(pathname) && consent === true;
-  const trackGoogle = isProductionHost && consent === true && (isClarityPublicPath(pathname) || pathname === "/gallery" || pathname === "/pages/gallery") && googleConfigured;
+  const trackPage = isProductionHost && isClarityPublicPath(publicPathname) && consent === true;
+  const trackGoogle = isProductionHost && consent === true && (isClarityPublicPath(publicPathname) || publicPathname === "/gallery" || publicPathname === "/pages/gallery") && googleConfigured;
 
   useEffect(() => {
     const saved = getAnalyticsConsent();
@@ -48,10 +52,10 @@ export default function CookieBanner() {
       (window as AnalyticsWindow).clarity?.(
         "set",
         "page_type",
-        getClarityPageType(pathname)
+        getClarityPageType(publicPathname)
       );
     }
-  }, [pathname, trackPage]);
+  }, [publicPathname, trackPage]);
 
   const choose = (allowAnalytics: boolean) => {
     const previouslyAllowed = consent === true;
@@ -77,7 +81,7 @@ export default function CookieBanner() {
             (window as Window & { clarity?: (...args: unknown[]) => void }).clarity?.(
               "set",
               "page_type",
-              getClarityPageType(pathname)
+              getClarityPageType(publicPathname)
             );
           }}
         >
@@ -90,15 +94,14 @@ export default function CookieBanner() {
         </Script>
       )}
       {showBanner && (
-        <div className="cookie-banner" role="region" aria-label="Cookie settings">
+        <div className="cookie-banner" role="region" aria-label={tr("Cookie settings")}>
           <Container>
             <div className="cookie-banner-content">
               <div className="cookie-banner-text">
-                <h5>Cookie settings</h5>
-                <p>
-                  We use Microsoft Clarity{googleConfigured ? " and Google Analytics" : ""} to understand how visitors use this site.
-                  Analytics runs only if you allow it. Essential site features work either way.
-                </p>
+                <h5>{tr("Cookie settings")}</h5>
+                <p>{tr(googleConfigured
+                  ? "We use Microsoft Clarity and Google Analytics to understand how visitors use this site. Analytics runs only if you allow it. Essential site features work either way."
+                  : "We use Microsoft Clarity to understand how visitors use this site. Analytics runs only if you allow it. Essential site features work either way.")}</p>
               </div>
               <div className="cookie-banner-buttons">
                 <Button
@@ -107,14 +110,14 @@ export default function CookieBanner() {
                   type="button"
                   onClick={() => choose(false)}
                 >
-                  Essential only
+                  {tr("Essential only")}
                 </Button>
                 <Button
                   className="btn-solid cookie-btn"
                   type="button"
                   onClick={() => choose(true)}
                 >
-                  Allow analytics
+                  {tr("Allow analytics")}
                 </Button>
               </div>
             </div>

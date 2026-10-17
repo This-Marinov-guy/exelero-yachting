@@ -1,5 +1,6 @@
 "use client";
 
+import { usePublicError, usePublicText } from "@/lib/usePublicText";
 import { Col, Row } from "reactstrap";
 import { useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
@@ -28,6 +29,8 @@ const initialFormState = {
 };
 
 export default function TransportationRequestSection() {
+  const tr = usePublicText();
+  const localError = usePublicError();
   const formRef = useRef<HTMLElement>(null);
   const [formInView, setFormInView] = useState(false);
   const [form, setForm] = useState(initialFormState);
@@ -68,23 +71,23 @@ export default function TransportationRequestSection() {
     const { name, email, dateStart, deadlineDate, startPoint, endPoint } = form;
 
     if (!name.trim() || !email.trim() || !dateStart || !deadlineDate || !startPoint.trim() || !endPoint.trim()) {
-      toast.error("Please fill in all required fields (name, email, dates, start and end points).");
+      toast.error(tr("Please fill in all required fields (name, email, dates, start and end points)."));
       return;
     }
 
     if (dateStart < format(new Date(), "yyyy-MM-dd")) {
-      toast.error("Choose today or a later start date.");
+      toast.error(tr("Choose today or a later start date."));
       return;
     }
 
     if (deadlineDate < dateStart) {
-      toast.error("Deadline date must be on or after the start date.");
+      toast.error(tr("Deadline date must be on or after the start date."));
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      toast.error("Please enter a valid email address.");
+      toast.error(tr("Please enter a valid email address."));
       return;
     }
 
@@ -113,7 +116,7 @@ export default function TransportationRequestSection() {
       });
 
       if (error) {
-        toast.error(error.message || "Failed to send transportation request. Please try again.");
+        toast.error(error.message ? localError(error.message, "Failed to send transportation request. Please try again.") : tr("Failed to send transportation request. Please try again."));
         return;
       }
 
@@ -140,11 +143,11 @@ export default function TransportationRequestSection() {
         }),
       }).catch(() => {});
 
-      toast.success("Transportation request sent successfully! We'll get back to you with options.");
+      toast.success(tr("Transportation request sent successfully! We'll get back to you with options."));
       trackClarityEvent("transport_request_submitted");
       setForm(initialFormState);
     } catch (err: any) {
-      toast.error(err?.message || "Failed to send transportation request. Please try again.");
+      toast.error(err?.message ? localError(err.message, "Failed to send transportation request. Please try again.") : tr("Failed to send transportation request. Please try again."));
     } finally {
       setSubmitting(false);
     }
@@ -161,9 +164,7 @@ export default function TransportationRequestSection() {
           pointerEvents: showStickyBtn ? "auto" : "none",
         }}
       >
-        <a href={`#${FORM_ID}`} className="btn-solid text-center transportation-request-cta__btn">
-          Request Yacht Transportation
-        </a>
+        <a href={`#${FORM_ID}`} className="btn-solid text-center transportation-request-cta__btn">{tr("Request Yacht Transportation")}</a>
       </div>
 
       {/* Form */}
@@ -173,17 +174,13 @@ export default function TransportationRequestSection() {
         className="transportation-form-section"
       >
         <div className="transportation-form-wrapper">
-          <h2 className="transportation-form__title text-center">Request Yacht Transportation</h2>
-          <p className="transportation-form__subtitle text-center">
-            Fill in the form below and we'll get back to you with options and a quote.
-          </p>
+          <h2 className="transportation-form__title text-center">{tr("Request Yacht Transportation")}</h2>
+          <p className="transportation-form__subtitle text-center">{tr("Fill in the form below and we'll get back to you with options and a quote.")}</p>
           <form className="transportation-form" onSubmit={handleSubmit}>
             <Row className="g-3">
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-name" className="form-label">
-                    Your name
-                  </label>
+                  <label htmlFor="transport-name" className="form-label">{tr("Your name")}</label>
                   <input
                     id="transport-name"
                     type="text"
@@ -197,9 +194,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-email" className="form-label">
-                    Email
-                  </label>
+                  <label htmlFor="transport-email" className="form-label">{tr("Email")}</label>
                   <input
                     id="transport-email"
                     type="email"
@@ -213,9 +208,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-phone" className="form-label">
-                    Phone (optional)
-                  </label>
+                  <label htmlFor="transport-phone" className="form-label">{tr("Phone (optional)")}</label>
                   <input
                     id="transport-phone"
                     type="tel"
@@ -228,7 +221,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-date-start" className="form-label">Start date</label>
+                  <label htmlFor="transport-date-start" className="form-label">{tr("Start date")}</label>
                   <DatePicker
                     id="transport-date-start"
                     selected={form.dateStart ? parseISO(form.dateStart) : null}
@@ -246,7 +239,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-deadline-date" className="form-label">Deadline date</label>
+                  <label htmlFor="transport-deadline-date" className="form-label">{tr("Deadline date")}</label>
                   <DatePicker
                     id="transport-deadline-date"
                     selected={form.deadlineDate ? parseISO(form.deadlineDate) : null}
@@ -264,9 +257,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-start-point" className="form-label">
-                    Start point
-                  </label>
+                  <label htmlFor="transport-start-point" className="form-label">{tr("Start point")}</label>
                   <input
                     id="transport-start-point"
                     type="text"
@@ -280,9 +271,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-end-point" className="form-label">
-                    End point
-                  </label>
+                  <label htmlFor="transport-end-point" className="form-label">{tr("End point")}</label>
                   <input
                     id="transport-end-point"
                     type="text"
@@ -296,9 +285,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-weight" className="form-label">
-                    Boat weight (kg)
-                  </label>
+                  <label htmlFor="transport-weight" className="form-label">{tr("Boat weight (kg)")}</label>
                   <input
                     id="transport-weight"
                     type="number"
@@ -312,9 +299,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-length" className="form-label">
-                    Length overall (m)
-                  </label>
+                  <label htmlFor="transport-length" className="form-label">{tr("Length overall (m)")}</label>
                   <input
                     id="transport-length"
                     type="number"
@@ -329,9 +314,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-beam" className="form-label">
-                    Beam (m)
-                  </label>
+                  <label htmlFor="transport-beam" className="form-label">{tr("Beam (m)")}</label>
                   <input
                     id="transport-beam"
                     type="number"
@@ -346,9 +329,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-draft" className="form-label">
-                    Draft (m)
-                  </label>
+                  <label htmlFor="transport-draft" className="form-label">{tr("Draft (m)")}</label>
                   <input
                     id="transport-draft"
                     type="number"
@@ -363,9 +344,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col md={6}>
                 <div className="form-input">
-                  <label htmlFor="transport-height" className="form-label">
-                    Overall height keel to top (m)
-                  </label>
+                  <label htmlFor="transport-height" className="form-label">{tr("Overall height keel to top (m)")}</label>
                   <input
                     id="transport-height"
                     type="number"
@@ -380,9 +359,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col xs={12}>
                 <div className="form-input">
-                  <label htmlFor="transport-note" className="form-label">
-                    Note to agent
-                  </label>
+                  <label htmlFor="transport-note" className="form-label">{tr("Note to agent")}</label>
                   <textarea
                     id="transport-note"
                     className="form-control"
@@ -395,7 +372,7 @@ export default function TransportationRequestSection() {
               </Col>
               <Col xs={12} className="form-submit-col">
                 <button type="submit" className="btn-solid px-2" disabled={submitting}>
-                  {submitting ? "Sending..." : "Send request"}
+                  {submitting ? tr("Sending...") : tr("Send request")}
                 </button>
               </Col>
             </Row>

@@ -4,6 +4,8 @@ import CharterMediaPanel from "@/components/pages/charters/CharterMediaPanel";
 import { Container } from "reactstrap";
 import { BadgeDollarSign, ArrowLeftRight, Zap } from "lucide-react";
 import type { TransportationPageContent, TransportationSection } from "@/lib/servicePageContent";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { publicText } from "@/lib/publicText";
 
 const TransportSection = ({ section }: { section: TransportationSection }) => (
   <section className="transportation-service-section">
@@ -16,10 +18,12 @@ const TransportSection = ({ section }: { section: TransportationSection }) => (
   </section>
 );
 
-const TransportationPage = ({ content }: { content: TransportationPageContent }) => {
+const TransportationPage = async ({ content }: { content: TransportationPageContent }) => {
+  const locale = await getServerPublicLocale();
+  const tr = (value: string) => publicText(locale, value);
   return (
     <>
-      <TopFilter title="Yacht Transportation" image={null} />
+      <TopFilter title={tr("Yacht Transportation")} image={null} />
 
       <section className="transportation-layout section-b-space">
         <Container>
@@ -38,20 +42,20 @@ const TransportationPage = ({ content }: { content: TransportationPageContent })
             </div>
 
             {/* Right: form */}
-            <div className="transportation-layout__form" role="region" aria-label="Transportation request and service highlights" tabIndex={0}>
+            <div className="transportation-layout__form" role="region" aria-label={tr("Transportation request and service highlights")} tabIndex={0}>
               <TransportationRequestSection />
-              <ul className="transportation-bento__labels" aria-label="Service highlights">
+              <ul className="transportation-bento__labels" aria-label={tr("Service highlights")}>
                 <li className="transportation-bento__label">
                   <ArrowLeftRight className="transportation-bento__label-icon" aria-hidden="true" />
-                  <span className="transportation-bento__label-text">End to end</span>
+                  <span className="transportation-bento__label-text">{tr("End to end")}</span>
                 </li>
                 <li className="transportation-bento__label">
                   <BadgeDollarSign className="transportation-bento__label-icon" aria-hidden="true" />
-                  <span className="transportation-bento__label-text">Transparent pricing</span>
+                  <span className="transportation-bento__label-text">{tr("Transparent pricing")}</span>
                 </li>
                 <li className="transportation-bento__label">
                   <Zap className="transportation-bento__label-icon" aria-hidden="true" />
-                  <span className="transportation-bento__label-text">Fast service</span>
+                  <span className="transportation-bento__label-text">{tr("Fast service")}</span>
                 </li>
               </ul>
             </div>

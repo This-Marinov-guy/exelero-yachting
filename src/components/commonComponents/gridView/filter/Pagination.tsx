@@ -4,8 +4,10 @@ import { PaginationProps } from "@/types/Product";
 import Link from "next/link";
 import React, { FC } from "react";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { usePublicText } from "@/lib/usePublicText";
 
 const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, onPageChange, type }) => {
+  const tr = usePublicText();
   const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
 
   const handlePageChange = (page: number) => {
@@ -17,7 +19,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, onPageChange
   return (
     <ul className={`pagination ${type === "job" ? "pagination-style-1 justify-content-center" : ""}`}>
       <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-        <Link scroll={false} className='page-link' href={Href} aria-label='Previous' onClick={() => handlePageChange(currentPage - 1)}>
+        <Link scroll={false} className='page-link' href={Href} aria-label={tr("Previous")} onClick={() => handlePageChange(currentPage - 1)}>
           <ChevronsLeft className='h-4 w-4' />
         </Link>
       </li>
@@ -29,7 +31,7 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, onPageChange
         </li>
       ))}
       <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-        <Link scroll={false} className='page-link' href={Href} aria-label='Next' onClick={() => handlePageChange(currentPage + 1)}>
+        <Link scroll={false} className='page-link' href={Href} aria-label={tr("Next")} onClick={() => handlePageChange(currentPage + 1)}>
           <ChevronsRight className='h-4 w-4' />
         </Link>
       </li>

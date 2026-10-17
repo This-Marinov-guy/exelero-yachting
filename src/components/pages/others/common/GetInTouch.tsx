@@ -1,13 +1,17 @@
+"use client";
+
 import { AboutGetInTouchData } from "@/data/pages/Others";
 import { FC, Fragment } from "react";
 import { Col, Row } from "reactstrap";
 import FollowUs from "./FollowUs";
+import { usePublicText } from "@/lib/usePublicText";
 
 interface GetInTouchProps {
   type?: 'contact-1' | 'contact-2' | 'contact-3';
 }
 
 const GetInTouch: FC<GetInTouchProps> = ({ type }) => {
+  const tr = usePublicText();
   const getHref = (title: string, value: string) => {
     const t = title.toLowerCase();
 
@@ -47,7 +51,7 @@ const GetInTouch: FC<GetInTouchProps> = ({ type }) => {
     >
       {!iconAtBottom && <div className="contact-icon m-auto">{item.icon}</div>}
       <div className="contact-info">
-        <h3>{item.title}</h3>
+        <h3>{tr(item.title)}</h3>
         <p>{item.description}</p>
       </div>
       {iconAtBottom && <div className="contact-icon">{item.icon}</div>}

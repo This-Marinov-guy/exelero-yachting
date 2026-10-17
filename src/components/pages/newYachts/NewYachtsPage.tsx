@@ -2,19 +2,23 @@ import TopFilter from "@/components/commonComponents/TopFilter";
 import { getPublishedPartners } from "@/lib/partners";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { publicText } from "@/lib/publicText";
 import type { CSSProperties } from "react";
 
 const NewYachtsPage = async () => {
+  const locale = await getServerPublicLocale();
+  const t = (value: string) => publicText(locale, value);
   const yachtPartners = (await getPublishedPartners()).filter((partner) => partner.show_on_new_yachts);
 
   return (
     <main className="new-yachts-page">
       <TopFilter
-        title="New Yachts"
-        description="Explore our partners and find your next yacht."
+        title={t("New Yachts")}
+        description={t("Explore our partners and find your next yacht.")}
       />
-      <section className="new-yachts-directory container" aria-label="New yacht partners">
+      <section className="new-yachts-directory container" aria-label={t("New yacht partners")}>
         {yachtPartners.length > 0 ? (
           <div
             className="new-yachts-cards"
@@ -33,7 +37,7 @@ const NewYachtsPage = async () => {
                   key={partner.id}
                   href={`/partners/${partner.slug}`}
                   className="new-yachts-card"
-                  aria-label={`Explore ${partner.name}`}
+                  aria-label={`${t("Explore")} ${partner.name}`}
                 >
                   <div className="new-yachts-card__media">
                     <Image
@@ -45,7 +49,7 @@ const NewYachtsPage = async () => {
                       className="new-yachts-card__image"
                       unoptimized={image.startsWith("http")}
                     />
-                    {isL30 && <span className="new-yachts-card__type">Class &amp; racing partner</span>}
+                    {isL30 && <span className="new-yachts-card__type">{t("Class & racing partner")}</span>}
                   </div>
                   <div className="new-yachts-card__body">
                     <div className="new-yachts-card__logo-wrap">
@@ -61,7 +65,7 @@ const NewYachtsPage = async () => {
                     <h2>{partner.name}</h2>
                     <p>{description}</p>
                     <span className="new-yachts-card__action">
-                      Explore {partner.name} <ArrowUpRight aria-hidden="true" size={19} />
+                      {t("Explore")} {partner.name} <ArrowUpRight aria-hidden="true" size={19} />
                     </span>
                   </div>
                 </Link>
@@ -70,9 +74,9 @@ const NewYachtsPage = async () => {
           </div>
         ) : (
           <div className="new-yachts-empty">
-            <h2>Find your next yacht</h2>
-            <p>Our partner selection is being updated. Speak with our team about available yachts.</p>
-            <Link href="/contact" className="btn-solid">Contact our team</Link>
+            <h2>{t("Find your next yacht")}</h2>
+            <p>{t("Our partner selection is being updated. Speak with our team about available yachts.")}</p>
+            <Link href="/contact" className="btn-solid">{t("Contact our team")}</Link>
           </div>
         )}
       </section>

@@ -15,8 +15,10 @@ import FilterSidebar from "./filter";
 import FilterTags from "./filter/FilterTags";
 import GridLayout from "./GridLayout";
 import TagsShowBox from "./TagsShowBox";
+import { usePublicText } from "@/lib/usePublicText";
 
 const GridView: FC<GridViewType> = ({ type, gridSize, gridType, view, scrollType, map, modalType, offcanvasSide, side, topFilter, sectionClass, cardShow, tagClass, mapSide, filterClass, category, filter, detailBoxStyle, tagFilter, fluid, initialProducts }) => {
+  const tr = usePublicText();
   const { productItem } = useAppSelector((state) => state.product);
   const { openFilterSidebar } = useAppSelector((state) => state.layout);
   const dispatch = useAppDispatch();
@@ -83,7 +85,7 @@ const GridView: FC<GridViewType> = ({ type, gridSize, gridType, view, scrollType
       </section>
       <Offcanvas fade direction={offcanvasSide === "right" ? "end" : "start"} isOpen={openFilterSidebar} toggle={() => dispatch(setOpenFilterSidebar())}>
         <OffcanvasHeader>
-          {Filters}
+          {tr(Filters)}
           <Button className="close-btn" onClick={() => dispatch(setOpenFilterSidebar())}>
             <X className="h-4 w-4" />
           </Button>

@@ -1,7 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { getPartnerAdminClient, validatePartnerInput } from "@/lib/partnerAdmin";
 import { revalidatePartnerPages } from "@/lib/partnerRevalidate";
 import type { PartnerInput } from "@/types/Partner";
+import { translateSavedPartner } from "@/lib/translateSavedContent";
+
+export const maxDuration = 120;
 
 type Context = { params: Promise<{ id: string }> };
 export async function PUT(request: NextRequest, { params }: Context) {
@@ -15,8 +18,9 @@ export async function PUT(request: NextRequest, { params }: Context) {
   const changes: Partial<PartnerInput> = { ...parsed.data };
   delete changes.slug;
   delete changes.sort_order;
-  const { data, error } = await client.from("partners").update(changes).eq("id", id).select("*").single();
+  const { data, error } = await client.from("partners").update({ ...changes, translations: {} }).eq("id", id).select("*").single();
   if (error) return NextResponse.json({ error: error.code === "23505" ? "That slug is already in use." : error.message }, { status: error.code === "23505" ? 409 : 500 });
   revalidatePartnerPages(old.slug, data.slug);
+  after(() => translateSavedPartner(client, data));
   return NextResponse.json({ partner: data });
 }

@@ -8,6 +8,9 @@ import {
   type ServicePageKey,
   validateServicePageContent,
 } from "@/lib/servicePageContent";
+import { translateSavedServicePage } from "@/lib/translateSavedContent";
+
+export const maxDuration = 120;
 
 type SavedPage<K extends ServicePageKey = ServicePageKey> = {
   content: ServicePageContentMap[K];
@@ -50,8 +53,8 @@ export async function PUT(request: NextRequest) {
   }
 
   const query = body.updated_at
-    ? client.from("service_page_content").update({ content: parsed.content }).eq("page_key", page).eq("updated_at", body.updated_at)
-    : client.from("service_page_content").insert({ page_key: page, content: parsed.content });
+    ? client.from("service_page_content").update({ content: parsed.content, translations: {} }).eq("page_key", page).eq("updated_at", body.updated_at)
+    : client.from("service_page_content").insert({ page_key: page, content: parsed.content, translations: {} });
   const { data, error } = await query.select("page_key, content, updated_at").maybeSingle();
   if (error?.code === "23505" || (!error && !data)) {
     return NextResponse.json({ error: "This page changed elsewhere. Copy any important draft text, then reload to see the latest version." }, { status: 409 });
@@ -61,5 +64,6 @@ export async function PUT(request: NextRequest) {
   }
 
   revalidatePath(`/services/${page}`);
+  await translateSavedServicePage(client, page, parsed.content, data.updated_at);
   return NextResponse.json({ page: { content: data.content, updated_at: data.updated_at } });
 }

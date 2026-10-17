@@ -14,8 +14,10 @@ import RightHeader from "./rightHeader/Index";
 import TopBar from "./topBar";
 import TapTop from "../TapTop";
 import AuthAccountIcon from "./AuthAccountIcon";
+import { usePublicText } from "@/lib/usePublicText";
 
 const Header: React.FC<PathTypes & { partners?: { slug: string; name: string }[] }> = ({ part, partners = [] }) => {
+  const tr = usePublicText();
   const { sidebarOpen } = useAppSelector((state) => state.layout);
   const dispatch = useAppDispatch();
   const isTopBar = ["car-2", "property-2"].some((item) => part?.includes(item));
@@ -42,7 +44,7 @@ const Header: React.FC<PathTypes & { partners?: { slug: string; name: string }[]
           <MainMenu partners={partners} />
           <AuthAccountIcon />
           <div className='mobile-menu-toggle'>
-            <Link scroll={false} href={Href} className={`toggle ${sidebarOpen ? "open" : ""}`} aria-label="Open menu" onClick={() => dispatch(setCartData())}>
+            <Link scroll={false} href={Href} className={`toggle ${sidebarOpen ? "open" : ""}`} aria-label={tr("Open menu")} onClick={() => dispatch(setCartData())}>
               <Menu className='iconsax' style={{ width: '24px', height: '24px' }} />
             </Link>
           </div>
@@ -52,7 +54,7 @@ const Header: React.FC<PathTypes & { partners?: { slug: string; name: string }[]
       <span
         role="button"
         tabIndex={0}
-        aria-label="Close menu"
+        aria-label={tr("Close menu")}
         className={`overlay ${sidebarOpen ? " overlay--active" : ""}`}
         onClick={() => dispatch(setSidebarOpen(false))}
         onKeyDown={(e) => e.key === "Enter" && dispatch(setSidebarOpen(false))}

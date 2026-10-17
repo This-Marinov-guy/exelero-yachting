@@ -58,6 +58,7 @@ export const FooterDetailData: FooterDetailType[] = [
       { title: "New yachts", url: RouteList.Pages.NewYachts },
       { title: "Pre-owned yachts", url: RouteList.Pages.PreOwnedYachts },
       { title: "Boat brokerage", url: RouteList.Pages.Services.Boats },
+      { title: "Gallery", url: RouteList.Pages.Gallery },
     ],
   },
   {

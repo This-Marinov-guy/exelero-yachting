@@ -57,62 +57,7 @@ import {
     UploadedBrochure,
 } from "@/redux/reducers/BoatUploadSlice";
 import { hasBoatDraftContent, mergeRecoveredImages } from "@/lib/boatDraftCompatibility";
-
-// Helper function to resize image to max dimensions
-const resizeImage = (file: File, maxWidth: number = 1500, maxHeight: number = 1500): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new window.Image();
-            img.onload = () => {
-                const canvas = document.createElement("canvas");
-                let width = img.width;
-                let height = img.height;
-
-                // Calculate new dimensions
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height = (height * maxWidth) / width;
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width = (width * maxHeight) / height;
-                        height = maxHeight;
-                    }
-                }
-
-                canvas.width = width;
-                canvas.height = height;
-
-                const ctx = canvas.getContext("2d");
-                if (!ctx) {
-                    reject(new Error("Could not get canvas context"));
-                    return;
-                }
-
-                ctx.drawImage(img, 0, 0, width, height);
-                canvas.toBlob(
-                    (blob) => {
-                        if (blob) {
-                            resolve(blob);
-                        } else {
-                            reject(new Error("Failed to create blob"));
-                        }
-                    },
-                    file.type,
-                    0.9
-                );
-            };
-            img.onerror = reject;
-            if (e.target?.result) {
-                img.src = e.target.result as string;
-            }
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-};
+import { MAX_LISTING_IMAGES, MAX_LISTING_VIDEOS, removeListingImage, uploadListingImage } from "@/lib/boatImageClient";
 
 const slugifyBoatListing = (title: string, buildYear: string) => {
     const normalizedTitle = title.trim();
@@ -171,6 +116,7 @@ type SortableUploadedImageCardProps = {
     isUploading: boolean;
     isMain: boolean;
     isCover: boolean;
+    locked: boolean;
     onRemove: (index: number) => void;
     onSetMain: (index: number) => void;
     onSetCover: (index: number) => void;
@@ -183,6 +129,7 @@ const SortableUploadedImageCard = ({
     isUploading,
     isMain,
     isCover,
+    locked,
     onRemove,
     onSetMain,
     onSetCover,
@@ -196,7 +143,7 @@ const SortableUploadedImageCard = ({
         isDragging,
     } = useSortable({
         id: itemId,
-        disabled: isUploading,
+        disabled: isUploading || locked,
     });
     const isVideo = uploadedImage.mediaType === "video";
 
@@ -309,7 +256,7 @@ const SortableUploadedImageCard = ({
                     )}
                 </div>
 
-                {!isUploading && (
+                {!isUploading && !locked && (
                     <button
                         type="button"
                         className="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
@@ -324,7 +271,7 @@ const SortableUploadedImageCard = ({
                     </button>
                 )}
 
-                {!isUploading && (!isMain || !isCover) && (
+                {!isUploading && !locked && (!isMain || !isCover) && (
                     <div className="position-absolute bottom-0 start-0 m-1 d-flex gap-1" style={{ zIndex: 10 }}>
                         {!isMain && (
                             <button
@@ -358,7 +305,7 @@ const SortableUploadedImageCard = ({
                     </div>
                 )}
 
-                {!isUploading && (
+                {!isUploading && !locked && (
                     <button
                         type="button"
                         className="position-absolute bottom-0 end-0 m-1 border-0"
@@ -400,6 +347,8 @@ const UploadBoat = () => {
     } = boatUpload;
     const uploadedImagesRef = useRef(uploadedImages);
     useEffect(() => { uploadedImagesRef.current = uploadedImages; }, [uploadedImages]);
+    const uploadFolderNameRef = useRef(uploadFolderName);
+    useEffect(() => { uploadFolderNameRef.current = uploadFolderName; }, [uploadFolderName]);
     useEffect(() => { dispatch(restoreBoatFormFromStorage()); }, [dispatch]);
 
     const [isLocked, setIsLocked] = useState(true);
@@ -407,7 +356,25 @@ const UploadBoat = () => {
     const [brokerDataList, setBrokerDataList] = useState<BrokerData[]>([]);
     const [submitting, setSubmitting] = useState(false);
     const [unsaved, setUnsaved] = useState(false);
-    useUnsavedChanges(unsaved || submitting);
+    const [pendingUploads, setPendingUploads] = useState(0);
+    const [uploadedInQueue, setUploadedInQueue] = useState(0);
+    const [queueTotal, setQueueTotal] = useState(0);
+    const [activeUploadName, setActiveUploadName] = useState("");
+    const [pendingPreviews, setPendingPreviews] = useState<Array<{ id: string; name: string; url: string | null }>>([]);
+    const previewUrlsRef = useRef(new Set<string>());
+    useEffect(() => () => { previewUrlsRef.current.forEach(url => URL.revokeObjectURL(url)); }, []);
+    const [failedUploads, setFailedUploads] = useState<File[]>([]);
+    const [createdBoatId, setCreatedBoatId] = useState<string | null>(null);
+    const [readyToFinish, setReadyToFinish] = useState(false);
+    const [attachingImages, setAttachingImages] = useState(0);
+    const [mediaSyncError, setMediaSyncError] = useState("");
+    useUnsavedChanges(unsaved || submitting || pendingUploads > 0 || createdBoatId !== null);
+    const uploadChainRef = useRef<Promise<void>>(Promise.resolve());
+    const queuedImagesRef = useRef(0);
+    const queuedVideosRef = useRef(0);
+    const createdBoatIdRef = useRef<string | null>(null);
+    const attachedImageUrlsRef = useRef(new Set<string>());
+    const attachChainRef = useRef<Promise<void>>(Promise.resolve());
     const [uploadingImages, setUploadingImages] = useState<Set<number>>(new Set());
     const [uploadingBrochures, setUploadingBrochures] = useState<Set<number>>(new Set());
     const [dealerDropdownOpen, setDealerDropdownOpen] = useState(false);
@@ -416,6 +383,8 @@ const UploadBoat = () => {
     const [newDealerData, setNewDealerData] = useState({ name: "", email: "", phone: "", dealer: "" });
     const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
     const [coverImageIndex, setCoverImageIndex] = useState<number>(0);
+    const coverImageIndexRef = useRef(coverImageIndex);
+    useEffect(() => { coverImageIndexRef.current = coverImageIndex; }, [coverImageIndex]);
     const [draftId, setDraftId] = useState<string | null>(null);
     const [savingDraft, setSavingDraft] = useState(false);
     const [videoLink, setVideoLink] = useState("");
@@ -435,6 +404,77 @@ const UploadBoat = () => {
 
     const selectedDealer = brokerDataList.find((d) => d.id === formData.dealer_id);
     const getMediaId = (item: UploadedImage) => item.filePath || `${item.mediaType || "image"}-${item.url}`;
+    const imageCount = uploadedImages.filter(item => item.mediaType !== "video").length;
+    const videoCount = uploadedImages.filter(item => item.mediaType === "video").length;
+    const failedImageCount = failedUploads.filter(file => file.type.startsWith("image/")).length;
+    const failedVideoCount = failedUploads.length - failedImageCount;
+    const reservedImageCount = imageCount + queuedImagesRef.current + failedImageCount;
+    const reservedVideoCount = videoCount + queuedVideosRef.current + failedVideoCount;
+
+    const attachImageToBoat = (image: UploadedImage): Promise<void> => {
+        const boatId = createdBoatIdRef.current;
+        if (!boatId || attachedImageUrlsRef.current.has(image.url)) return Promise.resolve();
+        attachedImageUrlsRef.current.add(image.url);
+        setAttachingImages(count => count + 1);
+        const task = attachChainRef.current.then(async () => {
+            const current = uploadedImagesRef.current;
+            const index = current.findIndex(item => item.url === image.url);
+            const { error } = await getSupabaseBrowserClient().from("boat_images").insert({
+                boat_id: boatId,
+                link: image.url,
+                media_type: image.mediaType || "image",
+                display_order: index >= 0 ? index : image.order,
+                is_cover: index === coverImageIndexRef.current,
+            });
+            if (error) throw error;
+        }).catch(error => {
+            attachedImageUrlsRef.current.delete(image.url);
+            setMediaSyncError(error instanceof Error ? error.message : "Could not link an uploaded image to the listing.");
+        }).finally(() => setAttachingImages(count => count - 1));
+        attachChainRef.current = task;
+        return task;
+    };
+
+    const attachExistingImagesToBoat = (): void => {
+        const boatId = createdBoatIdRef.current;
+        if (!boatId) return;
+        const images = uploadedImagesRef.current.filter(item => !attachedImageUrlsRef.current.has(item.url));
+        if (!images.length) return;
+        images.forEach(item => attachedImageUrlsRef.current.add(item.url));
+        setAttachingImages(count => count + 1);
+        const records = images.map(item => ({
+            boat_id: boatId,
+            link: item.url,
+            media_type: item.mediaType || "image",
+            display_order: uploadedImagesRef.current.findIndex(current => current.url === item.url),
+            is_cover: uploadedImagesRef.current[coverImageIndexRef.current]?.url === item.url,
+        }));
+        const task = attachChainRef.current.then(async () => {
+            const { error } = await getSupabaseBrowserClient().from("boat_images").insert(records);
+            if (error) throw error;
+            window.dispatchEvent(new CustomEvent("boatsListingRefresh"));
+        }).catch(error => {
+            images.forEach(item => attachedImageUrlsRef.current.delete(item.url));
+            setMediaSyncError(error instanceof Error ? error.message : "Could not link the uploaded images to the listing.");
+        }).finally(() => setAttachingImages(count => count - 1));
+        attachChainRef.current = task;
+    };
+
+    useEffect(() => {
+        if (!createdBoatId || !readyToFinish || pendingUploads || attachingImages || failedUploads.length || mediaSyncError) return;
+        createdBoatIdRef.current = null;
+        attachedImageUrlsRef.current.clear();
+        setCreatedBoatId(null);
+        setReadyToFinish(false);
+        setUnsaved(false);
+        setQueueTotal(0);
+        setUploadedInQueue(0);
+        dispatch(resetForm());
+        setCoverImageIndex(0);
+        setDraftId(null);
+        window.dispatchEvent(new CustomEvent("boatsListingRefresh"));
+        toast.success("Listing images are ready.");
+    }, [createdBoatId, readyToFinish, pendingUploads, attachingImages, failedUploads.length, mediaSyncError, dispatch]);
 
     const stripHtml = (value: string) =>
         value
@@ -600,97 +640,112 @@ const UploadBoat = () => {
         return () => { cancelled = true; };
     }, [uploadFolderName, dispatch]);
 
-    const handleImageDrop = async (acceptedFiles: File[]) => {
-        if (uploadedImages.length + acceptedFiles.length > 15) {
-            toast.error("Maximum 15 media items allowed");
-            return;
-        }
-
-        const imageTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    const handleImageDrop = (acceptedFiles: File[], retryingFailed = false): boolean => {
+        if (!acceptedFiles.length) return false;
+        const imageTypes = ["image/jpeg", "image/png", "image/webp"];
         const videoTypes = ["video/mp4", "video/webm", "video/quicktime", "video/x-m4v"];
         const allowedTypes = [...imageTypes, ...videoTypes];
         const invalidFiles = acceptedFiles.filter(file => !allowedTypes.includes(file.type));
 
         if (invalidFiles.length > 0) {
             toast.error("Invalid file type. Please upload JPEG, PNG, WebP, MP4, WebM, MOV, or M4V files only.");
-            return;
+            return false;
         }
-
-        const supabase = getSupabaseBrowserClient();
-        const bucketName = "boat_images";
-
-        // Generate folder name if this is the first image
-        let folderName = uploadFolderName;
-        if (!folderName) {
-            folderName = await generateFolderName();
-            dispatch(setUploadFolderName(folderName));
+        const newImageCount = acceptedFiles.filter(file => imageTypes.includes(file.type)).length;
+        const newVideoCount = acceptedFiles.length - newImageCount;
+        const current = uploadedImagesRef.current;
+        const reservedFailedImages = retryingFailed ? 0 : failedImageCount;
+        const reservedFailedVideos = retryingFailed ? 0 : failedVideoCount;
+        if (current.filter(item => item.mediaType !== "video").length + queuedImagesRef.current + reservedFailedImages + newImageCount > MAX_LISTING_IMAGES) {
+            toast.error(`Add up to ${MAX_LISTING_IMAGES} images per listing.`);
+            return false;
         }
-
-        // Process and upload each image immediately
-        const uploadPromises = acceptedFiles.map(async (file, fileIndex) => {
-            const order = uploadedImages.length + fileIndex;
-            setUploadingImages((prev) => new Set(prev).add(order));
-
-            try {
-                const isVideo = videoTypes.includes(file.type);
-                const uploadFile = isVideo
-                    ? file
-                    : new File([await resizeImage(file, 1500, 1500)], file.name, { type: file.type });
-
-                const fileExt = file.name.split(".").pop();
-                const fileName = `${Date.now()}-${order}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-                const filePath = `${folderName}/${fileName}`;
-
-                const { error: uploadError } = await supabase.storage
-                    .from(bucketName)
-                    .upload(filePath, uploadFile, {
-                        cacheControl: "3600",
-                        upsert: false,
-                    });
-
-                if (uploadError) throw uploadError;
-
-                // Get public URL
-                const { data: urlData } = supabase.storage
-                    .from(bucketName)
-                    .getPublicUrl(filePath);
-
-                if (!urlData?.publicUrl) throw new Error("Failed to get image URL");
-
-                // Add to Redux
-                const uploadedImage: UploadedImage = {
-                    url: urlData.publicUrl,
-                    order,
-                    name: file.name,
-                    filePath,
-                    mediaType: isVideo ? "video" : "image",
-                    sourceType: "upload",
-                };
-
-                dispatch(addUploadedImage(uploadedImage));
-
-                // If this is the first image, set it as main
-                if (uploadedImages.length === 0 && fileIndex === 0) {
-                    dispatch(setMainImageIndex(0));
-                }
-
-                toast.success(`Uploaded: ${file.name}`);
-            } catch (error: any) {
-                console.error(`Error uploading image ${file.name}:`, error);
-                toast.error(`Failed to upload ${file.name}: ${error?.message || "Unknown error"}`);
-            } finally {
-                setUploadingImages((prev) => {
-                    const next = new Set(prev);
-                    next.delete(order);
-                    return next;
-                });
-            }
+        if (current.filter(item => item.mediaType === "video").length + queuedVideosRef.current + reservedFailedVideos + newVideoCount > MAX_LISTING_VIDEOS) {
+            toast.error(`Add up to ${MAX_LISTING_VIDEOS} videos per listing.`);
+            return false;
+        }
+        queuedImagesRef.current += newImageCount;
+        queuedVideosRef.current += newVideoCount;
+        const batch = acceptedFiles.map(file => {
+            const url = imageTypes.includes(file.type) ? URL.createObjectURL(file) : null;
+            if (url) previewUrlsRef.current.add(url);
+            return { id: crypto.randomUUID(), file, url };
         });
+        setPendingPreviews(items => [...items, ...batch.map(({ id, file, url }) => ({ id, name: file.name, url }))]);
+        setPendingUploads(count => count + acceptedFiles.length);
+        setQueueTotal(count => count + acceptedFiles.length);
+        setUnsaved(true);
 
-        await Promise.all(uploadPromises);
+        const run = async () => {
+            let folderName = uploadFolderNameRef.current;
+            if (!folderName) {
+                folderName = `temp-${crypto.randomUUID()}`;
+                uploadFolderNameRef.current = folderName;
+                dispatch(setUploadFolderName(folderName));
+            }
+            for (const { id, file, url: previewUrl } of batch) {
+                const isVideo = videoTypes.includes(file.type);
+                setActiveUploadName(file.name);
+                try {
+                    let url: string;
+                    let filePath: string;
+                    if (isVideo) {
+                        const extension = file.name.split(".").pop();
+                        filePath = `${folderName}/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+                        const supabase = getSupabaseBrowserClient();
+                        const { error } = await supabase.storage.from("boat_images").upload(filePath, file, { cacheControl: "3600", upsert: false });
+                        if (error) throw error;
+                        url = supabase.storage.from("boat_images").getPublicUrl(filePath).data.publicUrl;
+                    } else {
+                        const image = await uploadListingImage(file, folderName);
+                        url = image.url;
+                        filePath = image.id;
+                    }
+                    const uploadedImage: UploadedImage = {
+                        url, filePath, name: file.name,
+                        order: uploadedImagesRef.current.length,
+                        mediaType: isVideo ? "video" : "image",
+                        sourceType: "upload",
+                    };
+                    uploadedImagesRef.current = [...uploadedImagesRef.current, uploadedImage];
+                    dispatch(addUploadedImage(uploadedImage));
+                    if (createdBoatIdRef.current) await attachImageToBoat(uploadedImage);
+                    setUploadedInQueue(count => count + 1);
+                } catch (error) {
+                    const message = error instanceof Error ? error.message : "Upload failed. Try again.";
+                    setFailedUploads(files => [...files, file]);
+                    toast.error(`${file.name}: ${message}`);
+                } finally {
+                    if (previewUrl) {
+                        URL.revokeObjectURL(previewUrl);
+                        previewUrlsRef.current.delete(previewUrl);
+                    }
+                    setPendingPreviews(items => items.filter(item => item.id !== id));
+                    if (isVideo) queuedVideosRef.current -= 1;
+                    else queuedImagesRef.current -= 1;
+                    setPendingUploads(count => count - 1);
+                }
+            }
+            setActiveUploadName("");
+        };
+        uploadChainRef.current = uploadChainRef.current.then(run, run);
+        return true;
+    };
+
+    const retryFailedUploads = () => {
+        const files = failedUploads;
+        if (handleImageDrop(files, true)) setFailedUploads([]);
+    };
+
+    const discardFailedUploads = () => setFailedUploads([]);
+
+    const retryMediaSync = () => {
+        setMediaSyncError("");
+        attachExistingImagesToBoat();
     };
 
     const removeImage = async (index: number) => {
+        if (createdBoatIdRef.current) return;
         const imageToRemove = uploadedImages[index];
         if (!imageToRemove) return;
 
@@ -698,19 +753,15 @@ const UploadBoat = () => {
         const bucketName = "boat_images";
 
         try {
-            if (imageToRemove.filePath) {
-                const { error: deleteError } = await supabase.storage
-                    .from(bucketName)
-                    .remove([imageToRemove.filePath]);
-
-                if (deleteError) {
-                    console.error("Error deleting media from storage:", deleteError);
-                    toast.error("Failed to delete media from storage");
-                    return;
-                }
+            if (imageToRemove.filePath && imageToRemove.url.startsWith("/api/boat-images/")) {
+                await removeListingImage(imageToRemove.url);
+            } else if (imageToRemove.filePath) {
+                const { error } = await supabase.storage.from(bucketName).remove([imageToRemove.filePath]);
+                if (error) throw error;
             }
 
             // Update Redux
+            uploadedImagesRef.current = uploadedImagesRef.current.filter(item => item.url !== imageToRemove.url).map((item, order) => ({ ...item, order }));
             dispatch(removeUploadedImage(index));
             setCoverImageIndex((current) => {
                 if (uploadedImages.length <= 1) return 0;
@@ -726,6 +777,7 @@ const UploadBoat = () => {
     };
 
     const handleImageDragEnd = ({ active, over }: DragEndEvent) => {
+        if (createdBoatIdRef.current) return;
         if (!over || active.id === over.id) return;
 
         const fromIndex = uploadedImages.findIndex((image) => getMediaId(image) === active.id);
@@ -750,7 +802,8 @@ const UploadBoat = () => {
         setAddingVideoLink(true);
         setVideoLinkError("");
         try {
-            if (uploadedImages.length >= 15) throw new Error("Maximum 15 media items allowed");
+            if (createdBoatIdRef.current) throw new Error("This listing has already been published.");
+            if (reservedVideoCount >= MAX_LISTING_VIDEOS) throw new Error(`Add up to ${MAX_LISTING_VIDEOS} videos per listing.`);
             const video = await prepareVideoLink(url);
 
             dispatch(addUploadedImage({
@@ -772,6 +825,7 @@ const UploadBoat = () => {
     };
 
     const setAsMainImage = (index: number) => {
+        if (createdBoatIdRef.current) return;
         if (uploadedImages[index] && !uploadingImages.has(index)) {
             dispatch(setMainImageIndex(index));
             toast.success("Main media updated");
@@ -958,6 +1012,7 @@ const UploadBoat = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (createdBoatIdRef.current || submitting) return;
 
         // Validate required fields
         const requiredFields = [
@@ -1071,6 +1126,7 @@ const UploadBoat = () => {
                 brochure: primaryBrochure,
                 brochures: uploadedBrochures,
                 additional_details: sanitizedAdditionalDetails,
+                translations: {},
             };
 
             const { error: boatDataError } = await supabase
@@ -1096,38 +1152,13 @@ const UploadBoat = () => {
                 throw new Error(`Failed to link dealer to boat: ${brokerDataError.message}`);
             }
 
-            // Step 4: Move temp folder to permanent boat_id folder (optional enhancement)
-            // For now, we'll keep the temp folder and just create records
-            // Optionally, we could move files: await moveFolderToBoatFolder(uploadFolderName, boatData.id);
-
-            // Step 5: Create boat_images records (images are already uploaded)
-            if (uploadedImages.length > 0) {
-                const imageRecords = uploadedImages.map((img, index) => ({
-                    boat_id: boatData.id,
-                    link: img.url,
-                    media_type: img.mediaType || "image",
-                    display_order: img.order,
-                    is_cover: index === coverImageIndex,
-                }));
-
-                const { error: imagesError } = await supabase
-                    .from("boat_images")
-                    .insert(imageRecords);
-
-                if (imagesError) {
-                    console.error("Error creating boat images records:", imagesError);
-                    throw new Error(`Failed to save boat images: ${imagesError.message}`);
-                }
-            }
-
-            setUnsaved(false);
-            toast.success("Boat uploaded successfully!");
+            createdBoatIdRef.current = boatData.id;
+            setCreatedBoatId(boatData.id);
+            attachExistingImagesToBoat();
+            setReadyToFinish(true);
+            void fetch(`/api/admin/boats/${boatData.id}/translate`, { method: "POST" }).catch(() => null);
+            toast.success(pendingUploads > 0 ? "Listing published. Images are still uploading; keep this tab open." : "Listing published.");
             window.dispatchEvent(new CustomEvent("boatsListingRefresh"));
-
-            // Reset form (Redux will handle localStorage cleanup)
-            dispatch(resetForm());
-            setCoverImageIndex(0);
-            setDraftId(null);
         } catch (error: any) {
             console.error("Error uploading boat:", error);
             toast.error(error?.message || "Failed to upload boat. Please try again.");
@@ -1137,6 +1168,10 @@ const UploadBoat = () => {
     };
 
     const handleSaveDraft = async () => {
+        if (pendingUploads || failedUploads.length) {
+            toast.error("Finish or discard failed uploads before saving this draft.");
+            return;
+        }
         setSavingDraft(true);
         const supabase = getSupabaseBrowserClient();
         const { data: { session } } = await supabase.auth.getSession();
@@ -1622,10 +1657,11 @@ const UploadBoat = () => {
 
                         {/* Media Upload Dropzone */}
                         <div className="mb-4">
-                            <label className="form-label">Boat Photos & Videos (up to 15 media items)</label>
+                            <label className="form-label">Boat photos and videos (up to 25 photos and 15 videos)</label>
 
                             <Dropzone
-                                onDrop={handleImageDrop}
+                                onDrop={(files) => { handleImageDrop(files); }}
+                                onDropRejected={() => toast.error("Choose JPEG, PNG, WebP, MP4, WebM, MOV or M4V files.")}
                                 accept={{
                                     "image/jpeg": [".jpg", ".jpeg"],
                                     "image/png": [".png"],
@@ -1635,20 +1671,19 @@ const UploadBoat = () => {
                                     "video/quicktime": [".mov"],
                                     "video/x-m4v": [".m4v"],
                                 }}
-                                maxFiles={15 - uploadedImages.length}
-                                disabled={uploadedImages.length >= 15}
+                                disabled={createdBoatId !== null || (reservedImageCount >= MAX_LISTING_IMAGES && reservedVideoCount >= MAX_LISTING_VIDEOS)}
                             >
                                 {({ getRootProps, getInputProps, isDragActive }) => (
                                     <div
                                         {...getRootProps()}
-                                        className={`dropzone-container mb-3 ${isDragActive ? "drag-active" : ""} ${uploadedImages.length >= 15 ? "disabled" : ""}`}
+                                        className={`dropzone-container mb-3 ${isDragActive ? "drag-active" : ""} ${createdBoatId || (reservedImageCount >= MAX_LISTING_IMAGES && reservedVideoCount >= MAX_LISTING_VIDEOS) ? "disabled" : ""}`}
                                         style={{
                                             border: "2px dashed",
                                             borderColor: isDragActive ? "rgba(var(--theme-color), 1)" : "rgba(var(--border-color), 1)",
                                             borderRadius: "8px",
                                             padding: "40px",
                                             textAlign: "center",
-                                            cursor: uploadedImages.length >= 15 ? "not-allowed" : "pointer",
+                                            cursor: createdBoatId ? "not-allowed" : "pointer",
                                             backgroundColor: isDragActive ? "rgba(var(--theme-color), 0.05)" : "transparent",
                                             transition: "all 0.3s ease",
                                         }}
@@ -1656,14 +1691,51 @@ const UploadBoat = () => {
                                         <input {...getInputProps()} />
                                         <ImagePlus style={{ fontSize: "48px", color: "rgba(var(--theme-color), 1)", marginBottom: "16px" }} />
                                         <h5 style={{ marginBottom: "8px", color: "rgba(var(--title-color), 1)" }}>
-                                            {isDragActive ? "Drop media here" : uploadedImages.length >= 15 ? "Maximum 15 media items reached" : "Drag & drop photos/videos here, or click to select"}
+                                            {isDragActive ? "Drop media here" : createdBoatId ? "Listing published" : "Drag & drop photos/videos here, or click to select"}
                                         </h5>
                                         <p className="text-muted mb-0">
-                                            {uploadedImages.length >= 15 ? "" : "Supports JPEG, PNG, WebP, MP4, WebM, MOV, M4V"}
+                                            {createdBoatId ? "Finish any remaining uploads below." : "Supports JPEG, PNG, WebP, MP4, WebM, MOV, M4V"}
                                         </p>
                                     </div>
                                 )}
                             </Dropzone>
+
+                            {pendingPreviews.length > 0 && (
+                                <div className="d-flex flex-wrap gap-2 mb-3" aria-label="Files waiting to upload">
+                                    {pendingPreviews.map(item => (
+                                        <div key={item.id} className="border rounded overflow-hidden" style={{ width: 88 }}>
+                                            {item.url ? <Image src={item.url} alt="" width={88} height={64} unoptimized style={{ objectFit: "cover" }} /> : <div className="d-flex align-items-center justify-content-center" style={{ height: 64 }}><FileText size={22} /></div>}
+                                            <div className="small text-truncate px-1" title={item.name}>{item.name}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {(pendingUploads > 0 || failedUploads.length > 0 || mediaSyncError || createdBoatId) && (
+                                <div className="mb-3" aria-live="polite">
+                                    {pendingUploads > 0 && (
+                                        <>
+                                            <div className="small mb-1">Uploading one file at a time: {activeUploadName || "Preparing"} · {uploadedInQueue} of {queueTotal} uploaded</div>
+                                            <progress className="w-100" value={queueTotal - pendingUploads} max={Math.max(queueTotal, 1)} aria-label="Listing media upload progress" />
+                                            {createdBoatId && <div className="small text-muted">The listing is published. Keep this tab open until the uploads finish.</div>}
+                                        </>
+                                    )}
+                                    {failedUploads.length > 0 && (
+                                        <div className="alert alert-danger mt-2 mb-0" role="alert">
+                                            {failedUploads.length} file{failedUploads.length === 1 ? "" : "s"} could not be uploaded. Your selection is still here.
+                                            <Button type="button" color="link" onClick={retryFailedUploads} style={{ minHeight: 44 }}>Retry failed uploads</Button>
+                                            <Button type="button" color="link" onClick={discardFailedUploads} style={{ minHeight: 44 }}>Discard failed files</Button>
+                                        </div>
+                                    )}
+                                    {mediaSyncError && (
+                                        <div className="alert alert-danger mt-2 mb-0" role="alert">
+                                            The listing was published, but an uploaded image could not be linked: {mediaSyncError}
+                                            <Button type="button" color="link" onClick={retryMediaSync} style={{ minHeight: 44 }}>Retry linking images</Button>
+                                        </div>
+                                    )}
+                                    {createdBoatId && !pendingUploads && !failedUploads.length && !mediaSyncError && attachingImages > 0 && <div className="small">Linking uploaded images to the listing…</div>}
+                                </div>
+                            )}
 
                             <div className="row g-2 align-items-end mb-3">
                                 <div className="col-md-9">
@@ -1689,7 +1761,7 @@ const UploadBoat = () => {
                                         type="button"
                                         className="btn-solid w-100"
                                         onClick={handleAddVideoLink}
-                                        disabled={!videoLink.trim() || uploadedImages.length >= 15 || addingVideoLink}
+                                        disabled={!videoLink.trim() || reservedVideoCount >= MAX_LISTING_VIDEOS || addingVideoLink || createdBoatId !== null}
                                         aria-busy={addingVideoLink}
                                         style={{ minHeight: 44 }}
                                     >
@@ -1720,6 +1792,7 @@ const UploadBoat = () => {
                                                         isUploading={uploadingImages.has(index)}
                                                         isMain={mainImageIndex === index}
                                                         isCover={coverImageIndex === index}
+                                                        locked={createdBoatId !== null}
                                                         onRemove={removeImage}
                                                         onSetMain={setAsMainImage}
                                                         onSetCover={setCoverImageIndex}
@@ -1731,7 +1804,7 @@ const UploadBoat = () => {
 
                                     <div className="row g-1 small" style={{ color: "#6c757d" }}>
                                         <div className="col-6 col-sm-auto d-flex align-items-center gap-1">
-                                            {uploadedImages.length} / 15 media items selected
+                                            {imageCount} / {MAX_LISTING_IMAGES} photos · {videoCount} / {MAX_LISTING_VIDEOS} videos
                                         </div>
                                         <div className="col-6 col-sm-auto ms-sm-auto d-flex align-items-center gap-1">
                                             <Info className="h-4 w-4" /> Drag to reorder
@@ -1822,12 +1895,13 @@ const UploadBoat = () => {
                         </div>
 
                         <div className="d-flex flex-wrap gap-2 mt-4">
-                            <Button type="submit" className="btn-solid" disabled={submitting || savingDraft}>
+                            <Button type="submit" className="btn-solid" disabled={submitting || savingDraft || createdBoatId !== null}>
                                 {submitting ? "Publishing…" : "Publish boat"}
                             </Button>
-                            <Button type="button" className="btn-border" onClick={handleSaveDraft} disabled={submitting || savingDraft}>
+                            <Button type="button" className="btn-border" onClick={handleSaveDraft} disabled={submitting || savingDraft || createdBoatId !== null || pendingUploads > 0 || failedUploads.length > 0}>
                                 {savingDraft ? "Saving..." : "Save as Draft"}
                             </Button>
+                            {(pendingUploads > 0 || failedUploads.length > 0) && !createdBoatId && <span className="small text-muted">Finish or discard failed uploads before saving a draft.</span>}
                         </div>
                     </form>
                 </CardBody>

@@ -15,6 +15,8 @@ The global palette lives in `public/assets/scss/abstracts/_variables.scss`; font
 
 - `--content-color: 77, 89, 99` on the default and `car-color` themes keeps body copy readable on light backgrounds. This affects the public homepage and other pages using those themes; dark-theme overrides remain separate.
 - `--bs-link-color-rgb: var(--theme-color)` uses the same blue as footer links for Bootstrap-styled links across the public site.
+- `--display-font` uses the existing Michroma for English, Romanian, and Serbian Latin headings. Bulgarian uses self-hosted Unbounded at its light display weight, whose geometric width keeps the heading style while covering Cyrillic.
+- `--supporting-font` keeps Outfit for existing English and Latin-script accents, and uses Source Sans 3 on Bulgarian pages. Source Sans 3 remains the body font across all public languages.
 
 ## Admin summary tokens
 

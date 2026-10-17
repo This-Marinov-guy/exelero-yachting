@@ -1208,6 +1208,11 @@ input[type="radio"] {
   }
 }
 
+.brokerage-detail-breadcrumb h1 {
+  font-size: calc(20px + (38 - 20) * ((100vw - 320px) / (1920 - 320)));
+  font-weight: 500;
+}
+
 .property-detail-section {
   background: rgba(var(--bg-color), 1);
 
@@ -1369,10 +1374,60 @@ input[type="radio"] {
   .property-detail-main {
     padding-block: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
 
-    h3,
-    .boat-detail-title {
+    h3 {
       color: rgba(var(--title-color), 1);
       font-weight: 400;
+    }
+
+    .boat-detail-overview {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .boat-detail-location {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 0 0 10px;
+      color: rgba(var(--content-color), 1);
+      font-size: calc(16px + (18 - 16) * ((100vw - 320px) / (1920 - 320)));
+      font-weight: 400;
+      line-height: 1.35;
+
+      svg {
+        flex: none;
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+        color: rgba(var(--theme-color), 1);
+      }
+
+      span {
+        overflow-wrap: anywhere;
+      }
+    }
+
+    .boat-detail-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .boat-detail-badge {
+      display: block;
+      width: fit-content;
+      max-width: 150px;
+      overflow: hidden;
+      padding: 4px 9px;
+      border: 1px solid rgba(var(--title-color), 0.14);
+      border-radius: 999px;
+      background: rgba(var(--white), 1);
+      color: rgba(var(--title-color), 0.8);
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.2;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     h6 {

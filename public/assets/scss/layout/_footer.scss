@@ -214,6 +214,11 @@
                 font-size: 24px;
                 transition: 0.4s ease;
 
+                svg {
+                    width: clamp(26px, 2.5vw, 38px);
+                    height: clamp(26px, 2.5vw, 38px);
+                }
+
                 .iconsax {
                     width: calc(20px + (38 - 20) * ((100vw - 320px) / (1920 - 320)));
                     height: calc(20px + (38 - 20) * ((100vw - 320px) / (1920 - 320)));

@@ -1,11 +1,15 @@
+"use client";
+
 import { ImagePath } from "@/constants";
 import { BreadcrumbsType } from "@/types/CommonComponents";
 import RatioImage from "@/utils/RatioImage";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
+import { usePublicText } from "@/lib/usePublicText";
 import { FC } from "react";
 import { Container } from "reactstrap";
 
 const Breadcrumbs: FC<BreadcrumbsType> = ({ title, headingLevel = 2, image, subTitle, url, mainClass }) => {
+  const tr = usePublicText();
   return (
     <div className={`${mainClass ? mainClass : "breadcrumbs-section without-search-breadcrumbs"} `}>
       <Container>
@@ -13,7 +17,7 @@ const Breadcrumbs: FC<BreadcrumbsType> = ({ title, headingLevel = 2, image, subT
           {headingLevel === 1 ? <h1>{title}</h1> : <h2>{title}</h2>}
           <ul className='breadcrumbs-list'>
             <li>
-              <Link href={url}>Home</Link>
+              <Link href={url}>{tr("Home")}</Link>
             </li>
             <li>{subTitle || title}</li>
           </ul>

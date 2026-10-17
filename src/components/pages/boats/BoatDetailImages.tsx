@@ -5,6 +5,7 @@ import { FC, useState } from "react";
 import { ProductType } from "@/types/Product";
 import { Modal, ModalBody } from "reactstrap";
 import { VideoPlayer, VideoPoster } from "@/components/commonComponents/VideoMedia";
+import Image from "next/image";
 
 interface BoatDetailImagesProps {
   boat: ProductType;
@@ -35,10 +36,16 @@ const BoatDetailImages: FC<BoatDetailImagesProps> = ({ boat }) => {
             />
           </button>
         ) : (
-          <img
+          <Image
             src={media.url}
             alt={boat.title}
+            width={1600}
+            height={900}
+            sizes="(max-width: 767px) 100vw, 1200px"
+            quality={72}
+            priority
             className="boat-detail-preview-image"
+            style={{ width: "100%", height: "auto", maxHeight: 400, objectFit: "cover" }}
           />
         )}
       </div>

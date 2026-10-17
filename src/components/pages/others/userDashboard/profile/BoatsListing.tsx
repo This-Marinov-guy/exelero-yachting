@@ -176,7 +176,7 @@ const BoatsListing = () => {
 
             if (error) throw error;
             setBoats((prev) => prev.map((boat) => boat.id === boatId ? { ...boat, bought: nextBought, active: false } : boat));
-            toast.success(nextBought ? "Yacht marked as sold and removed from brokerage." : "Yacht marked available. Publish it separately to show it in brokerage.");
+            toast.success(nextBought ? "Yacht marked as sold. It now appears in Gallery." : "Yacht marked available. Publish it separately to show it in brokerage.");
         } catch (error) {
             console.error("Error updating yacht availability:", error);
             setAvailabilityErrors((prev) => ({ ...prev, [boatId]: `Could not mark this yacht as ${nextBought ? "sold" : "available"}. Try again.` }));
@@ -277,7 +277,7 @@ const BoatsListing = () => {
             </div></td>
             <td><div className={styles.availabilityCell}>
               <span className={styles.availabilityBadge} data-sold={boat.bought}>{boat.bought ? "Sold" : "Available"}</span>
-              <button type="button" className={`btn-border ${styles.availabilityAction}`} aria-label={`Mark ${title} as ${boat.bought ? "available" : "sold"}`} disabled={busy} onClick={() => { if (boat.bought || window.confirm(`Mark ${title} as sold? This will remove it from brokerage and stop new inquiries.`)) void handleToggleBought(boat.id, boat.bought); }}>{updatingBought.has(boat.id) ? "Saving…" : boat.bought ? "Mark available" : "Mark as sold"}</button>
+              <button type="button" className={`btn-border ${styles.availabilityAction}`} aria-label={`Mark ${title} as ${boat.bought ? "available" : "sold"}`} disabled={busy} onClick={() => { if (boat.bought || window.confirm(`Mark ${title} as sold? This will move it from brokerage to Gallery and stop new inquiries.`)) void handleToggleBought(boat.id, boat.bought); }}>{updatingBought.has(boat.id) ? "Saving…" : boat.bought ? "Mark available" : "Mark as sold"}</button>
               {availabilityErrors[boat.id] && <span className={styles.availabilityError} role="alert">{availabilityErrors[boat.id]}</span>}
             </div></td>
             <td><div className="d-flex gap-2">

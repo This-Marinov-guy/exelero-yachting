@@ -1,12 +1,16 @@
-import { Copyright, Details, FooterDetailData } from "@/data/layout/Footer";
+import { Details, FooterDetailData } from "@/data/layout/Footer";
 import { PathTypes } from "@/types/Layout";
 import { Col, Container, Row } from "reactstrap";
 import FooterContactList from "./FooterContactList";
 import FooterDetailSection from "./FooterDetailSection";
 import FooterSocial from "./FooterSocial";
+import FooterLanguageSelect from "./FooterLanguageSelect";
+import CookieSettingsButton from "@/components/commonComponents/CookieSettingsButton";
+import { useTranslation } from "react-i18next";
 
 const Footer: React.FC<PathTypes> = ({ part }) => {
   const filteredData = FooterDetailData.filter((item) => !item.contactList);
+  const { t } = useTranslation("common");
   
   return (
     <footer className={`property-footer-section${part?.includes("job") ? " job-footer-section" : ""}`}>
@@ -24,7 +28,8 @@ const Footer: React.FC<PathTypes> = ({ part }) => {
             </Col>
           </Row>
         </div>
-        {Copyright}
+        <FooterLanguageSelect />
+        <div className="copyright"><p>© {new Date().getFullYear()} Exelero Yachting. {t("All rights reserved")}</p><CookieSettingsButton /></div>
       </Container>
     </footer>
   );

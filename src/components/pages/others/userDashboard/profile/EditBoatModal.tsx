@@ -3,7 +3,7 @@ import { useUnsavedChanges } from "../useUnsavedChanges";
 import styles from "../AdminShell.module.scss";
 import AccountSkeleton from "../AccountSkeleton";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import {
@@ -26,6 +26,7 @@ import DOMPurify from "dompurify";
 import Image from "next/image";
 import Dropzone from "react-dropzone";
 import { X, Star, ImagePlus, ChevronLeft, ChevronRight, FileText, Trash2 } from "lucide-react";
+import { MAX_LISTING_IMAGES, MAX_LISTING_VIDEOS, removeListingImage, uploadListingImage } from "@/lib/boatImageClient";
 
 const RichTextEditor = dynamic(
   () => import("@/components/commonComponents/RichTextEditor"),
@@ -124,15 +125,19 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
   const [saving, setSaving] = useState(false);
   const [unsaved, setUnsaved] = useState(false);
   useUnsavedChanges(unsaved || saving);
-  const closeEditor = () => { if (!saving && (!unsaved || confirm("Discard unsaved boat changes?"))) onClose(); };
+  const closeEditor = () => { if (!saving && !uploadingMedia && (!unsaved || confirm("Discard unsaved boat changes?"))) onClose(); };
   const [form, setForm] = useState(emptyForm);
   const [images, setImages] = useState<ImageItem[]>([]);
   const [brochures, setBrochures] = useState<UploadedBrochure[]>([]);
-  const [uploadingImages, setUploadingImages] = useState<Set<number>>(new Set());
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+  const [mediaUploadProgress, setMediaUploadProgress] = useState({ done: 0, total: 0 });
+  const mediaUploadActiveRef = useRef(false);
   const [uploadingBrochures, setUploadingBrochures] = useState<Set<number>>(new Set());
   const [videoLink, setVideoLink] = useState("");
   const [videoLinkError, setVideoLinkError] = useState("");
   const [addingVideoLink, setAddingVideoLink] = useState(false);
+  const imageCount = images.filter(item => item.media_type !== "video").length;
+  const videoCount = images.filter(item => item.media_type === "video").length;
 
   const setField = (field: string, value: string | number | boolean | null) => {
     setUnsaved(true);
@@ -229,7 +234,12 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
     setImages(next.map((img, i) => ({ ...img, display_order: i })));
   };
 
-  const removeImage = (index: number) => {
+  const removeImage = async (index: number) => {
+    const image = images[index];
+    if (image?.isNew && image.link.startsWith("/api/boat-images/")) {
+      try { await removeListingImage(image.link); }
+      catch (error) { toast.error(error instanceof Error ? error.message : "Could not remove this image. Try again."); return; }
+    }
     setUnsaved(true);
     setImages((prev) => prev.filter((_, i) => i !== index).map((img, i) => ({ ...img, display_order: i })));
   };
@@ -244,50 +254,43 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
   };
 
   const onDrop = async (acceptedFiles: File[]) => {
+    if (mediaUploadActiveRef.current || !acceptedFiles.length || !boatId) return;
     setUnsaved(true);
-    if (images.length + acceptedFiles.length > 15) {
-      toast.error("Maximum 15 media items allowed");
+    const newImages = acceptedFiles.filter(file => file.type.startsWith("image/")).length;
+    const newVideos = acceptedFiles.length - newImages;
+    if (imageCount + newImages > MAX_LISTING_IMAGES || videoCount + newVideos > MAX_LISTING_VIDEOS) {
+      toast.error(`Add up to ${MAX_LISTING_IMAGES} photos and ${MAX_LISTING_VIDEOS} videos per listing.`);
       return;
     }
+    mediaUploadActiveRef.current = true;
+    setUploadingMedia(true);
+    setMediaUploadProgress({ done: 0, total: acceptedFiles.length });
     const supabase = getSupabaseBrowserClient();
-    const startOrder = images.length;
-    const toAdd: ImageItem[] = [];
-
-    for (let i = 0; i < acceptedFiles.length; i++) {
-      const file = acceptedFiles[i];
-      const idx = startOrder + i;
-      setUploadingImages((prev) => new Set(prev).add(idx));
-      const isVideo = ["video/mp4", "video/webm", "video/quicktime", "video/x-m4v"].includes(file.type);
-
-      const ext = file.name.split(".").pop() || "jpg";
-      const path = `${boatId}/${Date.now()}-${i}.${ext}`;
-
-      const { data, error } = await supabase.storage.from("boat_images").upload(path, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-      setUploadingImages((prev) => {
-        const next = new Set(prev);
-        next.delete(idx);
-        return next;
-      });
-
-      if (error) {
-        toast.error(`Failed to upload ${file.name}`);
-        continue;
+    try {
+      for (const file of acceptedFiles) {
+        const isVideo = !file.type.startsWith("image/");
+        try {
+          let link: string;
+          if (isVideo) {
+            const ext = file.name.split(".").pop() || "mp4";
+            const path = `${boatId}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+            const { data, error } = await supabase.storage.from("boat_images").upload(path, file, { cacheControl: "3600", upsert: false });
+            if (error) throw error;
+            link = supabase.storage.from("boat_images").getPublicUrl(data.path).data.publicUrl;
+          } else {
+            link = (await uploadListingImage(file, `boat-${boatId}`)).url;
+          }
+          setImages(prev => [...prev, { link, media_type: isVideo ? "video" : "image", display_order: prev.length, isNew: true }]);
+        } catch (error) {
+          toast.error(`${file.name}: ${error instanceof Error ? error.message : "Upload failed. Try again."}`);
+        } finally {
+          setMediaUploadProgress(prev => ({ ...prev, done: prev.done + 1 }));
+        }
       }
-
-      const { data: urlData } = supabase.storage.from("boat_images").getPublicUrl(data.path);
-      toAdd.push({
-        link: urlData.publicUrl,
-        media_type: isVideo ? "video" : "image",
-        display_order: startOrder + toAdd.length,
-        isNew: true,
-      });
+    } finally {
+      mediaUploadActiveRef.current = false;
+      setUploadingMedia(false);
     }
-
-    setImages((prev) => [...prev, ...toAdd].map((img, i) => ({ ...img, display_order: i })));
   };
 
   const addVideoLink = async () => {
@@ -297,8 +300,8 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
     setAddingVideoLink(true);
     setVideoLinkError("");
     try {
-      if (images.length >= 15) {
-        throw new Error("Maximum 15 media items allowed");
+      if (videoCount >= MAX_LISTING_VIDEOS) {
+        throw new Error(`Add up to ${MAX_LISTING_VIDEOS} videos per listing.`);
       }
 
       const video = await prepareVideoLink(url);
@@ -404,7 +407,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!boatId) return;
+    if (!boatId || mediaUploadActiveRef.current) return;
 
     const supabase = getSupabaseBrowserClient();
     setSaving(true);
@@ -440,6 +443,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
         brochure: brochures[0]?.url || form.brochure?.trim() || null,
         brochures,
         additional_details: form.additional_details?.trim() ? sanitize(form.additional_details) : null,
+        translations: {},
       };
 
       if (form.type !== undefined && form.type !== "") {
@@ -454,27 +458,36 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
       }
 
       const existingIds = images.filter((img) => img.id && !img.isNew).map((img) => img.id as string);
-      const { data: existingRows } = await supabase.from("boat_images").select("id").eq("boat_id", boatId);
+      const { data: existingRows, error: existingError } = await supabase.from("boat_images").select("id, link").eq("boat_id", boatId);
+      if (existingError) throw existingError;
 
-      const toDelete = (existingRows || []).filter((r: { id: string }) => !existingIds.includes(r.id)).map((r: { id: string }) => r.id);
-      for (const id of toDelete) {
-        await supabase.from("boat_images").delete().eq("id", id);
+      const toDelete = (existingRows || []).filter((r: { id: string }) => !existingIds.includes(r.id));
+      for (const row of toDelete) {
+        const { error } = await supabase.from("boat_images").delete().eq("id", row.id);
+        if (error) throw error;
+        if (row.link.startsWith("/api/boat-images/")) {
+          try { await removeListingImage(row.link); }
+          catch (error) { console.error("Drive image cleanup failed:", error); }
+        }
       }
 
       for (let i = 0; i < images.length; i++) {
         const img = images[i];
         if (img.id && !img.isNew) {
-          await supabase.from("boat_images").update({ display_order: i, media_type: img.media_type || "image" }).eq("id", img.id);
+          const { error } = await supabase.from("boat_images").update({ display_order: i, media_type: img.media_type || "image" }).eq("id", img.id);
+          if (error) throw error;
         } else {
-          await supabase.from("boat_images").insert({
+          const { error } = await supabase.from("boat_images").insert({
             boat_id: boatId,
             link: img.link,
             media_type: img.media_type || "image",
             display_order: i,
           });
+          if (error) throw error;
         }
       }
 
+      await fetch(`/api/admin/boats/${boatId}/translate`, { method: "POST" }).catch(() => null);
       toast.success("Boat updated successfully");
       setUnsaved(false);
       onSaved();
@@ -811,9 +824,10 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
               </div>
 
               <div className="col-lg-4">
-                <Label className="d-block mb-2">Media ({images.length} / 15)</Label>
+                <Label className="d-block mb-2">Media ({imageCount} / {MAX_LISTING_IMAGES} photos · {videoCount} / {MAX_LISTING_VIDEOS} videos)</Label>
                 <Dropzone
                   onDrop={onDrop}
+                  onDropRejected={() => toast.error("Choose JPEG, PNG, WebP, MP4, WebM, MOV or M4V files.")}
                   accept={{
                     "image/jpeg": [".jpg", ".jpeg"],
                     "image/png": [".png"],
@@ -823,8 +837,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                     "video/quicktime": [".mov"],
                     "video/x-m4v": [".m4v"],
                   }}
-                  maxFiles={15 - images.length}
-                  disabled={images.length >= 15}
+                  disabled={uploadingMedia || (imageCount >= MAX_LISTING_IMAGES && videoCount >= MAX_LISTING_VIDEOS)}
                 >
                   {({ getRootProps, getInputProps, isDragActive }) => (
                     <div
@@ -832,18 +845,24 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                       className="border border-dashed rounded p-3 text-center mb-3"
                       style={{
                         borderColor: isDragActive ? "var(--theme-color, #0d6efd)" : "#dee2e6",
-                        cursor: images.length >= 15 ? "not-allowed" : "pointer",
+                        cursor: uploadingMedia || (imageCount >= MAX_LISTING_IMAGES && videoCount >= MAX_LISTING_VIDEOS) ? "not-allowed" : "pointer",
                         background: isDragActive ? "rgba(13, 110, 253, 0.05)" : "transparent",
                       }}
                     >
                       <input {...getInputProps()} />
                       <ImagePlus className="fs-2 text-muted" style={{ width: "1.5rem", height: "1.5rem" }} />
                       <p className="mb-0 small text-muted">
-                        {images.length >= 15 ? "Max 15 media items" : "Drop or click to add photos/videos"}
+                        {uploadingMedia ? "Uploading one file at a time…" : "Drop or click to add photos/videos"}
                       </p>
                     </div>
                   )}
                 </Dropzone>
+                {uploadingMedia && (
+                  <div className="small mb-3" aria-live="polite">
+                    Uploading {mediaUploadProgress.done} of {mediaUploadProgress.total} files. Keep this editor open.
+                    <progress className="w-100" value={mediaUploadProgress.done} max={Math.max(mediaUploadProgress.total, 1)} aria-label="Media upload progress" />
+                  </div>
+                )}
                 <div className="d-flex gap-2 mb-1">
                   <div className="flex-grow-1">
                     <Label for="edit-boat-video-link">Add video link</Label>
@@ -861,7 +880,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                       aria-describedby="edit-boat-video-link-help"
                     />
                   </div>
-                  <Button type="button" color="primary" onClick={addVideoLink} disabled={!videoLink.trim() || images.length >= 15 || addingVideoLink} aria-busy={addingVideoLink} className="align-self-end" style={{ minHeight: 44 }}>
+                  <Button type="button" color="primary" onClick={addVideoLink} disabled={!videoLink.trim() || videoCount >= MAX_LISTING_VIDEOS || addingVideoLink || uploadingMedia} aria-busy={addingVideoLink} className="align-self-end" style={{ minHeight: 44 }}>
                     {addingVideoLink && <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true" />}
                     {addingVideoLink ? "Adding..." : "Add Video"}
                   </Button>
@@ -888,9 +907,6 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                       )}
                       {index === 0 && (
                         <span className="position-absolute top-0 start-0 badge bg-primary m-1">Main</span>
-                      )}
-                      {uploadingImages.has(index) && (
-                        <span className="position-absolute top-50 start-50 translate-middle spinner-border spinner-border-sm text-light" />
                       )}
                       <div className="position-absolute bottom-0 start-0 end-0 d-flex justify-content-between p-1 bg-dark bg-opacity-75">
                         <button type="button" className="btn btn-sm btn-outline-light py-0 px-1" onClick={() => setMainImage(index)} disabled={index === 0} title="Set as main">
@@ -920,10 +936,10 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
       </ModalBody>
       {!loading && (
         <ModalFooter>
-          <Button color="secondary" onClick={closeEditor}>
+          <Button color="secondary" onClick={closeEditor} disabled={uploadingMedia}>
             Cancel
           </Button>
-          <Button color="primary" type="submit" form="edit-boat-form" disabled={saving}>
+          <Button color="primary" type="submit" form="edit-boat-form" disabled={saving || uploadingMedia}>
             {saving ? "Saving..." : "Save changes"}
           </Button>
         </ModalFooter>

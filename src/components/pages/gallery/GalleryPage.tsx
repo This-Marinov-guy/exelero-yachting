@@ -1,116 +1,98 @@
 "use client";
+
 import Breadcrumbs from "@/components/commonComponents/breadcrumb";
+import Link from "@/components/commonComponents/LocalizedLink";
+import { usePublicText } from "@/lib/usePublicText";
+import type { SoldYacht } from "@/lib/soldYachts";
+import { listingImageThumbnailUrl, listingImageViewUrl } from "@/lib/listingImageUrl";
 import { RouteList } from "@/utils/RouteList";
-import { GalleryEvents } from "@/data/pages/Gallery";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { Container, Row, Col } from "reactstrap";
 import { Gallery, Item } from "react-photoswipe-gallery";
 import "photoswipe/dist/photoswipe.css";
+import styles from "./GalleryPage.module.scss";
 
-const GalleryPage = () => {
-  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
+type Props = { yachts: SoldYacht[] };
 
-  const event = selectedEvent ? GalleryEvents.find((e) => e.id === selectedEvent) : null;
+export default function GalleryPage({ yachts }: Props) {
+  const tr = usePublicText();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selectedYacht = yachts.find((yacht) => yacht.id === selectedId);
 
-  return (
-    <>
-      <Breadcrumbs title="Gallery" url={RouteList.Home.CarDemo1} mainClass="page-breadcrumbs-section" image />
-      <section className="section-b-space gallery-section">
-        <Container>
-          {!selectedEvent ? (
-            <>
-              <div className="gallery-header text-center mb-5">
-                <h2 className="gallery-title">Event Gallery</h2>
-                <p className="gallery-subtitle">Explore our collection of events and moments</p>
-              </div>
-              <Row className="g-4">
-                {GalleryEvents.map((event) => (
-                  <Col lg={4} md={6} sm={6} key={event.id}>
-                    <div
-                      className="gallery-event-card"
-                      onClick={() => setSelectedEvent(event.id)}
-                    >
-                      <div className="event-thumbnail-wrapper">
-                        <Image
-                          src={event.thumbnail}
-                          alt={event.title}
-                          fill
-                          className="event-thumbnail"
-                          style={{ objectFit: "cover" }}
-                          unoptimized
-                        />
-                        <div className="event-overlay">
-                          <div className="event-info">
-                            <h3 className="event-title">{event.title}</h3>
-                            {event.description && (
-                              <p className="event-description">{event.description}</p>
-                            )}
-                            {event.date && <span className="event-date">{event.date}</span>}
-                            <span className="event-count">{event.images.length} photos</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Col>
-                ))}
-              </Row>
-            </>
-          ) : (
-            <>
-              <div className="gallery-header mb-4">
-                <button
-                  className="btn-back"
-                  onClick={() => setSelectedEvent(null)}
-                >
-                  ← Back to Gallery
-                </button>
-                <h2 className="gallery-title mt-3">{event?.title}</h2>
-                {event?.description && (
-                  <p className="gallery-subtitle">{event.description}</p>
-                )}
-              </div>
-              <Gallery>
-                <Row className="g-3">
-                  {event?.images.map((image) => (
-                    <Col lg={4} md={6} sm={6} key={image.id}>
-                      <Item
-                        original={image.src}
-                        thumbnail={image.src}
-                        width={image.width || 1200}
-                        height={image.height || 800}
-                      >
-                        {({ ref, open }) => (
-                          <div
-                            ref={ref}
-                            className="gallery-image-wrapper"
-                            onClick={open}
-                          >
-                            <Image
-                              src={image.src}
-                              alt={image.alt}
-                              fill
-                              className="gallery-image"
-                              style={{ objectFit: "cover" }}
-                              unoptimized
-                            />
-                            <div className="image-overlay">
-                              <i className="ri-zoom-in-line"></i>
-                            </div>
-                          </div>
-                        )}
-                      </Item>
-                    </Col>
-                  ))}
-                </Row>
-              </Gallery>
-            </>
-          )}
-        </Container>
-      </section>
-    </>
-  );
-};
+  return <>
+    <Breadcrumbs title={tr("Gallery")} headingLevel={1} url={RouteList.Home.CarDemo1} mainClass="page-breadcrumbs-section" image />
+    <section className={styles.section} aria-label={tr("Sold yachts")}>
+      <Container>
+        {selectedYacht ? <>
+          <button type="button" className={styles.backButton} onClick={() => setSelectedId(null)}>
+            <i className="ri-arrow-left-line" aria-hidden="true" /> {tr("Back to gallery")}
+          </button>
+          <div className={styles.heading}>
+            <div>
+              <h2>{selectedYacht.title}</h2>
+              <p>{[selectedYacht.manufacturer, selectedYacht.buildYear, selectedYacht.location].filter(Boolean).join(" · ")}</p>
+            </div>
+            <span className={styles.photoCount}>{tr("photos")} · {selectedYacht.images.length}</span>
+          </div>
+          <Gallery>
+            <Row className="g-3">
+              {selectedYacht.images.map((src, index) => <Col lg={4} md={6} key={`${src}-${index}`}>
+                <Item original={listingImageViewUrl(src)} thumbnail={listingImageThumbnailUrl(src)} width={1200} height={800}>
+                  {({ ref, open }) => <button
+                    type="button"
+                    ref={ref}
+                    className={styles.photoButton}
+                    onClick={open}
+                    aria-label={`${tr("View photo")} ${index + 1}: ${selectedYacht.title}`}
+                  >
+                    <Image src={src} alt={`${selectedYacht.title}, ${tr("photo")} ${index + 1}`} fill sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw" quality={72} />
+                    <span className={styles.zoomIcon} aria-hidden="true"><i className="ri-zoom-in-line" /></span>
+                  </button>}
+                </Item>
+              </Col>)}
+            </Row>
+          </Gallery>
+        </> : <>
+          <div className={styles.heading}>
+            <div>
+              <h2>{tr("Sold yachts")}</h2>
+              <p>{tr("Explore yachts sold by Exelero Yachting and browse photographs from completed sales.")}</p>
+            </div>
+          </div>
+          {yachts.length ? <Row className="g-4">
+            {yachts.map((yacht) => <Col lg={4} md={6} key={yacht.id}>
+              <article className={`${styles.card} ${yacht.images.length ? "" : styles.staticCard}`}>
+                <YachtCard yacht={yacht} />
+                {yacht.images.length > 0 && <button
+                  type="button"
+                  className={styles.cardHitbox}
+                  onClick={() => setSelectedId(yacht.id)}
+                  aria-label={`${tr("View photos")}: ${yacht.title}`}
+                />}
+              </article>
+            </Col>)}
+          </Row> : <div className={styles.emptyState}>
+            <h3>{tr("No sold yachts yet")}</h3>
+            <Link href={RouteList.Pages.Services.Boats} className={styles.browseLink}>{tr("Browse yachts for sale")} <i className="ri-arrow-right-line" aria-hidden="true" /></Link>
+          </div>}
+        </>}
+      </Container>
+    </section>
+  </>;
+}
 
-export default GalleryPage;
+function YachtCard({ yacht }: { yacht: SoldYacht }) {
+  const tr = usePublicText();
+  return <>
+    <div className={styles.cover}>
+      <Image src={yacht.images[0] || "/assets/images/hero/boats.jpg"} alt={yacht.title} fill sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw" quality={72} />
+      <span className={styles.soldBadge}>{tr("Sold")}</span>
+    </div>
+    <div className={styles.cardContent}>
+      <h3>{yacht.title}</h3>
+      <p>{[yacht.manufacturer, yacht.buildYear, yacht.location].filter(Boolean).join(" · ")}</p>
+      <span className={styles.cardAction}>{yacht.images.length ? `${tr("View photos")} (${yacht.images.length})` : tr("Photos coming soon")} {yacht.images.length > 0 && <i className="ri-arrow-right-line" aria-hidden="true" />}</span>
+    </div>
+  </>;
+}

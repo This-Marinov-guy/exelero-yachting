@@ -1,7 +1,9 @@
 import { ContactListData } from "@/data/layout/Footer";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const FooterContactList = () => {
+  const { t } = useTranslation("common");
   const getHref = (title: string, value: string) => {
     const t = title.toLowerCase();
 
@@ -26,7 +28,7 @@ const FooterContactList = () => {
         <li key={index}>
           <div className='footer-icon'>{item.icon}</div>
           <div className='footer-contact'>
-            <h4>{item.title}</h4>
+            <h4>{t(item.title)}</h4>
             <h6>
               <a href={getHref(item.title, item.text)} target={item.title.toLowerCase().includes("location") ? "_blank" : undefined} rel={item.title.toLowerCase().includes("location") ? "noreferrer" : undefined}>
                 {item.text}

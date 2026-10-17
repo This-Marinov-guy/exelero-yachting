@@ -1,0 +1,7 @@
+.env.local
+.env.*.local
+google-service-account.json
+.next-*
+*.tsbuildinfo
+.playwright-cli/
+.claude/

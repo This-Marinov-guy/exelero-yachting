@@ -4,6 +4,12 @@ import { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { ProductType } from "@/types/Product";
 import { getSiteUrl } from "@/lib/siteUrl";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { translatedFields } from "@/lib/contentTranslations";
+import { fallbackContentMetadata } from "@/lib/publicSeo";
+import { localizedPath, PUBLIC_LOCALES, type PublicLocale } from "@/lib/publicLocale";
+import { publicText } from "@/lib/publicText";
+import { sanitizePublicBoatHtml } from "@/lib/sanitizePublicBoatHtml";
 
 // Helper function to generate numeric ID from UUID (same as in BoatsPage)
 const generateNumericId = (uuid: string): number => {
@@ -27,7 +33,7 @@ const buildLegacyBoatSlug = (title: string, buildYear: string) => {
   return slugifyBoatTitle(slugSource);
 };
 
-async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | null> {
+async function fetchBoatByIdentifier(identifier: string, locale: PublicLocale): Promise<ProductType | null> {
   const supabase = getSupabaseServerClient();
 
   try {
@@ -73,15 +79,16 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
     }
 
     // Fetch boat_data
-    const { data: boatData, error: boatDataError } = await supabase
+    const { data: englishBoatData, error: boatDataError } = await supabase
       .from("boat_data")
       .select("*")
       .eq("boat_id", boat.id)
       .single();
 
-    if (boatDataError || !boatData) {
+    if (boatDataError || !englishBoatData) {
       throw boatDataError || new Error(`Missing public data for boat ${boat.id}`);
     }
+    const boatData = translatedFields(englishBoatData, locale);
 
     // Fetch broker_data
     let brokerData = null;
@@ -164,7 +171,7 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
         { icon: "power", text: `${boatData.engine_power || 0}kW` },
       ],
       price: boatData.price ?? undefined,
-      description: boatData.description || "",
+      description: sanitizePublicBoatHtml(boatData.description),
       location: boatData.location || "",
       year: parseInt(boatData.build_year || "0"),
       squareFeet: Math.round((boatData.hull_length || 0) * 10.764),
@@ -201,7 +208,7 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
       keelType: boatData.keel_type || "",
       ceDesignCategory: boatData.ce_design_category || "",
       material: boatData.material || "",
-      additionalDetails: boatData.additional_details || "",
+      additionalDetails: sanitizePublicBoatHtml(boatData.additional_details),
       brochure: boatData.brochure || "",
       brochures: Array.isArray(boatData.brochures) && boatData.brochures.length > 0
         ? boatData.brochures
@@ -212,6 +219,8 @@ async function fetchBoatByIdentifier(identifier: string): Promise<ProductType | 
       brokerEmail: brokerData?.email || "",
       brokerPhone: brokerData?.phone || "",
       brokerProfileImage: brokerProfileImage || "",
+      isTranslated: locale === "en" || Boolean((englishBoatData.translations as Record<string, { description?: string }> | null)?.[locale]?.description),
+      availableLocales: PUBLIC_LOCALES.filter((value) => value === "en" || Boolean((englishBoatData.translations as Record<string, { description?: string }> | null)?.[value]?.description)),
     } as ProductType;
   } catch (error) {
     console.error("Error fetching boat:", error);
@@ -245,78 +254,53 @@ const truncateMetaDescription = (value: string, maxLength = 180) => {
   return `${truncated}...`;
 };
 
-const buildBoatMetaDescription = (boat: ProductType) => {
+const buildBoatMetaDescription = (boat: ProductType, locale: PublicLocale) => {
   const plainDescription = stripHtml(boat.description);
   if (plainDescription) return truncateMetaDescription(plainDescription);
 
   return truncateMetaDescription(
-    `Explore ${boat.title} - ${boat.manufacturer} yacht for sale. ${boat.location ? `Located in ${boat.location}.` : ""}`
+    [boat.title, boat.manufacturer, publicText(locale, "Yachts for Sale"), boat.location].filter(Boolean).join(" · ")
   );
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const boat = await fetchBoatByIdentifier(id);
+  const locale = await getServerPublicLocale();
+  const boat = await fetchBoatByIdentifier(id, locale);
 
   if (!boat) {
     return {
-      title: "Boat Not Found",
+      title: publicText(locale, "Boat Not Found"),
       robots: { index: false, follow: false },
     };
   }
 
   if (boat.slug && id !== boat.slug) {
-    permanentRedirect(`/services/brokerage/${boat.slug}`);
+    permanentRedirect(localizedPath(locale, `/services/brokerage/${boat.slug}`));
   }
 
-  const metaDescription = buildBoatMetaDescription(boat);
+  const metaDescription = buildBoatMetaDescription(boat, locale);
   const canonicalPath = `/services/brokerage/${boat.slug || id}`;
 
-  return {
-    title: boat.title,
-    description: metaDescription,
-    openGraph: {
-      title: `${boat.title} | Exelero Yachting`,
-      description: metaDescription,
-      url: canonicalPath,
-      siteName: "Exelero Yachting",
-      type: "website",
-      images: boat.image && boat.image.length > 0 ? [
-        {
-          url: boat.image[0],
-          width: 1200,
-          height: 630,
-          alt: boat.title,
-        },
-      ] : [],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${boat.title} | Exelero Yachting`,
-      description: metaDescription,
-      images: boat.image && boat.image.length > 0 ? [boat.image[0]] : [],
-    },
-    alternates: {
-      canonical: canonicalPath,
-    },
-  };
+  return fallbackContentMetadata(locale, canonicalPath, boat.title, metaDescription, Boolean(boat.isTranslated), boat.image?.[0], boat.availableLocales);
 }
 
 const BoatDetail = async ({ params }: Props) => {
   const { id } = await params;
-  const boat = await fetchBoatByIdentifier(id);
+  const locale = await getServerPublicLocale();
+  const boat = await fetchBoatByIdentifier(id, locale);
 
   if (!boat) {
     notFound();
   }
 
   if (boat.slug && id !== boat.slug) {
-    permanentRedirect(`/services/brokerage/${boat.slug}`);
+    permanentRedirect(localizedPath(locale, `/services/brokerage/${boat.slug}`));
   }
 
   const siteUrl = getSiteUrl();
-  const boatUrl = `${siteUrl}/services/brokerage/${boat.slug || id}`;
-  const plainDescription = buildBoatMetaDescription(boat);
+  const boatUrl = `${siteUrl}${localizedPath(locale, `/services/brokerage/${boat.slug || id}`)}`;
+  const plainDescription = buildBoatMetaDescription(boat, locale);
 
   const vehicleJsonLd = {
     "@context": "https://schema.org",
@@ -345,14 +329,14 @@ const BoatDetail = async ({ params }: Props) => {
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "Home",
-        "item": siteUrl
+        "name": publicText(locale, "Home"),
+        "item": `${siteUrl}${localizedPath(locale, "/")}`
       },
       {
         "@type": "ListItem",
         "position": 2,
-        "name": "Brokerage",
-        "item": `${siteUrl}/services/brokerage`
+        "name": publicText(locale, "Brokerage"),
+        "item": `${siteUrl}${localizedPath(locale, "/services/brokerage")}`
       },
       {
         "@type": "ListItem",
@@ -367,11 +351,11 @@ const BoatDetail = async ({ params }: Props) => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(vehicleJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(vehicleJsonLd).replace(/</g, "\\u003c") }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }}
       />
       <BoatDetailContainer boat={boat} />
     </>

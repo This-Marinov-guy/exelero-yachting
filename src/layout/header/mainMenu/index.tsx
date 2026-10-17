@@ -3,7 +3,7 @@ import { MenuItem } from "@/data/layout/Header";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setSidebarOpen } from "@/redux/reducers/LayoutSlice";
 import UseOutsideDropdown from "@/utils/UseOutsideDropdown";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -40,8 +40,8 @@ const MainMenu = ({ partners }: { partners: { slug: string; name: string }[] }) 
   return (
     <nav ref={ref} className={`sidebar-nav ${isComponentVisible ? "open" : ""}`}>
       <div className='menu-header'>
-        <h5 className='menu-title'>Menu</h5>
-        <Link scroll={false} href={Href} className='close-btn' onClick={toggle}>
+        <h5 className='menu-title'>{t("Menu")}</h5>
+        <Link scroll={false} href={Href} className='close-btn' aria-label={t("Close menu")} onClick={toggle}>
           <X className="h-5 w-5" />
         </Link>
       </div>

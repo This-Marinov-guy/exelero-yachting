@@ -41,6 +41,8 @@ Local sign-in emails are captured at <http://localhost:54324>; they are not deli
 
 The homepage, partner navigation, New Yachts, listings, accounts, and forms require Supabase settings and the checked-in migrations. Never put a service-role or secret key in a `NEXT_PUBLIC_` variable or commit `.env.local`.
 
+Boat listing photo upload uses Google Drive; see [Drive image setup](docs/boat-images-drive.md) for the Shared drive and server-only environment variables.
+
 See [Partners and New Yachts administration](docs/partners-admin.md) for admin access, migration, form configuration, sitemap automation, and local verification.
 
 See [Tracking administration](docs/tracking-admin.md) to connect GA4 traffic and Search Console reports at `/account?tab=tracking`.

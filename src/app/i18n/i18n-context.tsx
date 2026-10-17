@@ -1,47 +1,46 @@
 "use client";
-import i18next from "i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
-import resourcesToBackend from "i18next-resources-to-backend";
-import React, { useEffect, } from "react";
-import { I18nextProvider as Provider, initReactI18next } from "react-i18next";
-import { getOptions } from "./settings";
 
-interface InitOptions {
-  supportedLangs: string[];
-  fallbackLng: string;
-  lng: string;
-  fallbackNS: string;
-  defaultNS: string;
-  ns: string;
-  detection: {
-    caches: string[];
-  };
+import { createContext, useContext, useEffect, useState } from "react";
+import { createInstance } from "i18next";
+import { I18nextProvider, initReactI18next } from "react-i18next";
+import { usePathname } from "next/navigation";
+import { localeFromPath, type PublicLocale } from "@/lib/publicLocale";
+import en from "./locales/en/common.json";
+import ro from "./locales/ro/common.json";
+import bg from "./locales/bg/common.json";
+import sr from "./locales/sr/common.json";
+
+const LocaleContext = createContext<PublicLocale>("en");
+const resources = { en: { common: en }, ro: { common: ro }, bg: { common: bg }, sr: { common: sr } };
+
+export function usePublicLocale() {
+  return useContext(LocaleContext);
 }
 
-interface I18nProviderProps {
-  children: React.ReactNode;
-  language: string;
-}
+export function I18nProvider({ children, language }: { children: React.ReactNode; language: PublicLocale }) {
+  const pathname = usePathname();
+  const [currentLanguage, setCurrentLanguage] = useState(language);
+  const [i18n] = useState(() => {
+    const instance = createInstance();
+    void instance.use(initReactI18next).init({
+      resources,
+      lng: language,
+      fallbackLng: "en",
+      ns: ["common"],
+      defaultNS: "common",
+      keySeparator: false,
+      initImmediate: false,
+      interpolation: { escapeValue: false },
+      react: { useSuspense: false },
+    });
+    return instance;
+  });
 
-i18next
-  .use(initReactI18next)
-  .use(LanguageDetector)
-  .use(
-    resourcesToBackend((language: string, namespace: string) =>
-      import(`./locales/${language}/${namespace}.json`)
-    )
-  )
-  .init({
-    ...getOptions(),
-    detection: {
-      caches: ["cookie"],
-    },
-  } as InitOptions);
-
-export function I18nProvider({ children, language }: I18nProviderProps) {
   useEffect(() => {
-    i18next.changeLanguage(language);
-  }, [language]);
+    const routeLanguage = localeFromPath(window.location.pathname) ?? "en";
+    setCurrentLanguage(routeLanguage);
+    if (i18n.language !== routeLanguage) void i18n.changeLanguage(routeLanguage);
+  }, [i18n, pathname, language]);
 
-  return <Provider i18n={i18next}>{children}</Provider>;
+  return <LocaleContext.Provider value={currentLanguage}><I18nextProvider i18n={i18n}>{children}</I18nextProvider></LocaleContext.Provider>;
 }

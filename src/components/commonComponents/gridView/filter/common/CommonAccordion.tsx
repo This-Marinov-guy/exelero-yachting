@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ImagePath } from "@/constants";
 import { setMapModal } from "@/redux/reducers/LayoutSlice";
 import RangeInputFields from "./RangeInputFields";
+import { usePublicText } from "@/lib/usePublicText";
 
 const boatTypeFilterData = [
   { id: "boat-type-racer", label: "Racer", type: "racer" },
@@ -16,6 +17,7 @@ const boatTypeFilterData = [
 ];
 
 const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValue, priceRange, squareFeet, values, modalType, type, radio }) => {
+  const tr = usePublicText();
   const dispatch = useAppDispatch();
   const { propertyType, bedsRooms, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory, JobWorkMode, JobCompanyType, JobEducation, JobCheck, JobLocation, JobTopCompanies, JobType, boatType, boatCondition, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded } = useAppSelector(state => state.filter);
 
@@ -95,7 +97,7 @@ const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValu
 
   return (
     <AccordionItem>
-      <AccordionHeader targetId={id}>{title}</AccordionHeader>
+      <AccordionHeader targetId={id}>{tr(title)}</AccordionHeader>
       <AccordionBody accordionId={id}>
         {type === "boat" && title === "Boat Type" ? (
           <div className="sidebar-choose-list categories-list">
@@ -110,7 +112,7 @@ const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValu
                     onChange={(event) => handleCheckboxChange(event, "Boat Type")}
                   />
                   <Label htmlFor={item.id} className="label-flex">
-                    <span>{item.label}</span>
+                    <span>{tr(item.label)}</span>
                   </Label>
                 </div>
               </div>
@@ -130,11 +132,11 @@ const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValu
         ) : squareFeet ? (
           <div className="main-number">
             <div className="input-number range-number">
-              <Input type="number" placeholder="Min" value={values ? values[0] : 0} onChange={event => handleCheckboxChange(event, title, "min")} />
+              <Input type="number" placeholder={tr("Min")} value={values ? values[0] : 0} onChange={event => handleCheckboxChange(event, title, "min")} />
             </div>
             -
             <div className="input-number range-number">
-              <Input type="number" placeholder="Max" value={values ? values[1] : 0} onChange={event => handleCheckboxChange(event, title, "max")} />
+              <Input type="number" placeholder={tr("Max")} value={values ? values[1] : 0} onChange={event => handleCheckboxChange(event, title, "max")} />
             </div>
           </div>
         ) : type === "car" || type === "job" || type === "boat" ? (
@@ -144,7 +146,7 @@ const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValu
                 <div className="choose-item">
                   <Input type={radio ? "radio" : "checkbox"} name={radio ? `category-${modalType ? "modal" : "id"}-${id}` : item.id} id={item.id} value={item.type} checked={radio ? checkValue === item.type : Array.isArray(checkValue) && checkValue.includes(item.type)} onChange={event => handleCheckboxChange(event, title)} />
                   <Label htmlFor={item.id} className="label-flex">
-                    <span>{item.label}</span>
+                    <span>{tr(item.label)}</span>
                     {item.count && <span>({item.count})</span>}
                   </Label>
                 </div>
@@ -157,7 +159,7 @@ const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValu
               <li key={index}>
                 <Input type="checkbox" id={item.id} value={item.type} checked={checkValue?.includes(item.type)} onChange={event => handleCheckboxChange(event, title)} />
                 <Label htmlFor={item.id}>
-                  <span>{item.label}</span>
+                  <span>{tr(item.label)}</span>
                   {item.count && <span>{item.count}</span>}
                 </Label>
               </li>

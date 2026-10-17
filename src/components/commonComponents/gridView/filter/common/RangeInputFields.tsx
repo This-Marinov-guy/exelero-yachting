@@ -4,9 +4,12 @@ import { RangeInputFieldsType } from "@/types/Product";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { MERGE_THRESHOLD, STEP, THUMB_SIZE } from "@/constants";
 import { setBudgetStatus, setKmsDriven, setPriceStatus, setSalaryStatus } from "@/redux/reducers/FilterSlice";
-import { formatPrice } from "@/utils";
+import { usePublicLocale } from "@/app/i18n/i18n-context";
+import { usePublicText } from "@/lib/usePublicText";
 
 const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
+  const locale = usePublicLocale();
+  const tr = usePublicText();
   const dispatch = useAppDispatch();
   const { minAndMaxPrice, priceStatus } = useAppSelector((state) => state.filter);
   const [rangePrice, setRangePrice] = useState<number[]>([0, 1000000]);  
@@ -85,9 +88,12 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
           </div>
         </div>
       )}
-      renderThumb={({ index, props }) => (
-        <div
-          {...props}
+      renderThumb={({ index, props }) => {
+        const { key, ...thumbProps } = props;
+        return <div
+          key={key}
+          {...thumbProps}
+          aria-label={tr(index === 0 ? "Price minimum" : "Price maximum")}
           style={{
             ...props.style,
             height: `${THUMB_SIZE}px`,
@@ -111,11 +117,11 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
               whiteSpace: "nowrap",
             }}
           >
-            {formatPrice(rangePrice[index])}
+            {new Intl.NumberFormat(locale === "sr" ? "sr-Latn-RS" : locale).format(rangePrice[index])}
             {type === "job" ? "K" : ""}
           </div>
         </div>
-      )}
+      }}
     />
   );
 };

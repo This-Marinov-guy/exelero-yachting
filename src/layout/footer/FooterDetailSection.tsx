@@ -1,10 +1,12 @@
 import { FooterSectionProps } from "@/types/Layout";
 import { Minus, Plus } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
 import React, { Fragment, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const FooterDetailSection: React.FC<FooterSectionProps> = ({ data, footerDemo }) => {
   const [openSections, setOpenSections] = useState<{ [key: string]: boolean }>({});
+  const { t } = useTranslation("common");
 
   const toggleSection = (title: string) => setOpenSections((prevState) => ({ ...prevState, [title]: !prevState[title] }));
 
@@ -19,9 +21,9 @@ const FooterDetailSection: React.FC<FooterSectionProps> = ({ data, footerDemo })
             <div>
               <div className="footer-title">
                 <h4>
-                  <span className="footer-title__heading">{item.title}</span>
+                  <span className="footer-title__heading">{t(item.title)}</span>
                   <button type="button" className="footer-title__button" onClick={() => toggleSection(item.title)} aria-expanded={Boolean(isOpen)} aria-controls={linksId}>
-                    {item.title}
+                    {t(item.title)}
                     <span className="footer-title__toggle" aria-hidden>
                       {isOpen ? <Minus size={18} /> : <Plus size={18} />}
                     </span>
@@ -42,10 +44,10 @@ const FooterDetailSection: React.FC<FooterSectionProps> = ({ data, footerDemo })
                       </Fragment>
                     ) : link.download ? (
                       <a className="footer-download-link" href={link.url} download={link.download}>
-                        {link.title}
+                        {t(link.title)}
                       </a>
                     ) : (
-                      <Link href={link.url ? link.url : ""}>{link.title}</Link>
+                      <Link href={link.url ? link.url : ""}>{t(link.title)}</Link>
                     )}
                   </li>
                 ))}

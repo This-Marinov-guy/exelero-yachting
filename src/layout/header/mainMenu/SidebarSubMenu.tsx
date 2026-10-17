@@ -2,7 +2,7 @@ import { Fragment } from "react/jsx-runtime";
 import { MenuItemType, MenuListType } from "../../../types/Layout";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Href } from "@/constants";
 

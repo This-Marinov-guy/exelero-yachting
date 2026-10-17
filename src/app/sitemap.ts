@@ -1,35 +1,59 @@
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
 import { getPublishedPartners } from "@/lib/partners";
-import { MetadataRoute } from "next";
+import { availableServiceLocales } from "@/lib/servicePagePublic";
+import { HREFLANG_LOCALES, PUBLIC_LOCALES, localizedPath, type PublicLocale } from "@/lib/publicLocale";
+import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/siteUrl";
 
 export const revalidate = 3600;
 const generateNumericId = (uuid: string): number =>
   parseInt(uuid.replace(/-/g, "").substring(0, 8), 16) % 10000000;
 
+function localizedEntries(path: string, locales: PublicLocale[], lastModified?: Date): MetadataRoute.Sitemap {
+  const base = getSiteUrl();
+  const languages = Object.fromEntries([
+    ...locales.map((locale) => [HREFLANG_LOCALES[locale], `${base}${localizedPath(locale, path)}`]),
+    ["x-default", `${base}${localizedPath("en", path)}`],
+  ]);
+  return locales.map((locale) => ({
+    url: `${base}${localizedPath(locale, path)}`,
+    ...(lastModified ? { lastModified } : {}),
+    alternates: { languages },
+  }));
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = getSiteUrl();
+  const staticPaths = ["/", "/about", "/new-yachts", "/contact", "/services/brokerage", "/gallery"];
+  const staticEntries = staticPaths.flatMap((path) => localizedEntries(path, [...PUBLIC_LOCALES]));
+  const serviceEntries = (await Promise.all(["charters", "transportation"].map(async (page) => {
+    return localizedEntries(`/services/${page}`, await availableServiceLocales(page as "charters" | "transportation"));
+  }))).flat();
+
   const partners = await getPublishedPartners();
-  const partnerRoutes: MetadataRoute.Sitemap = partners.map((partner) => ({
-    url: `${baseUrl}/partners/${partner.slug}`,
-    lastModified: new Date(partner.updated_at),
-  }));
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: baseUrl },
-    { url: `${baseUrl}/about` },
-    { url: `${baseUrl}/new-yachts` },
-    { url: `${baseUrl}/contact` },
-    { url: `${baseUrl}/services/brokerage` },
-    { url: `${baseUrl}/services/charters` },
-    { url: `${baseUrl}/services/transportation` },
-    ...partnerRoutes,
-  ];
-  const { data: boats, error } = await getSupabaseServerClient()
-    .from("boats").select("id, slug, updated_at").eq("active", true).eq("bought", false);
+  const partnerEntries = partners.flatMap((partner) => localizedEntries(
+    `/partners/${partner.slug}`,
+    PUBLIC_LOCALES.filter((locale) => locale === "en" || Boolean(partner.translations?.[locale]?.content)),
+    new Date(partner.updated_at),
+  ));
+
+  const db = getSupabaseServerClient();
+  const { data: boats, error } = await db.from("boats")
+    .select("id, slug, updated_at").eq("active", true).eq("bought", false);
   if (error) throw new Error(`Failed to build boat sitemap: ${error.message}`);
-  const boatUrls: MetadataRoute.Sitemap = (boats || []).map((boat) => ({
-    url: `${baseUrl}/services/brokerage/${boat.slug || generateNumericId(boat.id)}`,
-    ...(boat.updated_at ? { lastModified: new Date(boat.updated_at) } : {}),
-  }));
-  return [...staticRoutes, ...boatUrls];
+  const boatIds = (boats || []).map((boat) => boat.id);
+  const { data: details } = boatIds.length
+    ? await db.from("boat_data").select("boat_id, translations, updated_at").in("boat_id", boatIds)
+    : { data: [] as { boat_id: string; translations: unknown; updated_at: string | null }[] };
+  const detailsByBoat = new Map((details || []).map((row) => [row.boat_id, row]));
+  const boatEntries = (boats || []).flatMap((boat) => {
+    const detail = detailsByBoat.get(boat.id);
+    const translations = detail?.translations as Record<string, { description?: string }> | null;
+    const modified = [boat.updated_at, detail?.updated_at].filter(Boolean).map((value) => new Date(value!).getTime());
+    return localizedEntries(
+      `/services/brokerage/${boat.slug || generateNumericId(boat.id)}`,
+      PUBLIC_LOCALES.filter((locale) => locale === "en" || Boolean(translations?.[locale]?.description)),
+      modified.length ? new Date(Math.max(...modified)) : undefined,
+    );
+  });
+  return [...staticEntries, ...serviceEntries, ...partnerEntries, ...boatEntries];
 }

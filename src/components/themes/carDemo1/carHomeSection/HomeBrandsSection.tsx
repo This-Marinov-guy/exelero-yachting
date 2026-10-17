@@ -1,17 +1,21 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { publicText } from "@/lib/publicText";
 import { Container } from "reactstrap";
 import { ArrowRight } from "lucide-react";
 import { getPublishedPartners } from "@/lib/partners";
 
 export default async function HomeBrandsSection() {
+  const locale = await getServerPublicLocale();
+  const t = (value: string) => publicText(locale, value);
   const brands = (await getPublishedPartners()).filter((partner) => partner.show_on_home);
   if (!brands.length) return null;
 
   return (
     <section className="exelero-brands-section">
       <div className="brands-header" data-aos="fade-up" data-aos-duration={500}>
-        <Container><h2 className="brands-title">World-Class Brands</h2></Container>
+        <Container><h2 className="brands-title">{t("World-Class Brands")}</h2></Container>
       </div>
       <div className="brands-grid">
         {brands.map((brand, idx) => {
@@ -30,7 +34,7 @@ export default async function HomeBrandsSection() {
                   <Image src={brand.logo_url} alt="" width={logoWidth} height={isFullBleedLogo ? 70 : 60} sizes={`${logoWidth}px`} className="brand-block-logo" style={{ objectFit: isFullBleedLogo ? "cover" : "contain" }} unoptimized={brand.logo_url.startsWith("http")} />
                 </div>
                 <h3 className="brand-block-name">{brand.name}</h3>
-                <span className="brand-block-cta">Explore <ArrowRight size={16} /></span>
+                <span className="brand-block-cta">{t("Explore")} <ArrowRight size={16} /></span>
               </div>
             </Link>
           );

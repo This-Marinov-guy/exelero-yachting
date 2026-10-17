@@ -4,8 +4,10 @@ import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { RouteList } from "@/utils/RouteList";
 import { useEffect, useState } from "react";
 import { UserCircle } from "lucide-react";
+import { usePublicText } from "@/lib/usePublicText";
 
 export default function AuthAccountIcon() {
+  const tr = usePublicText();
   const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     ? getSupabaseBrowserClient()
     : null;
@@ -54,7 +56,7 @@ export default function AuthAccountIcon() {
 
   return (
     <div className="header-account-icon">
-      <a href={RouteList.Auth.Account} className="header-account-link" aria-label="Admin account" title="Admin account" rel="nofollow">
+      <a href={RouteList.Auth.Account} className="header-account-link" aria-label={tr("Admin account")} title={tr("Admin account")} rel="nofollow">
         <UserCircle className="iconsax" style={{ width: '24px', height: '24px' }} />
       </a>
     </div>

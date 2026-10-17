@@ -10,8 +10,7 @@ $outfit: "Outfit",
   sans-serif;
 $orbitron: "Orbitron",
   sans-serif;
-$michroma: "Michroma",
-  sans-serif;
+$michroma: var(--display-font);
 $sourcesans3: "SourceSans3",
   sans-serif;
 $rochester: "Rochester",
@@ -23,6 +22,8 @@ $crillee: "Crillee",
   2. CSS Variables
 ==========================**/
 :root {
+  --display-font: "Michroma", "SourceSans3", sans-serif;
+  --supporting-font: "Outfit", "SourceSans3", sans-serif;
   --white: 255, 255, 255;
   --black: 0, 0, 0;
   --theme-color: 29, 186, 231;
@@ -33,6 +34,11 @@ $crillee: "Crillee",
   --bg-color: 250, 253, 255;
   --border-color: 238, 238, 238;
   --light-bg-color: 248, 248, 248;
+}
+
+html[lang="bg"] {
+  --display-font: "Unbounded Variable", "SourceSans3", sans-serif;
+  --supporting-font: "SourceSans3", sans-serif;
 }
 
 .property2-color {

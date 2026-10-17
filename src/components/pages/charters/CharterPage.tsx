@@ -5,12 +5,16 @@ import { Container } from "reactstrap";
 import CharterSkipperTabs from "./CharterSkipperTabs";
 import CharterInfoTabs from "./CharterInfoTabs";
 import type { CharterPageContent } from "@/lib/servicePageContent";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { publicText } from "@/lib/publicText";
 
-const CharterPage = ({ content }: { content: CharterPageContent }) => {
+const CharterPage = async ({ content }: { content: CharterPageContent }) => {
+  const locale = await getServerPublicLocale();
+  const tr = (value: string) => publicText(locale, value);
   return (
     <>
       <TopFilter
-        title="Yacht & Sailing Charters"
+        title={tr("Yacht & Sailing Charters")}
         image={content.media.banner?.src ?? null}
         imageAlt={content.media.banner?.alt}
       />
@@ -34,7 +38,7 @@ const CharterPage = ({ content }: { content: CharterPageContent }) => {
             </div>
 
             {/* Right: form */}
-            <div className="charter-layout__form" role="region" aria-label="Charter request form" tabIndex={0}>
+            <div className="charter-layout__form" role="region" aria-label={tr("Charter request form")} tabIndex={0}>
               <CharterRequestSection />
             </div>
           </div>

@@ -89,6 +89,8 @@ export interface ProductType {
   brokerEmail?: string;
   brokerPhone?: string;
   brokerProfileImage?: string;
+  isTranslated?: boolean;
+  availableLocales?: ("en" | "ro" | "bg" | "sr")[];
 }
 
 export interface ProductCardType {

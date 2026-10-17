@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { usePublicText } from "@/lib/usePublicText";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import type { CharterGalleryItem } from "@/lib/servicePageContent";
 
@@ -10,6 +11,7 @@ const TRANSITION_MS = 360;
 type MediaStatus = "ready" | "error";
 
 export default function CharterMediaPanel({ media, contextLabel = "Charter" }: { media: CharterGalleryItem[]; contextLabel?: string }) {
+  const tr = usePublicText();
   const [displayed, setDisplayed] = useState(0);
   const [pending, setPending] = useState<number | null>(null);
   const [showPending, setShowPending] = useState(false);
@@ -205,8 +207,8 @@ export default function CharterMediaPanel({ media, contextLabel = "Charter" }: {
       >
         {failed ? (
           <div className="charter-media-panel__error" role={incoming ? undefined : "alert"}>
-            <span>We couldn&apos;t load this {item.type === "video" ? "video" : "photo"}.</span>
-            <button type="button" disabled={incoming} onClick={() => retryMedia(item.src)}>Try again</button>
+            <span>{tr(item.type === "video" ? "We couldn't load this video." : "We couldn't load this photo.")}</span>
+            <button type="button" disabled={incoming} onClick={() => retryMedia(item.src)}>{tr("Try again")}</button>
           </div>
         ) : item.type === "image" ? (
           <Image
@@ -255,7 +257,7 @@ export default function CharterMediaPanel({ media, contextLabel = "Charter" }: {
   };
 
   return (
-    <section className="charter-media-panel-wrap" aria-label={`${contextLabel} photos and video`}>
+    <section className="charter-media-panel-wrap" aria-label={`${tr(contextLabel)} ${tr("photos and video")}`}>
       <div className="charter-media-panel" aria-busy={pending !== null}>
         {renderSlide(current, displayed, false)}
         {pending !== null && pendingMedia && renderSlide(pendingMedia, pending, true)}
@@ -265,7 +267,7 @@ export default function CharterMediaPanel({ media, contextLabel = "Charter" }: {
             type="button"
             className="charter-media-panel__play"
             onClick={playVideo}
-            aria-label={`Play ${contextLabel.toLowerCase()} video`}
+            aria-label={tr("Play video")}
           >
             <Play size={24} fill="currentColor" aria-hidden="true" />
           </button>
@@ -274,7 +276,7 @@ export default function CharterMediaPanel({ media, contextLabel = "Charter" }: {
           type="button"
           className="charter-media-panel__arrow charter-media-panel__arrow--previous"
           onClick={() => goTo(selectedIndex - 1)}
-          aria-label={`Previous ${contextLabel.toLowerCase()} media`}
+          aria-label={`${tr("Previous")} ${tr("media")}`}
         >
           <ChevronLeft size={26} aria-hidden="true" />
         </button>}
@@ -282,18 +284,18 @@ export default function CharterMediaPanel({ media, contextLabel = "Charter" }: {
           type="button"
           className="charter-media-panel__arrow charter-media-panel__arrow--next"
           onClick={() => goTo(selectedIndex + 1)}
-          aria-label={`Next ${contextLabel.toLowerCase()} media`}
+          aria-label={`${tr("Next")} ${tr("media")}`}
         >
           <ChevronRight size={26} aria-hidden="true" />
         </button>}
       </div>
 
       <span className="visually-hidden" aria-live="polite">
-        {current.label}, {displayed + 1} of {media.length}
+        {current.label}, {displayed + 1} {tr("of")} {media.length}
       </span>
 
       {media.length > 1 && <div className="charter-media-panel__controls">
-        <div ref={thumbnailStripRef} className="charter-media-panel__thumbnails" role="group" aria-label={`Choose ${contextLabel.toLowerCase()} media`}>
+        <div ref={thumbnailStripRef} className="charter-media-panel__thumbnails" role="group" aria-label={`${tr("Choose")} ${tr(contextLabel)} ${tr("media")}`}>
           {media.map((item, index) => (
             <button
               key={item.id}
@@ -301,7 +303,7 @@ export default function CharterMediaPanel({ media, contextLabel = "Charter" }: {
               type="button"
               className={`charter-media-panel__thumbnail${index === selectedIndex ? " charter-media-panel__thumbnail--active" : ""}`}
               onClick={() => goTo(index)}
-              aria-label={`View ${item.label}${item.type === "video" ? " video" : " photo"}`}
+              aria-label={`${tr("View")} ${item.label} ${tr(item.type === "video" ? "video" : "photo")}`}
               aria-pressed={index === selectedIndex}
             >
               <Image
@@ -323,7 +325,7 @@ export default function CharterMediaPanel({ media, contextLabel = "Charter" }: {
           type="button"
           className="charter-media-panel__toggle"
           onClick={togglePaused}
-          aria-label={paused ? "Resume gallery" : "Pause gallery"}
+          aria-label={tr(paused ? "Resume gallery" : "Pause gallery")}
           aria-pressed={paused}
         >
           {paused ? <Play size={17} fill="currentColor" aria-hidden="true" /> : <Pause size={17} fill="currentColor" aria-hidden="true" />}

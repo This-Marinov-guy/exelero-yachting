@@ -1,6 +1,6 @@
 import { MainMenu } from "@/types/Layout";
 import { RouteList } from "@/utils/RouteList";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Col, Row } from "reactstrap";

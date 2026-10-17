@@ -6,23 +6,33 @@ import { Href } from "@/constants";
 import ShareModal from "@/components/commonComponents/productDetail/mainDetail/ShareModal";
 import { useAppDispatch } from "@/redux/hooks";
 import { setShareModal, setShareData } from "@/redux/reducers/LayoutSlice";
-import { Share2, FileDown, Bookmark } from "lucide-react";
+import { Share2, FileDown, Bookmark, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { usePathname } from "next/navigation";
 import { trackClarityEvent } from "@/lib/clarity";
+import { usePublicText } from "@/lib/usePublicText";
+import { usePublicLocale } from "@/app/i18n/i18n-context";
 
 interface BoatMainDetailProps {
   boat: ProductType;
 }
 
 const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
+  const tr = usePublicText();
+  const locale = usePublicLocale();
   const dispatch = useAppDispatch();
   const pathname = usePathname();
   const [saveBoat, setSaveBoat] = useState<boolean>(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const boatTypeLabel = boat.boatType
+    ? tr(boat.boatType === "racer" ? "Racer" : boat.boatType === "cruiser" ? "Cruiser" : boat.boatType)
+    : null;
+  const conditionLabel = boat.condition
+    ? tr(boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : boat.condition)
+    : null;
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat(locale === "sr" ? "sr-Latn-RS" : locale, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
@@ -31,12 +41,11 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
   const handleShare = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const mainImage = boat.image?.[0] ?? "";
-    const priceStr = boat.price != null ? `${formatPrice(boat.price)} €` : "Price upon inquiry";
-    const conditionLabel = boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : "";
-    const descriptionParts = [boat.location, conditionLabel, boat.boatType, priceStr].filter(Boolean);
+    const priceStr = boat.price != null ? `${formatPrice(boat.price)} €` : tr("Price upon inquiry");
+    const descriptionParts = [boat.location, conditionLabel, boatTypeLabel, priceStr].filter(Boolean);
     dispatch(
       setShareData({
-        title: boat.title || "Boat listing",
+        title: boat.title || tr("Boat listing"),
         description: descriptionParts.join(" · "),
         imageUrl: mainImage,
       })
@@ -50,7 +59,7 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
 
     try {
       setIsGeneratingPdf(true);
-      toast.message("Generating PDF…");
+      toast.message(tr("Generating PDF…"));
 
       const [{ pdf }, { default: BoatListingPdfDocument }] = await Promise.all([
         import("@react-pdf/renderer"),
@@ -71,10 +80,10 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
       a.remove();
       URL.revokeObjectURL(url);
 
-      toast.success("PDF downloaded.");
+      toast.success(tr("PDF downloaded."));
       trackClarityEvent("boat_pdf_downloaded");
     } catch (err: any) {
-      toast.error(err?.message || "Failed to generate PDF. Please try again.");
+      toast.error(err?.message || tr("Failed to generate PDF. Please try again."));
     } finally {
       setIsGeneratingPdf(false);
     }
@@ -85,33 +94,37 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
     const newSaveState = !saveBoat;
     setSaveBoat(newSaveState);
     if (newSaveState) {
-      toast.success("Boat saved to favorites");
+      toast.success(tr("Boat saved to favorites"));
     } else {
-      toast.success("Boat removed from favorites");
+      toast.success(tr("Boat removed from favorites"));
     }
   };
 
   return (
     <div className="property-detail-main">
       <div className="main-detail-flex">
-        <div>
-          <h1 className="boat-detail-title">{boat.title}</h1>
-          <h6>{boat.location || "Location TBD"}</h6>
-          <div className="label-flex">
-            {boat.boatType && (
-              <label className="detail-label">
-                {boat.boatType === "racer" ? "Racer" : boat.boatType === "cruiser" ? "Cruiser" : boat.boatType}
-              </label>
-            )}
-            {boat.condition && (
-              <label className="detail-label">
-                {boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : boat.condition}
-              </label>
-            )}
-            {boat.manufacturer && (
-              <label className="detail-label">{boat.manufacturer}</label>
-            )}
-          </div>
+        <div className="boat-detail-overview">
+          <p className="boat-detail-location">
+            <MapPin aria-hidden="true" />
+            <span>{boat.location || tr("Location TBD")}</span>
+          </p>
+          {(boatTypeLabel || conditionLabel || boat.manufacturer) && (
+            <div className="boat-detail-badges">
+              {boatTypeLabel && (
+                <span className="boat-detail-badge" title={boatTypeLabel}>
+                  {boatTypeLabel}
+                </span>
+              )}
+              {conditionLabel && (
+                <span className="boat-detail-badge" title={conditionLabel}>
+                  {conditionLabel}
+                </span>
+              )}
+              {boat.manufacturer && (
+                <span className="boat-detail-badge" title={boat.manufacturer}>{boat.manufacturer}</span>
+              )}
+            </div>
+          )}
         </div>
         <div className="price-box">
           <h4>
@@ -119,20 +132,20 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
               <>
                 {formatPrice(boat.price)} <span style={{ fontFamily: "Satisfy", color: 'black' }}>€</span>
               </>
-            ) : "Price upon inquiry"}
-            {boat.vatIncluded && <span className="text-muted" style={{ fontSize: "14px" }}> (VAT Included)</span>}
+            ) : tr("Price upon inquiry")}
+            {boat.vatIncluded && <span className="text-muted" style={{ fontSize: "14px" }}> ({tr("VAT Included")})</span>}
           </h4>
           <ul className="detail-social-list">
             <li>
               <Link scroll={false} href={Href} onClick={handleShare}>
                 <Share2 className="h-5 w-5" />
-                Share
+                {tr("Share")}
               </Link>
             </li>
             <li>
               <Link scroll={false} href={Href} className="print-button" onClick={handleDownloadPdf} aria-disabled={isGeneratingPdf}>
                 <FileDown className="h-5 w-5" />
-                {isGeneratingPdf ? "Generating PDF…" : "Download PDF"}
+                {isGeneratingPdf ? tr("Generating PDF…") : tr("Download PDF")}
               </Link>
             </li>
             {/* <li>

@@ -4,16 +4,20 @@ import { PropertyCardType } from "@/types/Product";
 import SvgIcon from "@/utils/SvgIcon";
 import Image from "next/image";
 import { VideoPlayer, VideoPoster } from "@/components/commonComponents/VideoMedia";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
+import { usePublicText } from "@/lib/usePublicText";
+import { usePublicLocale } from "@/app/i18n/i18n-context";
 import { FC, useState } from "react";
 import { Modal, ModalBody } from "reactstrap";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ArrowDownToLine, MoveHorizontal, Play, Ruler, Zap } from "lucide-react";
 
 const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
+  const tr = usePublicText();
+  const locale = usePublicLocale();
   const [previewVideo, setPreviewVideo] = useState<string | null>(null);
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat(locale === "sr" ? "sr-Latn-RS" : locale, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
@@ -22,7 +26,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
     <>
       {formatPrice(data.price)} <span style={{fontFamily: 'Satisfy'}}>€</span>
     </>
-  ) : "Price upon inquiry";
+  ) : tr("Price upon inquiry");
 
   const lengthM = data.hullLength ?? 0;
   const lengthText = lengthM > 0 ? `${lengthM} m` : "—";
@@ -33,7 +37,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
   const beamText = beamM > 0 ? `${beamM} m` : "—";
   const draftM = data.draft ?? 0;
   const draftText = draftM > 0 ? `${draftM} m` : "—";
-  const conditionLabel = data.condition === "new" ? "New" : data.condition === "pre-owned" ? "Pre-owned" : label || "For Sale";
+  const conditionLabel = tr(data.condition === "new" ? "New" : data.condition === "pre-owned" ? "Pre-owned" : label || "For Sale");
   const mediaItems = data.media?.length
     ? data.media
     : data.image.map((url) => ({ url, type: "image" as const }));
@@ -66,7 +70,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
                             setPreviewVideo(media.url);
                           }}
                         >
-                          <Play size={14} /> Preview
+                          <Play size={14} /> {tr("Preview")}
                         </button>
                       </>
                     ) : (
@@ -104,25 +108,25 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
           </div>
           <ul className='featured-list boat-spec-list'>
             <li>
-              <span className="boat-spec-icon" data-tooltip="Length" aria-label="Length" tabIndex={0}>
+              <span className="boat-spec-icon" data-tooltip={tr("Length")} aria-label={tr("Length")} tabIndex={0}>
                 <Ruler className="boat-feature-icon" aria-hidden />
               </span>
               <span>{lengthText}</span>
             </li>
             <li>
-              <span className="boat-spec-icon" data-tooltip="Engine power" aria-label="Engine power" tabIndex={0}>
+              <span className="boat-spec-icon" data-tooltip={tr("Engine power")} aria-label={tr("Engine power")} tabIndex={0}>
                 <Zap className="boat-feature-icon" aria-hidden />
               </span>
               <span>{powerText}</span>
             </li>
             <li className="boat-spec-secondary">
-              <span className="boat-spec-icon" data-tooltip="Beam" aria-label="Beam" tabIndex={0}>
+              <span className="boat-spec-icon" data-tooltip={tr("Beam")} aria-label={tr("Beam")} tabIndex={0}>
                 <MoveHorizontal className="boat-feature-icon" aria-hidden />
               </span>
               <span>{beamText}</span>
             </li>
             <li className="boat-spec-secondary">
-              <span className="boat-spec-icon" data-tooltip="Draft" aria-label="Draft" tabIndex={0}>
+              <span className="boat-spec-icon" data-tooltip={tr("Draft")} aria-label={tr("Draft")} tabIndex={0}>
                 <ArrowDownToLine className="boat-feature-icon" aria-hidden />
               </span>
               <span>{draftText}</span>
@@ -132,7 +136,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
         <div className='price-flex'>
           <h4>{priceLabel}</h4>
           <Link href={detailHref} className='btn-solid'>
-            View
+            {tr("View")}
           </Link>
         </div>
       </div>

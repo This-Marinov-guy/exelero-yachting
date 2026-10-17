@@ -8,11 +8,13 @@ import { Col, Container, Row } from "reactstrap";
 import ContactForm from "../others/common/ContactForm";
 import GetInTouch from "../others/common/GetInTouch";
 import FollowUs from "../others/common/FollowUs";
+import { usePublicText } from "@/lib/usePublicText";
 
 const ContactContainer = () => {
+  const tr = usePublicText();
   return (
     <>
-      <Breadcrumbs title='Contact Us' headingLevel={1} url={RouteList.Home.CarDemo1} mainClass='page-breadcrumbs-section' image />
+      <Breadcrumbs title={tr("Contact Us")} headingLevel={1} url={RouteList.Home.CarDemo1} mainClass='page-breadcrumbs-section' image />
       <section className='contact-section contact-2-section'>
         <Container>
             <GetInTouch type='contact-2' />
@@ -24,7 +26,7 @@ const ContactContainer = () => {
             </Col>
             <Col lg={6}>
               <div className="form-box">
-                <CommonHeader title={GetInTouchTitle} content={Contact1Description} headClass='content-title text-center' contentClass="mx-0 w-100" />
+                <CommonHeader title={tr(GetInTouchTitle)} content={tr(Contact1Description)} headClass='content-title text-center' contentClass="mx-0 w-100" />
                 <ContactForm />
               </div>
             </Col>

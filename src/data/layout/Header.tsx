@@ -45,6 +45,12 @@ export const MenuItem: MenuItemType[] = [
     active: false,
   },
   {
+    title: "Gallery",
+    type: "link",
+    path: RouteList.Pages.Gallery,
+    active: false,
+  },
+  {
     title: "Yacht Transportation",
     type: "link",
     path: RouteList.Pages.Services.Transportation,

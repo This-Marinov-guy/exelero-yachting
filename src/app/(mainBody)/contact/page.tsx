@@ -1,72 +1,36 @@
 import ContactContainer from "@/components/pages/contact";
-import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import type { Metadata } from "next";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { publicText } from "@/lib/publicText";
+import { publicPageMetadata } from "@/lib/publicSeo";
+import { HTML_LANG, localizedPath } from "@/lib/publicLocale";
 import { getSiteUrl } from "@/lib/siteUrl";
 
-export const metadata: Metadata = {
-  title: "Contact & Yacht Enquiries",
-  description:
-    "Get in touch with Exelero Yachting today. Contact us for expert advice on yacht brokerage, charters, transportation, and marine services.",
-  openGraph: {
-    title: "Contact Exelero Yachting | Get in Touch",
-    description: "Contact Exelero Yachting for yacht brokerage, charters and marine services.",
-    url: "/contact",
-    type: "website",
-    images: [breadcrumbOpenGraphImage("Contact Exelero Yachting")],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Contact Exelero Yachting | Get in Touch",
-    description: "Contact Exelero Yachting for yacht brokerage, charters and marine services.",
-    images: [DEFAULT_BREADCRUMB_IMAGE],
-  },
-  alternates: { canonical: "/contact" },
-  robots: { index: true, follow: true },
-};
+export const dynamic = "force-dynamic";
+const path = "/contact";
+const title = "Contact & Yacht Enquiries";
+const description = "Get in touch with Exelero Yachting today. Contact us for expert advice on yacht brokerage, charters, transportation, and marine services.";
 
-const Contact1Page = () => {
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPageMetadata(await getServerPublicLocale(), path, title, description);
+}
+
+export default async function PublicPage() {
+  const locale = await getServerPublicLocale();
   const siteUrl = getSiteUrl();
-
-  const breadcrumbJsonLd = {
+  const url = `${siteUrl}${localizedPath(locale, path)}`;
+  const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": siteUrl
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Contact",
-        "item": `${siteUrl}/contact`
-      }
-    ]
+    "@graph": [
+      { "@type": "BreadcrumbList", itemListElement: [
+        { "@type": "ListItem", position: 1, name: publicText(locale, "Home"), item: `${siteUrl}${localizedPath(locale, "/")}` },
+        { "@type": "ListItem", position: 2, name: publicText(locale, "Contact"), item: url },
+      ] },
+      { "@type": "ContactPage", name: publicText(locale, title), description: publicText(locale, description), url, inLanguage: HTML_LANG[locale] },
+    ],
   };
-
-  const contactJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "ContactPage",
-    "name": "Contact Exelero Yachting",
-    "description": "Contact us for yacht brokerage, charters and marine services.",
-    "url": `${siteUrl}/contact`
-  };
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactJsonLd) }}
-      />
-      <ContactContainer />
-    </>
-  );
-};
-
-export default Contact1Page;
+  return <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+    <ContactContainer />
+  </>;
+}

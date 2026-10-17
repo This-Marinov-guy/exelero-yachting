@@ -2,9 +2,14 @@ import { getSupabaseServerClient } from "@/lib/supabaseServer";
 import BoatsPageClient from "./BoatsPageClient";
 import { ProductType } from "@/types/Product";
 import { getSiteUrl } from "@/lib/siteUrl";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { translatedFields } from "@/lib/contentTranslations";
+import { localizedPath } from "@/lib/publicLocale";
+import { publicText } from "@/lib/publicText";
 
 async function fetchActiveBoats(): Promise<ProductType[]> {
   const supabase = getSupabaseServerClient();
+  const locale = await getServerPublicLocale();
 
   try {
     // Fetch active boats with related data
@@ -27,14 +32,15 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
     const boatsWithDetails = await Promise.all(
       boatsData.map(async (boat) => {
         // Fetch boat_data
-        const { data: boatData, error: boatDataError } = await supabase
+        const { data: englishBoatData, error: boatDataError } = await supabase
           .from("boat_data")
           .select("*")
           .eq("boat_id", boat.id)
           .single();
-        if (boatDataError || !boatData) {
+        if (boatDataError || !englishBoatData) {
           throw boatDataError || new Error(`Missing public data for boat ${boat.id}`);
         }
+        const boatData = translatedFields(englishBoatData, locale);
 
         // Fetch broker_data
         let brokerData = null;
@@ -149,15 +155,17 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
 }
 
 const BoatsPage = async () => {
+  const locale = await getServerPublicLocale();
   const boats = await fetchActiveBoats();
 
   // Add JSON-LD structured data for SEO
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Yachts for Sale",
-    description: "Explore our exclusive collection of high-performance yachts and boats for sale",
-    url: `${getSiteUrl()}/services/brokerage`,
+    name: publicText(locale, "Yachts for Sale"),
+    description: publicText(locale, "Explore our exclusive collection of high-performance yachts and boats for sale. Find your perfect vessel from top manufacturers with expert dealer support."),
+    url: `${getSiteUrl()}${localizedPath(locale, "/services/brokerage")}`,
+    inLanguage: locale,
     numberOfItems: boats.length,
   };
 

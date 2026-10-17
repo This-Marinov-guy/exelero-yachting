@@ -1,5 +1,7 @@
 import { Handshake, Sailboat, ShieldCheck } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { publicText } from "@/lib/publicText";
 import { RouteList } from "@/utils/RouteList";
 
 const commitments = [
@@ -27,28 +29,32 @@ const services = [
   { title: "Yacht Charters", lines: ["Yacht", "Charters"], href: RouteList.Pages.Charters },
 ];
 
-export function Commitments() {
+export async function Commitments() {
+  const locale = await getServerPublicLocale();
+  const t = (value: string) => publicText(locale, value);
   return (
-    <div className="about-commitments" aria-label="Our commitments">
+    <div className="about-commitments" aria-label={t("Our commitments")}>
       {commitments.map(({ icon: Icon, title, description }) => (
         <div className="about-commitment" key={title}>
           <Icon className="about-commitment__icon" size={28} strokeWidth={1.8} aria-hidden="true" />
-          <h3>{title}</h3>
-          <p>{description}</p>
+          <h3>{t(title)}</h3>
+          <p>{t(description)}</p>
         </div>
       ))}
     </div>
   );
 }
 
-export function Services({ headingId = "about-services-title" }: { headingId?: string }) {
+export async function Services({ headingId = "about-services-title" }: { headingId?: string }) {
+  const locale = await getServerPublicLocale();
+  const t = (value: string) => publicText(locale, value);
   return (
     <section className="about-services" aria-labelledby={headingId}>
-      <h2 id={headingId}>Our Services</h2>
+      <h2 id={headingId}>{t("Our Services")}</h2>
       <div className="about-services__grid">
         {services.map(({ title, lines, href }) => (
-          <Link key={title} href={href} aria-label={title}>
-            <span>{lines[0]}<br />{lines[1]}</span>
+          <Link key={title} href={href} aria-label={t(title)}>
+            <span>{t(lines[0])}<br />{t(lines[1])}</span>
           </Link>
         ))}
       </div>

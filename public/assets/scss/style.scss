@@ -138,4 +138,7 @@
 
 // plugins scss file
 @import "plugins/iconsax.scss";
-@import "plugins/dropzone.scss"
+@import "plugins/dropzone.scss";
+
+// Locale-specific display weight after page styles so Cyrillic matches Michroma's light finish.
+@import "base/locale-typography";

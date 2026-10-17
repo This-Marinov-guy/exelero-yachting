@@ -9,8 +9,10 @@ import { Button, Input, Modal, ModalBody, ModalHeader } from "reactstrap";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import Image from "next/image";
+import { usePublicText } from "@/lib/usePublicText";
 
 const ShareModal = () => {
+  const tr = usePublicText();
   const { shareModal, shareData } = useAppSelector((state) => state.layout);
   const dispatch = useAppDispatch();
   const pathname = usePathname();
@@ -28,7 +30,7 @@ const ShareModal = () => {
     dispatch(setShareModal());
   };
 
-  const shareTitle = shareData?.title || (typeof document !== "undefined" ? document.title : "Check out this boat");
+  const shareTitle = shareData?.title || (typeof document !== "undefined" ? document.title : tr("Check out this boat"));
   const shareText = shareData?.description
     ? `${shareTitle} - ${shareData.description}`
     : shareTitle;
@@ -39,10 +41,10 @@ const ShareModal = () => {
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(inputValue);
-      toast.success("Link copied to clipboard!");
+      toast.success(tr("Link copied to clipboard."));
     } catch (err) {
       console.error("Failed to copy text: ", err);
-      toast.error("Failed to copy link");
+      toast.error(tr("Could not copy the link. Try again."));
     }
   };
 
@@ -54,7 +56,7 @@ const ShareModal = () => {
       <Modal fade centered modalClassName='theme-modal' isOpen={shareModal} toggle={toggle}>
         <ModalHeader toggle={toggle} close={<CloseBtn toggle={toggle} />} />
         <ModalBody>
-          <h4 className='modal-title'>Share It</h4>
+          <h4 className='modal-title'>{tr("Share")}</h4>
           {shareData?.imageUrl && (
             <div className="share-modal-preview mb-3">
               <div
@@ -114,7 +116,7 @@ const ShareModal = () => {
               const Icon = link.Icon;
               return (
                 <li key={index}>
-                  <Link href={shareUrl} target='_blank' rel='noopener noreferrer'>
+                  <Link href={shareUrl} target='_blank' rel='noopener noreferrer' aria-label={link.name === "Email" ? tr("Share by email") : `${tr("Share on")} ${link.name}`}>
                     <Icon size={18} />
                   </Link>
                 </li>
@@ -122,9 +124,9 @@ const ShareModal = () => {
             })}
           </ul>
           <div className='d-flex align-items-center position-relative copy-input'>
-            <Input type='text' value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
+            <Input type='text' aria-label={tr("Share link")} value={inputValue} onChange={(event) => setInputValue(event.target.value)} />
             <Button className='btn-solid position-absolute top-0 end-0' onClick={handleCopy}>
-              Copy Link
+              {tr("Copy link")}
             </Button>
           </div>
         </ModalBody>

@@ -1,11 +1,13 @@
 "use client";
 
+import { usePublicText } from "@/lib/usePublicText";
 import { useEffect, useRef, useState } from "react";
 import type { SkipperOption } from "@/lib/servicePageContent";
 
 const AUTO_ADVANCE_MS = 7000;
 
 const CharterSkipperTabs = ({ tabs }: { tabs: SkipperOption[] }) => {
+  const tr = usePublicText();
   const [activeSkipperTab, setActiveSkipperTab] = useState<string>(tabs[0].id);
   const [hasInteracted, setHasInteracted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -53,11 +55,11 @@ const CharterSkipperTabs = ({ tabs }: { tabs: SkipperOption[] }) => {
 
   return (
     <div ref={containerRef} className="charter-skipper-tabs">
-      <h3 className="charter-skipper-tabs__title">Skipper options</h3>
+      <h3 className="charter-skipper-tabs__title">{tr("Skipper options")}</h3>
       <div
         className="charter-skipper-tabs__nav"
         role="group"
-        aria-label="Skipper options"
+        aria-label={tr("Skipper options")}
         onFocusCapture={() => setHasInteracted(true)}
         onPointerEnter={() => setHasInteracted(true)}
         onPointerDownCapture={() => setHasInteracted(true)}>

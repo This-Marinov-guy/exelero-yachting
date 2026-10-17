@@ -7,8 +7,10 @@ import { TopPanelType } from "@/types/Product";
 import Link from "next/link";
 import { FC, Fragment, useState } from "react";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
+import { usePublicText } from "@/lib/usePublicText";
 
 const FilterTags: FC<TopPanelType> = ({ topFilter, side, type, mainClass }) => {
+  const tr = usePublicText();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dispatch = useAppDispatch();
   const { sortBy } = useAppSelector((state) => state.filter);
@@ -34,7 +36,7 @@ const FilterTags: FC<TopPanelType> = ({ topFilter, side, type, mainClass }) => {
         {FilterTabsListData.map((item, index) => (
           <DropdownItem onClick={() => handleSortBy(item)} key={index} className="select-item">
             <Link href={Href} scroll={false} className={`select-item ${sortBy === item ? "active" : ""}`}>
-              {item}
+              {tr(item)}
             </Link>
           </DropdownItem>
         ))}
@@ -47,7 +49,7 @@ const FilterTags: FC<TopPanelType> = ({ topFilter, side, type, mainClass }) => {
       <Fragment>
 
         <h4>
-          {totalProduct} results
+          {totalProduct} {tr("results")}
         </h4>
 
         {topFilter ? <div className='category-filter'>
@@ -59,7 +61,7 @@ const FilterTags: FC<TopPanelType> = ({ topFilter, side, type, mainClass }) => {
             {FilterDropdown(3, 8)}
           </div>
           <Link href={Href} scroll={false} className={`btn-solid ${side !== "nosidebar" && "filter-btn"}`} onClick={() => dispatch(setOpenFilterSidebar())}>
-            Filter
+            {tr("Filter")}
           </Link>
         </div>}
       </Fragment>

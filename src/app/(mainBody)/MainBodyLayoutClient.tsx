@@ -13,13 +13,15 @@ import { useAppSelector } from "@/redux/hooks";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { stripLocale } from "@/lib/publicLocale";
 
 const SearchModal = dynamic(() => import("@/components/commonComponents/modal/SearchModal"));
 
-export default function MainBodyLayoutClient({ children, partners }: Readonly<{ children: React.ReactNode; partners: { slug: string; name: string }[] }>) {
+export default function MainBodyLayoutClient({ children, partners, initialLanguageLoading }: Readonly<{ children: React.ReactNode; partners: { slug: string; name: string }[]; initialLanguageLoading: boolean }>) {
   const pathname = usePathname() || "";
+  const publicPathname = stripLocale(pathname);
   const { searchModal } = useAppSelector((state) => state.layout);
-  const segments = pathname.split("/").slice(1);
+  const segments = publicPathname.split("/").slice(1);
   const symbolRegex = /[!@#\$%\^\*\(\)_\+\{\}\[\]:;"'<>,.?/\\|`~=]/g;
   const [firstPart] = segments.map((item) => item.replace(symbolRegex, " "));
 
@@ -37,7 +39,7 @@ export default function MainBodyLayoutClient({ children, partners }: Readonly<{ 
 
   useEffect(() => {
     document.body.className = className;
-    document.body.classList.toggle("home-scrollbar-hidden", pathname === "/");
+    document.body.classList.toggle("home-scrollbar-hidden", publicPathname === "/");
     setFavicon("/assets/images/favicons/favicon.ico");
     const browserWindow = window as Window & typeof globalThis & {
       requestIdleCallback?: (callback: IdleRequestCallback) => number;
@@ -58,13 +60,13 @@ export default function MainBodyLayoutClient({ children, partners }: Readonly<{ 
       }
       setFavicon("/assets/images/favicons/favicon.ico");
     };
-  }, [className, pathname]);
+  }, [className, publicPathname]);
   
   const isJobOrProperty = ["car-2", "job-3", "job-2", "property-2"].some((item) => firstPart.includes(item));
   const secondPart = segments[1] || ""; // Get the second segment
   const carSpaceClass = secondPart === "detail" ? "car-detail-space" : "";
 
-  const isHomePage = pathname === "/" || !firstPart;
+  const isHomePage = publicPathname === "/" || !firstPart;
 
   return (
     <div>
@@ -77,7 +79,7 @@ export default function MainBodyLayoutClient({ children, partners }: Readonly<{ 
       {searchModal && <SearchModal type={SearchModalData[firstPart] || SearchModalData.car} carSpaceClass={carSpaceClass} />}
       <CookieBanner />
       <CustomToaster/>
-      <LoadingOverlay />
+      <LoadingOverlay initialVisible={initialLanguageLoading} />
     </div>
   );
 }

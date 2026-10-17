@@ -1,10 +1,14 @@
 import React from "react";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
 import Image from "next/image";
 import { Col, Container, Row } from "reactstrap";
 import { ArrowDownToLine, ArrowRight, MapPin, MoveHorizontal, Ruler, Zap } from "lucide-react";
 import { getSupabaseServerClient } from "@/lib/supabaseServer";
 import { RouteList } from "@/utils/RouteList";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { translatedFields } from "@/lib/contentTranslations";
+import { publicText } from "@/lib/publicText";
+import type { PublicLocale } from "@/lib/publicLocale";
 
 type FeaturedBoat = {
   id: number;
@@ -22,8 +26,8 @@ type FeaturedBoat = {
   condition: string;
 };
 
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat("en-US", {
+const formatPrice = (price: number, locale: PublicLocale) => {
+  return new Intl.NumberFormat(locale === "sr" ? "sr-Latn-RS" : locale, {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);
@@ -35,7 +39,7 @@ const conditionLabel = (condition: string) => {
   return "For Sale";
 };
 
-async function fetchFeaturedBoats(): Promise<FeaturedBoat[]> {
+async function fetchFeaturedBoats(locale: PublicLocale): Promise<FeaturedBoat[]> {
   try {
     const supabase = getSupabaseServerClient();
 
@@ -51,11 +55,12 @@ async function fetchFeaturedBoats(): Promise<FeaturedBoat[]> {
 
     const boats = await Promise.all(
       boatsData.map(async (boat) => {
-        const [{ data: boatData }, { data: imagesData }] = await Promise.all([
+        const [{ data: englishBoatData }, { data: imagesData }] = await Promise.all([
           supabase.from("boat_data").select("*").eq("boat_id", boat.id).single(),
           supabase.from("boat_images").select("link, is_cover, media_type").eq("boat_id", boat.id).order("display_order", { ascending: true }),
         ]);
 
+        const boatData = englishBoatData ? translatedFields(englishBoatData, locale) : null;
         const mainMedia = ((imagesData || []) as { link: string; is_cover: boolean; media_type?: string }[])
           .sort((a, b) => (b.is_cover ? 1 : 0) - (a.is_cover ? 1 : 0))[0];
 
@@ -86,7 +91,9 @@ async function fetchFeaturedBoats(): Promise<FeaturedBoat[]> {
 }
 
 const HomeBoatPreview = async () => {
-  const boats = await fetchFeaturedBoats();
+  const locale = await getServerPublicLocale();
+  const tr = (value: string) => publicText(locale, value);
+  const boats = await fetchFeaturedBoats(locale);
 
   if (boats.length === 0) return null;
 
@@ -95,10 +102,10 @@ const HomeBoatPreview = async () => {
       <Container>
         <div className="boat-preview-header" data-aos="fade-up" data-aos-duration={500}>
           <div>
-            <h2 className="boat-preview-title">Featured Yachts</h2>
+            <h2 className="boat-preview-title">{tr("Featured Yachts")}</h2>
           </div>
           <Link href={RouteList.Pages.Boats} className="boat-preview-all">
-            View All Listings <ArrowRight size={16} />
+            {tr("View All Listings")} <ArrowRight size={16} />
           </Link>
         </div>
 
@@ -132,7 +139,7 @@ const HomeBoatPreview = async () => {
                     )}
                   </div>
                   <div className="car2-label-flex">
-                    <span className="bg-white">{conditionLabel(boat.condition)}</span>
+                    <span className="bg-white">{tr(conditionLabel(boat.condition))}</span>
                     {boat.buildYear && <span className="text-white">{boat.buildYear}</span>}
                   </div>
                 </Link>
@@ -149,25 +156,25 @@ const HomeBoatPreview = async () => {
                     )}
                     <ul className="featured-list boat-spec-list">
                       <li>
-                        <span className="boat-spec-icon" data-tooltip="Length" aria-label="Length" tabIndex={0}>
+                        <span className="boat-spec-icon" data-tooltip={tr("Length")} aria-label={tr("Length")} tabIndex={0}>
                           <Ruler className="boat-feature-icon" aria-hidden />
                         </span>
                         <span>{boat.hullLength > 0 ? `${boat.hullLength} m` : "—"}</span>
                       </li>
                       <li>
-                        <span className="boat-spec-icon" data-tooltip="Engine power" aria-label="Engine power" tabIndex={0}>
+                        <span className="boat-spec-icon" data-tooltip={tr("Engine power")} aria-label={tr("Engine power")} tabIndex={0}>
                           <Zap className="boat-feature-icon" aria-hidden />
                         </span>
                         <span>{boat.enginePower > 0 ? `${boat.enginePower} kW` : "—"}</span>
                       </li>
                       <li className="boat-spec-secondary">
-                        <span className="boat-spec-icon" data-tooltip="Beam" aria-label="Beam" tabIndex={0}>
+                        <span className="boat-spec-icon" data-tooltip={tr("Beam")} aria-label={tr("Beam")} tabIndex={0}>
                           <MoveHorizontal className="boat-feature-icon" aria-hidden />
                         </span>
                         <span>{boat.beam > 0 ? `${boat.beam} m` : "—"}</span>
                       </li>
                       <li className="boat-spec-secondary">
-                        <span className="boat-spec-icon" data-tooltip="Draft" aria-label="Draft" tabIndex={0}>
+                        <span className="boat-spec-icon" data-tooltip={tr("Draft")} aria-label={tr("Draft")} tabIndex={0}>
                           <ArrowDownToLine className="boat-feature-icon" aria-hidden />
                         </span>
                         <span>{boat.draft > 0 ? `${boat.draft} m` : "—"}</span>
@@ -178,12 +185,12 @@ const HomeBoatPreview = async () => {
                     <h4>
                       {boat.price != null ? (
                         <>
-                          {formatPrice(boat.price)} <span style={{ fontFamily: "Satisfy" }}>€</span>
+                          {formatPrice(boat.price, locale)} <span style={{ fontFamily: "Satisfy" }}>€</span>
                         </>
-                      ) : "Price upon inquiry"}
+                      ) : tr("Price upon inquiry")}
                     </h4>
                     <Link href={`/services/brokerage/${boat.slug || boat.id}`} className="btn-solid">
-                      View
+                      {tr("View")}
                     </Link>
                   </div>
                 </div>

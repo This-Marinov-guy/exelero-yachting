@@ -1,9 +1,8 @@
 "use client";
 
-import { FC, useState, useEffect } from "react";
+import { FC, useState } from "react";
 import { ProductType } from "@/types/Product";
 import { Row, Col, Modal, ModalBody } from "reactstrap";
-import DOMPurify from "dompurify";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs } from "swiper/modules";
 import { Gallery, Item } from "react-photoswipe-gallery";
@@ -14,38 +13,19 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/thumbs";
 import "photoswipe/dist/photoswipe.css";
+import { usePublicText } from "@/lib/usePublicText";
+import { listingImageThumbnailUrl, listingImageViewUrl } from "@/lib/listingImageUrl";
 
 interface BoatDetailBodyProps {
   boat: ProductType;
 }
 
 const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
-  const [imgDimensions, setImgDimensions] = useState<Record<number, { width: number; height: number }>>({});
+  const tr = usePublicText();
   const [previewVideo, setPreviewVideo] = useState<string | null>(null);
   const mediaItems = boat.media?.length
     ? boat.media
     : (boat.image || []).map((url) => ({ url, type: "image" as const }));
-
-  useEffect(() => {
-    boat.image?.forEach((src, index) => {
-      const img = new window.Image();
-      img.onload = () => {
-        setImgDimensions((prev) => ({
-          ...prev,
-          [index]: { width: img.naturalWidth, height: img.naturalHeight },
-        }));
-      };
-      img.src = src;
-    });
-  }, [boat.image]);
-
-  const sanitizeHTML = (html: string): string => {
-    if (!html || typeof html !== "string") return "";
-    return DOMPurify.sanitize(html, {
-      ALLOWED_TAGS: ["p", "br", "strong", "em", "u", "s", "h1", "h2", "h3", "ul", "ol", "li", "a", "span", "div"],
-      ALLOWED_ATTR: ["href", "target", "rel", "style", "class", "color"],
-    });
-  };
 
   // Conversion functions
   const metersToFeet = (meters: number): number => Math.round(meters * 3.28084 * 10) / 10;
@@ -82,7 +62,7 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
       {/* Image Gallery Carousel */}
       {mediaItems.length > 0 && (
         <div id="gallery" className="mb-5">
-          <h4 className="detail-page-title mb-3">Gallery</h4>
+          <h4 className="detail-page-title mb-3">{tr("Gallery")}</h4>
           <Gallery>
             <Swiper
               modules={[Navigation, Pagination, Thumbs]}
@@ -109,7 +89,7 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
                       type="button"
                       className="boat-gallery-item border-0 p-0"
                       onClick={() => setPreviewVideo(media.url)}
-                      aria-label={`Play video ${index + 1} for ${boat.title}`}
+                      aria-label={`${tr("Play video")} ${index + 1} ${boat.title}`}
                     >
                       <VideoPoster
                         url={media.url}
@@ -123,10 +103,10 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
                     </button>
                   ) : (
                     <Item
-                      original={media.url}
-                      thumbnail={media.url}
-                      width={imgDimensions[index]?.width ?? 1200}
-                      height={imgDimensions[index]?.height ?? 800}
+                      original={listingImageViewUrl(media.url)}
+                      thumbnail={listingImageThumbnailUrl(media.url)}
+                      width={1200}
+                      height={800}
                     >
                       {({ ref, open }) => (
                       <div
@@ -138,6 +118,8 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
                           src={media.url}
                           alt={`${boat.title} - Image ${index + 1}`}
                           fill
+                          sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                          quality={72}
                           style={{ objectFit: "contain" }}
                           className="boat-gallery-image"
                         />
@@ -169,12 +151,12 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
       {/* Overview / Specifications */}
       {specs.length > 0 && (
         <div id="overview" className="mb-4">
-          <h4 className="detail-page-title">Specifications</h4>
+          <h4 className="detail-page-title">{tr("Specifications")}</h4>
           <Row className="g-3">
             {specs.map(({ label, value }) => (
               <Col md={6} key={label}>
                 <div className="spec-item">
-                  <strong>{label}:</strong> <span>{value}</span>
+                  <strong>{tr(label)}:</strong> <span>{value}</span>
                 </div>
               </Col>
             ))}
@@ -185,27 +167,27 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
       {/* Description */}
       {boat.description && (
         <div id="description" className="mb-4">
-          <h4 className="detail-page-title">Description</h4>
-          <div dangerouslySetInnerHTML={{ __html: sanitizeHTML(boat.description) }} />
+          <h4 className="detail-page-title">{tr("Description")}</h4>
+          <div dangerouslySetInnerHTML={{ __html: boat.description }} />
         </div>
       )}
 
       {/* Additional Details */}
       {boat.additionalDetails && boat.additionalDetails.length > 10 && (
         <div id="additional" className="mb-4">
-          <h4 className="detail-page-title">Additional Details</h4>
-          <div dangerouslySetInnerHTML={{ __html: sanitizeHTML(boat.additionalDetails) }} />
+          <h4 className="detail-page-title">{tr("Additional Details")}</h4>
+          <div dangerouslySetInnerHTML={{ __html: boat.additionalDetails }} />
         </div>
       )}
 
       {/* Brochure Download */}
       {(boat.brochures?.length || boat.brochure) && (
         <div id="brochure" className="mb-4">
-          <h4 className="detail-page-title">Brochures</h4>
+          <h4 className="detail-page-title">{tr("Brochures")}</h4>
           <div className="d-flex flex-wrap gap-2">
             {(boat.brochures?.length ? boat.brochures : [{ url: boat.brochure || "", name: "Brochure" }]).map((brochure, index) => (
               <a key={`${brochure.url}-${index}`} href={brochure.url} target="_blank" rel="noopener noreferrer" className="btn-solid">
-                Download {brochure.name || `Brochure ${index + 1}`}
+                {tr("Download")} {brochure.name || `${tr("Brochure")} ${index + 1}`}
               </a>
             ))}
           </div>

@@ -18,6 +18,7 @@ export type Partner = {
   breadcrumb_image_url: string;
   hero_image_url: string | null;
   content: string;
+  translations?: Record<string, { content?: string; custom_fields?: PartnerFormField[] }>;
   website_url: string | null;
   primary_color: string;
   secondary_color: string;

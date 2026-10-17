@@ -10,7 +10,7 @@
   h2,
   h3,
   strong {
-    font-family: "Michroma", sans-serif;
+    font-family: var(--display-font);
     color: rgba(var(--title-color), 1);
   }
 
@@ -128,7 +128,7 @@
       padding: 18px 14px;
       background: rgba(var(--title-color), 1);
       color: rgba(var(--white), 1);
-      font-family: "Michroma", sans-serif;
+      font-family: var(--display-font);
       font-size: clamp(13px, 1.25vw, 16px);
       line-height: 1.4;
       text-align: center;
@@ -256,7 +256,7 @@
     &__role {
       margin-bottom: 24px;
       color: rgba(var(--theme-color), 1) !important;
-      font-family: "Michroma", sans-serif;
+      font-family: var(--display-font);
       font-size: clamp(14px, 1.5vw, 18px) !important;
     }
   }

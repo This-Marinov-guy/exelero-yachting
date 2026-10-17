@@ -2,7 +2,9 @@ import Breadcrumbs from "@/components/commonComponents/breadcrumb";
 import { RouteList } from "@/utils/RouteList";
 import { getPublishedPartners } from "@/lib/partners";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/commonComponents/LocalizedLink";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { publicText } from "@/lib/publicText";
 import { Container } from "reactstrap";
 import AboutBrochureActions from "./AboutBrochureActions";
 import { Commitments, Services } from "./CommitmentsAndServices";
@@ -29,20 +31,22 @@ const experience = [
 
 const AboutPage = async () => {
   const partners = await getPublishedPartners();
+  const locale = await getServerPublicLocale();
+  const t = (value: string) => publicText(locale, value);
 
   return <>
-    <Breadcrumbs title="Premium Yachting Experience" headingLevel={1} subTitle="About Us" url={RouteList.Home.CarDemo1} mainClass="page-breadcrumbs-section" image />
+    <Breadcrumbs title={t("Premium Yachting Experience")} headingLevel={1} subTitle={t("About Us")} url={RouteList.Home.CarDemo1} mainClass="page-breadcrumbs-section" image />
     <main className="exelero-about-section">
       <Container>
         <section className="about-overview" aria-labelledby="about-intro-title">
           <div className="about-overview__body">
             <div className="about-overview__copy">
-              <h2 id="about-intro-title">About Us</h2>
-              <p>At Exelero Yachting we specialise in a personalised customer approach. We carefully gather information about our clients' requirements and make recommendations. We are adamant that every customer must make an informed choice.</p>
-              <p>For this purpose we only work with prestigious brands that have proven themselves in both quality and customer service. We would not recommend a product that we would not purchase ourselves. We believe that, in the long run, quality is what brings high value to customers. We make no compromises.</p>
+              <h2 id="about-intro-title">{t("About Us") }</h2>
+              <p>{t("At Exelero Yachting we specialise in a personalised customer approach. We carefully gather information about our clients' requirements and make recommendations. We are adamant that every customer must make an informed choice.")}</p>
+              <p>{t("For this purpose we only work with prestigious brands that have proven themselves in both quality and customer service. We would not recommend a product that we would not purchase ourselves. We believe that, in the long run, quality is what brings high value to customers. We make no compromises.")}</p>
             </div>
             <div className="about-overview__image">
-              <Image src="/assets/images/other/about/general.jpg" alt="Exelero sailing yacht moored at the marina" width={900} height={600} sizes="(max-width: 767px) 100vw, 42vw" />
+              <Image src="/assets/images/other/about/general.jpg" alt={t("Exelero sailing yacht moored at the marina")} width={900} height={600} sizes="(max-width: 767px) 100vw, 42vw" />
             </div>
           </div>
           <Commitments />
@@ -51,37 +55,37 @@ const AboutPage = async () => {
         <Services />
 
         <section className="about-partners" aria-labelledby="about-partners-title">
-          <h2 id="about-partners-title">Our Partners</h2>
-          <p>We collaborate with leading brands to deliver exceptional results.</p>
+          <h2 id="about-partners-title">{t("Our Partners") }</h2>
+          <p>{t("We collaborate with leading brands to deliver exceptional results.") }</p>
           <div className="about-partners__grid">
             {partners.map(({ name, slug, logo_url }) => {
               const logo = transparentLogoBySource[logo_url] ?? logo_url;
 
-              return <Link className={`partner-card${logo_url === "/assets/images/logo/zhik.svg" ? " partner-card--zhik" : ""}`} href={`/partners/${slug}`} key={slug} aria-label={`Explore ${name}`}>
-                <Image src={logo} alt={`${name} logo`} width={220} height={120} sizes="(max-width: 575px) 45vw, (max-width: 991px) 22vw, 14vw" unoptimized={logo.startsWith("http")} />
+              return <Link className={`partner-card${logo_url === "/assets/images/logo/zhik.svg" ? " partner-card--zhik" : ""}`} href={`/partners/${slug}`} key={slug} aria-label={`${t("Explore")} ${name}`}>
+                <Image src={logo} alt={`${name} ${t("logo")}`} width={220} height={120} sizes="(max-width: 575px) 45vw, (max-width: 991px) 22vw, 14vw" unoptimized={logo.startsWith("http")} />
               </Link>;
             })}
           </div>
         </section>
 
         <section className="about-director" aria-labelledby="about-director-title">
-          <h2 id="about-director-title">Our Director</h2>
+          <h2 id="about-director-title">{t("Our Director") }</h2>
           <div className="about-director__body">
             <div className="about-director__image">
-              <Image src="/assets/images/hero/krasi.jpg" alt="Krasimir Naumov, Founder and Director" width={500} height={570} sizes="(max-width: 767px) 100vw, 34vw" />
+              <Image src="/assets/images/hero/krasi.jpg" alt={t("Krasimir Naumov, Founder and Director")} width={500} height={570} sizes="(max-width: 767px) 100vw, 34vw" />
             </div>
             <div className="about-director__copy">
               <h3>Krasimir Naumov</h3>
-              <p className="about-director__role">Founder &amp; Director</p>
-              <p>After a long corporate career as a financial executive, I decided to turn to yachting and turn my love for it into my business. I want to help other people experience the great way of life that yachting offers.</p>
-              <p>I have been sailing since I was six years old. For 32 years I have been connected with the industry as a sailor, and now it is the joy of my life to provide products that help others enjoy their lives more or build a business.</p>
+              <p className="about-director__role">{t("Founder & Director") }</p>
+              <p>{t("After a long corporate career as a financial executive, I decided to turn to yachting and turn my love for it into my business. I want to help other people experience the great way of life that yachting offers.")}</p>
+              <p>{t("I have been sailing since I was six years old. For 32 years I have been connected with the industry as a sailor, and now it is the joy of my life to provide products that help others enjoy their lives more or build a business.")}</p>
               <section className="about-experience" aria-labelledby="about-experience-title">
-                <h3 id="about-experience-title">Experience &amp; Qualifications</h3>
+                <h3 id="about-experience-title">{t("Experience & Qualifications") }</h3>
                 <div className="about-experience__list">
                   {experience.map(({ years, description }) => (
                     <div className="about-experience__item" key={years}>
-                      <strong>{years}</strong>
-                      <p>{description}</p>
+                      <strong>{t(years)}</strong>
+                      <p>{t(description)}</p>
                     </div>
                   ))}
                 </div>
@@ -92,8 +96,8 @@ const AboutPage = async () => {
 
         <section className="about-guarantee" aria-labelledby="about-guarantee-title">
           <div className="about-guarantee__copy">
-            <h2 id="about-guarantee-title">Our Guarantee</h2>
-            <p>Outstanding quality and unwavering support.</p>
+            <h2 id="about-guarantee-title">{t("Our Guarantee") }</h2>
+            <p>{t("Outstanding quality and unwavering support.") }</p>
           </div>
           <AboutBrochureActions />
         </section>

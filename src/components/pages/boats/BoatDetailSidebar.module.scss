@@ -1,0 +1,42 @@
+:global(.tap-to-tap).floatingContact {
+  right: auto;
+  left: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
+
+  [dir="rtl"] & {
+    left: auto;
+    right: calc(15px + (30 - 15) * ((100vw - 320px) / (1920 - 320)));
+  }
+}
+
+:global(.tap-to-tap) .contactButton {
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 48px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    color: #fff;
+    background-color: rgba(var(--theme-color), 0.85);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -4px;
+    box-shadow: 0 0 0 2px rgba(var(--theme-color), 1);
+  }
+
+  &:active {
+    transform: translateY(2px);
+  }
+}
+
+.formTarget {
+  scroll-margin-top: 96px;
+
+  &:focus-visible {
+    outline: 2px solid rgba(var(--theme-color), 1);
+    outline-offset: 4px;
+  }
+}

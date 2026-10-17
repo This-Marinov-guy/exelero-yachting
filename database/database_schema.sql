@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS boat_data (
     brochures JSONB DEFAULT '[]'::jsonb,
     exterior_description TEXT NOT NULL,
     additional_details TEXT, -- Optional
+    translations JSONB NOT NULL DEFAULT '{}'::jsonb,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

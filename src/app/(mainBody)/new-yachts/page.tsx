@@ -1,73 +1,36 @@
 import NewYachtsPage from "@/components/pages/newYachts/NewYachtsPage";
 import type { Metadata } from "next";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { publicText } from "@/lib/publicText";
+import { publicPageMetadata } from "@/lib/publicSeo";
+import { HTML_LANG, localizedPath } from "@/lib/publicLocale";
 import { getSiteUrl } from "@/lib/siteUrl";
-import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 
 export const dynamic = "force-dynamic";
+const path = "/new-yachts";
+const title = "New Yachts";
+const description = "Explore our new yacht brands, discover their ranges, and contact the Exelero Yachting team.";
 
-export const metadata: Metadata = {
-  title: "New Yachts | Exelero Yachting",
-  description:
-    "Explore our new yacht brands, discover their ranges, and contact the Exelero Yachting team.",
-  openGraph: {
-    title: "New Yachts | Exelero Yachting",
-    description:
-      "Select a yacht brand to discover more and contact our team.",
-    url: "/new-yachts",
-    type: "website",
-    images: [breadcrumbOpenGraphImage("New Yachts | Exelero Yachting")],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "New Yachts | Exelero Yachting",
-    description:
-      "Select a yacht brand to discover more and contact our team.",
-    images: [DEFAULT_BREADCRUMB_IMAGE],
-  },
-  alternates: { canonical: "/new-yachts" },
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPageMetadata(await getServerPublicLocale(), path, title, description);
+}
 
-const NewYachts = () => {
+export default async function PublicPage() {
+  const locale = await getServerPublicLocale();
   const siteUrl = getSiteUrl();
-  const structuredData = {
+  const url = `${siteUrl}${localizedPath(locale, path)}`;
+  const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "CollectionPage",
-        name: "New Yachts",
-        url: `${siteUrl}/new-yachts`,
-        description: metadata.description,
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: siteUrl,
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "New Yachts",
-            item: `${siteUrl}/new-yachts`,
-          },
-        ],
-      },
+      { "@type": "BreadcrumbList", itemListElement: [
+        { "@type": "ListItem", position: 1, name: publicText(locale, "Home"), item: `${siteUrl}${localizedPath(locale, "/")}` },
+        { "@type": "ListItem", position: 2, name: publicText(locale, "New Yachts"), item: url },
+      ] },
+      { "@type": "CollectionPage", name: publicText(locale, title), description: publicText(locale, description), url, inLanguage: HTML_LANG[locale] },
     ],
   };
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-      <NewYachtsPage />
-    </>
-  );
-};
-
-export default NewYachts;
+  return <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+    <NewYachtsPage />
+  </>;
+}

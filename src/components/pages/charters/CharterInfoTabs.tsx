@@ -1,14 +1,16 @@
 "use client";
 
+import { usePublicText } from "@/lib/usePublicText";
 import { useState } from "react";
 import type { CharterInfoTab } from "@/lib/servicePageContent";
 
 const CharterInfoTabs = ({ tabs }: { tabs: CharterInfoTab[] }) => {
+  const tr = usePublicText();
   const [activeId, setActiveId] = useState(tabs[0].id);
 
   return (
     <div className="charter-info-tabs">
-      <div className="charter-info-tabs__nav" role="group" aria-label="Charter information">
+      <div className="charter-info-tabs__nav" role="group" aria-label={tr("Charter information")}>
         {tabs.map((tab) => (
           <button
             key={tab.id}

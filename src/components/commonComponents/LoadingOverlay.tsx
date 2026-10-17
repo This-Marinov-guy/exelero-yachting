@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import ExceleroLoader from "@/components/commonComponents/ExceleroLoader";
+import { LOCALE_SWITCH_COOKIE } from "@/lib/publicLocale";
 
 const SHOW_DELAY_MS = 150;
 const EXIT_ANIMATION_MS = 600;
@@ -10,18 +12,19 @@ const MAX_WAIT_MS = 10000;
 // A full navigation starts a new JavaScript runtime; client-side route changes do not.
 let initialPageLoadFinished = false;
 
-const LoadingOverlay = () => {
-  const [phase, setPhase] = useState<"hidden" | "visible" | "exiting">("hidden");
+const LoadingOverlay = ({ initialVisible = false }: { initialVisible?: boolean }) => {
+  const [phase, setPhase] = useState<"hidden" | "visible" | "exiting">(initialVisible ? "visible" : "hidden");
+  const { t } = useTranslation("common");
 
   useEffect(() => {
-    if (initialPageLoadFinished) return;
+    if (initialPageLoadFinished && !initialVisible) return;
 
-    if (document.readyState === "complete") {
+    if (document.readyState === "complete" && !initialVisible) {
       initialPageLoadFinished = true;
       return;
     }
 
-    let visible = false;
+    let visible = initialVisible;
     let finished = false;
     let exitTimer: number | undefined;
 
@@ -30,6 +33,7 @@ const LoadingOverlay = () => {
 
       finished = true;
       initialPageLoadFinished = true;
+      if (initialVisible) document.cookie = `${LOCALE_SWITCH_COOKIE}=; Path=/; Max-Age=0`;
       window.clearTimeout(showTimer);
       window.clearTimeout(maxWaitTimer);
       window.removeEventListener("load", finish);
@@ -48,10 +52,11 @@ const LoadingOverlay = () => {
 
       visible = true;
       setPhase("visible");
-    }, SHOW_DELAY_MS);
+    }, initialVisible ? 0 : SHOW_DELAY_MS);
     const maxWaitTimer = window.setTimeout(finish, MAX_WAIT_MS);
 
     window.addEventListener("load", finish, { once: true });
+    if (document.readyState === "complete") finish();
 
     return () => {
       window.clearTimeout(showTimer);
@@ -59,14 +64,14 @@ const LoadingOverlay = () => {
       window.clearTimeout(exitTimer);
       window.removeEventListener("load", finish);
     };
-  }, []);
+  }, [initialVisible]);
 
-  // The server render and first hydration both return null, leaving page content
-  // in the HTML for crawlers and available to visitors without JavaScript.
+  // Ordinary page loads start with visible page content; language changes
+  // server-render this loader so the destination never flashes blank.
   if (phase === "hidden") return null;
 
   return (
-    <div className={`loader-wrapper ${phase === "exiting" ? "loader-exit" : ""}`} aria-hidden="true">
+    <div className={`loader-wrapper ${phase === "exiting" ? "loader-exit" : ""}`} role="status" aria-live="polite" aria-busy="true" aria-label={t("Loading...")}>
       <div className="text-center exelero-loader-wrapper">
         <ExceleroLoader />
       </div>

@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Layout from "./(mainBody)/layout";
 import CarDemo1Container from "@/components/themes/carDemo1/Index";
 import { getSiteUrl } from "@/lib/siteUrl";
-import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
+import { publicPageMetadata } from "@/lib/publicSeo";
+import { publicText } from "@/lib/publicText";
+import { getServerPublicLocale } from "@/lib/serverPublicLocale";
+import { HTML_LANG, localizedPath } from "@/lib/publicLocale";
 import {
   LINKEDIN_URL,
   MAIN_CONTACT_EMAIL,
@@ -11,43 +14,24 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: { absolute: "Exelero Yachting | Luxury Yachts, Brokerage & Charters" },
-  description:
-    "Explore yachts for sale, brokerage, charters, and marine services with Exelero Yachting in Southeast Europe.",
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "Exelero Yachting | Luxury Yachts, Brokerage & Charters",
-    description:
-      "Yachts for sale, brokerage, charters, and marine services across Southeast Europe.",
-    url: "/",
-    siteName: "Exelero Yachting",
-    type: "website",
-    images: [breadcrumbOpenGraphImage("Exelero Yachting — Luxury Yachts")],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Exelero Yachting | Luxury Yachts, Brokerage & Charters",
-    description:
-      "Yachts for sale, brokerage, charters, and marine services across Southeast Europe.",
-    images: [DEFAULT_BREADCRUMB_IMAGE],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+const homeTitle = "Exelero Yachting | Luxury Yachts, Brokerage & Charters";
+const homeDescription = "Explore yachts for sale, brokerage, charters, and marine services with Exelero Yachting in Southeast Europe.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerPublicLocale();
+  return { ...publicPageMetadata(locale, "/", homeTitle, homeDescription), title: { absolute: publicText(locale, homeTitle) } };
+}
 
 const siteUrl = getSiteUrl();
 
-export default function Home() {
+export default async function Home() {
+  const locale = await getServerPublicLocale();
   const webSiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Exelero Yachting",
-    url: siteUrl,
+    url: `${siteUrl}${localizedPath(locale, "/")}`,
+    inLanguage: HTML_LANG[locale],
   };
 
   const organizationJsonLd = {
@@ -56,8 +40,7 @@ export default function Home() {
     name: "Exelero Yachting",
     url: siteUrl,
     logo: `${siteUrl}/assets/images/logo/1.png`,
-    description:
-      "Exelero Yachting — yacht sales, brokerage, charters, and marine services across Southeast Europe.",
+    description: publicText(locale, homeDescription),
     telephone: MAIN_CONTACT_NUMBER,
     email: MAIN_CONTACT_EMAIL,
     address: {
@@ -66,6 +49,8 @@ export default function Home() {
       addressCountry: "BG",
     },
     sameAs: [LINKEDIN_URL],
+    areaServed: [{ "@type": "Country", name: "Romania" }, { "@type": "Country", name: "Bulgaria" }, { "@type": "Country", name: "Serbia" }],
+    knowsLanguage: ["en", "ro", "bg", "sr-Latn"],
   };
 
   const breadcrumbJsonLd = {
@@ -75,8 +60,8 @@ export default function Home() {
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "Home",
-        "item": siteUrl
+        "name": publicText(locale, "Home"),
+        "item": `${siteUrl}${localizedPath(locale, "/")}`
       }
     ]
   };
@@ -85,15 +70,15 @@ export default function Home() {
     <main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd).replace(/</g, "\\u003c") }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c") }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c") }}
       />
       <Layout>
         <CarDemo1Container />
