@@ -63,7 +63,7 @@ const HomeHeroSection = () => {
             {/* <p className="home-hero-eyebrow">Exelero Group</p> */}
             <h1 className="home-hero-title">{t("Performance & Luxury Yachts")}</h1>
             <p className="home-hero-subtitle">
-              {t("Yachts, brokerage, charters, and marine services for clients across Southeast Europe.")}
+              {t("New yachts, Brokerage and marine services")}
             </p>
           </div>
         </Container>
