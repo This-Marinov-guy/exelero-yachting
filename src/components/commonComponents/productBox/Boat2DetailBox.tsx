@@ -145,7 +145,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
           {previewVideo && (
             <VideoPlayer
               url={previewVideo}
-              title={`${data.title} video`}
+              title={`${data.title} ${tr("video")}`}
               style={{ width: "100%", maxHeight: "80vh", display: "block", background: "#000" }}
             />
           )}

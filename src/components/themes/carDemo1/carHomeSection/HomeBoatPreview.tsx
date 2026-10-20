@@ -71,7 +71,7 @@ async function fetchFeaturedBoats(locale: PublicLocale): Promise<FeaturedBoat[]>
           slug: boat.slug || "",
           mainMediaUrl: mainMedia?.link || "/assets/images/hero/boats.jpg",
           mainMediaType: mainMedia?.media_type === "video" ? "video" as const : "image" as const,
-          title: boatData?.title || "Untitled Boat",
+          title: boatData?.title || publicText(locale, "Untitled Boat"),
           price: boatData?.price ?? undefined,
           location: boatData?.location || "",
           buildYear: boatData?.build_year || "",

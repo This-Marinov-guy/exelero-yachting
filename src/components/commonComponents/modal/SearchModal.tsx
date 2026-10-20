@@ -7,8 +7,10 @@ import { SearchModalType } from "@/types/CommonComponents";
 import { FC, Fragment } from "react";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import CloseBtn from "../CloseBtn";
+import { usePublicText } from "@/lib/usePublicText";
 
 const SearchModal: FC<SearchModalType> = ({ type, carSpaceClass = "" }) => {
+  const tr = usePublicText();
   const { searchModal } = useAppSelector((state) => state.layout);
   const { productItem } = useAppSelector((state) => state.product);
   const dispatch = useAppDispatch();
@@ -26,13 +28,13 @@ const SearchModal: FC<SearchModalType> = ({ type, carSpaceClass = "" }) => {
         <ModalHeader toggle={toggle} close={<CloseBtn toggle={toggle} />} />
         <ModalBody>
           <div className='filter-header'>
-            <h3>Search</h3>
-            <span onClick={handleReset}>Reset</span>
+            <h3>{tr("Search")}</h3>
+            <span onClick={handleReset}>{tr("Reset")}</span>
           </div>
           <FilterSidebar type={type} value={showProduct} />
         </ModalBody>
         <ModalFooter>
-          <Button className='btn-solid'>{Search}</Button>
+          <Button className='btn-solid'>{tr(Search)}</Button>
         </ModalFooter>
       </Modal>
     </Fragment>

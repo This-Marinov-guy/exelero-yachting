@@ -13,7 +13,6 @@ const ExceleroLoader = () => {
           className="loader-logo"
           priority
         />
-        <div className="loader-spinner"></div>
       </div>
       <h4 className="loader-text">Exelero Yachting</h4>
     </div>

@@ -7,6 +7,7 @@ import BG from "country-flag-icons/react/3x2/BG";
 import RS from "country-flag-icons/react/3x2/RS";
 import { Check, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { usePublicLocale } from "@/app/i18n/i18n-context";
 import ExceleroLoader from "@/components/commonComponents/ExceleroLoader";
@@ -15,7 +16,7 @@ import styles from "./FooterLanguageSelect.module.scss";
 
 const FLAGS = { en: GB, ro: RO, bg: BG, sr: RS };
 
-export default function FooterLanguageSelect() {
+export default function FooterLanguageSelect({ compact = false }: { compact?: boolean }) {
   const locale = usePublicLocale();
   const { t } = useTranslation("common");
   const CurrentFlag = FLAGS[locale];
@@ -38,16 +39,16 @@ export default function FooterLanguageSelect() {
     requestAnimationFrame(() => requestAnimationFrame(() => location.assign(target)));
   };
 
-  return <div className={styles.wrap}>
+  return <div className={`${styles.wrap}${compact ? ` ${styles.compact}` : ""}`}>
     {/* <span id="footer-language-label" className={styles.label}>{t("Language")}</span> */}
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className={styles.trigger} aria-label={`${t("Language")}: ${LANGUAGE_NAMES[locale]}`} disabled={switching}>
         <CurrentFlag className={styles.flag} aria-hidden="true" />
-        <span id="footer-language-value">{LANGUAGE_NAMES[locale]}</span>
-        <ChevronDown size={16} aria-hidden="true" />
+        {!compact && <span>{LANGUAGE_NAMES[locale]}</span>}
+        {!compact && <ChevronDown size={16} aria-hidden="true" />}
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
-        <DropdownMenu.Content className={styles.menu} side="top" align="start" sideOffset={8}>
+        <DropdownMenu.Content className={styles.menu} side={compact ? "bottom" : "top"} align={compact ? "end" : "start"} sideOffset={8}>
           <DropdownMenu.RadioGroup
             value={locale}
             onValueChange={changeLanguage}
@@ -64,8 +65,11 @@ export default function FooterLanguageSelect() {
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
-    {switching && <div className={`loader-wrapper ${styles.switchLoader}`} role="status" aria-live="polite" aria-busy="true" aria-label={t("Loading...")}>
-      <div className="text-center exelero-loader-wrapper"><ExceleroLoader /></div>
-    </div>}
+    {switching && createPortal(
+      <div className={`loader-wrapper ${styles.switchLoader}`} role="status" aria-live="polite" aria-busy="true" aria-label={t("Loading...")}>
+        <div className="text-center exelero-loader-wrapper"><ExceleroLoader /></div>
+      </div>,
+      document.body,
+    )}
   </div>;
 }

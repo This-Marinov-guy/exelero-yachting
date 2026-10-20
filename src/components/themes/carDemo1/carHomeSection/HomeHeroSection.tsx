@@ -5,53 +5,101 @@ import { usePublicText } from "@/lib/usePublicText";
 import { Container } from "reactstrap";
 import { ArrowRight } from "lucide-react";
 import { RouteList } from "@/utils/RouteList";
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import { useEffect, useState } from "react";
+
+const MAX_720_SCALE = 1.15;
+const VIDEO_MOBILE = "/assets/video/hero/spring-sailing-mobile.m4v";
+const VIDEO_720 = "/assets/video/hero/spring-sailing-720.m4v";
+const VIDEO_1080 = "/assets/video/hero/spring-sailing-1080.m4v";
 
 const HomeHeroSection = () => {
   const t = usePublicText();
-  const [loadVideo, setLoadVideo] = useState(false);
-  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [videoSource, setVideoSource] = useState<string | null>(null);
+  const [playingSource, setPlayingSource] = useState<string | null>(null);
+  const { props: desktopImage } = getImageProps({
+    src: "/assets/images/breadcrumbs/x-yachts.jpg",
+    alt: "",
+    fill: true,
+    sizes: "100vw",
+    quality: 82,
+    loading: "eager",
+    fetchPriority: "high",
+    className: "home-hero-image",
+  });
+  const { props: mobileImage } = getImageProps({
+    src: "/assets/images/hero/x-yachts.jpg",
+    alt: "",
+    fill: true,
+    sizes: "100vw",
+    quality: 82,
+  });
 
   useEffect(() => {
     const connection = (navigator as Navigator & {
-      connection?: { saveData?: boolean; effectiveType?: string };
+      connection?: {
+        saveData?: boolean;
+        addEventListener?: (type: string, listener: () => void) => void;
+        removeEventListener?: (type: string, listener: () => void) => void;
+      };
     }).connection;
-    const prefersStillImage = window.matchMedia(
-      "(max-width: 767px), (prefers-reduced-motion: reduce)"
-    ).matches;
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    if (prefersStillImage || connection?.saveData || /(?:slow-)?2g/.test(connection?.effectiveType || "")) {
-      return;
-    }
+    const updateVideo = () => {
+      const pixelRatio = window.devicePixelRatio || 1;
+      const scale720 = Math.max(
+        (window.innerWidth * pixelRatio) / 1280,
+        (window.innerHeight * pixelRatio) / 720
+      );
+      const skipVideo = motionQuery.matches || connection?.saveData;
+      const source = skipVideo
+        ? null
+        : window.innerHeight > window.innerWidth
+          ? VIDEO_MOBILE
+          : window.innerWidth < 1024 || scale720 <= MAX_720_SCALE
+            ? VIDEO_720
+            : VIDEO_1080;
 
-    const timeout = window.setTimeout(() => setLoadVideo(true), 1800);
-    return () => window.clearTimeout(timeout);
+      setVideoSource(source);
+    };
+
+    updateVideo();
+    window.addEventListener("resize", updateVideo);
+    motionQuery.addEventListener("change", updateVideo);
+    connection?.addEventListener?.("change", updateVideo);
+    return () => {
+      window.removeEventListener("resize", updateVideo);
+      motionQuery.removeEventListener("change", updateVideo);
+      connection?.removeEventListener?.("change", updateVideo);
+    };
   }, []);
+
+  const hideVideo = (source: string) => {
+    setPlayingSource((current) => (current === source ? null : current));
+  };
 
   return (
     <section className="exelero-home-hero">
       <div className="home-hero-bg" aria-hidden="true">
-        <Image
-          src="/assets/images/hero/x-yachts.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          quality={75}
-          className="home-hero-image"
-        />
-        {loadVideo && (
+        <picture>
+          <source media="(max-width: 767px)" srcSet={mobileImage.srcSet} sizes="100vw" />
+          <img {...desktopImage} />
+        </picture>
+        {videoSource && (
           <video
-            className={`home-hero-video${videoPlaying ? " is-playing" : ""}`}
+            key={videoSource}
+            className={`home-hero-video${playingSource === videoSource ? " is-playing" : ""}`}
             autoPlay
             muted
             loop
             playsInline
-            preload="none"
-            onPlaying={() => setVideoPlaying(true)}
+            preload="auto"
+            onPlaying={() => setPlayingSource(videoSource)}
+            onWaiting={() => hideVideo(videoSource)}
+            onPause={() => hideVideo(videoSource)}
+            onError={() => hideVideo(videoSource)}
           >
-            <source src="/assets/video/hero/performance.m4v" type="video/mp4" />
+            <source src={videoSource} type="video/mp4" />
           </video>
         )}
         <div className="home-hero-overlay" />
@@ -81,7 +129,7 @@ const HomeHeroSection = () => {
           </div>
 
           <Link href={RouteList.Pages.Other.ContactUs1} className="home-hero-btn">
-            Get in Touch
+            {t("Get in Touch")}
           </Link>
         </div>
       </div>

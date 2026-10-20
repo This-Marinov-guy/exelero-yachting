@@ -1,20 +1,23 @@
 "use client";
 
 import React from "react";
-import { Document, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { Document, Font, Image, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 import type { ProductType } from "@/types/Product";
+import type { PublicLocale } from "@/lib/publicLocale";
+import { publicText } from "@/lib/publicText";
 
 type Props = {
   boat: ProductType;
   /** Absolute base url like https://example.com (for converting /assets/... to absolute). */
   baseUrl: string;
+  locale: PublicLocale;
 };
 
 const styles = StyleSheet.create({
   page: {
     padding: 28,
     fontSize: 10,
-    fontFamily: "Helvetica",
+    fontFamily: "Source Sans 3 PDF",
     color: "#0b1220",
   },
   headerRow: {
@@ -164,9 +167,9 @@ const styles = StyleSheet.create({
   },
 });
 
-function formatPrice(price: number | undefined) {
-  if (price == null) return "Price upon inquiry";
-  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(price);
+function formatPrice(price: number | undefined, locale: PublicLocale) {
+  if (price == null) return publicText(locale, "Price upon inquiry");
+  return new Intl.NumberFormat(locale === "sr" ? "sr-Latn-RS" : locale, { maximumFractionDigits: 0 }).format(price);
 }
 
 /** Strip HTML tags for plain text in PDF. */
@@ -183,12 +186,12 @@ function toAbsoluteUrl(url: string, baseUrl: string) {
   return `${baseUrl}/${url}`;
 }
 
-function buildSpecs(boat: ProductType) {
+function buildSpecs(boat: ProductType, tr: (value: string) => string) {
   const specs: Array<[string, string]> = [];
 
   const add = (k: string, v: string | number | undefined | null) => {
     if (v === undefined || v === null || v === "" || (typeof v === "number" && !Number.isFinite(v))) return;
-    specs.push([k, String(v)]);
+    specs.push([tr(k), typeof v === "string" ? tr(v) : String(v)]);
   };
 
   add("Manufacturer", boat.manufacturer);
@@ -216,39 +219,41 @@ function buildSpecs(boat: ProductType) {
 
 const MAX_PHOTOS = 9;
 
-export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
+export default function BoatListingPdfDocument({ boat, baseUrl, locale }: Props) {
+  Font.register({ family: "Source Sans 3 PDF", src: `${baseUrl}/assets/fonts/SourceSans3-Regular.ttf` });
+  const tr = (value: string) => publicText(locale, value);
   const photoUrls = (boat.image || [])
     .filter(Boolean)
     .slice(0, MAX_PHOTOS)
     .map((u) => toAbsoluteUrl(u, baseUrl));
-  const specs = buildSpecs(boat);
+  const specs = buildSpecs(boat, tr);
 
   const chips: string[] = [
-    boat.boatType ? `Type: ${boat.boatType}` : "",
-    boat.condition ? `Condition: ${boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : boat.condition}` : "",
-    boat.manufacturer ? `Manufacturer: ${boat.manufacturer}` : "",
-    boat.buildYear ? `Year: ${boat.buildYear}` : boat.year ? `Year: ${boat.year}` : "",
+    boat.boatType ? `${tr("Type")}: ${tr(boat.boatType)}` : "",
+    boat.condition ? `${tr("Condition")}: ${tr(boat.condition === "new" ? "New" : boat.condition === "pre-owned" ? "Pre-owned" : boat.condition)}` : "",
+    boat.manufacturer ? `${tr("Manufacturer")}: ${boat.manufacturer}` : "",
+    boat.buildYear ? `${tr("Year")}: ${boat.buildYear}` : boat.year ? `${tr("Year")}: ${boat.year}` : "",
   ].filter(Boolean);
 
   const brokerLines = [
-    boat.brokerEmail ? `Email: ${boat.brokerEmail}` : "",
-    boat.brokerPhone ? `Phone: ${boat.brokerPhone}` : "",
+    boat.brokerEmail ? `${tr("Email")}: ${boat.brokerEmail}` : "",
+    boat.brokerPhone ? `${tr("Phone")}: ${boat.brokerPhone}` : "",
   ].filter(Boolean);
 
   const avatarUrl = boat.brokerProfileImage ? toAbsoluteUrl(boat.brokerProfileImage, baseUrl) : "";
 
   return (
     <Document
-      title={`${boat.title || "Boat"} - Exelero Yachting`}
+      title={`${boat.title || tr("Boat")} - Exelero Yachting`}
       author="Exelero Yachting"
-      subject="Boat listing"
+      subject={tr("Boat listing")}
     >
       <Page size="A4" style={styles.page}>
         <View style={styles.headerRow}>
           <View style={{ flex: 1 }}>
             <Text style={styles.brand}>EXELERO YACHTING</Text>
-            <Text style={styles.title}>{boat.title || "Untitled Boat"}</Text>
-            <Text style={styles.subtitle}>{boat.location || "Location TBD"}</Text>
+            <Text style={styles.title}>{boat.title || tr("Untitled Boat")}</Text>
+            <Text style={styles.subtitle}>{boat.location || tr("Location TBD")}</Text>
             {chips.length > 0 && (
               <View style={styles.chipsRow}>
                 {chips.map((c) => (
@@ -261,15 +266,15 @@ export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
           </View>
           <View style={{ width: 190 }}>
             <Text style={styles.price}>
-              {boat.price != null ? `${formatPrice(boat.price)} €` : formatPrice(boat.price)}
+              {boat.price != null ? `${formatPrice(boat.price, locale)} €` : formatPrice(boat.price, locale)}
             </Text>
-            <Text style={styles.vat}>{boat.vatIncluded ? "VAT Included" : "VAT not included"}</Text>
+            <Text style={styles.vat}>{tr(boat.vatIncluded ? "VAT Included" : "VAT not included")}</Text>
           </View>
         </View>
 
         {photoUrls.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Photos</Text>
+            <Text style={styles.sectionTitle}>{tr("Photos")}</Text>
             <View style={styles.photosGrid}>
               {photoUrls.map((src, idx) => (
                 <Image key={`${src}-${idx}`} src={src} style={styles.photo} />
@@ -281,7 +286,7 @@ export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
         <View style={styles.section}>
           <View style={styles.row}>
             <View style={styles.col}>
-              <Text style={styles.sectionTitle}>Listing details</Text>
+              <Text style={styles.sectionTitle}>{tr("Listing details")}</Text>
               <View style={styles.kvTable}>
                 {specs.length ? (
                   specs.map(([k, v], idx) => (
@@ -292,20 +297,20 @@ export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
                   ))
                 ) : (
                   <View style={[styles.kvRow, { borderBottom: "none" }]}>
-                    <Text style={styles.kvKey}>Details</Text>
-                    <Text style={styles.kvValue}>No additional specs provided.</Text>
+                    <Text style={styles.kvKey}>{tr("Details")}</Text>
+                    <Text style={styles.kvValue}>{tr("No additional specs provided.")}</Text>
                   </View>
                 )}
               </View>
             </View>
 
             <View style={[styles.col, { maxWidth: 220 }]}>
-              <Text style={styles.sectionTitle}>Contact</Text>
+              <Text style={styles.sectionTitle}>{tr("Contact")}</Text>
               <View style={styles.contactCard}>
                 <View style={styles.contactTop}>
                   {avatarUrl ? <Image src={avatarUrl} style={styles.avatar} /> : null}
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.contactName}>{boat.brokerName || "Broker / Dealer"}</Text>
+                    <Text style={styles.contactName}>{boat.brokerName || tr("Broker / Dealer")}</Text>
                     <Text style={styles.contactMeta}>{boat.dealer || boat.company || "Exelero Yachting"}</Text>
                   </View>
                 </View>
@@ -316,7 +321,7 @@ export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
                     </Text>
                   ))
                 ) : (
-                  <Text style={styles.contactLine}>Contact details not provided.</Text>
+                  <Text style={styles.contactLine}>{tr("Contact details not provided.")}</Text>
                 )}
               </View>
             </View>
@@ -325,19 +330,19 @@ export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
 
         {(boat.description || boat.exteriorDescription || boat.additionalDetails) && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Description</Text>
+            <Text style={styles.sectionTitle}>{tr("Description")}</Text>
             {!!boat.description && (
               <Text style={styles.paragraph}>{stripHtml(boat.description)}</Text>
             )}
             {!!boat.exteriorDescription && (
               <>
-                <Text style={[styles.sectionTitle, { marginTop: 10 }]}>Exterior</Text>
+                <Text style={[styles.sectionTitle, { marginTop: 10 }]}>{tr("Exterior")}</Text>
                 <Text style={styles.paragraph}>{stripHtml(boat.exteriorDescription)}</Text>
               </>
             )}
             {!!boat.additionalDetails && (
               <>
-                <Text style={[styles.sectionTitle, { marginTop: 10 }]}>Additional details</Text>
+                <Text style={[styles.sectionTitle, { marginTop: 10 }]}>{tr("Additional details")}</Text>
                 <Text style={styles.paragraph}>{stripHtml(boat.additionalDetails)}</Text>
               </>
             )}
@@ -345,7 +350,7 @@ export default function BoatListingPdfDocument({ boat, baseUrl }: Props) {
         )}
 
         <View style={styles.footer}>
-          <Text>Generated {new Date().toLocaleDateString()}</Text>
+          <Text>{tr("Generated")} {new Date().toLocaleDateString(locale === "sr" ? "sr-Latn-RS" : locale)}</Text>
           <Text>{toAbsoluteUrl(`/services/brokerage/${boat.slug || boat.id}`, baseUrl)}</Text>
         </View>
       </Page>

@@ -9,6 +9,8 @@ import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
 import { trackClarityEvent } from "@/lib/clarity";
 import BookingCalendarHeader, { bookingCalendarDayClassName } from "@/components/commonComponents/BookingCalendarHeader";
+import { usePublicLocale } from "@/app/i18n/i18n-context";
+import { BOOKING_DATE_LOCALES } from "@/lib/bookingDateLocales";
 
 const FORM_ID = "transportation-form";
 
@@ -30,6 +32,7 @@ const initialFormState = {
 
 export default function TransportationRequestSection() {
   const tr = usePublicText();
+  const locale = usePublicLocale();
   const localError = usePublicError();
   const formRef = useRef<HTMLElement>(null);
   const [formInView, setFormInView] = useState(false);
@@ -228,6 +231,10 @@ export default function TransportationRequestSection() {
                     onChange={(date) => handleDateChange("dateStart", date as Date | null)}
                     className="form-control"
                     dateFormat="dd-MM-yyyy"
+                    locale={BOOKING_DATE_LOCALES[locale].dateFns}
+                    monthAriaLabelPrefix={tr("Month")}
+                    chooseDayAriaLabelPrefix={tr("Choose")}
+                    disabledDayAriaLabelPrefix={tr("Not available")}
                     placeholderText="dd-mm-yyyy"
                     minDate={today}
                     calendarStartDay={1}
@@ -246,6 +253,10 @@ export default function TransportationRequestSection() {
                     onChange={(date) => handleDateChange("deadlineDate", date as Date | null)}
                     className="form-control"
                     dateFormat="dd-MM-yyyy"
+                    locale={BOOKING_DATE_LOCALES[locale].dateFns}
+                    monthAriaLabelPrefix={tr("Month")}
+                    chooseDayAriaLabelPrefix={tr("Choose")}
+                    disabledDayAriaLabelPrefix={tr("Not available")}
                     placeholderText="dd-mm-yyyy"
                     minDate={minDeadlineDate}
                     calendarStartDay={1}

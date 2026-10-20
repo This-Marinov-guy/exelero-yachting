@@ -66,7 +66,7 @@ const BoatMainDetail: FC<BoatMainDetailProps> = ({ boat }) => {
         import("@/components/pages/boats/BoatListingPdfDocument"),
       ]);
       const baseUrl = window.location.origin;
-      const blob = await pdf(<BoatListingPdfDocument boat={boat} baseUrl={baseUrl} />).toBlob();
+      const blob = await pdf(<BoatListingPdfDocument boat={boat} baseUrl={baseUrl} locale={locale} />).toBlob();
 
       const safeTitle = (boat.title || "boat-listing").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-");
       const filename = `${safeTitle || "boat-listing"}.pdf`;

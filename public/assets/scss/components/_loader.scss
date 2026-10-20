@@ -24,8 +24,7 @@
 
     @media (prefers-reduced-motion: reduce) {
         &.loader-exit,
-        .loader-logo,
-        .loader-spinner {
+        .loader-logo {
             animation-duration: 0.01ms !important;
             animation-iteration-count: 1 !important;
         }
@@ -257,21 +256,6 @@
                 object-fit: contain;
                 animation: logoPulse 2s ease-in-out infinite;
             }
-
-            .loader-spinner {
-                position: absolute;
-                width: 140px;
-                height: 140px;
-                border: 3px solid rgba(var(--theme-color), 0.1);
-                border-top-color: rgba(var(--theme-color), 1);
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-
-                @media (max-width: 767px) {
-                    width: 120px;
-                    height: 120px;
-                }
-            }
         }
 
         .loader-text {
@@ -339,21 +323,6 @@
                 height: 100%;
                 object-fit: contain;
                 animation: logoPulse 2s ease-in-out infinite;
-            }
-
-            .loader-spinner {
-                position: absolute;
-                width: 140px;
-                height: 140px;
-                border: 3px solid rgba(var(--theme-color), 0.1);
-                border-top-color: rgba(var(--theme-color), 1);
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-
-                @media (max-width: 767px) {
-                    width: 120px;
-                    height: 120px;
-                }
             }
         }
 

@@ -709,6 +709,12 @@ header {
         justify-content: space-between;
         position: relative;
         gap: 10px;
+
+        @media (max-width: 400px) {
+            &:has(.header-account-icon) .header-toggle__brand-text {
+                display: none;
+            }
+        }
     }
 
     .left-side-header {

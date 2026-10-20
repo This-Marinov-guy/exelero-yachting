@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { trackClarityEvent } from "@/lib/clarity";
 import { CHARTER_MODELS } from "@/lib/charterModels";
 import BookingCalendarHeader, { bookingCalendarDayClassName } from "@/components/commonComponents/BookingCalendarHeader";
+import { usePublicLocale } from "@/app/i18n/i18n-context";
+import { BOOKING_DATE_LOCALES } from "@/lib/bookingDateLocales";
 
 const FORM_ID = "charter-form";
 
@@ -26,6 +28,7 @@ const initialFormState = {
 
 export default function CharterRequestSection() {
   const tr = usePublicText();
+  const locale = usePublicLocale();
   const localError = usePublicError();
   const formRef = useRef<HTMLElement>(null);
   const [formInView, setFormInView] = useState(false);
@@ -233,6 +236,10 @@ export default function CharterRequestSection() {
                     onChange={(date) => handleDateChange("dateFrom", date as Date | null)}
                     className="form-control"
                     dateFormat="dd-MM-yyyy"
+                    locale={BOOKING_DATE_LOCALES[locale].dateFns}
+                    monthAriaLabelPrefix={tr("Month")}
+                    chooseDayAriaLabelPrefix={tr("Choose")}
+                    disabledDayAriaLabelPrefix={tr("Not available")}
                     placeholderText="dd-mm-yyyy"
                     minDate={today}
                     calendarStartDay={1}
@@ -251,6 +258,10 @@ export default function CharterRequestSection() {
                     onChange={(date) => handleDateChange("dateTo", date as Date | null)}
                     className="form-control"
                     dateFormat="dd-MM-yyyy"
+                    locale={BOOKING_DATE_LOCALES[locale].dateFns}
+                    monthAriaLabelPrefix={tr("Month")}
+                    chooseDayAriaLabelPrefix={tr("Choose")}
+                    disabledDayAriaLabelPrefix={tr("Not available")}
                     placeholderText="dd-mm-yyyy"
                     minDate={minToDate}
                     calendarStartDay={1}

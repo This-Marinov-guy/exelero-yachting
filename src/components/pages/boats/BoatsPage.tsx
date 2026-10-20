@@ -96,7 +96,7 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
           id: numericId,
           image: images.length > 0 ? images : [mainImage],
           media,
-          title: boatData?.title || "Untitled Boat",
+          title: boatData?.title || publicText(locale, "Untitled Boat"),
           type: "boat",
           category: boatData?.manufacturer ? [boatData.manufacturer] : [],
           features: [

@@ -1,9 +1,9 @@
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import type { ReactDatePickerCustomHeaderProps } from "react-datepicker";
+import { usePublicLocale } from "@/app/i18n/i18n-context";
+import { usePublicText } from "@/lib/usePublicText";
+import { BOOKING_DATE_LOCALES } from "@/lib/bookingDateLocales";
 
-const MONTHS = Array.from({ length: 12 }, (_, month) =>
-  new Intl.DateTimeFormat("en", { month: "long" }).format(new Date(2000, month, 1))
-);
 
 export const bookingCalendarDayClassName = (date: Date) =>
   date.getDay() === 0 || date.getDay() === 6 ? "booking-calendar__weekend" : "";
@@ -22,6 +22,11 @@ export default function BookingCalendarHeader({
   nextMonthButtonDisabled,
   minDate,
 }: BookingCalendarHeaderProps) {
+  const locale = usePublicLocale();
+  const tr = usePublicText();
+  const months = Array.from({ length: 12 }, (_, month) =>
+    new Intl.DateTimeFormat(BOOKING_DATE_LOCALES[locale].code, { month: "long" }).format(new Date(2000, month, 1))
+  );
   const firstYear = minDate?.getFullYear() ?? 1900;
   const lastYear = Math.max(2100, date.getFullYear());
 
@@ -30,7 +35,7 @@ export default function BookingCalendarHeader({
       <button
         type="button"
         className="booking-calendar__arrow"
-        aria-label="Previous month"
+        aria-label={tr("Previous month")}
         onClick={decreaseMonth}
         disabled={prevMonthButtonDisabled}
       >
@@ -38,15 +43,15 @@ export default function BookingCalendarHeader({
       </button>
       <div className="booking-calendar__selectors">
         <div className="booking-calendar__selector">
-          <span aria-hidden="true">{MONTHS[date.getMonth()]}</span>
+          <span aria-hidden="true">{months[date.getMonth()]}</span>
           <ChevronDown size={14} aria-hidden="true" />
           <select
             className="booking-calendar__select react-datepicker__month-select"
-            aria-label="Month"
+            aria-label={tr("Month")}
             value={date.getMonth()}
             onChange={(event) => changeMonth(Number(event.target.value))}
           >
-            {MONTHS.map((month, index) => (
+            {months.map((month, index) => (
               <option key={month} value={index}>{month}</option>
             ))}
           </select>
@@ -56,7 +61,7 @@ export default function BookingCalendarHeader({
           <ChevronDown size={14} aria-hidden="true" />
           <select
             className="booking-calendar__select react-datepicker__year-select"
-            aria-label="Year"
+            aria-label={tr("Year")}
             value={date.getFullYear()}
             onChange={(event) => changeYear(Number(event.target.value))}
           >
@@ -69,7 +74,7 @@ export default function BookingCalendarHeader({
       <button
         type="button"
         className="booking-calendar__arrow"
-        aria-label="Next month"
+        aria-label={tr("Next month")}
         onClick={increaseMonth}
         disabled={nextMonthButtonDisabled}
       >

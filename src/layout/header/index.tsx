@@ -15,6 +15,7 @@ import TopBar from "./topBar";
 import TapTop from "../TapTop";
 import AuthAccountIcon from "./AuthAccountIcon";
 import { usePublicText } from "@/lib/usePublicText";
+import FooterLanguageSelect from "@/layout/footer/FooterLanguageSelect";
 
 const Header: React.FC<PathTypes & { partners?: { slug: string; name: string }[] }> = ({ part, partners = [] }) => {
   const tr = usePublicText();
@@ -42,6 +43,7 @@ const Header: React.FC<PathTypes & { partners?: { slug: string; name: string }[]
         <div className='header-flex'>
           <LeftHeader sidebarOpen={sidebarOpen} part={part} isJobOrProperty={isJobOrProperty} />
           <MainMenu partners={partners} />
+          <FooterLanguageSelect compact />
           <AuthAccountIcon />
           <div className='mobile-menu-toggle'>
             <Link scroll={false} href={Href} className={`toggle ${sidebarOpen ? "open" : ""}`} aria-label={tr("Open menu")} onClick={() => dispatch(setCartData())}>
