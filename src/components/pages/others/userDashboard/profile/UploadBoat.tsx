@@ -58,6 +58,7 @@ import {
 } from "@/redux/reducers/BoatUploadSlice";
 import { hasBoatDraftContent, mergeRecoveredImages } from "@/lib/boatDraftCompatibility";
 import { MAX_LISTING_IMAGES, MAX_LISTING_VIDEOS, removeListingImage, uploadListingImage } from "@/lib/boatImageClient";
+import { migratedBoatImagePath } from "@/lib/migratedBoatImageUrl";
 
 const slugifyBoatListing = (title: string, buildYear: string) => {
     const normalizedTitle = title.trim();
@@ -618,7 +619,7 @@ const UploadBoat = () => {
                         .getPublicUrl(filePath);
 
                     return {
-                        url: urlData.publicUrl,
+                        url: migratedBoatImagePath(filePath) || urlData.publicUrl,
                         order: index,
                         name: file.name,
                         filePath,
@@ -753,9 +754,9 @@ const UploadBoat = () => {
         const bucketName = "boat_images";
 
         try {
-            if (imageToRemove.filePath && imageToRemove.url.startsWith("/api/boat-images/")) {
+            if (imageToRemove.filePath && imageToRemove.url.startsWith("/api/boat-images/") && !imageToRemove.filePath.includes("/")) {
                 await removeListingImage(imageToRemove.url);
-            } else if (imageToRemove.filePath) {
+            } else if (imageToRemove.filePath && !imageToRemove.url.startsWith("/api/boat-images/")) {
                 const { error } = await supabase.storage.from(bucketName).remove([imageToRemove.filePath]);
                 if (error) throw error;
             }

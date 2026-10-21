@@ -1,4 +1,5 @@
 import type { BoatUploadState, ImageMetadata, UploadedBrochure, UploadedImage } from "@/redux/reducers/BoatUploadSlice";
+import { migratedBoatImageUrl } from "@/lib/migratedBoatImageUrl";
 
 export const defaultBoatFormData: BoatUploadState["formData"] = {
   dealer_id: "",
@@ -46,11 +47,12 @@ const normalizeImages = (value: unknown): UploadedImage[] => {
   if (!Array.isArray(value)) return [];
   return value.flatMap((raw, index): UploadedImage[] => {
     const item = record(raw);
-    const url = typeof raw === "string" ? raw : firstString(item?.url, item?.link);
-    if (!url) return [];
+    const originalUrl = typeof raw === "string" ? raw : firstString(item?.url, item?.link);
+    if (!originalUrl) return [];
+    const url = migratedBoatImageUrl(originalUrl);
     const filePath = firstString(item?.filePath, item?.file_path);
-    const mediaType = item?.mediaType === "video" || item?.media_type === "video" || /\.(mp4|webm|mov|m4v)(?:[?#]|$)/i.test(url) || /(?:youtube\.com|youtu\.be|vimeo\.com)/i.test(url) ? "video" : "image";
-    return [{ url, order: index, name: firstString(item?.name, item?.file_name) || imageName(url, index), filePath, mediaType, sourceType: item?.sourceType === "link" || item?.source_type === "link" || !filePath ? "link" : "upload" }];
+    const mediaType = item?.mediaType === "video" || item?.media_type === "video" || /\.(mp4|webm|mov|m4v)(?:[?#]|$)/i.test(originalUrl) || /(?:youtube\.com|youtu\.be|vimeo\.com)/i.test(originalUrl) ? "video" : "image";
+    return [{ url, order: index, name: firstString(item?.name, item?.file_name) || imageName(originalUrl, index), filePath, mediaType, sourceType: item?.sourceType === "link" || item?.source_type === "link" || !filePath ? "link" : "upload" }];
   });
 };
 

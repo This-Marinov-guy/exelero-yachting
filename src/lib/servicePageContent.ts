@@ -45,6 +45,7 @@ const assetUrl = (value: unknown, kind: "image" | "video"): string | null => {
   if (typeof value !== "string" || value.length > 2048) return null;
   const extension = kind === "image" ? "(?:jpe?g|png|webp)" : "mp4";
   if (new RegExp(`^/assets/images/[a-zA-Z0-9/_-]+\\.${extension}$`).test(value)) return value;
+  if (kind === "image" && /^\/api\/boat-images\/[a-zA-Z0-9_-]{10,}$/.test(value)) return value;
 
   const origin = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!origin) return null;

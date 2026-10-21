@@ -3,6 +3,7 @@
 import * as tus from "tus-js-client";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import type { ServicePageKey } from "@/lib/servicePageContent";
+import { uploadSiteImage } from "@/lib/siteImageClient";
 
 const BUCKET = "service-page-media";
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -32,6 +33,7 @@ export async function uploadServiceMedia(
 ): Promise<string> {
   const fileError = serviceMediaFileError(file, kind);
   if (fileError) throw new Error(fileError);
+  if (kind === "image") return uploadSiteImage(file, "service", page);
 
   const client = getSupabaseBrowserClient();
   const { data: { session }, error } = await client.auth.getSession();
@@ -44,7 +46,7 @@ export async function uploadServiceMedia(
     ? base.hostname.replace(/\.supabase\.co$/, ".storage.supabase.co")
     : base.host;
   const endpoint = `${base.protocol}//${host}/storage/v1/upload/resumable`;
-  const extension = kind === "video" ? "mp4" : file.type === "image/jpeg" ? "jpg" : file.type === "image/png" ? "png" : "webp";
+  const extension = "mp4";
   const path = `${page}/${slot}/${crypto.randomUUID()}.${extension}`;
 
   await new Promise<void>((resolve, reject) => {

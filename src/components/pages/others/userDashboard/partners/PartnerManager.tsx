@@ -11,7 +11,7 @@ import PartnerManagerSkeleton from "./PartnerManagerSkeleton";
 import { Check, GripVertical, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
+import { uploadSiteImage } from "@/lib/siteImageClient";
 import type { Partner, PartnerFormField, PartnerInput, PartnerStatus } from "@/types/Partner";
 
 const blank: PartnerInput = {
@@ -125,13 +125,8 @@ export default function PartnerManager({ onDirtyChange, mode = "manage", onCreat
         }
         bitmap.close();
       }
-      const ext = file.type === "image/jpeg" ? "jpg" : file.type === "image/png" ? "png" : "webp";
-      const path = `${crypto.randomUUID()}.${ext}`;
-      const client = getSupabaseBrowserClient();
-      const { error: uploadError } = await client.storage.from("partner-assets").upload(path, file, { contentType: file.type, upsert: false });
-      if (uploadError) throw uploadError;
-      const { data } = client.storage.from("partner-assets").getPublicUrl(path);
-      change(key, data.publicUrl);
+      const url = await uploadSiteImage(file, "partner", draft.slug || "new-partner");
+      change(key, url);
       if (key === "breadcrumb_image_url") setImageWarning(warning);
       toast.success("Image uploaded. Save your changes to apply it.");
     } catch (cause) { toast.error(cause instanceof Error ? cause.message : "Image upload failed. Check your connection and try again."); }

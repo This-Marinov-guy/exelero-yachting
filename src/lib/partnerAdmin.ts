@@ -25,7 +25,7 @@ export function validatePartnerInput(value: unknown): { data?: PartnerInput; err
   if (!name || name.length > 120) return { error: "Name is required and must be at most 120 characters." };
   if (status !== "draft" && status !== "published") return { error: "Choose draft or published." };
   if (formType !== "standard" && formType !== "custom") return { error: "Choose a standard or custom form." };
-  const validAsset = (url: string) => !url || url.startsWith("/assets/images/") || url.startsWith(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/partner-assets/`);
+  const validAsset = (url: string) => !url || url.startsWith("/assets/images/") || /^\/api\/boat-images\/[a-zA-Z0-9_-]{10,}$/.test(url) || url.startsWith(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/partner-assets/`);
   const logo = text("logo_url"), breadcrumb = text("breadcrumb_image_url"), hero = text("hero_image_url"), content = text("content"), website = text("website_url");
   if (![logo, breadcrumb, hero].every(validAsset)) return { error: "Upload images to partner assets or choose a site image." };
   if (status === "published" && (!logo || !breadcrumb || !content)) return { error: "Name, logo, breadcrumb image and content are required to publish." };

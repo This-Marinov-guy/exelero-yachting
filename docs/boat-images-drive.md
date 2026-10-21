@@ -15,6 +15,27 @@ The OAuth app in Google Cloud project `website-511814` was moved to **In product
 
 The OAuth app's homepage is `https://www.exeleroyachting.com` and its integration-specific privacy notice is `/en/listing-images-privacy`. Publish that page before moving the app from Testing to In production, then renew owner consent. Store only the renewed refresh token in the production Secret.
 
-Uploaded files stay inside the configured folder. The database stores `/api/boat-images/<Drive file ID>` for each photo. The public route reads only WebP files in that folder through the service account and sends a cacheable image response, so the folder does not need public sharing. The supplied folder is currently shared with anyone who has the link, which also permits direct preview. Existing Supabase image URLs remain readable.
+Uploaded files stay inside the configured folder. New listing photos go to `Listings/New uploads`; partner, profile, dealer, and service images go to their own folders. The database stores `/api/boat-images/<Drive file ID>` for each photo. The public route reads JPEG, PNG, and WebP images in this folder tree through the service account and sends a cacheable image response, so the folder does not need public sharing. The supplied folder is currently shared with anyone who has the link, which also permits direct preview. Existing Supabase image URLs remain readable.
 
 The upload route accepts image requests up to 20 MB, but the browser compresses them below 3.5 MB before sending them to stay within typical serverless request limits. Upload failures remain visible with a retry action. When publishing before uploads finish, keep the account tab open until the progress indicator completes; browser tabs cannot finish local `File` uploads after they close.
+
+## Existing Supabase image migration
+
+The 21 October 2026 inventory contains 213 images (86,169,860 bytes): 206 listing-bucket files, 5 partner files, and 2 profile files. Of the 206 listing-bucket files, 145 are linked to listing rows and 61 are unlinked. The 13 non-image brochure/video objects are outside this migration. The local, byte-checked staging tree and manifest are in `.image-migration/`, which is gitignored. Keep this folder until the migration is complete.
+
+The destination is `Website Storage/Migrated Supabase images/` with `Listings/<slug>--<boat ID>/`, `Unlinked uploads/<original prefix>/`, `Partners/`, and `Profiles/<user ID>/`. The existing root Drive images move to `Listings/Existing Drive uploads` only after the new route is deployed and each moved image is checked through that route.
+
+The verified listing file IDs are also recorded in `src/data/migratedBoatImages.json`. Draft restoration uses this map to replace saved Supabase photo URLs with their Drive URLs, including photos that were uploaded but never linked to a listing. Keep this map with the deployment that changes the database URLs.
+
+Use `scripts/migrate-supabase-images.mjs` with the existing server-only Drive credentials. It checks every staged file against its recorded size and SHA-256, uploads or reuses only byte-identical Drive files, and verifies Drive size, MIME type, parent folder, and MD5 through the read-only service account. It writes a resumable `verified-drive-mapping.json` to the output directory. Do not commit the credential JSON or staging files.
+
+Run the same command with `--verify-local` (instead of `--upload`) to check the staged originals without any Drive credentials or network calls.
+
+```bash
+node scripts/migrate-supabase-images.mjs \
+  --manifest=.image-migration/staged-manifest.json \
+  --files='.image-migration/Migrated Supabase images' \
+  --output=.image-migration/results --upload
+```
+
+Deploy this route and the new upload paths before changing database URLs. The app continues to read old Supabase URLs during that interval. Once the deployment is live, rerun the script with `--site=https://www.exeleroyachting.com` (and without `--upload`). It verifies the bytes returned by all 213 `/api/boat-images/<ID>` URLs before writing `update-image-urls.sql` and `restore-image-urls.sql`. Add `--organize-existing` to move the older direct-root Drive images into their listing folder; each moved image is verified through the deployed route, and a failed move is restored. Run the generated update SQL as one transaction in the Supabase SQL Editor. It updates only URLs still equal to the inventoried originals and aborts if any Supabase image references remain. The restore SQL returns migrated references to their original Supabase URLs if needed. The migration never deletes Supabase Storage objects. If a new Supabase image appears during the handoff, refresh the inventory and copy it before retrying the SQL.

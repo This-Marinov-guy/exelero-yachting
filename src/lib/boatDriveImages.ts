@@ -6,6 +6,7 @@ const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive";
 const DRIVE_API = "https://www.googleapis.com/drive/v3/files";
 const DRIVE_UPLOAD_API = "https://www.googleapis.com/upload/drive/v3/files";
 const IMAGE_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const FOLDER_MIME_TYPE = "application/vnd.google-apps.folder";
 export const MAX_BOAT_IMAGE_BYTES = 20 * 1024 * 1024;
 
 type Credentials = { client_email: string; private_key: string };
@@ -84,10 +85,59 @@ export function driveImageId(url: string): string | null {
   return match?.[1] || null;
 }
 
-export async function uploadBoatImage(file: File, listingKey: string): Promise<{ id: string; url: string }> {
+type DriveMetadata = { id?: string; parents?: string[]; mimeType?: string; trashed?: boolean };
+
+async function fileMetadata(id: string, forWrite = false): Promise<DriveMetadata | null> {
+  const response = await driveFetch(`${DRIVE_API}/${id}?fields=id,parents,mimeType,trashed&supportsAllDrives=true`, {}, forWrite);
+  if (!response.ok) return null;
+  return response.json();
+}
+
+async function pathWithinImageFolder(id: string, forWrite = false, initial?: DriveMetadata): Promise<string[] | null> {
+  const path: string[] = [];
+  const seen = new Set<string>();
+  let current = id;
+  let metadata = initial || await fileMetadata(id, forWrite);
+  for (let depth = 0; depth < 6; depth++) {
+    if (seen.has(current)) return null;
+    seen.add(current);
+    if (!metadata || metadata.trashed || !Array.isArray(metadata.parents)) return null;
+    const parent = metadata.parents[0];
+    if (!parent) return null;
+    if (parent === folderId()) return path.reverse();
+    const parentMetadata = await fileMetadata(parent, forWrite);
+    if (!parentMetadata || parentMetadata.trashed || parentMetadata.mimeType !== FOLDER_MIME_TYPE) return null;
+    path.push(parent);
+    current = parent;
+    metadata = parentMetadata;
+  }
+  return null;
+}
+
+async function ensureFolder(parent: string, name: string): Promise<string> {
+  const q = `'${parent}' in parents and name = '${name.replaceAll("'", "\\'")}' and mimeType = '${FOLDER_MIME_TYPE}' and trashed = false`;
+  const search = new URLSearchParams({ q, fields: "files(id),nextPageToken", pageSize: "100", supportsAllDrives: "true", includeItemsFromAllDrives: "true" });
+  const existing = await driveFetch(`${DRIVE_API}?${search}`, {}, true);
+  if (!existing.ok) throw new Error("Could not find the Drive image folder.");
+  const result = await existing.json();
+  const first = result.files?.[0]?.id;
+  if (typeof first === "string") return first;
+  const created = await driveFetch(`${DRIVE_API}?fields=id&supportsAllDrives=true`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, mimeType: FOLDER_MIME_TYPE, parents: [parent] }),
+  }, true);
+  if (!created.ok) throw new Error("Could not create the Drive image folder.");
+  const folder = await created.json();
+  if (typeof folder.id !== "string") throw new Error("Drive returned no folder ID.");
+  return folder.id;
+}
+
+export async function uploadBoatImage(file: File, listingKey: string, folders = ["Listings", "New uploads"]): Promise<{ id: string; url: string }> {
   if (!IMAGE_MIME_TYPES.has(file.type)) throw new Error("Choose a JPEG, PNG or WebP image.");
   if (file.size > MAX_BOAT_IMAGE_BYTES) throw new Error("Images must be smaller than 20 MB.");
   if (!/^[a-zA-Z0-9_-]{1,100}$/.test(listingKey)) throw new Error("The listing upload session is invalid.");
+  if (!folders.length || folders.length > 3 || folders.some(name => !/^[a-zA-Z0-9 _-]{1,100}$/.test(name))) throw new Error("The image folder is invalid.");
 
   let optimized: Buffer;
   try {
@@ -99,7 +149,9 @@ export async function uploadBoatImage(file: File, listingKey: string): Promise<{
   } catch { throw new Error("This image could not be processed. Choose another JPEG, PNG or WebP file."); }
 
   const boundary = `exelero-${randomUUID()}`;
-  const metadata = JSON.stringify({ name: `${listingKey}-${randomUUID()}.webp`, mimeType: "image/webp", parents: [folderId()] });
+  let destination = folderId();
+  for (const name of folders) destination = await ensureFolder(destination, name);
+  const metadata = JSON.stringify({ name: `${listingKey}-${randomUUID()}.webp`, mimeType: "image/webp", parents: [destination] });
   const body = Buffer.concat([
     Buffer.from(`--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${metadata}\r\n--${boundary}\r\nContent-Type: image/webp\r\n\r\n`),
     optimized,
@@ -128,20 +180,23 @@ export async function uploadBoatImage(file: File, listingKey: string): Promise<{
 }
 
 export async function getBoatImage(id: string): Promise<Response> {
-  const info = await driveFetch(`${DRIVE_API}/${id}?fields=parents,mimeType&supportsAllDrives=true`);
-  if (!info.ok) return info;
-  const metadata = await info.json();
-  if (!Array.isArray(metadata.parents) || !metadata.parents.includes(folderId()) || metadata.mimeType !== "image/webp") {
+  const metadata = await fileMetadata(id);
+  if (!metadata || !metadata.mimeType || !IMAGE_MIME_TYPES.has(metadata.mimeType) || !await pathWithinImageFolder(id, false, metadata)) {
     return new Response(null, { status: 404 });
   }
   return driveFetch(`${DRIVE_API}/${id}?alt=media&supportsAllDrives=true`);
 }
 
 export async function deleteBoatImage(id: string): Promise<void> {
-  const info = await driveFetch(`${DRIVE_API}/${id}?fields=parents&supportsAllDrives=true`, {}, true);
-  if (!info.ok) throw new Error("Could not find this image in Drive.");
-  const metadata = await info.json();
-  if (!Array.isArray(metadata.parents) || !metadata.parents.includes(folderId())) throw new Error("This image is outside the listing image folder.");
+  const path = await pathWithinImageFolder(id, true);
+  if (!path) throw new Error("Could not find this image in Drive.");
+  if (path.length && !(await isListingsFolder(path[0]))) throw new Error("This image is outside the listing image folder.");
   const response = await driveFetch(`${DRIVE_API}/${id}?supportsAllDrives=true`, { method: "DELETE" }, true);
   if (!response.ok) throw new Error("Could not remove this image from Drive.");
+}
+
+async function isListingsFolder(id: string): Promise<boolean> {
+  const response = await driveFetch(`${DRIVE_API}/${id}?fields=name&supportsAllDrives=true`, {}, true);
+  if (!response.ok) return false;
+  return (await response.json()).name === "Listings";
 }

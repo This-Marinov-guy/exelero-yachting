@@ -9,6 +9,7 @@ import { Edit, Trash2, Plus } from "lucide-react";
 import CloseBtn from "@/components/commonComponents/CloseBtn";
 import Image from "next/image";
 import AccountSkeleton from "../AccountSkeleton";
+import { uploadSiteImage } from "@/lib/siteImageClient";
 
 type BrokerData = {
   id: string;
@@ -111,16 +112,10 @@ const DealerInfo = ({ onDataChange }: DealerInfoProps) => {
     }
 
     setSaving(true);
-    let uploadedPath: string | null = null;
     try {
       let nextImageUrl = removeImage ? null : imageUrl;
       if (imageFile) {
-        const extension = imageFile.type === "image/jpeg" ? "jpg" : imageFile.type === "image/png" ? "png" : "webp";
-        uploadedPath = `${session.user.id}/${crypto.randomUUID()}.${extension}`;
-        const { error: uploadError } = await supabase.storage.from("dealer-images").upload(uploadedPath, imageFile, { contentType: imageFile.type });
-        if (uploadError) throw uploadError;
-        const { data } = supabase.storage.from("dealer-images").getPublicUrl(uploadedPath);
-        nextImageUrl = data.publicUrl;
+        nextImageUrl = await uploadSiteImage(imageFile, "dealer", session.user.id);
       }
       if (editingId) {
         // Update existing
@@ -157,14 +152,6 @@ const DealerInfo = ({ onDataChange }: DealerInfoProps) => {
         toast.success("Dealer information saved successfully");
       }
 
-      if ((imageFile || removeImage) && original?.image_url) {
-        const oldPath = original.image_url.split("/dealer-images/")[1]?.split("?")[0];
-        if (oldPath) {
-          const { error: cleanupError } = await supabase.storage.from("dealer-images").remove([oldPath]);
-          if (cleanupError) toast.error("Dealer saved, but the previous image could not be removed.");
-        }
-      }
-
       setFormData({ name: "", email: "", phone: "", dealer: "" });
       setImageFile(null);
       setImageUrl(null);
@@ -177,7 +164,6 @@ const DealerInfo = ({ onDataChange }: DealerInfoProps) => {
       // Dispatch custom event to notify sidebar to refresh lock status
       window.dispatchEvent(new CustomEvent("dealerDataChanged"));
     } catch (err: any) {
-      if (uploadedPath) await supabase.storage.from("dealer-images").remove([uploadedPath]);
       toast.error(err?.message || "Failed to save dealer information");
     } finally { setSaving(false); }
   };
@@ -224,12 +210,6 @@ const DealerInfo = ({ onDataChange }: DealerInfoProps) => {
         .eq("user_id", session.user.id);
 
       if (error) throw error;
-      const deletedImage = brokerDataList.find(item => item.id === itemToDelete.id)?.image_url;
-      const imagePath = deletedImage?.split("/dealer-images/")[1]?.split("?")[0];
-      if (imagePath) {
-        const { error: cleanupError } = await supabase.storage.from("dealer-images").remove([imagePath]);
-        if (cleanupError) toast.error("Dealer deleted, but the image could not be removed.");
-      }
       toast.success("Dealer information deleted successfully");
       await fetchBrokerData();
       onDataChange?.();

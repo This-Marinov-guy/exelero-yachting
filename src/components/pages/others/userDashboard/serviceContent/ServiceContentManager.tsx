@@ -95,7 +95,7 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
   const [orderSaveFailed, setOrderSaveFailed] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<PendingServiceFiles>({});
   const previewUrls = useRef<Record<string, string>>({});
-  const [uploadProgress, setUploadProgress] = useState<{ label: string; percent: number } | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<{ label: string; percent: number | null } | null>(null);
 
   const pageDirty = !!pages && !!drafts && (JSON.stringify(pages[page].content) !== JSON.stringify(drafts[page]) || Object.keys(pendingFiles).length > 0);
   const busy = saving || reordering;
@@ -227,10 +227,11 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
       let content = structuredClone(drafts[page]);
       for (const [slot, pending] of Object.entries(pendingFiles)) {
         const label = mediaSlotLabel(slot);
-        setUploadProgress({ label, percent: 0 });
+        const kind = mediaKindForSlot(content, slot);
+        setUploadProgress({ label, percent: kind === "image" ? null : 0 });
         let url: string;
         try {
-          url = await uploadServiceMedia(pending.file, mediaKindForSlot(content, slot), page, slot, (percent) => setUploadProgress({ label, percent }));
+          url = await uploadServiceMedia(pending.file, kind, page, slot, (percent) => setUploadProgress({ label, percent }));
         } catch (cause) {
           throw new Error(`Could not upload ${label}. ${cause instanceof Error ? cause.message : "Check your connection and try again."}`);
         }
@@ -333,7 +334,7 @@ export default function ServiceContentManager({ page }: { page: ServicePageKey }
           <div className={styles.status} role="status" aria-live="polite">
             {reordering ? "Saving media order…" : saveError ? <span className={styles.saveError}>{saveError}{saveConflict ? <button type="button" className={styles.reload} onClick={reloadLatest}>Reload latest content</button> : orderSaveFailed && <button type="button" className={styles.reload} onClick={() => void saveOrder(drafts[page].media.gallery, false)}>Retry order save</button>}</span> : orderNotice ? orderNotice : savedMessage ? <><span className={styles.saved}>{savedMessage}</span>{pageDirty && " Other changes are unsaved."}</> : pageDirty ? "Unsaved changes" : updatedAt ? `Last saved ${new Date(updatedAt).toLocaleString()}` : "Using the current website copy"}
           </div>
-          {uploadProgress && <div className={styles.uploadProgress} role="status">Uploading {uploadProgress.label}: {uploadProgress.percent}%<progress value={uploadProgress.percent} max={100} /></div>}
+          {uploadProgress && <div className={styles.uploadProgress} role="status">Uploading {uploadProgress.label}{uploadProgress.percent === null ? "…" : `: ${uploadProgress.percent}%`}<progress value={uploadProgress.percent ?? undefined} max={100} /></div>}
           {pageDirty && <button type="button" className={styles.discard} disabled={busy} onClick={discard}>Discard changes</button>}
           <button type="submit" className={styles.save} disabled={!pageDirty || busy} aria-busy={busy}>{reordering ? "Saving order…" : saving ? uploadProgress ? "Uploading…" : "Saving…" : "Save and publish"}</button>
         </div>

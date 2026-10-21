@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabaseClient";
 import { toast } from "sonner";
+import { uploadSiteImage } from "@/lib/siteImageClient";
 import AccountSkeleton from "../AccountSkeleton";
 
 // Helper function to resize image to max 400x400
@@ -162,59 +163,8 @@ const UserProfile = () => {
 
       // Resize image to max 400x400
       const resizedBlob = await resizeImage(file, 400, 400);
-      const resizedFile = new File([resizedBlob], file.name, { type: file.type });
-
-      // Upload to Supabase storage
-      // Bucket name: profile_images
-      // Path structure: {user_id}/filename (bucket name is not part of the path)
-      const bucketName = "profile_images";
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `${userId}/${fileName}`;
-
-      // Delete old image if exists (before uploading new one)
-      const { data: oldImageData } = await supabase
-        .from("profile_image")
-        .select("image_url")
-        .eq("user_id", userId)
-        .maybeSingle();
-
-      if (oldImageData?.image_url) {
-        // Extract file path from URL and delete from storage
-        try {
-          const urlParts = oldImageData.image_url.split(`/${bucketName}/`);
-          if (urlParts[1]) {
-            const oldPath = urlParts[1].split("?")[0]; // Remove query params
-            await supabase.storage
-              .from(bucketName)
-              .remove([oldPath]);
-          }
-        } catch (err) {
-          // Ignore errors when deleting old image
-          console.warn("Could not delete old image:", err);
-        }
-      }
-
-      // Upload new image (use upsert to replace if exists)
-      const { error: uploadError } = await supabase.storage
-        .from(bucketName)
-        .upload(filePath, resizedFile, {
-          cacheControl: "3600",
-          upsert: true, // Replace if exists
-        });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from(bucketName)
-        .getPublicUrl(filePath);
-
-      if (!urlData?.publicUrl) {
-        throw new Error("Failed to get public URL");
-      }
+      const resizedFile = new File([resizedBlob], file.name, { type: resizedBlob.type });
+      const imageUrl = await uploadSiteImage(resizedFile, "profile", userId);
 
       // Save or update profile_image record
       const { error: dbError } = await supabase
@@ -222,7 +172,7 @@ const UserProfile = () => {
         .upsert(
           {
             user_id: userId,
-            image_url: urlData.publicUrl,
+            image_url: imageUrl,
           },
           {
             onConflict: "user_id",
@@ -231,7 +181,7 @@ const UserProfile = () => {
 
       if (dbError) throw dbError;
 
-      setAvatarUrl(urlData.publicUrl);
+      setAvatarUrl(imageUrl);
       toast.success("Profile image uploaded successfully!");
     } catch (error: any) {
       console.error("Error uploading image:", error);
