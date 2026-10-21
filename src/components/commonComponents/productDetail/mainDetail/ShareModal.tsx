@@ -48,9 +48,6 @@ const ShareModal = () => {
     }
   };
 
-  const isExternalImage = (src: string) =>
-    src.startsWith("http://") || src.startsWith("https://");
-
   return (
     <>
       <Modal fade centered modalClassName='theme-modal' isOpen={shareModal} toggle={toggle}>
@@ -76,8 +73,8 @@ const ShareModal = () => {
                   alt={shareData.title}
                   fill
                   style={{ objectFit: "contain" }}
-                  unoptimized={isExternalImage(shareData.imageUrl)}
                   sizes="(max-width: 480px) 100vw, 400px"
+                  quality={72}
                 />
               </div>
               {shareData.title && (

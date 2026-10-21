@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from "@/lib/supabaseServer";
+import { getSupabasePublicClient, logPublicDataError } from "@/lib/supabaseServer";
 import { getPublishedPartners } from "@/lib/partners";
 import { availableServiceLocales } from "@/lib/servicePagePublic";
 import { HREFLANG_LOCALES, PUBLIC_LOCALES, localizedPath, type PublicLocale } from "@/lib/publicLocale";
@@ -36,24 +36,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     new Date(partner.updated_at),
   ));
 
-  const db = getSupabaseServerClient();
-  const { data: boats, error } = await db.from("boats")
-    .select("id, slug, updated_at").eq("active", true).eq("bought", false);
-  if (error) throw new Error(`Failed to build boat sitemap: ${error.message}`);
-  const boatIds = (boats || []).map((boat) => boat.id);
-  const { data: details } = boatIds.length
-    ? await db.from("boat_data").select("boat_id, translations, updated_at").in("boat_id", boatIds)
-    : { data: [] as { boat_id: string; translations: unknown; updated_at: string | null }[] };
-  const detailsByBoat = new Map((details || []).map((row) => [row.boat_id, row]));
-  const boatEntries = (boats || []).flatMap((boat) => {
-    const detail = detailsByBoat.get(boat.id);
-    const translations = detail?.translations as Record<string, { description?: string }> | null;
-    const modified = [boat.updated_at, detail?.updated_at].filter(Boolean).map((value) => new Date(value!).getTime());
-    return localizedEntries(
-      `/services/brokerage/${boat.slug || generateNumericId(boat.id)}`,
-      PUBLIC_LOCALES.filter((locale) => locale === "en" || Boolean(translations?.[locale]?.description)),
-      modified.length ? new Date(Math.max(...modified)) : undefined,
-    );
-  });
+  let boatEntries: MetadataRoute.Sitemap = [];
+  try {
+    const db = getSupabasePublicClient();
+    const { data: boats, error } = await db.from("boats")
+      .select("id, slug, updated_at").eq("active", true).eq("bought", false);
+    if (error) throw error;
+    const boatIds = (boats || []).map((boat) => boat.id);
+    const { data: details, error: detailsError } = boatIds.length
+      ? await db.from("boat_data").select("boat_id, translations, updated_at").in("boat_id", boatIds)
+      : { data: [] as { boat_id: string; translations: unknown; updated_at: string | null }[], error: null };
+    if (detailsError) throw detailsError;
+    const detailsByBoat = new Map((details || []).map((row) => [row.boat_id, row]));
+    boatEntries = (boats || []).flatMap((boat) => {
+      const detail = detailsByBoat.get(boat.id);
+      const translations = detail?.translations as Record<string, { description?: string }> | null;
+      const modified = [boat.updated_at, detail?.updated_at].filter(Boolean).map((value) => new Date(value!).getTime());
+      return localizedEntries(
+        `/services/brokerage/${boat.slug || generateNumericId(boat.id)}`,
+        PUBLIC_LOCALES.filter((locale) => locale === "en" || Boolean(translations?.[locale]?.description)),
+        modified.length ? new Date(Math.max(...modified)) : undefined,
+      );
+    });
+  } catch (error) {
+    logPublicDataError("Failed to build boat sitemap", error);
+  }
   return [...staticEntries, ...serviceEntries, ...partnerEntries, ...boatEntries];
 }

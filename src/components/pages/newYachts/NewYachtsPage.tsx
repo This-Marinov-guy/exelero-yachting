@@ -46,8 +46,8 @@ const NewYachtsPage = async () => {
                       fill
                       priority={index < 3}
                       sizes="(max-width: 600px) 100vw, (max-width: 1199px) 50vw, 33vw"
+                      quality={72}
                       className="new-yachts-card__image"
-                      unoptimized={image.startsWith("http")}
                     />
                     {isL30 && <span className="new-yachts-card__type">{t("Class & racing partner")}</span>}
                   </div>
@@ -58,8 +58,8 @@ const NewYachtsPage = async () => {
                         alt=""
                         width={190}
                         height={68}
+                        sizes="190px"
                         className="new-yachts-card__logo"
-                        unoptimized={partner.logo_url.startsWith("http")}
                       />
                     </div>
                     <h2>{partner.name}</h2>

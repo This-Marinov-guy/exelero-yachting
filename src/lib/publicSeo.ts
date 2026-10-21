@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DEFAULT_BREADCRUMB_IMAGE, breadcrumbOpenGraphImage } from "@/utils/socialMetadata";
 import { publicText } from "./publicText";
 import { getSiteUrl } from "./siteUrl";
+import { socialPreviewImageUrl } from "./listingImageUrl";
 import {
   HREFLANG_LOCALES,
   OPEN_GRAPH_LOCALES,
@@ -29,7 +30,7 @@ export function localizedAlternates(locale: PublicLocale, path: string): Metadat
 export function publicPageMetadata(locale: PublicLocale, path: string, englishTitle: string, englishDescription: string, image?: string): Metadata {
   const title = publicText(locale, englishTitle);
   const description = publicText(locale, englishDescription);
-  const preview = image ?? breadcrumbOpenGraphImage(englishTitle).url;
+  const preview = image ? socialPreviewImageUrl(image, getSiteUrl()) : breadcrumbOpenGraphImage(englishTitle).url;
   return {
     title,
     description,
@@ -44,7 +45,7 @@ export function publicPageMetadata(locale: PublicLocale, path: string, englishTi
       alternateLocale: PUBLIC_LOCALES.filter((other) => other !== locale).map((other) => OPEN_GRAPH_LOCALES[other]),
       images: [{ url: preview, alt: title }],
     },
-    twitter: { card: "summary_large_image", title, description, images: [{ url: image ?? DEFAULT_BREADCRUMB_IMAGE, alt: title }] },
+    twitter: { card: "summary_large_image", title, description, images: [{ url: image ? preview : DEFAULT_BREADCRUMB_IMAGE, alt: title }] },
     robots: { index: true, follow: true },
   };
 }

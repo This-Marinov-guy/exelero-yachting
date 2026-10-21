@@ -11,3 +11,21 @@ export function listingImageViewUrl(source: string): string {
 export function listingImageThumbnailUrl(source: string): string {
   return optimizedListingImageUrl(source, 640, 72);
 }
+
+/** Keep social crawlers on the site's image cache instead of repeatedly fetching full-size Storage files. */
+export function socialPreviewImageUrl(source: string, siteUrl: string): string {
+  try {
+    const url = new URL(source, siteUrl);
+    const isSupabaseImage = url.hostname.endsWith(".supabase.co")
+      && url.pathname.startsWith("/storage/v1/object/public/")
+      && /\.(?:jpe?g|png|webp)$/i.test(url.pathname);
+    const isDriveListingImage = url.origin === siteUrl && url.pathname.startsWith("/api/boat-images/");
+
+    if (!isSupabaseImage && !isDriveListingImage) return url.toString();
+
+    const imageSource = isDriveListingImage ? `${url.pathname}${url.search}` : url.toString();
+    return new URL(optimizedListingImageUrl(imageSource, 1200, 70), siteUrl).toString();
+  } catch {
+    return source;
+  }
+}

@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from "@/lib/supabaseServer";
+import { getSupabasePublicClient, logPublicDataError } from "@/lib/supabaseServer";
 import BoatDetailContainer from "@/components/pages/boats/BoatDetailContainer";
 import { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
@@ -10,6 +10,8 @@ import { fallbackContentMetadata } from "@/lib/publicSeo";
 import { localizedPath, PUBLIC_LOCALES, type PublicLocale } from "@/lib/publicLocale";
 import { publicText } from "@/lib/publicText";
 import { sanitizePublicBoatHtml } from "@/lib/sanitizePublicBoatHtml";
+import { socialPreviewImageUrl } from "@/lib/listingImageUrl";
+import { cache } from "react";
 
 // Helper function to generate numeric ID from UUID (same as in BoatsPage)
 const generateNumericId = (uuid: string): number => {
@@ -33,10 +35,9 @@ const buildLegacyBoatSlug = (title: string, buildYear: string) => {
   return slugifyBoatTitle(slugSource);
 };
 
-async function fetchBoatByIdentifier(identifier: string, locale: PublicLocale): Promise<ProductType | null> {
-  const supabase = getSupabaseServerClient();
-
+const fetchBoatByIdentifier = cache(async (identifier: string, locale: PublicLocale): Promise<ProductType | null> => {
   try {
+    const supabase = getSupabasePublicClient();
     // Fetch all active boats
     const { data: boatsData, error: boatsError } = await supabase
       .from("boats")
@@ -223,10 +224,10 @@ async function fetchBoatByIdentifier(identifier: string, locale: PublicLocale): 
       availableLocales: PUBLIC_LOCALES.filter((value) => value === "en" || Boolean((englishBoatData.translations as Record<string, { description?: string }> | null)?.[value]?.description)),
     } as ProductType;
   } catch (error) {
-    console.error("Error fetching boat:", error);
-    throw error;
+    logPublicDataError("Error fetching boat", error);
+    return null;
   }
-}
+});
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -307,7 +308,7 @@ const BoatDetail = async ({ params }: Props) => {
     "@type": "Vehicle",
     "name": boat.title,
     "description": plainDescription,
-    "image": boat.image,
+    "image": boat.image.map((image) => socialPreviewImageUrl(image, siteUrl)),
     "manufacturer": boat.manufacturer,
     "modelDate": boat.buildYear,
     "vehicleConfiguration": boat.boatType,

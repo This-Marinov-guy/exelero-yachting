@@ -3,7 +3,7 @@ import Link from "@/components/commonComponents/LocalizedLink";
 import Image from "next/image";
 import { Col, Container, Row } from "reactstrap";
 import { ArrowDownToLine, ArrowRight, MapPin, MoveHorizontal, Ruler, Zap } from "lucide-react";
-import { getSupabaseServerClient } from "@/lib/supabaseServer";
+import { getSupabasePublicClient } from "@/lib/supabaseServer";
 import { RouteList } from "@/utils/RouteList";
 import { getServerPublicLocale } from "@/lib/serverPublicLocale";
 import { translatedFields } from "@/lib/contentTranslations";
@@ -41,7 +41,7 @@ const conditionLabel = (condition: string) => {
 
 async function fetchFeaturedBoats(locale: PublicLocale): Promise<FeaturedBoat[]> {
   try {
-    const supabase = getSupabaseServerClient();
+    const supabase = getSupabasePublicClient();
 
     const { data: boatsData } = await supabase
       .from("boats")

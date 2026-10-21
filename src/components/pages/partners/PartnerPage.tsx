@@ -15,17 +15,17 @@ export default async function PartnerPage({ partner, englishFields }: { partner:
     <div className="partner-page" style={{ "--partner-primary": partner.primary_color, "--partner-secondary": partner.secondary_color } as React.CSSProperties}>
       <div className="partner-hero-section">
         <div className="partner-hero-background">
-          <Image src={partner.breadcrumb_image_url} alt="" fill className="partner-hero-image" priority style={{ objectFit: "cover" }} unoptimized={partner.breadcrumb_image_url.startsWith("http")} />
+          <Image src={partner.breadcrumb_image_url} alt="" fill sizes="100vw" quality={72} className="partner-hero-image" priority style={{ objectFit: "cover" }} />
           <div className="partner-hero-overlay" />
         </div>
         <Container><div className="partner-hero-content">
-          <div className="partner-logo-wrapper"><Image src={partner.logo_url} alt={`${partner.name} ${t("logo")}`} width={200} height={100} className="partner-logo" style={{ objectFit: "contain" }} unoptimized={partner.logo_url.startsWith("http")} /></div>
+          <div className="partner-logo-wrapper"><Image src={partner.logo_url} alt={`${partner.name} ${t("logo")}`} width={200} height={100} sizes="200px" className="partner-logo" style={{ objectFit: "contain" }} /></div>
           <h1 className="visually-hidden">{partner.name}</h1>
         </div></Container>
       </div>
       <Container><div className="partner-content-section"><Row className="g-4">
         <Col lg={8}>
-          {partner.hero_image_url && <div className="partner-image-panel"><div className="partner-panel-image-wrapper"><Image src={partner.hero_image_url} alt={partner.name} fill className="partner-panel-image" style={{ objectFit: "cover" }} unoptimized={partner.hero_image_url.startsWith("http")} /></div></div>}
+          {partner.hero_image_url && <div className="partner-image-panel"><div className="partner-panel-image-wrapper"><Image src={partner.hero_image_url} alt={partner.name} fill sizes="(max-width: 991px) 100vw, 66vw" quality={72} className="partner-panel-image" style={{ objectFit: "cover" }} /></div></div>}
           <div className="partner-description"><h2>{t("About partner")} {partner.name}</h2>{partner.content.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>
         </Col>
         <Col lg={4} className="partner-contact-column">

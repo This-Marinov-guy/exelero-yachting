@@ -1,4 +1,4 @@
-import { getSupabaseServerClient } from "@/lib/supabaseServer";
+import { getSupabasePublicClient, logPublicDataError } from "@/lib/supabaseServer";
 import BoatsPageClient from "./BoatsPageClient";
 import { ProductType } from "@/types/Product";
 import { getSiteUrl } from "@/lib/siteUrl";
@@ -8,10 +8,9 @@ import { localizedPath } from "@/lib/publicLocale";
 import { publicText } from "@/lib/publicText";
 
 async function fetchActiveBoats(): Promise<ProductType[]> {
-  const supabase = getSupabaseServerClient();
-  const locale = await getServerPublicLocale();
-
   try {
+    const supabase = getSupabasePublicClient();
+    const locale = await getServerPublicLocale();
     // Fetch active boats with related data
     const { data: boatsData, error: boatsError } = await supabase
       .from("boats")
@@ -149,8 +148,8 @@ async function fetchActiveBoats(): Promise<ProductType[]> {
 
     return boatsWithDetails;
   } catch (error) {
-    console.error("Error fetching boats:", error);
-    throw error;
+    logPublicDataError("Error fetching boats", error);
+    return [];
   }
 }
 

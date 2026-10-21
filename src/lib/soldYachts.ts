@@ -1,6 +1,6 @@
 import { translatedFields } from "@/lib/contentTranslations";
 import type { PublicLocale } from "@/lib/publicLocale";
-import { getSupabaseServerClient } from "@/lib/supabaseServer";
+import { getSupabasePublicClient, logPublicDataError } from "@/lib/supabaseServer";
 
 export type SoldYacht = {
   id: string;
@@ -12,7 +12,16 @@ export type SoldYacht = {
 };
 
 export async function getSoldYachts(locale: PublicLocale): Promise<SoldYacht[]> {
-  const db = getSupabaseServerClient();
+  try {
+    return await fetchSoldYachts(locale);
+  } catch (error) {
+    logPublicDataError("Failed to load sold yachts", error);
+    return [];
+  }
+}
+
+async function fetchSoldYachts(locale: PublicLocale): Promise<SoldYacht[]> {
+  const db = getSupabasePublicClient();
   const { data: boats, error: boatsError } = await db.from("boats")
     .select("id")
     .eq("bought", true)

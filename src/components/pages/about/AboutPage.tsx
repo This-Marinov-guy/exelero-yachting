@@ -62,7 +62,7 @@ const AboutPage = async () => {
               const logo = transparentLogoBySource[logo_url] ?? logo_url;
 
               return <Link className={`partner-card${logo_url === "/assets/images/logo/zhik.svg" ? " partner-card--zhik" : ""}`} href={`/partners/${slug}`} key={slug} aria-label={`${t("Explore")} ${name}`}>
-                <Image src={logo} alt={`${name} ${t("logo")}`} width={220} height={120} sizes="(max-width: 575px) 45vw, (max-width: 991px) 22vw, 14vw" unoptimized={logo.startsWith("http")} />
+                <Image src={logo} alt={`${name} ${t("logo")}`} width={220} height={120} sizes="(max-width: 575px) 45vw, (max-width: 991px) 22vw, 14vw" />
               </Link>;
             })}
           </div>
