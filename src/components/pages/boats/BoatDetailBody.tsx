@@ -15,6 +15,7 @@ import "swiper/css/thumbs";
 import "photoswipe/dist/photoswipe.css";
 import { usePublicText } from "@/lib/usePublicText";
 import { listingImageThumbnailUrl, listingImageViewUrl } from "@/lib/listingImageUrl";
+import { preservePhotoSwipeAspectRatio } from "@/lib/photoSwipeAspectRatio";
 
 interface BoatDetailBodyProps {
   boat: ProductType;
@@ -63,7 +64,7 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
       {mediaItems.length > 0 && (
         <div id="gallery" className="mb-5">
           <h4 className="detail-page-title mb-3">{tr("Gallery")}</h4>
-          <Gallery>
+          <Gallery onBeforeOpen={preservePhotoSwipeAspectRatio}>
             <Swiper
               modules={[Navigation, Pagination, Thumbs]}
               navigation
