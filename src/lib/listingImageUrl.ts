@@ -10,7 +10,7 @@ export function listingImageViewUrl(source: string): string {
 
 /** Use a higher quality only for the opened boat gallery image. */
 export function boatPreviewImageUrl(source: string): string {
-  return optimizedListingImageUrl(source, 1920, 90);
+  return optimizedListingImageUrl(source, 2560, 90);
 }
 
 export function listingImageThumbnailUrl(source: string): string {

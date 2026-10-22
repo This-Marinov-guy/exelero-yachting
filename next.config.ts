@@ -72,6 +72,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 2560, 3840],
     qualities: [70, 72, 74, 75, 82, 90],
     minimumCacheTTL: 2_678_400,
     remotePatterns: [

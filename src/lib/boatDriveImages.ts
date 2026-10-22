@@ -1,6 +1,7 @@
 import "server-only";
 import { createSign, randomUUID } from "node:crypto";
 import sharp from "sharp";
+import { boatImageLongEdgeLimit } from "@/lib/boatImageResolution";
 
 const DRIVE_SCOPE = "https://www.googleapis.com/auth/drive";
 const DRIVE_API = "https://www.googleapis.com/drive/v3/files";
@@ -142,11 +143,23 @@ export async function uploadBoatImage(file: File, listingKey: string, folders = 
 
   let optimized: Buffer;
   try {
-    optimized = await sharp(Buffer.from(await file.arrayBuffer()), { limitInputPixels: 100_000_000 })
-      .rotate()
-      .resize({ width: 2000, height: 2000, fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 78, effort: 5 })
-      .toBuffer();
+    const input = Buffer.from(await file.arrayBuffer());
+    const metadata = await sharp(input, { limitInputPixels: 100_000_000 }).metadata();
+    const longEdgeLimit = boatImageLongEdgeLimit(metadata.width || 0, metadata.height || 0, 3200);
+    // Browser-prepared WebP images have already been compressed. Keep their bytes
+    // when they fit the resolution cap, avoiding a second lossy encode.
+    if (metadata.format === "webp" && metadata.width && metadata.height
+      && Math.max(metadata.width, metadata.height) <= longEdgeLimit
+      && !metadata.orientation && (!metadata.pages || metadata.pages === 1)) {
+      await sharp(input, { limitInputPixels: 100_000_000 }).stats();
+      optimized = input;
+    } else {
+      optimized = await sharp(input, { limitInputPixels: 100_000_000 })
+        .rotate()
+        .resize({ width: longEdgeLimit, height: longEdgeLimit, fit: "inside", withoutEnlargement: true })
+        .webp({ quality: 90, effort: 5, smartSubsample: true })
+        .toBuffer();
+    }
   } catch { throw new Error("This image could not be processed. Choose another JPEG, PNG or WebP file."); }
 
   const boundary = `exelero-${randomUUID()}`;
