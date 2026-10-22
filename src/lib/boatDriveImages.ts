@@ -89,6 +89,7 @@ type DriveMetadata = { id?: string; parents?: string[]; mimeType?: string; trash
 
 async function fileMetadata(id: string, forWrite = false): Promise<DriveMetadata | null> {
   const response = await driveFetch(`${DRIVE_API}/${id}?fields=id,parents,mimeType,trashed&supportsAllDrives=true`, {}, forWrite);
+  if (response.status === 429 || response.status >= 500) throw new Error(`Google Drive metadata is temporarily unavailable (${response.status}).`);
   if (!response.ok) return null;
   return response.json();
 }

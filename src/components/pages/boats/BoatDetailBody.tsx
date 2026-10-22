@@ -16,6 +16,7 @@ import "photoswipe/dist/photoswipe.css";
 import { usePublicText } from "@/lib/usePublicText";
 import { listingImageThumbnailUrl, listingImageViewUrl } from "@/lib/listingImageUrl";
 import { preservePhotoSwipeAspectRatio } from "@/lib/photoSwipeAspectRatio";
+import { useRecoveringCarouselMedia } from "@/lib/useRecoveringCarouselMedia";
 
 interface BoatDetailBodyProps {
   boat: ProductType;
@@ -27,6 +28,7 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
   const mediaItems = boat.media?.length
     ? boat.media
     : (boat.image || []).map((url) => ({ url, type: "image" as const }));
+  const { availableMedia, failedCount, isRetrying, imageSource, onImageError, retryFailed } = useRecoveringCarouselMedia(mediaItems);
 
   // Conversion functions
   const metersToFeet = (meters: number): number => Math.round(meters * 3.28084 * 10) / 10;
@@ -64,8 +66,9 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
       {mediaItems.length > 0 && (
         <div id="gallery" className="mb-5">
           <h4 className="detail-page-title mb-3">{tr("Gallery")}</h4>
-          <Gallery onBeforeOpen={preservePhotoSwipeAspectRatio}>
+          {availableMedia.length > 0 ? <Gallery options={{ mainClass: "boat-media-lightbox" }} onBeforeOpen={preservePhotoSwipeAspectRatio}>
             <Swiper
+              key={availableMedia.map((media) => media.url).join("|")}
               modules={[Navigation, Pagination, Thumbs]}
               navigation
               pagination={{ clickable: true }}
@@ -83,7 +86,7 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
               }}
               className="boat-gallery-carousel"
             >
-              {mediaItems.map((media, index) => (
+              {availableMedia.map((media, index) => (
                 <SwiperSlide key={`${media.url}-${index}`}>
                   {media.type === "video" ? (
                     <button
@@ -104,8 +107,8 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
                     </button>
                   ) : (
                     <Item
-                      original={listingImageViewUrl(media.url)}
-                      thumbnail={listingImageThumbnailUrl(media.url)}
+                      original={listingImageViewUrl(imageSource(media.url))}
+                      thumbnail={listingImageThumbnailUrl(imageSource(media.url))}
                       width={1200}
                       height={800}
                     >
@@ -116,11 +119,12 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
                         onClick={open}
                       >
                         <Image
-                          src={media.url}
+                          src={imageSource(media.url)}
                           alt={`${boat.title} - Image ${index + 1}`}
                           fill
                           sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
                           quality={72}
+                          onError={() => onImageError(media.url)}
                           style={{ objectFit: "contain" }}
                           className="boat-gallery-image"
                         />
@@ -134,7 +138,16 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
                 </SwiperSlide>
               ))}
             </Swiper>
-          </Gallery>
+          </Gallery> : <div className="boat-gallery-unavailable" role="status">
+            <p>{tr("Photos are temporarily unavailable.")}</p>
+            <button type="button" className="btn-border" onClick={retryFailed} disabled={isRetrying}>{isRetrying ? tr("Retrying photos in the background...") : tr("Retry photos")}</button>
+          </div>}
+          {failedCount > 0 && availableMedia.length > 0 && (isRetrying
+            ? <p className="visually-hidden" role="status">{tr("Some photos are unavailable. Retrying in the background.")}</p>
+            : <div className="boat-gallery-partial" role="status">
+                <span>{tr("Some photos are unavailable.")}</span>
+                <button type="button" className="btn-border" onClick={retryFailed}>{tr("Retry photos")}</button>
+              </div>)}
           <Modal isOpen={Boolean(previewVideo)} toggle={() => setPreviewVideo(null)} centered size="lg">
             <ModalBody className="p-0 bg-dark">
               {previewVideo && (

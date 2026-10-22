@@ -11,6 +11,7 @@ import { FC, useState } from "react";
 import { Modal, ModalBody } from "reactstrap";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { ArrowDownToLine, MoveHorizontal, Play, Ruler, Zap } from "lucide-react";
+import { useRecoveringCarouselMedia } from "@/lib/useRecoveringCarouselMedia";
 
 const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
   const tr = usePublicText();
@@ -41,14 +42,15 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
   const mediaItems = data.media?.length
     ? data.media
     : data.image.map((url) => ({ url, type: "image" as const }));
+  const { availableMedia, imageSource, onImageError } = useRecoveringCarouselMedia(mediaItems);
   const detailHref = `/services/brokerage/${data.slug || data.id}`;
 
   return (
     <article className='car2-featured-box property2-featured-box boat-featured-box'>
       <Link href={detailHref} className='car2-featured-img'>
-        <Swiper {...Property2SwiperSetting}>
+        {availableMedia.length > 0 ? <Swiper {...Property2SwiperSetting} key={availableMedia.map((media) => media.url).join("|")} loop={availableMedia.length > 1}>
           <div className='swiper-wrapper'>
-            {mediaItems.map((media, i) => {
+            {availableMedia.map((media, i) => {
               return (
                 <SwiperSlide key={i}>
                   <div style={{ position: "relative", width: "100%", aspectRatio: "16/9" }}>
@@ -75,13 +77,14 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
                       </>
                     ) : (
                       <Image
-                        src={media.url}
+                        src={imageSource(media.url)}
                         alt={`${data.title} - ${i + 1}`}
                         fill
                         sizes="(max-width: 575px) 100vw, (max-width: 1199px) 50vw, 25vw"
                         quality={72}
+                        onError={() => onImageError(media.url)}
                         className='bg-img'
-                        style={{ objectFit: "cover" }}
+                        style={{ objectFit: "contain" }}
                       />
                     )}
                   </div>
@@ -91,7 +94,7 @@ const Boat2DetailBox: FC<PropertyCardType> = ({ data, label, index }) => {
           </div>
           <div className='swiper-button-next' />
           <div className='swiper-button-prev' />
-        </Swiper>
+        </Swiper> : <div className="boat-card-media-unavailable" role="status">{tr("Photos are temporarily unavailable.")}</div>}
         <div className='car2-label-flex'>
           <span className='bg-white'>{conditionLabel}</span>
           {data.year && <span className='text-white'>{data.buildYear || data.year}</span>}
