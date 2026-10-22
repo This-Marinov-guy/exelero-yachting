@@ -45,7 +45,7 @@ const BoatDetailImages: FC<BoatDetailImagesProps> = ({ boat }) => {
             quality={72}
             priority
             className="boat-detail-preview-image"
-            style={{ width: "100%", height: "auto", maxHeight: 400, objectFit: "contain" }}
+            style={{ width: "100%", height: "auto", maxHeight: 400, objectFit: "cover" }}
           />
         )}
       </div>

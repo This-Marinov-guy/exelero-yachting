@@ -5,7 +5,6 @@ import Link from "@/components/commonComponents/LocalizedLink";
 import { usePublicText } from "@/lib/usePublicText";
 import type { SoldYacht } from "@/lib/soldYachts";
 import { listingImageThumbnailUrl, listingImageViewUrl } from "@/lib/listingImageUrl";
-import { preservePhotoSwipeAspectRatio } from "@/lib/photoSwipeAspectRatio";
 import { RouteList } from "@/utils/RouteList";
 import Image from "next/image";
 import { useState } from "react";
@@ -36,7 +35,7 @@ export default function GalleryPage({ yachts }: Props) {
             </div>
             <span className={styles.photoCount}>{tr("photos")} · {selectedYacht.images.length}</span>
           </div>
-          <Gallery onBeforeOpen={preservePhotoSwipeAspectRatio}>
+          <Gallery>
             <Row className="g-3">
               {selectedYacht.images.map((src, index) => <Col lg={4} md={6} key={`${src}-${index}`}>
                 <Item original={listingImageViewUrl(src)} thumbnail={listingImageThumbnailUrl(src)} width={1200} height={800}>

@@ -58,7 +58,7 @@
 .group { margin-top: 32px; h3 { margin: 0 0 8px; font-size: 18px; font-weight: 650; } }
 .field { min-width: 0; margin-bottom: 16px; label { display: block; margin: 0 0 6px; font-weight: 600; } input, textarea, select { display: block; width: 100%; min-height: 48px; border: 1px solid var(--admin-border); border-radius: 6px; padding: 10px 12px; color: var(--admin-text); background: var(--content-surface); } textarea { resize: vertical; line-height: 1.5; } }
 .mediaFile { margin: 0 0 20px; }
-.mediaPreview { display: grid; place-items: center; width: min(100%, 420px); min-height: 236px; overflow: hidden; border-radius: 6px; background: var(--admin-soft); margin-bottom: 12px; img { display: block; max-width: 100%; max-height: min(70vh, 560px); width: auto; height: auto; object-fit: contain; } video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: contain; } }
+.mediaPreview { width: min(100%, 420px); aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px; background: var(--admin-soft); margin-bottom: 12px; img, video { display: block; width: 100%; height: 100%; object-fit: cover; } }
 .mediaPlaceholder { display: grid; place-content: center; justify-items: center; gap: 8px; height: 100%; color: var(--admin-muted); }
 .mediaDrop { width: min(100%, 420px); min-height: 52px; display: flex; align-items: center; gap: 10px; position: relative; padding: 10px 12px; border: 1px dashed var(--admin-accent); border-radius: 6px; color: var(--admin-accent); font-weight: 600; cursor: pointer; &:hover { background: #e9f3f6; } &:focus-within { outline: 3px solid #268cae; outline-offset: 3px; } svg { flex: none; } }
 .mediaInput { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
