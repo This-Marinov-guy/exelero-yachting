@@ -72,7 +72,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    qualities: [70, 72, 74, 75, 82],
+    qualities: [70, 72, 74, 75, 82, 90],
     minimumCacheTTL: 2_678_400,
     remotePatterns: [
       {

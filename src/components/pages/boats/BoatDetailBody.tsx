@@ -14,7 +14,7 @@ import "swiper/css/pagination";
 import "swiper/css/thumbs";
 import "photoswipe/dist/photoswipe.css";
 import { usePublicText } from "@/lib/usePublicText";
-import { listingImageThumbnailUrl, listingImageViewUrl } from "@/lib/listingImageUrl";
+import { boatPreviewImageUrl, listingImageThumbnailUrl } from "@/lib/listingImageUrl";
 import { preservePhotoSwipeAspectRatio } from "@/lib/photoSwipeAspectRatio";
 import { useRecoveringCarouselMedia } from "@/lib/useRecoveringCarouselMedia";
 
@@ -66,7 +66,15 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
       {mediaItems.length > 0 && (
         <div id="gallery" className="mb-5">
           <h4 className="detail-page-title mb-3">{tr("Gallery")}</h4>
-          {availableMedia.length > 0 ? <Gallery options={{ mainClass: "boat-media-lightbox" }} onBeforeOpen={preservePhotoSwipeAspectRatio}>
+          {availableMedia.length > 0 ? <Gallery options={{
+            mainClass: "boat-media-lightbox",
+            initialZoomLevel: ({ elementSize, panAreaSize, fit }) => {
+              if (!elementSize || !panAreaSize || !elementSize.x || !elementSize.y) return fit;
+              const viewportFit = Math.min(panAreaSize.x / elementSize.x, panAreaSize.y / elementSize.y);
+              return Math.min(viewportFit, 2);
+            },
+            secondaryZoomLevel: ({ initial }) => Math.max(1, initial * 1.5),
+          }} onBeforeOpen={preservePhotoSwipeAspectRatio}>
             <Swiper
               key={availableMedia.map((media) => media.url).join("|")}
               modules={[Navigation, Pagination, Thumbs]}
@@ -107,7 +115,7 @@ const BoatDetailBody: FC<BoatDetailBodyProps> = ({ boat }) => {
                     </button>
                   ) : (
                     <Item
-                      original={listingImageViewUrl(imageSource(media.url))}
+                      original={boatPreviewImageUrl(imageSource(media.url))}
                       thumbnail={listingImageThumbnailUrl(imageSource(media.url))}
                       width={1200}
                       height={800}
