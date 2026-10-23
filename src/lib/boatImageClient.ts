@@ -55,3 +55,14 @@ export async function removeListingImage(url: string): Promise<void> {
   const result = await response.json().catch(() => null);
   if (!response.ok) throw new Error(result?.error || "Could not remove this Drive image. Try again.");
 }
+
+export async function discardUnlinkedListingImages(urls: string[]): Promise<void> {
+  if (!urls.length) return;
+  const response = await fetch("/api/admin/boat-images", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ urls }),
+  });
+  const result = await response.json().catch(() => null);
+  if (!response.ok) throw new Error(result?.error || "Could not discard uploaded photos. Try again.");
+}

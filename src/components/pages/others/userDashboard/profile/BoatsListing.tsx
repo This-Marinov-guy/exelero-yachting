@@ -190,32 +190,21 @@ const BoatsListing = () => {
     };
 
     const handleDelete = async (boatId: string) => {
-        if (!confirm("Are you sure you want to delete this boat? This action cannot be undone.")) {
+        if (!confirm("Delete this boat and its Drive photos? This action cannot be undone.")) {
             return;
         }
 
         setDeleting((prev) => new Set(prev).add(boatId));
 
-        const supabase = getSupabaseBrowserClient();
-
         try {
-            // Unlink dealer (broker_data) from this boat so the dealer is not deleted
-            const { error: unlinkError } = await supabase.from("broker_data").update({ boat_id: null }).eq("boat_id", boatId);
-            if (unlinkError) throw unlinkError;
-
-            // Delete boat (cascade will handle boat_data, boat_images, inqueries, etc.)
-            const { error } = await supabase.from("boats").delete().eq("id", boatId).select("id").single();
-
-            if (error) {
-                console.error("Error deleting boat:", error);
-                toast.error("Failed to delete boat");
-            } else {
-                setBoats((prev) => prev.filter((boat) => boat.id !== boatId));
-                toast.success("Boat deleted successfully");
-            }
+            const response = await fetch(`/api/admin/boats/${boatId}`, { method: "DELETE" });
+            const result = await response.json().catch(() => null);
+            if (!response.ok) throw new Error(result?.error || "Failed to delete boat");
+            setBoats((prev) => prev.filter((boat) => boat.id !== boatId));
+            toast.success(result?.driveCleanupQueued ? "Boat deleted. Drive photo cleanup has started." : "Boat deleted successfully");
         } catch (error) {
             console.error("Error deleting boat:", error);
-            toast.error("Failed to delete boat");
+            toast.error(error instanceof Error ? error.message : "Failed to delete boat");
         } finally {
             setDeleting((prev) => {
                 const next = new Set(prev);

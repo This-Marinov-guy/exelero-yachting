@@ -26,7 +26,7 @@ import DOMPurify from "dompurify";
 import Image from "next/image";
 import Dropzone from "react-dropzone";
 import { X, Star, ImagePlus, ChevronLeft, ChevronRight, FileText, Trash2 } from "lucide-react";
-import { MAX_LISTING_IMAGES, MAX_LISTING_VIDEOS, removeListingImage, uploadListingImage } from "@/lib/boatImageClient";
+import { discardUnlinkedListingImages, MAX_LISTING_IMAGES, MAX_LISTING_VIDEOS, removeListingImage, uploadListingImage } from "@/lib/boatImageClient";
 
 const RichTextEditor = dynamic(
   () => import("@/components/commonComponents/RichTextEditor"),
@@ -123,9 +123,10 @@ const emptyForm = {
 export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: EditBoatModalProps) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [removingImage, setRemovingImage] = useState(false);
   const [unsaved, setUnsaved] = useState(false);
-  useUnsavedChanges(unsaved || saving);
-  const closeEditor = () => { if (!saving && !uploadingMedia && (!unsaved || confirm("Discard unsaved boat changes?"))) onClose(); };
+  const [closing, setClosing] = useState(false);
+  useUnsavedChanges(unsaved || saving || closing);
   const [form, setForm] = useState(emptyForm);
   const [images, setImages] = useState<ImageItem[]>([]);
   const [brochures, setBrochures] = useState<UploadedBrochure[]>([]);
@@ -138,6 +139,22 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
   const [addingVideoLink, setAddingVideoLink] = useState(false);
   const imageCount = images.filter(item => item.media_type !== "video").length;
   const videoCount = images.filter(item => item.media_type === "video").length;
+
+  const closeEditor = async () => {
+    if (saving || uploadingMedia || removingImage || closing || (unsaved && !confirm("Discard unsaved boat changes?"))) return;
+    const newDriveImages = images.filter(image => image.isNew && image.link.startsWith("/api/boat-images/"));
+    if (newDriveImages.length) {
+      setClosing(true);
+      try {
+        await discardUnlinkedListingImages(newDriveImages.map(image => image.link));
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Could not discard uploaded photos. Try again.");
+        setClosing(false);
+        return;
+      }
+    }
+    onClose();
+  };
 
   const setField = (field: string, value: string | number | boolean | null) => {
     setUnsaved(true);
@@ -235,13 +252,21 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
   };
 
   const removeImage = async (index: number) => {
+    if (saving || uploadingMedia || removingImage || closing) return;
     const image = images[index];
+    if (!image) return;
+    setRemovingImage(true);
     if (image?.isNew && image.link.startsWith("/api/boat-images/")) {
       try { await removeListingImage(image.link); }
-      catch (error) { toast.error(error instanceof Error ? error.message : "Could not remove this image. Try again."); return; }
+      catch (error) {
+        toast.error(error instanceof Error ? error.message : "Could not remove this image. Try again.");
+        setRemovingImage(false);
+        return;
+      }
     }
     setUnsaved(true);
     setImages((prev) => prev.filter((_, i) => i !== index).map((img, i) => ({ ...img, display_order: i })));
+    setRemovingImage(false);
   };
 
   const setMainImage = (index: number) => {
@@ -407,7 +432,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!boatId || mediaUploadActiveRef.current) return;
+    if (!boatId || mediaUploadActiveRef.current || removingImage || closing || saving) return;
 
     const supabase = getSupabaseBrowserClient();
     setSaving(true);
@@ -462,13 +487,14 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
       if (existingError) throw existingError;
 
       const toDelete = (existingRows || []).filter((r: { id: string }) => !existingIds.includes(r.id));
-      for (const row of toDelete) {
-        const { error } = await supabase.from("boat_images").delete().eq("id", row.id);
-        if (error) throw error;
-        if (row.link.startsWith("/api/boat-images/")) {
-          try { await removeListingImage(row.link); }
-          catch (error) { console.error("Drive image cleanup failed:", error); }
-        }
+      if (toDelete.length) {
+        const response = await fetch(`/api/admin/boats/${boatId}/images`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageIds: toDelete.map(row => row.id) }),
+        });
+        const result = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(result?.error || "Could not remove listing photos.");
       }
 
       for (let i = 0; i < images.length; i++) {
@@ -488,7 +514,9 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
       }
 
       await fetch(`/api/admin/boats/${boatId}/translate`, { method: "POST" }).catch(() => null);
-      toast.success("Boat updated successfully");
+      toast.success(toDelete.some(row => row.link.startsWith("/api/boat-images/"))
+        ? "Boat updated. Removed photos are being cleaned up."
+        : "Boat updated successfully");
       setUnsaved(false);
       onSaved();
       onClose();
@@ -912,7 +940,7 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
                         <button type="button" className="btn btn-sm btn-outline-light py-0 px-1" onClick={() => setMainImage(index)} disabled={index === 0} title="Set as main">
                           <Star className="h-4 w-4" />
                         </button>
-                        <button type="button" className="btn btn-sm btn-outline-danger py-0 px-1" onClick={() => removeImage(index)} title="Remove">
+                        <button type="button" className="btn btn-sm btn-outline-danger py-0 px-1" onClick={() => removeImage(index)} disabled={saving || uploadingMedia || removingImage || closing} title="Remove">
                           <X className="h-4 w-4" />
                         </button>
                       </div>
@@ -936,10 +964,10 @@ export default function EditBoatModal({ boatId, isOpen, onClose, onSaved }: Edit
       </ModalBody>
       {!loading && (
         <ModalFooter>
-          <Button color="secondary" onClick={closeEditor} disabled={uploadingMedia}>
-            Cancel
+          <Button color="secondary" onClick={closeEditor} disabled={uploadingMedia || saving || removingImage || closing}>
+            {closing ? "Discarding…" : "Cancel"}
           </Button>
-          <Button color="primary" type="submit" form="edit-boat-form" disabled={saving || uploadingMedia}>
+          <Button color="primary" type="submit" form="edit-boat-form" disabled={saving || uploadingMedia || removingImage || closing}>
             {saving ? "Saving..." : "Save changes"}
           </Button>
         </ModalFooter>

@@ -90,8 +90,8 @@ type DriveMetadata = { id?: string; parents?: string[]; mimeType?: string; trash
 
 async function fileMetadata(id: string, forWrite = false): Promise<DriveMetadata | null> {
   const response = await driveFetch(`${DRIVE_API}/${id}?fields=id,parents,mimeType,trashed&supportsAllDrives=true`, {}, forWrite);
-  if (response.status === 429 || response.status >= 500) throw new Error(`Google Drive metadata is temporarily unavailable (${response.status}).`);
-  if (!response.ok) return null;
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Google Drive metadata is unavailable (${response.status}).`);
   return response.json();
 }
 
@@ -201,16 +201,20 @@ export async function getBoatImage(id: string): Promise<Response> {
   return driveFetch(`${DRIVE_API}/${id}?alt=media&supportsAllDrives=true`);
 }
 
-export async function deleteBoatImage(id: string): Promise<void> {
-  const path = await pathWithinImageFolder(id, true);
+export async function deleteBoatImage(id: string, allowMigrated = false): Promise<void> {
+  const metadata = await fileMetadata(id, true);
+  if (!metadata) return; // A retry may find that the file was already removed.
+  if (!metadata.mimeType || !IMAGE_MIME_TYPES.has(metadata.mimeType)) throw new Error("This Drive file is not a listing image.");
+  const path = await pathWithinImageFolder(id, true, metadata);
   if (!path) throw new Error("Could not find this image in Drive.");
-  if (path.length && !(await isListingsFolder(path[0]))) throw new Error("This image is outside the listing image folder.");
+  if (!path.length || !(await isBoatImageFolder(path[0], allowMigrated))) throw new Error("This image is outside the listing image folders.");
   const response = await driveFetch(`${DRIVE_API}/${id}?supportsAllDrives=true`, { method: "DELETE" }, true);
-  if (!response.ok) throw new Error("Could not remove this image from Drive.");
+  if (!response.ok && response.status !== 404) throw new Error(`Could not remove this image from Drive (${response.status}).`);
 }
 
-async function isListingsFolder(id: string): Promise<boolean> {
+async function isBoatImageFolder(id: string, allowMigrated: boolean): Promise<boolean> {
   const response = await driveFetch(`${DRIVE_API}/${id}?fields=name&supportsAllDrives=true`, {}, true);
   if (!response.ok) return false;
-  return (await response.json()).name === "Listings";
+  const name = (await response.json()).name;
+  return name === "Listings" || (allowMigrated && name === "Migrated Supabase images");
 }

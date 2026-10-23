@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPartnerAdminClient } from "@/lib/partnerAdmin";
-import { deleteBoatImage, driveImageId, MAX_BOAT_IMAGE_BYTES, uploadBoatImage } from "@/lib/boatDriveImages";
+import { driveImageId, MAX_BOAT_IMAGE_BYTES, uploadBoatImage } from "@/lib/boatDriveImages";
+import { queueBoatDriveCleanup } from "@/lib/boatDriveCleanup";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -28,14 +29,20 @@ export async function DELETE(request: NextRequest) {
   const client = await getPartnerAdminClient();
   if (!client) return NextResponse.json({ error: "Account access required." }, { status: 403 });
   const url = new URL(request.url);
-  const id = driveImageId(url.searchParams.get("url") || "");
-  if (!id) return NextResponse.json({ error: "Choose a Drive image to remove." }, { status: 400 });
+  const singleUrl = url.searchParams.get("url");
+  const body = singleUrl ? null : await request.json().catch(() => null);
+  const urls = singleUrl ? [singleUrl] : body?.urls;
+  if (!Array.isArray(urls) || !urls.length || urls.length > 25
+    || urls.some(value => typeof value !== "string" || !driveImageId(value))
+    || new Set(urls).size !== urls.length) {
+    return NextResponse.json({ error: "Choose up to 25 Drive images to remove." }, { status: 400 });
+  }
   try {
-    const { data, error } = await client.from("boat_images").select("id").eq("link", `/api/boat-images/${id}`).limit(1);
+    const { data, error } = await client.from("boat_images").select("id").in("link", urls).limit(1);
     if (error) throw error;
     if (data?.length) return NextResponse.json({ error: "Remove this image from the listing before deleting its Drive file." }, { status: 409 });
-    await deleteBoatImage(id);
-    return NextResponse.json({ ok: true });
+    queueBoatDriveCleanup(client, urls);
+    return NextResponse.json({ queued: true }, { status: 202 });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Could not remove this image. Try again." }, { status: 502 });
   }
