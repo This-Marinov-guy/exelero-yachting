@@ -8,6 +8,8 @@ import { ImagePath } from "@/constants";
 import { setMapModal } from "@/redux/reducers/LayoutSlice";
 import RangeInputFields from "./RangeInputFields";
 import { usePublicText } from "@/lib/usePublicText";
+import { useBoatFilters } from "@/components/pages/boats/BoatFiltersContext";
+import { BoatListParam, BoatRangeParam } from "@/lib/boatFilterQuery";
 
 const boatTypeFilterData = [
   { id: "boat-type-racer", label: "Racer", type: "racer" },
@@ -19,11 +21,31 @@ const boatTypeFilterData = [
 const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValue, priceRange, squareFeet, values, modalType, type, radio }) => {
   const tr = usePublicText();
   const dispatch = useAppDispatch();
+  const boatQuery = useBoatFilters();
   const { propertyType, bedsRooms, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory, JobWorkMode, JobCompanyType, JobEducation, JobCheck, JobLocation, JobTopCompanies, JobType, boatType, boatCondition, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded } = useAppSelector(state => state.filter);
 
   const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>, title: string, field?: string) => {
     const value = event.target.value;
     const isChecked = event.target.checked;
+
+    if (type === "boat" && boatQuery) {
+      const listKey: Record<string, BoatListParam> = {
+        "Boat Type": "type", Condition: "condition", Manufacturer: "manufacturer", Location: "location",
+      };
+      const rangeKey: Record<string, BoatRangeParam> = {
+        "Year Built": "year", "Hull Length (m)": "length", "Beam (m)": "beam", "Draft (m)": "draft",
+        "Displacement (kg)": "displacement", "Engine Power (hp)": "power",
+      };
+      if (listKey[title]) {
+        const selected = title === "Boat Type" ? boatQuery.filters.boatType : Array.isArray(checkValue) ? checkValue : [];
+        boatQuery.setList(listKey[title], isChecked ? [...selected, value] : selected.filter(item => item !== value));
+      } else if (rangeKey[title] && field) {
+        const range = values ?? [0, 0];
+        const number = event.target.value === "" ? 0 : Number(value);
+        boatQuery.setRange(rangeKey[title], field === "min" ? [number, range[1]] : [range[0], number]);
+      }
+      return;
+    }
 
     const actionCreator = (option?: string[] | string) => {
       if (radio) {
@@ -108,7 +130,7 @@ const CommonFilter: FC<CommonFilterType> = ({ title, colors, id, data, checkValu
                     type="checkbox"
                     id={item.id}
                     value={item.type}
-                    checked={Array.isArray(boatType) && boatType.includes(item.type)}
+                    checked={Array.isArray(checkValue) && checkValue.includes(item.type)}
                     onChange={(event) => handleCheckboxChange(event, "Boat Type")}
                   />
                   <Label htmlFor={item.id} className="label-flex">

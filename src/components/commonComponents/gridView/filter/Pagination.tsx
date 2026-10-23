@@ -19,19 +19,19 @@ const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, onPageChange
   return (
     <ul className={`pagination ${type === "job" ? "pagination-style-1 justify-content-center" : ""}`}>
       <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-        <Link scroll={false} className='page-link' href={Href} aria-label={tr("Previous")} onClick={() => handlePageChange(currentPage - 1)}>
+        <Link scroll={false} className='page-link' href={Href} aria-label={tr("Previous")} onClick={event => { event.preventDefault(); handlePageChange(currentPage - 1); }}>
           <ChevronsLeft className='h-4 w-4' />
         </Link>
       </li>
       {pages.map((page) => (
         <li key={page} className={`page-item`}>
-          <Link scroll={false} className={`page-link ${currentPage === page ? "active" : ""}`} href={Href} onClick={() => handlePageChange(page)}>
+          <Link scroll={false} className={`page-link ${currentPage === page ? "active" : ""}`} href={Href} onClick={event => { event.preventDefault(); handlePageChange(page); }}>
             {page}
           </Link>
         </li>
       ))}
       <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-        <Link scroll={false} className='page-link' href={Href} aria-label={tr("Next")} onClick={() => handlePageChange(currentPage + 1)}>
+        <Link scroll={false} className='page-link' href={Href} aria-label={tr("Next")} onClick={event => { event.preventDefault(); handlePageChange(currentPage + 1); }}>
           <ChevronsRight className='h-4 w-4' />
         </Link>
       </li>

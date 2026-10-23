@@ -6,13 +6,15 @@ import { MERGE_THRESHOLD, STEP, THUMB_SIZE } from "@/constants";
 import { setBudgetStatus, setKmsDriven, setPriceStatus, setSalaryStatus } from "@/redux/reducers/FilterSlice";
 import { usePublicLocale } from "@/app/i18n/i18n-context";
 import { usePublicText } from "@/lib/usePublicText";
+import { useBoatFilters } from "@/components/pages/boats/BoatFiltersContext";
 
 const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
   const locale = usePublicLocale();
   const tr = usePublicText();
   const dispatch = useAppDispatch();
+  const boatQuery = useBoatFilters();
   const { minAndMaxPrice, priceStatus } = useAppSelector((state) => state.filter);
-  const [rangePrice, setRangePrice] = useState<number[]>([0, 1000000]);  
+  const [rangePrice, setRangePrice] = useState<number[]>(() => type === "boat" && boatQuery ? boatQuery.filters.priceStatus : priceStatus);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const getAction = () => {
@@ -27,6 +29,7 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
   const handlePriceChange = (values: number[]) => {
     // Update local state immediately for smooth UI
     setRangePrice(values);
+    if (type === "boat" && boatQuery) return;
     
     // Clear existing timer
     if (debounceTimerRef.current) {
@@ -49,13 +52,13 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
   }, []);
 
   useEffect(() => {
-    setRangePrice(priceStatus);
-  }, [priceStatus, minAndMaxPrice]);
+    setRangePrice(type === "boat" && boatQuery ? boatQuery.filters.priceStatus : priceStatus);
+  }, [type, boatQuery?.filters.priceStatus, priceStatus, minAndMaxPrice]);
 
   // react-range requires min < max (not equal). Ensure bounds are always valid.
   const step = type === "job" ? 1 : STEP;
   const minBound = 0;
-  const maxBound = 1000000;
+  const maxBound = type === "boat" ? Math.max(1000000, rangePrice[1]) : 1000000;
 
   return (
     <Range
@@ -64,6 +67,9 @@ const RangeInputFields: FC<RangeInputFieldsType> = ({ type }) => {
       min={minBound}
       max={maxBound}
       onChange={(values) => handlePriceChange(values)}
+      onFinalChange={(values) => {
+        if (type === "boat") boatQuery?.setRange("price", values);
+      }}
       renderTrack={({ props, children }) => (
         <div onTouchStart={props.onTouchStart} onMouseDown={props.onMouseDown} style={{
           ...props.style, height: "36px", display: "flex", width: "100%", padding: `0 10px`,

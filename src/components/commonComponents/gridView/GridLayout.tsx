@@ -23,11 +23,13 @@ import Job7DetailBox from "@/components/commonComponents/productBox/Job7DetailBo
 import JobAdsBox from "./JobAdsBox";
 import Job8DetailBox from "@/components/commonComponents/productBox/Job8DetailBox";
 import { usePublicText } from "@/lib/usePublicText";
+import { useBoatFilters } from "@/components/pages/boats/BoatFiltersContext";
 
 const GridLayout: FC<GridLayoutType> = ({ value, type, gridType, gridSize, view, scrollType, map, detailBoxStyle }) => {
   const tr = usePublicText();
   const swiperRef = useRef<SwiperType | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const boatQuery = useBoatFilters();
   const { cardToShow } = useAppSelector((state) => state.layout);
   const dispatch = useAppDispatch();
 
@@ -50,9 +52,11 @@ const GridLayout: FC<GridLayoutType> = ({ value, type, gridType, gridSize, view,
   }
 
   const totalPages = Math.ceil(filteredProducts.length / cardToShow);
+  const activePage = type === "boat" && boatQuery ? boatQuery.filters.page : currentPage;
+  const visiblePage = activePage <= totalPages ? activePage : 1;
   const showProduct = scrollType === "infinite"
-      ? filteredProducts.slice(0, cardToShow * currentPage)
-      : filteredProducts.slice(cardToShow * (currentPage - 1), cardToShow * currentPage);
+      ? filteredProducts.slice(0, cardToShow * visiblePage)
+      : filteredProducts.slice(cardToShow * (visiblePage - 1), cardToShow * visiblePage);
 
   const fetchMoreData = () => {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
@@ -71,15 +75,19 @@ const GridLayout: FC<GridLayoutType> = ({ value, type, gridType, gridSize, view,
   }, []);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    if (type === "boat" && boatQuery) boatQuery.setPage(page);
+    else setCurrentPage(page);
   };
 
   useEffect(() => {
     dispatch(setTotalProduct(filteredProducts.length || 0));
+    if (type === "boat" && boatQuery && activePage > totalPages && activePage !== 1) {
+      boatQuery.setPage(1, true);
+    }
     if (currentPage > totalPages) {
       setCurrentPage(1);
     }
-  }, [filteredProducts.length, dispatch, totalPages, currentPage]);
+  }, [filteredProducts.length, dispatch, totalPages, currentPage, type, boatQuery?.setPage, activePage]);
 
   const getColData = () => {
     switch (gridSize) {
@@ -174,7 +182,7 @@ const GridLayout: FC<GridLayoutType> = ({ value, type, gridType, gridSize, view,
         )
       ) : (scrollType !== "infinite" && showProduct.length > 0) ? (
         <div className={`${type === "job" ? "text-center" : ""}`}>
-          <Pagination type={type} currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+          <Pagination type={type} currentPage={visiblePage} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>
       ) : null}
     </div>

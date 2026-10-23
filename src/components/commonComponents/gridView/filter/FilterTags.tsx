@@ -3,20 +3,29 @@ import { FilterTabsListData } from "@/data/car";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setCardToShow, setOpenFilterSidebar } from "@/redux/reducers/LayoutSlice";
 import { setPopular, setSortBy } from "@/redux/reducers/FilterSlice";
-import { TopPanelType } from "@/types/Product";
+import { ProductType, TopPanelType } from "@/types/Product";
 import Link from "next/link";
-import { FC, Fragment, useState } from "react";
+import { FC, Fragment, useMemo, useState } from "react";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
 import { usePublicText } from "@/lib/usePublicText";
+import { useBoatFilters } from "@/components/pages/boats/BoatFiltersContext";
+import { filterBoats } from "../UseFilterBoats";
 
-const FilterTags: FC<TopPanelType> = ({ topFilter, side, type, mainClass }) => {
+const FilterTags: FC<TopPanelType & { boatProducts?: ProductType[] }> = ({ topFilter, side, type, mainClass, boatProducts }) => {
   const tr = usePublicText();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dispatch = useAppDispatch();
+  const boatQuery = useBoatFilters();
   const { sortBy } = useAppSelector((state) => state.filter);
   const { totalProduct } = useAppSelector((state) => state.layout);
+  const boatCount = useMemo(() => type === "boat" && boatQuery && boatProducts ? filterBoats(boatProducts, boatQuery.filters).length : null, [type, boatQuery?.filters, boatProducts]);
 
   const handleSortBy = (sortOption: string) => {
+    if (type === "boat" && boatQuery) {
+      boatQuery.setSort(sortOption);
+      setDropdownOpen(false);
+      return;
+    }
     if (sortOption === "Most Popular") {
       dispatch(setPopular(sortOption));
     } else if (sortOption === "24 Product par page") {
@@ -31,11 +40,11 @@ const FilterTags: FC<TopPanelType> = ({ topFilter, side, type, mainClass }) => {
 
   const FilterDropdown = (startPoint: number, endPoint: number) => (
     <Dropdown className='select-dropdown' isOpen={dropdownOpen} toggle={() => setDropdownOpen(!dropdownOpen)}>
-      {/* <DropdownToggle className='select-button' color="">{sortBy || "Sort By"}</DropdownToggle> */}
+      {type === "boat" && <DropdownToggle className='select-button' color="">{tr(boatQuery?.filters.sortBy || "Sort By")}</DropdownToggle>}
       <DropdownMenu className='select-menu' end>
         {FilterTabsListData.map((item, index) => (
           <DropdownItem onClick={() => handleSortBy(item)} key={index} className="select-item">
-            <Link href={Href} scroll={false} className={`select-item ${sortBy === item ? "active" : ""}`}>
+            <Link href={Href} scroll={false} onClick={event => event.preventDefault()} className={`select-item ${(type === "boat" ? boatQuery?.filters.sortBy : sortBy) === item ? "active" : ""}`}>
               {tr(item)}
             </Link>
           </DropdownItem>
@@ -49,7 +58,7 @@ const FilterTags: FC<TopPanelType> = ({ topFilter, side, type, mainClass }) => {
       <Fragment>
 
         <h4>
-          {totalProduct} {tr("results")}
+          {boatCount ?? totalProduct} {tr("results")}
         </h4>
 
         {topFilter ? <div className='category-filter'>

@@ -9,10 +9,13 @@ import { setMinAndMaxKilometers, setMinAndMaxPrice, setMinAndMaxSalary } from "@
 import { ColorData, FilterCategory, FuelType, ModelYearData, OwnerData, SeatsData, TransmissionData } from "@/data/car";
 import { AllCategoriesData, ByData, CompanyTypeData, EducationData, JobTypeData, LocationData, TopCompaniesData, WorkModeData } from "@/data/job";
 import { BoatConditionData, VatIncludedData } from "@/data/boat";
+import { useBoatFilters } from "@/components/pages/boats/BoatFiltersContext";
 
 const FilterSidebar: FC<FilterSidebarType> = ({ value, modalType, filterClass, type }) => {
   const dispatch = useAppDispatch();
+  const boatQuery = useBoatFilters();
   const { propertyType, bedsRooms, squareFeetStatus, yearBuiltStatus, amenities, categories, fuelType, modelYear, seats, color, carTransmissions, ownerDetail, jobAllCategory,JobWorkMode ,JobCompanyType ,JobEducation ,JobCheck,JobLocation,JobTopCompanies,JobType, boatType, boatCondition, boatManufacturer, boatLocation, boatBeamStatus, boatDraftStatus, boatDisplacementStatus, boatEnginePowerStatus, boatVatIncluded} = useAppSelector((state) => state.filter);
+  const boat = type === "boat" ? boatQuery?.filters : null;
   const ItemData = ["1", "2", "3", "map-id"];
   const [openItems, setOpenItems] = useState<string[]>(ItemData);
   const toggle = (id: string) => setOpenItems((openItems) => (openItems.includes(id) ? openItems.filter((item) => item !== id) : [...openItems, id]));
@@ -85,19 +88,19 @@ const FilterSidebar: FC<FilterSidebarType> = ({ value, modalType, filterClass, t
               title="Boat Type"
               id="boat-type"
               type={type}
-              checkValue={boatType}
+              checkValue={boat?.boatType ?? boatType}
             />
           )}
-          {type === "boat" && <CommonAccordion title='Condition' id='boat-condition' data={BoatConditionData} checkValue={boatCondition} type={type} />}
+          {type === "boat" && <CommonAccordion title='Condition' id='boat-condition' data={BoatConditionData} checkValue={boat?.boatCondition ?? boatCondition} type={type} />}
           <CommonAccordion title='Price Range' id='1' priceRange type={type} maxPrice={maxPrice?.price} minPrice={minPrice?.price} />
-          <CommonAccordion title='Year Built' id='2' squareFeet values={yearBuiltStatus} />
-          <CommonAccordion title='Hull Length (m)' id='3' squareFeet values={squareFeetStatus} />
-          {boatManufacturerData.length > 0 && <CommonAccordion title='Manufacturer' id='4' data={boatManufacturerData} checkValue={boatManufacturer} type={type} />}
-          {boatLocationData.length > 0 && <CommonAccordion title='Location' id='5' data={boatLocationData} checkValue={boatLocation} type={type} />}
-          <CommonAccordion title='Beam (m)' id='6' squareFeet values={boatBeamStatus} />
-          <CommonAccordion title='Draft (m)' id='7' squareFeet values={boatDraftStatus} />
-          <CommonAccordion title='Displacement (kg)' id='8' squareFeet values={boatDisplacementStatus} />
-          <CommonAccordion title='Engine Power (hp)' id='9' squareFeet values={boatEnginePowerStatus} />
+          <CommonAccordion title='Year Built' id='2' squareFeet values={boat?.yearBuiltStatus ?? yearBuiltStatus} type={type} />
+          <CommonAccordion title='Hull Length (m)' id='3' squareFeet values={boat?.squareFeetStatus ?? squareFeetStatus} type={type} />
+          {boatManufacturerData.length > 0 && <CommonAccordion title='Manufacturer' id='4' data={boatManufacturerData} checkValue={boat?.boatManufacturer ?? boatManufacturer} type={type} />}
+          {boatLocationData.length > 0 && <CommonAccordion title='Location' id='5' data={boatLocationData} checkValue={boat?.boatLocation ?? boatLocation} type={type} />}
+          <CommonAccordion title='Beam (m)' id='6' squareFeet values={boat?.boatBeamStatus ?? boatBeamStatus} type={type} />
+          <CommonAccordion title='Draft (m)' id='7' squareFeet values={boat?.boatDraftStatus ?? boatDraftStatus} type={type} />
+          <CommonAccordion title='Displacement (kg)' id='8' squareFeet values={boat?.boatDisplacementStatus ?? boatDisplacementStatus} type={type} />
+          <CommonAccordion title='Engine Power (hp)' id='9' squareFeet values={boat?.boatEnginePowerStatus ?? boatEnginePowerStatus} type={type} />
           {/* <CommonAccordion title='VAT Status' id='10' data={VatIncludedData} checkValue={boatVatIncluded !== null ? String(boatVatIncluded) : ""} type={type} radio /> */}
         </Fragment>
       </UncontrolledAccordion>

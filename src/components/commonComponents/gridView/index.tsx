@@ -65,7 +65,7 @@ const GridView: FC<GridViewType> = ({ type, gridSize, gridType, view, scrollType
             )}
             <div className={gridColumnClass}>
               {tagFilter && <TagsShowBox />}
-              <FilterTags side={side} topFilter={topFilter} type={type} mainClass={tagClass} />
+              <FilterTags side={side} topFilter={topFilter} type={type} mainClass={tagClass} boatProducts={type === "boat" ? showProduct : undefined} />
               {map ? (
                   <Row className='gy-4'>
                     <Col xl={6} className={`map-section ${mapSide === "right" ? "order-1" : ""}`}>
